@@ -1,0 +1,1411 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/homeDrawer"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clipToPadding="false"
+    tools:context=".home.HomeFragment">
+
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/homeRefresh"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false">
+
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/homeScroll"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        <LinearLayout
+            android:id="@+id/homeContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <FrameLayout
+                android:id="@+id/homeBannerFrame"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <com.flaviofaria.kenburnsview.KenBurnsView
+                    android:id="@+id/homeUserBg"
+                    android:layout_width="match_parent"
+                    android:layout_height="216dp"
+                    android:scaleType="centerCrop"
+                    tools:ignore="ContentDescription"
+                    tools:src="@tools:sample/backgrounds/scenic" />
+
+                <ImageView
+                    android:id="@+id/homeUserBgNoKen"
+                    android:layout_width="match_parent"
+                    android:layout_height="216dp"
+                    android:scaleType="centerCrop"
+                    tools:ignore="ContentDescription"
+                    tools:src="@tools:sample/backgrounds/scenic" />
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="-94dp"
+                    android:src="@drawable/linear_gradient_bg"
+                    tools:ignore="ContentDescription" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/homeBannerCarousel"
+                    android:layout_width="match_parent"
+                    android:layout_height="216dp"
+                    android:clipToPadding="false"
+                    android:visibility="gone"
+                    tools:visibility="visible"
+                    tools:listitem="@layout/item_banner_carousel"
+                    tools:orientation="horizontal" />
+
+                <LinearLayout
+                    android:id="@+id/homeTopContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="bottom"
+                        android:baselineAligned="false"
+                        android:orientation="horizontal"
+                        android:padding="32dp">
+
+                        <FrameLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:minHeight="64dp">
+
+                            <LinearLayout
+                                android:id="@+id/homeUserDataContainer"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical"
+                                android:visibility="gone"
+                                tools:visibility="visible">
+
+                                <TextView
+                                    android:id="@+id/homeUserName"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginBottom="-4dp"
+                                    android:fontFamily="@font/poppins_bold"
+                                    android:gravity="center"
+                                    android:text="@string/username"
+                                    android:textSize="16sp" />
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:orientation="horizontal">
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:alpha="0.58"
+                                        android:fontFamily="@font/poppins"
+                                        android:text="@string/episodes_watched"
+                                        android:textSize="12sp"
+                                        tools:ignore="TextContrastCheck,TooDeepLayout" />
+
+                                    <TextView
+                                        android:id="@+id/homeUserEpisodesWatched"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginStart="4dp"
+                                        android:fontFamily="@font/poppins_bold"
+                                        android:textColor="?attr/colorPrimaryVariant"
+                                        android:textSize="12sp" />
+                                </LinearLayout>
+
+                                <LinearLayout
+                                    android:id="@+id/homeUserChaptersReadRow"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="match_parent"
+                                    android:orientation="horizontal"
+                                    android:visibility="gone">
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:alpha="0.58"
+                                        android:fontFamily="@font/poppins"
+                                        android:text="@string/chapters_read"
+                                        android:textSize="12sp"
+                                        tools:ignore="TextContrastCheck" />
+
+                                    <TextView
+                                        android:id="@+id/homeUserChaptersRead"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginStart="4dp"
+                                        android:fontFamily="@font/poppins_bold"
+                                        android:textColor="?attr/colorPrimaryVariant"
+                                        android:textSize="12sp" />
+                                </LinearLayout>
+
+                            </LinearLayout>
+
+                            <ProgressBar
+                                android:id="@+id/homeUserDataProgressBar"
+                                style="?android:attr/progressBarStyleHorizontal"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_marginEnd="16dp"
+                                android:indeterminate="true"
+                                tools:visibility="gone" />
+
+                        </FrameLayout>
+
+                        <FrameLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="10dp">
+
+                            <com.google.android.material.card.MaterialCardView
+                                android:id="@+id/searchImageContainer"
+                                android:layout_width="52dp"
+                                android:layout_height="52dp"
+                                android:layout_marginTop="4dp"
+                                android:backgroundTint="@color/nav_bg_inv"
+                                android:scaleX="0.96"
+                                android:scaleY="0.96"
+                                android:focusable="true"
+                                android:nextFocusDown="@+id/homeAnimeList"
+                                app:cardCornerRadius="26dp">
+
+                                <com.google.android.material.imageview.ShapeableImageView
+                                    android:id="@+id/searchImage"
+                                    android:layout_width="52dp"
+                                    android:layout_height="52dp"
+                                    android:scaleType="center"
+                                    android:scaleX="1.2"
+                                    android:scaleY="1.2"
+                                    android:tint="@color/bg_white"
+                                    app:srcCompat="@drawable/ic_round_search_24"
+                                    tools:ignore="ContentDescription,ImageContrastCheck" />
+
+                            </com.google.android.material.card.MaterialCardView>
+
+                        </FrameLayout>
+
+                        <FrameLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content">
+
+                            <com.google.android.material.card.MaterialCardView
+                                android:id="@+id/homeUserAvatarContainer"
+                                android:layout_width="52dp"
+                                android:layout_height="52dp"
+                                android:layout_marginTop="4dp"
+                                android:backgroundTint="@color/nav_bg_inv"
+                                android:focusable="true"
+                                android:nextFocusDown="@+id/homeContinueWatchingContainer"
+                                app:cardCornerRadius="26dp">
+
+                                <com.google.android.material.imageview.ShapeableImageView
+                                    android:id="@+id/homeUserAvatar"
+                                    android:layout_width="52dp"
+                                    android:layout_height="52dp"
+                                    android:scaleType="center"
+                                    app:srcCompat="@drawable/ic_round_settings_24"
+                                    tools:ignore="ContentDescription,ImageContrastCheck" />
+
+                            </com.google.android.material.card.MaterialCardView>
+
+                            <TextView
+                                android:id="@+id/homeNotificationCount"
+                                android:layout_width="18dp"
+                                android:layout_height="18dp"
+                                android:layout_gravity="end|bottom"
+                                android:background="@drawable/notification_circle"
+                                android:fontFamily="@font/poppins_semi_bold"
+                                android:gravity="center"
+                                android:textColor="#F3F3F3"
+                                android:textSize="12sp"
+                                android:visibility="gone"
+                                tools:ignore="SmallSp"
+                                tools:text="1"
+                                tools:visibility="visible" />
+                        </FrameLayout>
+
+                    </LinearLayout>
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/homeListContainer"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:clipToPadding="false"
+                        android:paddingStart="24dp"
+                        android:paddingEnd="24dp">
+
+                        <com.google.android.material.card.MaterialCardView
+                            android:id="@+id/homeAnimeList"
+                            android:layout_width="match_parent"
+                            android:layout_height="72dp"
+                            android:layout_margin="8dp"
+                            android:visibility="invisible"
+                            app:boxStrokeColor="@color/text_input_layout_stroke_color"
+                            app:cardCornerRadius="16dp"
+                            app:layout_constrainedWidth="true"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toStartOf="@+id/homeMangaList"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintWidth_max="256dp"
+                            tools:visibility="visible">
+
+                            <ImageView
+                                android:id="@+id/homeAnimeListImage"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:scaleType="centerCrop"
+                                tools:ignore="ContentDescription"
+                                tools:src="@tools:sample/backgrounds/scenic" />
+
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:alpha="0.6"
+                                android:background="@color/bg_black" />
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center"
+                                    android:fontFamily="@font/poppins_bold"
+                                    android:text="@string/anime_list"
+                                    android:textAllCaps="true"
+                                    android:textColor="@color/bg_white"
+                                    android:textSize="16sp" />
+
+                                <View
+                                    android:layout_width="64dp"
+                                    android:layout_height="2dp"
+                                    android:layout_gravity="center"
+                                    android:background="?attr/colorPrimary" />
+                            </LinearLayout>
+                        </com.google.android.material.card.MaterialCardView>
+
+                        <com.google.android.material.card.MaterialCardView
+                            android:id="@+id/homeMangaList"
+                            android:layout_width="match_parent"
+                            android:layout_height="72dp"
+                            android:layout_margin="8dp"
+                            android:layout_marginBottom="16dp"
+                            android:visibility="invisible"
+                            app:boxStrokeColor="@color/text_input_layout_stroke_color"
+                            app:cardCornerRadius="16dp"
+                            app:layout_constrainedWidth="true"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toEndOf="@+id/homeAnimeList"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintWidth_max="256dp"
+                            tools:visibility="visible">
+
+                            <ImageView
+                                android:id="@+id/homeMangaListImage"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:scaleType="centerCrop"
+                                tools:ignore="ContentDescription"
+                                tools:src="@tools:sample/backgrounds/scenic" />
+
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:alpha="0.6"
+                                android:background="@color/bg_black" />
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center"
+                                    android:fontFamily="@font/poppins_bold"
+                                    android:text="@string/manga_list"
+                                    android:textAllCaps="true"
+                                    android:textColor="@color/bg_white"
+                                    android:textSize="16sp" />
+
+                                <View
+                                    android:layout_width="64dp"
+                                    android:layout_height="2dp"
+                                    android:layout_gravity="center"
+                                    android:background="?attr/colorPrimary" />
+                            </LinearLayout>
+
+                        </com.google.android.material.card.MaterialCardView>
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                </LinearLayout>
+
+            </FrameLayout>
+
+            <!-- ═══ Navigating Banner (HomeBannerMode = NAVIGATING) ══════════ -->
+            <FrameLayout
+                android:id="@+id/homeNavigatingBannerContainer"
+                android:layout_width="match_parent"
+                android:layout_height="320dp"
+                android:layout_marginBottom="8dp"
+                android:visibility="gone">
+
+                <ImageView
+                    android:id="@+id/navBannerBgA"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:contentDescription="@null"
+                    android:scaleType="centerCrop" />
+
+                <ImageView
+                    android:id="@+id/navBannerBgB"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:alpha="0"
+                    android:contentDescription="@null"
+                    android:scaleType="centerCrop" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/linear_gradient_bg" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:orientation="vertical"
+                    android:padding="20dp"
+                    android:paddingBottom="20dp">
+
+                    <ImageView
+                        android:id="@+id/navBannerLogo"
+                        android:layout_width="160dp"
+                        android:layout_height="56dp"
+                        android:contentDescription="@null"
+                        android:scaleType="fitStart"
+                        android:visibility="gone" />
+
+                    <TextView
+                        android:id="@+id/navBannerTitle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:fontFamily="sans-serif-medium"
+                        android:maxLines="2"
+                        android:shadowColor="#99000000"
+                        android:shadowDx="1"
+                        android:shadowDy="1"
+                        android:shadowRadius="4"
+                        android:textColor="#FFFFFF"
+                        android:textSize="22sp" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/navBannerStatus"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/ic_banner_background"
+                            android:paddingHorizontal="8dp"
+                            android:paddingVertical="2dp"
+                            android:textColor="#FFFFFF"
+                            android:textSize="11sp" />
+
+                        <View
+                            android:layout_width="1dp"
+                            android:layout_height="12dp"
+                            android:layout_marginHorizontal="8dp"
+                            android:background="#88FFFFFF" />
+
+                        <TextView
+                            android:id="@+id/navBannerRating"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="#FFDD44"
+                            android:textSize="13sp" />
+
+                        <View
+                            android:layout_width="1dp"
+                            android:layout_height="12dp"
+                            android:layout_marginHorizontal="8dp"
+                            android:background="#88FFFFFF" />
+
+                        <TextView
+                            android:id="@+id/navBannerGenres"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:ellipsize="end"
+                            android:maxLines="1"
+                            android:textColor="#CCFFFFFF"
+                            android:textSize="12sp" />
+
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/navBannerSynopsis"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:ellipsize="end"
+                        android:maxLines="2"
+                        android:textColor="#BBFFFFFF"
+                        android:textSize="13sp" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:orientation="horizontal">
+
+                        <Button
+                            android:id="@+id/navBannerWatchBtn"
+                            style="@style/Widget.Material3.Button"
+                            android:layout_width="wrap_content"
+                            android:layout_height="40dp"
+                            android:focusable="true"
+                            android:focusableInTouchMode="false"
+                            android:minWidth="120dp"
+                            android:paddingHorizontal="20dp"
+                            android:text="@string/watch_now"
+                            android:textSize="14sp" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </FrameLayout>
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/homeRescueModeBanner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                app:cardBackgroundColor="?attr/colorPrimaryContainer"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="0dp"
+                app:strokeWidth="0dp"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:orientation="horizontal"
+                    android:padding="12dp">
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_marginEnd="8dp"
+                        android:src="@drawable/ic_myanimelist"
+                        app:tint="?attr/colorOnPrimaryContainer"
+                        tools:ignore="ContentDescription" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/poppins_semi_bold"
+                        android:text="@string/rescue_mode_active"
+                        android:textColor="?attr/colorOnPrimaryContainer"
+                        android:textSize="13sp" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <FrameLayout
+                android:id="@+id/homeUserStatusContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="120dp"
+                android:layout_marginVertical="8dp"
+                android:visibility="gone">
+                <ProgressBar
+                    android:id="@+id/homeUserStatusProgressBar"
+                    style="?android:attr/progressBarStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center" />
+
+                <ani.dantotsu.FadingEdgeRecyclerView
+                    android:id="@+id/homeUserStatusRecyclerView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clipToPadding="false"
+                    android:paddingStart="20dp"
+                    android:paddingEnd="20dp"
+                    android:requiresFadingEdge="horizontal"
+                    tools:itemCount="4"
+                    tools:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    tools:listitem="@layout/item_user_status"
+                    tools:orientation="horizontal" />
+            </FrameLayout>
+
+            <LinearLayout
+                android:id="@+id/homeHiddenItemsContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    tools:ignore="UseCompoundDrawables">
+
+                    <TextView
+                        android:id="@+id/homeHiddenItemsTitle"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="24dp"
+                        android:layout_weight="1"
+                        android:fontFamily="@font/poppins_bold"
+                        android:padding="8dp"
+                        android:text="@string/hidden"
+                        android:textSize="16sp" />
+
+                    <ImageView
+                        android:id="@+id/homeHiddenItemsMore"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginEnd="16dp"
+                        android:fontFamily="@font/poppins_bold"
+                        android:padding="8dp"
+                        android:src="@drawable/arrow_mark"
+                        android:textSize="16sp"
+                        tools:ignore="ContentDescription" />
+                </LinearLayout>
+
+                <ani.dantotsu.FadingEdgeRecyclerView
+                    android:id="@+id/homeHiddenItemsRecyclerView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clipToPadding="false"
+                    android:paddingStart="20dp"
+                    android:paddingEnd="20dp"
+                    android:requiresFadingEdge="horizontal"
+                    tools:itemCount="4"
+                    tools:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    tools:listitem="@layout/item_media_compact"
+                    tools:orientation="horizontal" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/homeContinueWatchingContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    tools:ignore="UseCompoundDrawables">
+
+                    <TextView
+                        android:id="@+id/homeContinueWatch"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="24dp"
+                        android:layout_weight="1"
+                        android:fontFamily="@font/poppins_bold"
+                        android:padding="8dp"
+                        android:text="@string/continue_watching"
+                        android:textSize="16sp" />
+
+                    <ImageView
+                        android:id="@+id/homeContinueWatchMore"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginEnd="16dp"
+                        android:fontFamily="@font/poppins_bold"
+                        android:padding="8dp"
+                        android:src="@drawable/arrow_mark"
+                        android:textSize="16sp"
+                        tools:ignore="ContentDescription" />
+                </LinearLayout>
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="250dp">
+
+                    <LinearLayout
+                        android:id="@+id/homeWatchingEmpty"
+                        android:layout_width="match_parent"
+                        android:layout_height="250dp"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:visibility="gone">
+
+                        <ImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="32dp"
+                            android:alpha="0.58"
+                            android:src="@drawable/ic_round_movie_filter_24"
+                            tools:ignore="ContentDescription" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:alpha="0.58"
+                            android:text="@string/empty" />
+
+                        <Button
+                            android:id="@+id/homeWatchingBrowseButton"
+                            android:layout_width="128dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="12dp"
+                            android:text="@string/browse_anime"
+                            app:cornerRadius="16dp"
+                            tools:ignore="TextContrastCheck" />
+                    </LinearLayout>
+
+                    <ProgressBar
+                        android:id="@+id/homeWatchingProgressBar"
+                        style="?android:attr/progressBarStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_margin="90dp" />
+
+                    <ani.dantotsu.FadingEdgeRecyclerView
+                        android:id="@+id/homeWatchingRecyclerView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:clipToPadding="false"
+                        android:paddingStart="20dp"
+                        android:paddingEnd="20dp"
+                        android:requiresFadingEdge="horizontal"
+                        tools:itemCount="4"
+                        tools:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                        tools:listitem="@layout/item_media_compact"
+                        tools:orientation="horizontal" />
+                </FrameLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/homeFavAnimeContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    tools:ignore="UseCompoundDrawables">
+
+                    <TextView
+                        android:id="@+id/homeFavAnime"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="24dp"
+                        android:layout_weight="1"
+                        android:fontFamily="@font/poppins_bold"
+                        android:padding="8dp"
+                        android:text="@string/fav_anime"
+                        android:textSize="16sp" />
+
+                    <ImageView
+                        android:id="@+id/homeFavAnimeMore"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginEnd="16dp"
+                        android:fontFamily="@font/poppins_bold"
+                        android:padding="8dp"
+                        android:src="@drawable/arrow_mark"
+                        android:textSize="16sp"
+                        tools:ignore="ContentDescription" />
+                </LinearLayout>
+
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="250dp">
+
+                    <LinearLayout
+                        android:id="@+id/homeFavAnimeEmpty"
+                        android:layout_width="match_parent"
+                        android:layout_height="250dp"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:visibility="gone"
+                        tools:ignore="UseCompoundDrawables">
+
+                        <ImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="32dp"
+                            android:src="@drawable/ic_round_heart_broken_24"
+                            app:tint="?attr/colorPrimary"
+                            tools:ignore="ContentDescription" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:alpha="0.58"
+                            android:paddingStart="32dp"
+                            android:paddingEnd="32dp"
+                            android:text="@string/empty_fav"
+                            android:textAlignment="center"
+                            tools:ignore="TextContrastCheck" />
+
+                    </LinearLayout>
+
+                    <ProgressBar
+                        android:id="@+id/homeFavAnimeProgressBar"
+                        style="?android:attr/progressBarStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_margin="90dp" />
+
+                    <ani.dantotsu.FadingEdgeRecyclerView
+                        android:id="@+id/homeFavAnimeRecyclerView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:clipToPadding="false"
+                        android:paddingStart="20dp"
+                        android:paddingEnd="20dp"
+                        android:requiresFadingEdge="horizontal"
+                        tools:itemCount="4"
+                        tools:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                        tools:listitem="@layout/item_media_compact"
+                        tools:orientation="horizontal" />
+                </FrameLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/homePlannedAnimeContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    tools:ignore="UseCompoundDrawables">
+
+                    <TextView
+                        android:id="@+id/homePlannedAnime"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="24dp"
+                        android:layout_weight="1"
+                        android:fontFamily="@font/poppins_bold"
+                        android:padding="8dp"
+                        android:text="@string/planned_anime"
+                        android:textSize="16sp" />
+
+                    <ImageView
+                        android:id="@+id/homePlannedAnimeMore"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginEnd="16dp"
+                        android:fontFamily="@font/poppins_bold"
+                        android:padding="8dp"
+                        android:src="@drawable/arrow_mark"
+                        android:textSize="16sp"
+                        tools:ignore="ContentDescription" />
+                </LinearLayout>
+
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="250dp">
+
+                    <LinearLayout
+                        android:id="@+id/homePlannedAnimeEmpty"
+                        android:layout_width="match_parent"
+                        android:layout_height="250dp"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:visibility="gone">
+
+                        <ImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="32dp"
+                            android:alpha="0.58"
+                            android:src="@drawable/ic_round_movie_filter_24"
+                            tools:ignore="ContentDescription" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:alpha="0.58"
+                            android:text="@string/empty" />
+
+                        <Button
+                            android:id="@+id/homePlannedAnimeBrowseButton"
+                            android:layout_width="128dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="12dp"
+                            android:text="@string/browse_anime"
+                            app:cornerRadius="16dp"
+                            tools:ignore="TextContrastCheck" />
+                    </LinearLayout>
+
+                    <ProgressBar
+                        android:id="@+id/homePlannedAnimeProgressBar"
+                        style="?android:attr/progressBarStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_margin="90dp" />
+
+                    <ani.dantotsu.FadingEdgeRecyclerView
+                        android:id="@+id/homePlannedAnimeRecyclerView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:clipToPadding="false"
+                        android:paddingStart="20dp"
+                        android:paddingEnd="20dp"
+                        android:requiresFadingEdge="horizontal"
+                        tools:itemCount="4"
+                        tools:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                        tools:listitem="@layout/item_media_compact"
+                        tools:orientation="horizontal" />
+                </FrameLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/homeContinueReadingContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    tools:ignore="UseCompoundDrawables">
+
+                    <TextView
+                        android:id="@+id/homeContinueRead"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="24dp"
+                        android:layout_weight="1"
+                        android:fontFamily="@font/poppins_bold"
+                        android:padding="8dp"
+                        android:text="@string/continue_reading"
+                        android:textSize="16sp" />
+
+                    <ImageView
+                        android:id="@+id/homeContinueReadMore"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginEnd="16dp"
+                        android:fontFamily="@font/poppins_bold"
+                        android:padding="8dp"
+                        android:src="@drawable/arrow_mark"
+                        android:textSize="16sp"
+                        tools:ignore="ContentDescription" />
+                </LinearLayout>
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="250dp">
+
+                    <LinearLayout
+                        android:id="@+id/homeReadingEmpty"
+                        android:layout_width="match_parent"
+                        android:layout_height="250dp"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:visibility="gone">
+
+                        <ImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="32dp"
+                            android:alpha="0.58"
+                            android:src="@drawable/ic_round_import_contacts_24"
+                            tools:ignore="ContentDescription" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:alpha="0.58"
+                            android:text="@string/empty" />
+
+                        <Button
+                            android:id="@+id/homeReadingBrowseButton"
+                            android:layout_width="128dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="12dp"
+                            android:text="@string/browse_manga"
+                            app:cornerRadius="16dp"
+                            tools:ignore="TextContrastCheck" />
+                    </LinearLayout>
+
+                    <ProgressBar
+                        android:id="@+id/homeReadingProgressBar"
+                        style="?android:attr/progressBarStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_margin="90dp" />
+
+                    <ani.dantotsu.FadingEdgeRecyclerView
+                        android:id="@+id/homeReadingRecyclerView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:clipToPadding="false"
+                        android:paddingStart="20dp"
+                        android:paddingEnd="20dp"
+                        android:requiresFadingEdge="horizontal"
+                        tools:itemCount="4"
+                        tools:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                        tools:listitem="@layout/item_media_compact"
+                        tools:orientation="horizontal" />
+                </FrameLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/homeFavMangaContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    tools:ignore="UseCompoundDrawables">
+
+                    <TextView
+                        android:id="@+id/homeFavManga"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="24dp"
+                        android:layout_weight="1"
+                        android:fontFamily="@font/poppins_bold"
+                        android:padding="8dp"
+                        android:text="@string/fav_manga"
+                        android:textSize="16sp" />
+
+                    <ImageView
+                        android:id="@+id/homeFavMangaMore"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginEnd="16dp"
+                        android:fontFamily="@font/poppins_bold"
+                        android:padding="8dp"
+                        android:src="@drawable/arrow_mark"
+                        android:textSize="16sp"
+                        tools:ignore="ContentDescription" />
+                </LinearLayout>
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="250dp">
+
+                    <LinearLayout
+                        android:id="@+id/homeFavMangaEmpty"
+                        android:layout_width="match_parent"
+                        android:layout_height="250dp"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:visibility="gone"
+                        tools:ignore="UseCompoundDrawables">
+
+                        <ImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="32dp"
+                            android:src="@drawable/ic_round_heart_broken_24"
+                            app:tint="?attr/colorPrimary"
+                            tools:ignore="ContentDescription" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:alpha="0.58"
+                            android:paddingStart="32dp"
+                            android:paddingEnd="32dp"
+                            android:text="@string/empty_fav"
+                            android:textAlignment="center"
+                            tools:ignore="TextContrastCheck" />
+
+                    </LinearLayout>
+
+                    <ProgressBar
+                        android:id="@+id/homeFavMangaProgressBar"
+                        style="?android:attr/progressBarStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_margin="90dp" />
+
+                    <ani.dantotsu.FadingEdgeRecyclerView
+                        android:id="@+id/homeFavMangaRecyclerView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:clipToPadding="false"
+                        android:paddingStart="20dp"
+                        android:paddingEnd="20dp"
+                        android:requiresFadingEdge="horizontal"
+                        tools:itemCount="4"
+                        tools:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                        tools:listitem="@layout/item_media_compact"
+                        tools:orientation="horizontal" />
+                </FrameLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/homePlannedMangaContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    tools:ignore="UseCompoundDrawables">
+
+                    <TextView
+                        android:id="@+id/homePlannedManga"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="24dp"
+                        android:layout_weight="1"
+                        android:fontFamily="@font/poppins_bold"
+                        android:padding="8dp"
+                        android:text="@string/planned_manga"
+                        android:textSize="16sp" />
+
+                    <ImageView
+                        android:id="@+id/homePlannedMangaMore"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginEnd="16dp"
+                        android:fontFamily="@font/poppins_bold"
+                        android:padding="8dp"
+                        android:src="@drawable/arrow_mark"
+
+                        android:textSize="16sp"
+                        tools:ignore="ContentDescription" />
+                </LinearLayout>
+
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="250dp">
+
+                    <LinearLayout
+                        android:id="@+id/homePlannedMangaEmpty"
+                        android:layout_width="match_parent"
+                        android:layout_height="250dp"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:visibility="gone">
+
+                        <ImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="32dp"
+                            android:alpha="0.58"
+                            android:src="@drawable/ic_round_import_contacts_24"
+                            tools:ignore="ContentDescription" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:alpha="0.58"
+                            android:text="@string/empty" />
+
+                        <Button
+                            android:id="@+id/homePlannedMangaBrowseButton"
+                            android:layout_width="128dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="12dp"
+                            android:text="@string/browse_manga"
+                            app:cornerRadius="16dp"
+                            tools:ignore="TextContrastCheck" />
+                    </LinearLayout>
+
+                    <ProgressBar
+                        android:id="@+id/homePlannedMangaProgressBar"
+                        style="?android:attr/progressBarStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_margin="90dp" />
+
+                    <ani.dantotsu.FadingEdgeRecyclerView
+                        android:id="@+id/homePlannedMangaRecyclerView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:clipToPadding="false"
+                        android:paddingStart="20dp"
+                        android:paddingEnd="20dp"
+                        android:requiresFadingEdge="horizontal"
+                        tools:itemCount="4"
+                        tools:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                        tools:listitem="@layout/item_media_compact"
+                        tools:orientation="horizontal" />
+                </FrameLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/homeMissingSequelsContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    tools:ignore="UseCompoundDrawables">
+
+                    <TextView
+                        android:id="@+id/homeMissingSequels"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="24dp"
+                        android:layout_weight="1"
+                        android:fontFamily="@font/poppins_bold"
+                        android:padding="8dp"
+                        android:text="@string/missing_sequels"
+                        android:textSize="16sp" />
+
+                    <ImageView
+                        android:id="@+id/homeMissingSequelsMore"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginEnd="16dp"
+                        android:fontFamily="@font/poppins_bold"
+                        android:padding="8dp"
+                        android:src="@drawable/arrow_mark"
+                        android:textSize="16sp"
+                        tools:ignore="ContentDescription" />
+                </LinearLayout>
+
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="250dp">
+
+                    <LinearLayout
+                        android:id="@+id/homeMissingSequelsEmpty"
+                        android:layout_width="match_parent"
+                        android:layout_height="250dp"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:visibility="gone"
+                        tools:ignore="UseCompoundDrawables">
+
+                        <ImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="32dp"
+                            android:alpha="0.58"
+                            android:src="@drawable/ic_round_movie_filter_24"
+                            tools:ignore="ContentDescription" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="16dp"
+                            android:alpha="0.58"
+                            android:text="@string/no_missing_sequels"
+                            android:textAlignment="center" />
+                    </LinearLayout>
+
+                    <ProgressBar
+                        android:id="@+id/homeMissingSequelsProgressBar"
+                        style="?android:attr/progressBarStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_margin="90dp" />
+
+                    <ani.dantotsu.FadingEdgeRecyclerView
+                        android:id="@+id/homeMissingSequelsRecyclerView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:clipToPadding="false"
+                        android:paddingStart="20dp"
+                        android:paddingEnd="20dp"
+                        android:requiresFadingEdge="horizontal"
+                        tools:itemCount="4"
+                        tools:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                        tools:listitem="@layout/item_media_compact"
+                        tools:orientation="horizontal" />
+                </FrameLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/homeRecommendedContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    tools:ignore="UseCompoundDrawables">
+
+                    <TextView
+                        android:id="@+id/homeRecommended"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="24dp"
+                        android:layout_weight="1"
+                        android:fontFamily="@font/poppins_bold"
+                        android:padding="8dp"
+                        android:text="@string/recommended"
+                        android:textSize="16sp" />
+
+                    <ImageView
+                        android:id="@+id/homeRecommendedMore"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginEnd="16dp"
+                        android:fontFamily="@font/poppins_bold"
+                        android:padding="8dp"
+                        android:src="@drawable/arrow_mark"
+                        android:textSize="16sp"
+                        tools:ignore="ContentDescription" />
+                </LinearLayout>
+
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="250dp">
+
+                    <LinearLayout
+                        android:id="@+id/homeRecommendedEmpty"
+                        android:layout_width="match_parent"
+                        android:layout_height="250dp"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:visibility="gone"
+                        tools:ignore="UseCompoundDrawables">
+
+                        <ImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="32dp"
+                            android:alpha="0.58"
+                            android:src="@drawable/ic_round_auto_awesome_24"
+                            tools:ignore="ContentDescription" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="16dp"
+                            android:alpha="0.58"
+                            android:text="@string/get_recommendations"
+                            android:textAlignment="center" />
+
+                    </LinearLayout>
+
+                    <ProgressBar
+                        android:id="@+id/homeRecommendedProgressBar"
+                        style="?android:attr/progressBarStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_margin="90dp" />
+
+                    <ani.dantotsu.FadingEdgeRecyclerView
+                        android:id="@+id/homeRecommendedRecyclerView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:clipToPadding="false"
+                        android:paddingStart="20dp"
+                        android:paddingEnd="20dp"
+                        android:requiresFadingEdge="horizontal"
+                        tools:itemCount="4"
+                        tools:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                        tools:listitem="@layout/item_media_compact"
+                        tools:orientation="horizontal" />
+                </FrameLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/homeDantotsuContainer"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <ImageView
+                    android:id="@+id/homeDantotsuIcon"
+                    android:layout_width="match_parent"
+                    android:layout_height="480dp"
+                    android:contentDescription="@string/app_name"
+                    android:padding="32dp"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/splash_logo" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="32dp"
+                    android:layout_marginEnd="32dp"
+                    android:fontFamily="@font/poppins_thin"
+                    android:text="@string/app_name"
+                    android:textAlignment="center"
+                    android:textColor="?attr/colorPrimary"
+                    android:textSize="64sp" />
+            </LinearLayout>
+
+            <View
+                android:id="@+id/homeSpace"
+                android:layout_width="match_parent"
+                android:layout_height="128dp" />
+
+            </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    <include layout="@layout/drawer_right_rail" />
+
+</androidx.drawerlayout.widget.DrawerLayout>
