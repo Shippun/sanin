@@ -47,7 +47,6 @@ import ani.dantotsu.px
 import ani.dantotsu.setSafeOnClickListener
 import ani.dantotsu.settings.saving.PrefManager
 import ani.dantotsu.settings.saving.PrefName
-import ani.dantotsu.media.mangaupdates.MangaAnimeUtil
 import ani.dantotsu.util.Logger
 import com.xwray.groupie.GroupieAdapter
 import io.noties.markwon.Markwon
@@ -84,33 +83,13 @@ class MediaInfoFragment : Fragment() {
         super.onDestroyView();_binding = null
     }
 
-    // Method to display anime adaptation
-    private fun displayAnimeAdaptation(adaptation: MangaAnimeUtil.AnimeAdaptation) {
-        if (adaptation.hasAdaptation) {
-            val adaptationText = buildString {
-                append("Start: ${adaptation.animeStart ?: "Unknown"}\n")
-                append("End: ${adaptation.animeEnd ?: "Ongoing"}")
-            }
-
-            binding.mediaAnimeAdaptation.text = adaptationText
-
-            binding.mediaAnimeAdaptationText.fadeIn()
-            binding.mediaAnimeAdaptation.fadeIn()
-        } else {
-            binding.mediaAnimeAdaptationText.fadeOut()
-            binding.mediaAnimeAdaptation.fadeOut()
-        }
+    @Suppress("UNUSED_PRIVATE_FUNCTION")
+    private fun displayAnimeAdaptation(adaptation: Any?) {
     }
-    private fun displayNextChapterPrediction(prediction: MangaAnimeUtil.NextRelease) {
-        if (prediction.error == null && prediction.nextReleaseDate != null) {
-            val dateFormat = java.text.SimpleDateFormat("d MMMM", java.util.Locale.US)
 
-            val predictionText = buildString {
-                append("Current: ${prediction.latestChapter ?: "Unknown"}\n")
-                append("${prediction.nextChapter ?: "Next chapter"} releases on ${
-                    dateFormat.format(prediction.nextReleaseDate)
-                }")
-            }
+    @Suppress("UNUSED_PRIVATE_FUNCTION")
+    private fun displayNextChapterPrediction(prediction: Any?) {
+    }
 
             binding.mediaNextChapterPrediction.text = predictionText
 
@@ -350,17 +329,6 @@ class MediaInfoFragment : Fragment() {
 
                 val screenWidth = resources.displayMetrics.run { widthPixels / density }
 
-                if (media.manga != null && !offline) {
-                    model.loadMangaExtras(media)
-
-                    model.adaptation.observe(viewLifecycleOwner) {
-                        it?.let { displayAnimeAdaptation(it) }
-                    }
-
-                    model.nextRelease.observe(viewLifecycleOwner) {
-                        it?.let { displayNextChapterPrediction(it) }
-                    }
-                }
                 if (media.synonyms.isNotEmpty()) {
                     val bind = ItemTitleChipgroupBinding.inflate(
                         LayoutInflater.from(context),

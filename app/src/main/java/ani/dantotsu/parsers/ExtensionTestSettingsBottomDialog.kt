@@ -9,10 +9,8 @@ import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.LinearLayoutManager
 import ani.dantotsu.BottomSheetDialogFragment
 import ani.dantotsu.databinding.BottomSheetExtensionTestSettingsBinding
-import ani.dantotsu.parsers.novel.NovelExtensionManager
 import com.xwray.groupie.GroupieAdapter
 import eu.kanade.tachiyomi.extension.anime.AnimeExtensionManager
-import eu.kanade.tachiyomi.extension.manga.MangaExtensionManager
 import uy.kohesive.injekt.Injekt
 import uy.kohesive.injekt.api.get
 
@@ -21,8 +19,6 @@ class ExtensionTestSettingsBottomDialog : BottomSheetDialogFragment() {
     private val binding get() = _binding!!
     private val adapter: GroupieAdapter = GroupieAdapter()
     private val animeExtension: AnimeExtensionManager = Injekt.get()
-    private val mangaExtensions: MangaExtensionManager = Injekt.get()
-    private val novelExtensions: NovelExtensionManager = Injekt.get()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -47,8 +43,6 @@ class ExtensionTestSettingsBottomDialog : BottomSheetDialogFragment() {
         binding.extensionTypeRadioGroup.check(
             when (extensionType) {
                 "anime" -> binding.animeRadioButton.id
-                "manga" -> binding.mangaRadioButton.id
-                "novel" -> binding.novelsRadioButton.id
                 else -> binding.animeRadioButton.id
             }
         )
@@ -63,20 +57,6 @@ class ExtensionTestSettingsBottomDialog : BottomSheetDialogFragment() {
         binding.animeRadioButton.setOnCheckedChangeListener { _, b ->
             if (b) {
                 extensionType = "anime"
-                extensionsToTest.clear()
-                setupAdapter()
-            }
-        }
-        binding.mangaRadioButton.setOnCheckedChangeListener { _, b ->
-            if (b) {
-                extensionType = "manga"
-                extensionsToTest.clear()
-                setupAdapter()
-            }
-        }
-        binding.novelsRadioButton.setOnCheckedChangeListener { _, b ->
-            if (b) {
-                extensionType = "novel"
                 extensionsToTest.clear()
                 setupAdapter()
             }
@@ -112,12 +92,6 @@ class ExtensionTestSettingsBottomDialog : BottomSheetDialogFragment() {
     private fun setupAdapter() {
         val extDataList: List<ExtData> = when (extensionType) {
             "anime" -> animeExtension.installedExtensionsFlow.value.map { ExtData(it.name, it.icon, null) }
-            "manga" -> mangaExtensions.installedExtensionsFlow.value.map { ExtData(it.name, it.icon, null) }
-            "novel" -> {
-                val apk = novelExtensions.installedExtensionsFlow.value.map { ExtData(it.name, it.icon, null) }
-                val js = novelExtensions.lnReaderManager.installedPluginsFlow.value.map { ExtData(it.name, null, it.iconUrl) }
-                apk + js
-            }
             else -> emptyList()
         }
         adapter.clear()
