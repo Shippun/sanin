@@ -1271,7 +1271,7 @@ class AnilistQueries {
 
             return CharacterSearchResults(
                 search = search,
-                results = responseArray,
+                results = responseArray as MutableList<Any>,
                 page = pageInfo.currentPage ?: 0,
                 hasNextPage = pageInfo.hasNextPage == true
             )
@@ -1312,7 +1312,7 @@ class AnilistQueries {
 
             return StudioSearchResults(
                 search = search,
-                results = responseArray,
+                results = responseArray as MutableList<Any>,
                 page = pageInfo.currentPage ?: 0,
                 hasNextPage = pageInfo.hasNextPage == true
             )
@@ -1354,7 +1354,7 @@ class AnilistQueries {
 
             return StaffSearchResults(
                 search = search,
-                results = responseArray,
+                results = responseArray as MutableList<Any>,
                 page = pageInfo.currentPage ?: 0,
                 hasNextPage = pageInfo.hasNextPage == true
             )

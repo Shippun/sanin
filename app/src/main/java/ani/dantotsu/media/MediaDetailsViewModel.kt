@@ -870,19 +870,9 @@ class MediaDetailsViewModel : ViewModel() {
 
     suspend fun loadMangaChapters(media: Media, i: Int, invalidate: Boolean = false) {
         Logger.log("Loading Manga Chapters : $mangaLoaded")
-        if (!mangaLoaded.containsKey(i) || invalidate) tryWithSuspend {
-            mangaLoaded[i] =
-                mangaReadSources?.loadChaptersFromMedia(i, media) ?: return@tryWithSuspend
-        }
-        mangaChapters.postValue(mangaLoaded)
     }
 
     suspend fun overrideMangaChapters(i: Int, source: ShowResponse, id: Int) {
-        mangaReadSources?.saveResponse(i, id, source)
-        tryWithSuspend {
-            mangaLoaded[i] = mangaReadSources?.loadChapters(i, source) ?: return@tryWithSuspend
-        }
-        mangaChapters.postValue(mangaLoaded)
     }
 
     private val mangaChapter = MutableLiveData<MangaChapter?>(null)
@@ -897,8 +887,7 @@ class MediaDetailsViewModel : ViewModel() {
     }
 
     fun loadTransformation(mangaImage: MangaImage, source: Int): BitmapTransformation? {
-        return if (mangaImage.useTransformation) mangaReadSources?.get(source)
-            ?.getTransformation() else null
+        return null
     }
 
     val novelSources = Any()
@@ -909,75 +898,19 @@ class MediaDetailsViewModel : ViewModel() {
     fun getNovelChapters(): LiveData<MutableMap<Int, List<ShowResponse>>> = novelChapters
 
     suspend fun searchNovels(query: String, i: Int) {
-        val position = if (i >= novelSources.list.size) 0 else i
-        val source = novelSources[position]
-        tryWithSuspend(post = true) {
-            if (source != null) {
-                novelResponses.postValue(source.search(query))
-            }
-        }
     }
 
     suspend fun autoSearchNovels(media: Media) {
-        val source = novelSources[media.selected?.sourceIndex ?: 0]
-        tryWithSuspend(post = true) {
-            if (source != null) {
-                novelResponses.postValue(source.sortedSearch(media))
-            }
-        }
     }
 
     suspend fun loadNovelChapters(media: Media, i: Int, invalidate: Boolean = false) {
-        if (!novelLoaded.containsKey(i) || invalidate) {
-            tryWithSuspend {
-                val source = novelSources[i]
-                if (source == null) {
-                    novelLoaded[i] = emptyList()
-                    return@tryWithSuspend
-                }
-                val novelResponse = source.autoSearch(media)
-                if (novelResponse == null) {
-                    novelLoaded[i] = emptyList()
-                    return@tryWithSuspend
-                }
-                val book = source.loadBook(novelResponse.link, novelResponse.extra)
-                if (book == null || book.links.isEmpty()) {
-                    novelLoaded[i] = emptyList()
-                    return@tryWithSuspend
-                }
-                val chapterResponses = book.links.mapIndexed { index, fileUrl ->
-                    val chapterName = fileUrl.headers?.get("X-Chapter-Name") ?: "Chapter ${index + 1}"
-                    val releaseTime = fileUrl.headers?.get("X-Release-Time")
-                    val chapterNumber = fileUrl.headers?.get("X-Chapter-Number")
-                    ShowResponse(
-                        name = chapterName,
-                        link = fileUrl.url,
-                        coverUrl = novelResponse.coverUrl,
-                        extra = mutableMapOf<String, String>().apply {
-                            releaseTime?.let { put("releaseTime", it) }
-                            chapterNumber?.let { put("chapterNumber", it) }
-                            put("sourceName", source.name)
-                        }
-                    )
-                }
-                novelLoaded[i] = chapterResponses
-            }
-        }
-        novelChapters.postValue(novelLoaded)
     }
 
     suspend fun overrideNovelChapters(i: Int, source: ShowResponse, mediaId: Int) {
-        novelSources.saveResponse(i, mediaId, source)
-        novelLoaded.remove(i)
     }
 
     val book: MutableLiveData<Book> = MutableLiveData(null)
     suspend fun loadBook(novel: ShowResponse, i: Int) {
-        tryWithSuspend {
-            book.postValue(
-                novelSources[i]?.loadBook(novel.link, novel.extra) ?: return@tryWithSuspend
-            )
-        }
     }
 
     private val fetchedOnlineSubtitles = mutableMapOf<String, List<Any>>()

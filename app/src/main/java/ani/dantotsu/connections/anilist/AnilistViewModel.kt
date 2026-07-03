@@ -1022,7 +1022,7 @@ class AnilistSearch : ViewModel() {
 
                 userResult.postValue(UserSearchResults(
                     search = search, page = r.page,
-                    results = resultsList,
+                    results = resultsList as MutableList<Any>,
                     hasNextPage = res?.pagination?.hasNextPage ?: false
                 ))
             } else {

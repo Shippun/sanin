@@ -27,6 +27,7 @@ data class AniMangaSearchResults(
 
 data class CharacterSearchResults(
     var search: String? = null,
+    @Suppress("UNCHECKED_CAST")
     var results: MutableList<Any> = mutableListOf(),
     var page: Int = 0,
     var hasNextPage: Boolean = false,
@@ -34,6 +35,7 @@ data class CharacterSearchResults(
 
 data class StudioSearchResults(
     var search: String? = null,
+    @Suppress("UNCHECKED_CAST")
     var results: MutableList<Any> = mutableListOf(),
     var page: Int = 0,
     var hasNextPage: Boolean = false,
@@ -41,6 +43,7 @@ data class StudioSearchResults(
 
 data class StaffSearchResults(
     var search: String? = null,
+    @Suppress("UNCHECKED_CAST")
     var results: MutableList<Any> = mutableListOf(),
     var page: Int = 0,
     var hasNextPage: Boolean = false,
@@ -48,6 +51,7 @@ data class StaffSearchResults(
 
 data class UserSearchResults(
     var search: String? = null,
+    @Suppress("UNCHECKED_CAST")
     var results: MutableList<Any> = mutableListOf(),
     var page: Int = 0,
     var hasNextPage: Boolean = false,
