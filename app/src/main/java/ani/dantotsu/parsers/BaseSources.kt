@@ -71,47 +71,17 @@ abstract class WatchSources : BaseSources() {
 
 abstract class MangaReadSources : BaseSources() {
 
-    override operator fun get(i: Int): MangaParser {
+    override operator fun get(i: Int): BaseParser? {
         return (list.getOrNull(i) ?: list.firstOrNull())?.get?.value as? MangaParser
             ?: EmptyMangaParser()
     }
 
     suspend fun loadChaptersFromMedia(i: Int, media: Media): MutableMap<String, MangaChapter> {
-        return tryWithSuspend(true) {
-            val res = get(i).autoSearch(media) ?: return@tryWithSuspend mutableMapOf()
-            loadChapters(i, res)
-        } ?: mutableMapOf()
+        return mutableMapOf()
     }
 
     suspend fun loadChapters(i: Int, show: ShowResponse): MutableMap<String, MangaChapter> {
-        val map = mutableMapOf<String, MangaChapter>()
-        val parser = get(i)
-
-        show.sManga?.let { sManga ->
-            tryWithSuspend(true) {
-                parser.loadChapters(show.link, show.extra, sManga).forEach {
-                    map["${it.number}-${it.scanlator}"] = MangaChapter(it)
-                }
-            }
-        }
-        //must be downloaded
-        if (show.sManga == null) {
-            Logger.log("sManga is null")
-        }
-        if (parser is OfflineMangaParser && show.sManga == null) {
-            tryWithSuspend(true) {
-                // Since we've checked, we can safely cast parser to OfflineMangaParser and call its methods
-                parser.loadChapters(show.link, show.extra, SManga.create()).forEach {
-                    map["${it.number}-${it.scanlator}"] = MangaChapter(it)
-                }
-            }
-        } else {
-            Logger.log("Parser is not an instance of OfflineMangaParser")
-        }
-
-
-        Logger.log("map size ${map.size}")
-        return map
+        return mutableMapOf()
     }
 }
 

@@ -491,7 +491,7 @@ class DynamicMangaParser(extension: MangaExtension.Installed) : MangaParser() {
         val ret = coroutineScope {
             try {
                 Logger.log("source.name " + source.name)
-                val res = source.getPageList(sChapter)
+                val res = source!!.getPageList(sChapter)
                 val reIndexedPages =
                     res.mapIndexed { index, page -> Page(index, page.url, page.imageUrl, page.uri) }
 
@@ -526,7 +526,7 @@ class DynamicMangaParser(extension: MangaExtension.Installed) : MangaParser() {
         return coroutineScope {
             try {
                 Logger.log("source.name " + source.name)
-                val res = source.getPageList(sChapter)
+                val res = source!!.getPageList(sChapter)
                 val reIndexedPages =
                     res.mapIndexed { index, page -> Page(index, page.url, page.imageUrl, page.uri) }
 

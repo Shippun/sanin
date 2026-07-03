@@ -1,5 +1,7 @@
 package ani.dantotsu.parsers
 
+import eu.kanade.tachiyomi.source.model.SChapter
+import eu.kanade.tachiyomi.source.model.SManga
 import java.io.Serializable
 import java.util.Date
 
@@ -11,13 +13,20 @@ open class MangaParser {
     open val icon: ByteArray? = null
 
     open suspend fun search(query: String): List<ShowResponse>? = null
+    open suspend fun loadChapters(
+        mangaUrl: String,
+        extra: Map<String, String>? = null,
+        sManga: SManga? = null,
+        sourceLanguage: Int = 0,
+    ): List<MangaChapter>? = null
+    open suspend fun loadImages(chapterLink: String, sChapter: SChapter): List<MangaImage> = emptyList()
 }
 
 class EmptyMangaParser : MangaParser()
 
 open class OfflineMangaParser : MangaParser()
 
-open class NovelParser {
+open class NovelParser : BaseParser() {
     open val name: String = ""
     open val saveName: String = ""
 }

@@ -67,7 +67,8 @@ object Download {
         val folder = "/Novel/${nTitle}/"
         val fileName = "$title.epub"
         val file = book.links[pos]
-        download(context, file, fileName, folder, notif)
+        @Suppress("UNCHECKED_CAST")
+        download(context, file as FileUrl, fileName, folder, notif)
     }
 
     fun download(
