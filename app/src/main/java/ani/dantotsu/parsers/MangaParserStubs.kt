@@ -9,6 +9,8 @@ open class MangaParser {
     open val hostUrl: String = ""
     open val isNSFW: Boolean = false
     open val icon: ByteArray? = null
+
+    open suspend fun search(query: String): List<ShowResponse>? = null
 }
 
 class EmptyMangaParser : MangaParser()

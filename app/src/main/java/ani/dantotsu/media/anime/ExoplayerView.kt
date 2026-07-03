@@ -2062,7 +2062,7 @@ class ExoplayerView :
         playerErrorRetryCount = 0
 
         // Player
-        val bufferSize = PrefManager.getVal(PrefName.BufferSize)
+        val bufferSize = PrefManager.getVal<Int>(PrefName.BufferSize)
         val minBufferMs = bufferSize * 1000L
         val maxBufferMs = bufferSize * 2000L
         val loadControl =
@@ -3475,13 +3475,13 @@ class ExoplayerView :
 
     private fun ensureControllerVisible() {
         if (!playerView.isControllerFullyVisible) playerView.showController()
-        playerView.controllerShowTimeoutMs = PrefManager.getVal(PrefName.AutoHideTimeout) * 1000L
+        playerView.controllerShowTimeoutMs = PrefManager.getVal<Int>(PrefName.AutoHideTimeout) * 1000L
     }
 
     override fun dispatchKeyEvent(event: KeyEvent): Boolean {
         if (!isInitialized) return super.dispatchKeyEvent(event)
         when (event.keyCode) {
-            KEYCODE_DPAD_UP, KeyEvent.KEYCODE_DPAD_DOWN -> {
+            KeyEvent.KEYCODE_DPAD_UP, KeyEvent.KEYCODE_DPAD_DOWN -> {
                 if (event.action == KeyEvent.ACTION_DOWN) ensureControllerVisible()
                 return true
             }
@@ -3547,7 +3547,7 @@ class ExoplayerView :
             }
             KeyEvent.KEYCODE_MEDIA_FAST_FORWARD,
             KeyEvent.KEYCODE_MEDIA_SKIP_FORWARD -> {
-                if (event.action == KeyEvent.ACTION_UP) seek(true)
+                if (event.action == KeyEvent.ACTION_UP) exoPlayer.seekTo(exoPlayer.currentPosition + PrefManager.getVal<Int>(PrefName.SeekTime) * 1000)
                 return true
             }
             KeyEvent.KEYCODE_MEDIA_REWIND,

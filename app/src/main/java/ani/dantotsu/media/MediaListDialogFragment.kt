@@ -98,8 +98,7 @@ class MediaListDialogFragment : BottomSheetDialogFragment() {
                 }
                 binding.mediaListProgressLayout.suffixTextView.gravity = Gravity.CENTER
 
-                @Suppress("UNUSED_EXPRESSION", "UNCHECKED_CAST")
-                val volumeTotal = media?.manga?.totalVolumes
+                val volumeTotal = null
                 if (media?.manga != null) {
                     binding.mediaListVolumeProgressLayout.visibility = View.VISIBLE
                     binding.mediaListVolumeProgress.setText(

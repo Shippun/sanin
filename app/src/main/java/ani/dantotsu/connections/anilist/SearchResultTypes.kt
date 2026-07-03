@@ -1,6 +1,8 @@
 package ani.dantotsu.connections.anilist
 
 import ani.dantotsu.media.Media
+import ani.dantotsu.connections.anilist.api.Author
+import ani.dantotsu.connections.anilist.api.Studio
 
 interface SearchResults<out T> {
     var search: String?

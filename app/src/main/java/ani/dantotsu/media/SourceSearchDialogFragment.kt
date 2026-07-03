@@ -64,7 +64,7 @@ class SourceSearchDialogFragment : BottomSheetDialogFragment() {
                 binding.searchRecyclerView.visibility = View.GONE
                 binding.searchProgress.visibility = View.VISIBLE
 
-                val source = if (isNovel) {
+                val source: Any? = if (isNovel) {
                     null
                 } else if (media!!.anime != null) {
                     if (i == null) i = media!!.selected?.sourceIndex ?: 0
@@ -72,23 +72,27 @@ class SourceSearchDialogFragment : BottomSheetDialogFragment() {
                 } else {
                     anime = false
                     if (i == null) i = media!!.selected?.sourceIndex ?: 0
-                    (if (media!!.isAdult) HMangaSources else MangaSources)[i!!]
+                    MangaSources[i!!]
                 }
 
                 fun search() {
                     binding.searchBarText.clearFocus()
                     imm.hideSoftInputFromWindow(binding.searchBarText.windowToken, 0)
                     scope.launch {
+                        @Suppress("UNCHECKED_CAST")
+                        val src = source as? MangaParser
                         model.responses.postValue(
                             withContext(Dispatchers.IO) {
                                 tryWithSuspend {
-                                    source?.search(binding.searchBarText.text.toString())
+                                    src?.search(binding.searchBarText.text.toString())
                                 }
                             }
                         )
                     }
                 }
-                binding.searchSourceTitle.text = source?.name ?: "Search"
+                @Suppress("UNCHECKED_CAST")
+                val srcName = (source as? MangaParser)?.name ?: "Search"
+                binding.searchSourceTitle.text = srcName
                 binding.searchBarText.setText(media!!.mangaName())
                 binding.searchBarText.setOnEditorActionListener { _, actionId, _ ->
                     return@setOnEditorActionListener when (actionId) {

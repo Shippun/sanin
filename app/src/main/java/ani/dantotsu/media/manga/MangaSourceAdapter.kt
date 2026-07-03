@@ -1,18 +1,16 @@
 package ani.dantotsu.media.manga
 
-import android.view.View
-import android.view.ViewGroup
+import ani.dantotsu.media.MediaDetailsViewModel
+import ani.dantotsu.media.SourceAdapter
+import ani.dantotsu.media.SourceSearchDialogFragment
+import ani.dantotsu.parsers.ShowResponse
+import kotlinx.coroutines.CoroutineScope
 
-open class MangaSourceAdapter(
-    position: Int,
-    model: Any?,
-    sourceIndex: Int,
-    mediaId: Int,
-    fragment: Any?,
-    scope: Any?,
-) {
-    open fun getCount(): Int = 0
-    open fun getItem(position: Int): Any? = null
-    open fun getItemViewType(position: Int): Int = 0
-    open fun isEnabled(position: Int): Boolean = false
-}
+class MangaSourceAdapter(
+    sources: List<ShowResponse>,
+    val model: MediaDetailsViewModel,
+    val i: Int,
+    val id: Int,
+    fragment: SourceSearchDialogFragment,
+    scope: CoroutineScope
+) : SourceAdapter(sources, fragment, scope)

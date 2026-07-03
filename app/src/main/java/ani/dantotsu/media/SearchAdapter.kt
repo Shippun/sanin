@@ -21,6 +21,9 @@ import ani.dantotsu.App.Companion.context
 import ani.dantotsu.R
 import ani.dantotsu.connections.anilist.Anilist
 import ani.dantotsu.connections.anilist.AnilistSearch.SearchType
+import ani.dantotsu.connections.anilist.ChipItem
+import ani.dantotsu.connections.anilist.toChipList
+import ani.dantotsu.connections.anilist.removeChip
 import ani.dantotsu.databinding.ItemChipBinding
 import ani.dantotsu.openLinkInBrowser
 import ani.dantotsu.others.imagesearch.ImageSearchActivity
@@ -287,7 +290,7 @@ class SearchAdapter(private val activity: SearchActivity, private val type: Sear
         private val searchAdapter: SearchAdapter
     ) :
         RecyclerView.Adapter<SearchChipAdapter.SearchChipViewHolder>() {
-        private var chips = activity.aniMangaResult.toChipList()
+        private var chips: MutableList<ChipItem> = activity.aniMangaResult.toChipList()
 
         inner class SearchChipViewHolder(val binding: ItemChipBinding) :
             RecyclerView.ViewHolder(binding.root)
