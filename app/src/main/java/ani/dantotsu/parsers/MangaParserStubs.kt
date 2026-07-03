@@ -1,18 +1,19 @@
 package ani.dantotsu.parsers
 
+import android.graphics.drawable.Drawable
 import eu.kanade.tachiyomi.source.model.SChapter
 import eu.kanade.tachiyomi.source.model.SManga
 import java.io.Serializable
 import java.util.Date
 
-open class MangaParser {
-    open val name: String = ""
-    open val saveName: String = ""
-    open val hostUrl: String = ""
-    open val isNSFW: Boolean = false
-    open val icon: ByteArray? = null
+open class MangaParser : BaseParser() {
+    override val name: String = ""
+    override val saveName: String = ""
+    override val hostUrl: String = ""
+    override val isNSFW: Boolean = false
+    override val icon: Drawable? = null
 
-    open suspend fun search(query: String): List<ShowResponse>? = null
+    override suspend fun search(query: String): List<ShowResponse> = emptyList()
     open suspend fun loadChapters(
         mangaUrl: String,
         extra: Map<String, String>? = null,
@@ -27,8 +28,10 @@ class EmptyMangaParser : MangaParser()
 open class OfflineMangaParser : MangaParser()
 
 open class NovelParser : BaseParser() {
-    open val name: String = ""
-    open val saveName: String = ""
+    override val name: String = ""
+    override val saveName: String = ""
+
+    override suspend fun search(query: String): List<ShowResponse> = emptyList()
 }
 
 class EmptyNovelParser : NovelParser()
@@ -39,7 +42,7 @@ open class MangaChapter(
     open val number: String = "",
     open val date: String? = null,
     open val scanlator: String? = null,
-    open val sChapter: Any? = null,
+    open val sChapter: SChapter? = null,
     open val dateUpload: Long? = null,
 ) : Serializable {
     constructor(chapter: MangaChapter) : this(

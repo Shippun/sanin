@@ -116,7 +116,7 @@ class ExtensionTestItem(
         val searchStart = System.currentTimeMillis()
         val searchResult = extension.search(searchString)
         searchResultData.time = (System.currentTimeMillis() - searchStart).toInt()
-        searchResultData.size = searchResult.size
+        searchResultData.size = searchResult?.size ?: 0
         withContext(Dispatchers.Main) {
             searchResult()
         }
@@ -158,7 +158,7 @@ class ExtensionTestItem(
         val searchStart = System.currentTimeMillis()
         val searchResult = extension.search(searchString)
         searchResultData.time = (System.currentTimeMillis() - searchStart).toInt()
-        searchResultData.size = searchResult.size
+        searchResultData.size = searchResult?.size ?: 0
         withContext(Dispatchers.Main) {
             searchResult()
         }
@@ -167,9 +167,9 @@ class ExtensionTestItem(
             return
         }
         val episodeResultStart = System.currentTimeMillis()
-        val chapterResult = extension.loadChapters("", null, searchResult.first().sManga!!)
+        val chapterResult = extension.loadChapters("", null, searchResult?.first()?.sManga ?: return)
         episodeResultData.time = (System.currentTimeMillis() - episodeResultStart).toInt()
-        episodeResultData.size = chapterResult.size
+        episodeResultData.size = chapterResult?.size ?: 0
         withContext(Dispatchers.Main) {
             episodeResult()
         }
@@ -178,7 +178,7 @@ class ExtensionTestItem(
             return
         }
         val serverResultStart = System.currentTimeMillis()
-        val serverResult = extension.loadImages("", chapterResult.first().sChapter)
+        val serverResult = extension.loadImages("", chapterResult?.first()?.sChapter ?: return)
         serverResultData.time = (System.currentTimeMillis() - serverResultStart).toInt()
         serverResultData.size = serverResult.size
         withContext(Dispatchers.Main) {
@@ -200,7 +200,7 @@ class ExtensionTestItem(
         val searchStart = System.currentTimeMillis()
         val searchResult = extension.search(searchString)
         searchResultData.time = (System.currentTimeMillis() - searchStart).toInt()
-        searchResultData.size = searchResult.size
+        searchResultData.size = searchResult?.size ?: 0
         withContext(Dispatchers.Main) {
             searchResult()
         }
