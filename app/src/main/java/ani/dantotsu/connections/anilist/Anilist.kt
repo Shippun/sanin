@@ -66,6 +66,8 @@ object Anilist {
         "SCORE"
     )
 
+    val favouriteSort = "FAVOURITES_DESC"
+
     val source = listOf(
         "ORIGINAL",
         "MANGA",

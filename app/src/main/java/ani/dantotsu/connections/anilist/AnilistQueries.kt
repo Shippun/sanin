@@ -689,15 +689,14 @@ class AnilistQueries {
                 )
             }"""
         )
-        if (toShow.getOrNull(3) != true && toShow.getOrNull(4) != true && toShow.getOrNull(5) != true) {}
-        if (toShow.getOrNull(6) == true) {
+        if (toShow.getOrNull(3) == true) {
             queries.add("""recommendationQuery: ${recommendationQuery()}""")
         }
-        if (toShow.getOrNull(8) == true) {
+        if (toShow.getOrNull(5) == true) {
             queries.add("""missingSequelsCompletedQuery: ${missingSequelsCompletedSourceQuery()}""")
             queries.add("""missingSequelsAllListQuery: ${missingSequelsAllListSourceQuery()}""")
         }
-        if (queries.isEmpty() && toShow.getOrNull(8) != true) {
+        if (queries.isEmpty() && toShow.getOrNull(5) != true) {
             return mutableMapOf("hidden" to arrayListOf())
         }
 

@@ -67,7 +67,7 @@ class AnilistHomeViewModel : ViewModel() {
         val res = Anilist.query.searchAniManga(
             "ANIME",
             perPage = 15,
-            sort = Anilist.sortBy[0],
+            sort = Anilist.favouriteSort,
             hd = true,
             adultOnly = PrefManager.getVal(PrefName.AdultOnly)
         )

@@ -619,7 +619,6 @@ class HomeFragment : Fragment() {
                     )
                     val sectionVisibilityMap = mapOf(
                         0 to 0, // ContinueWatching -> ShowContinueWatching
-                        1 to 3, // FavAnime -> ShowTrending
                         2 to 1, // PlannedAnime -> ShowPlanned
                         3 to 2, // Recommendation -> ShowRecommendations
                     )
