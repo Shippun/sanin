@@ -29,6 +29,7 @@ import ani.dantotsu.settings.saving.PrefName
 import androidx.core.graphics.ColorUtils
 import kotlinx.coroutines.launch
 import ani.dantotsu.others.IdMappers
+import ani.dantotsu.util.FocusEffectUtil
 
 class SubtitleDialogFragment : BottomSheetDialogFragment() {
     data class AddLocalSubtitle(val text: String)
@@ -83,6 +84,7 @@ class SubtitleDialogFragment : BottomSheetDialogFragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = BottomSheetSubtitlesBinding.inflate(inflater, container, false)
+        FocusEffectUtil.applyFocusListener(binding.root)
         return binding.root
     }
 

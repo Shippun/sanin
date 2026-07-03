@@ -25,6 +25,7 @@ import ani.dantotsu.settings.saving.PrefManager
 import ani.dantotsu.settings.saving.PrefName
 import ani.dantotsu.snackString
 import ani.dantotsu.tryWith
+import ani.dantotsu.util.FocusEffectUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -60,6 +61,7 @@ class MediaListDialogSmallFragment : BottomSheetDialogFragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = BottomSheetMediaListSmallBinding.inflate(inflater, container, false)
+        FocusEffectUtil.applyFocusListener(binding.root)
         return binding.root
     }
 

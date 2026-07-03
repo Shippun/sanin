@@ -20,6 +20,7 @@ import ani.dantotsu.others.AndroidBug5497Workaround
 import ani.dantotsu.statusBarHeight
 import ani.dantotsu.themes.ThemeManager
 import ani.dantotsu.toast
+import ani.dantotsu.util.FocusEffectUtil
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import io.noties.markwon.editor.MarkwonEditor
@@ -69,6 +70,7 @@ class ActivityMarkdownCreator : AppCompatActivity() {
             bottomMargin += navBarHeight
         }
         setContentView(binding.root)
+        FocusEffectUtil.applyFocusListener(binding.root)
         AndroidBug5497Workaround.assistActivity(this) {}
 
         val params = binding.createButton.layoutParams as ViewGroup.MarginLayoutParams

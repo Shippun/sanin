@@ -17,6 +17,7 @@ import ani.dantotsu.settings.saving.PrefManager
 import ani.dantotsu.statusBarHeight
 import ani.dantotsu.themes.ThemeManager
 import ani.dantotsu.util.Logger
+import ani.dantotsu.util.FocusEffectUtil
 
 class StatusActivity : AppCompatActivity(), StoriesCallback {
     private lateinit var activity: ArrayList<User>
@@ -32,6 +33,7 @@ class StatusActivity : AppCompatActivity(), StoriesCallback {
         initActivity(this)
         binding = ActivityStatusBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        FocusEffectUtil.applyFocusListener(binding.root)
         activity = user
         position = intent.getIntExtra("position", -1)
         binding.root.updateLayoutParams<ViewGroup.MarginLayoutParams> {

@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import ani.dantotsu.BottomSheetDialogFragment
 import ani.dantotsu.connections.github.Contributors
 import ani.dantotsu.databinding.BottomSheetDevelopersBinding
+import ani.dantotsu.util.FocusEffectUtil
 import kotlinx.coroutines.launch
 
 class DevelopersDialogFragment : BottomSheetDialogFragment() {
@@ -21,6 +22,7 @@ class DevelopersDialogFragment : BottomSheetDialogFragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = BottomSheetDevelopersBinding.inflate(inflater, container, false)
+        FocusEffectUtil.applyFocusListener(binding.root)
         return binding.root
     }
 

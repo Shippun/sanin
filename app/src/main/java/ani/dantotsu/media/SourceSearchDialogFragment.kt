@@ -24,6 +24,7 @@ import ani.dantotsu.parsers.MangaParser
 import ani.dantotsu.parsers.MangaSources
 import ani.dantotsu.px
 import ani.dantotsu.tryWithSuspend
+import ani.dantotsu.util.FocusEffectUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -47,6 +48,7 @@ class SourceSearchDialogFragment : BottomSheetDialogFragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = BottomSheetSourceSearchBinding.inflate(inflater, container, false)
+        FocusEffectUtil.applyFocusListener(binding.root)
         return binding.root
     }
 

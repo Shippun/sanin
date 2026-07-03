@@ -16,6 +16,7 @@ import ani.dantotsu.navBarHeight
 import ani.dantotsu.profile.activity.ActivityFragment.Companion.ActivityType
 import ani.dantotsu.statusBarHeight
 import ani.dantotsu.themes.ThemeManager
+import ani.dantotsu.util.FocusEffectUtil
 import nl.joery.animatedbottombar.AnimatedBottomBar
 
 class FeedActivity : AppCompatActivity() {
@@ -34,6 +35,7 @@ class FeedActivity : AppCompatActivity() {
             topMargin = statusBarHeight
         }
         navBar = binding.notificationNavBar
+        FocusEffectUtil.applyFocusListener(binding.root, navBar)
         binding.root.updateLayoutParams<ViewGroup.MarginLayoutParams> {
             bottomMargin = navBarHeight
         }

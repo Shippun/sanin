@@ -62,6 +62,7 @@ import ani.dantotsu.toast
 import ani.dantotsu.tryWith
 import ani.dantotsu.util.Logger
 import ani.dantotsu.util.customAlertDialog
+import ani.dantotsu.util.FocusEffectUtil
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
@@ -110,6 +111,7 @@ class SelectorDialogFragment : BottomSheetDialogFragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = BottomSheetSelectorBinding.inflate(inflater, container, false)
+        FocusEffectUtil.applyFocusListener(binding.root)
         val window = dialog?.window
         window?.statusBarColor = Color.TRANSPARENT
         window?.navigationBarColor =

@@ -20,6 +20,7 @@ import ani.dantotsu.settings.saving.PrefManager
 import ani.dantotsu.settings.saving.PrefName
 import ani.dantotsu.statusBarHeight
 import ani.dantotsu.themes.ThemeManager
+import ani.dantotsu.util.FocusEffectUtil
 import com.xwray.groupie.GroupieAdapter
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -42,6 +43,7 @@ class FollowActivity : AppCompatActivity() {
             bottomMargin = navBarHeight
         }
         setContentView(binding.root)
+        FocusEffectUtil.applyFocusListener(binding.root)
         val layoutType = PrefManager.getVal<Int>(PrefName.FollowerLayout)
         selected = getSelected(layoutType)
         binding.followFilterButton.visibility = View.GONE

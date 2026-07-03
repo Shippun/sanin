@@ -18,6 +18,7 @@ import ani.dantotsu.media.MediaType
 import ani.dantotsu.settings.saving.PrefManager
 import ani.dantotsu.settings.saving.PrefName
 import ani.dantotsu.util.customAlertDialog
+import ani.dantotsu.util.FocusEffectUtil
 import com.xwray.groupie.GroupieAdapter
 import com.xwray.groupie.viewbinding.BindableItem
 import eu.kanade.tachiyomi.extension.anime.AnimeExtensionManager
@@ -72,6 +73,7 @@ class AddRepositoryBottomSheet : BottomSheetDialogFragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = BottomSheetAddRepositoryBinding.inflate(inflater, container, false)
+        FocusEffectUtil.applyFocusListener(binding.root)
         return binding.root
     }
 

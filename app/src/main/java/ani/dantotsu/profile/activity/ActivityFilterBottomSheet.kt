@@ -8,6 +8,7 @@ import androidx.core.content.ContextCompat
 import ani.dantotsu.BottomSheetDialogFragment
 import ani.dantotsu.R
 import ani.dantotsu.databinding.BottomSheetActivityFilterBinding
+import ani.dantotsu.util.FocusEffectUtil
 
 class ActivityFilterBottomSheet : BottomSheetDialogFragment() {
 
@@ -23,6 +24,7 @@ class ActivityFilterBottomSheet : BottomSheetDialogFragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = BottomSheetActivityFilterBinding.inflate(inflater, container, false)
+        FocusEffectUtil.applyFocusListener(binding.root)
         return binding.root
     }
 

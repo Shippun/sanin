@@ -12,6 +12,7 @@ import ani.dantotsu.R
 import ani.dantotsu.databinding.BottomSheetRecyclerBinding
 import ani.dantotsu.notifications.subscription.SubscriptionHelper
 import ani.dantotsu.parsers.novel.NovelExtensionManager
+import ani.dantotsu.util.FocusEffectUtil
 import com.xwray.groupie.GroupieAdapter
 import eu.kanade.tachiyomi.extension.anime.AnimeExtensionManager
 import eu.kanade.tachiyomi.extension.manga.MangaExtensionManager
@@ -35,6 +36,7 @@ class SubscriptionsBottomDialog : BottomSheetDialogFragment() {
         savedInstanceState: Bundle?
     ): View? {
         _binding = BottomSheetRecyclerBinding.inflate(inflater, container, false)
+        FocusEffectUtil.applyFocusListener(binding.root)
         return _binding?.root
     }
 

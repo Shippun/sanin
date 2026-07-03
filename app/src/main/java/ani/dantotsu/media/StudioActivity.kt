@@ -23,6 +23,7 @@ import ani.dantotsu.others.getSerialized
 import ani.dantotsu.px
 import ani.dantotsu.statusBarHeight
 import ani.dantotsu.themes.ThemeManager
+import ani.dantotsu.util.FocusEffectUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -40,6 +41,7 @@ class StudioActivity : AppCompatActivity() {
         ThemeManager(this).applyTheme()
         binding = ActivityStudioBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        FocusEffectUtil.applyFocusListener(binding.root)
 
         initActivity(this)
         this.window.statusBarColor = ContextCompat.getColor(this, R.color.nav_bg)

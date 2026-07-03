@@ -15,6 +15,7 @@ import ani.dantotsu.snackString
 import ani.dantotsu.startMainActivity
 import ani.dantotsu.themes.ThemeManager
 import ani.dantotsu.tryWithSuspend
+import ani.dantotsu.util.FocusEffectUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 

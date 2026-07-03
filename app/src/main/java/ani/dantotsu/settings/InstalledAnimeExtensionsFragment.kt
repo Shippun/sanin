@@ -32,6 +32,7 @@ import ani.dantotsu.settings.saving.PrefName
 import ani.dantotsu.snackString
 import ani.dantotsu.util.Logger
 import ani.dantotsu.util.customAlertDialog
+import ani.dantotsu.util.FocusEffectUtil
 
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.textfield.TextInputLayout
@@ -185,6 +186,7 @@ class InstalledAnimeExtensionsFragment : Fragment(), SearchQueryHandler {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentExtensionsBinding.inflate(inflater, container, false)
+        FocusEffectUtil.applyFocusListener(binding.root)
 
         extensionsRecyclerView = binding.allExtensionsRecyclerView
         extensionsRecyclerView.layoutManager = LinearLayoutManager(requireContext())

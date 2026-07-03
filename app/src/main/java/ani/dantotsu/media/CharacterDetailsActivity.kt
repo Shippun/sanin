@@ -33,6 +33,7 @@ import ani.dantotsu.settings.saving.PrefName
 import ani.dantotsu.snackString
 import ani.dantotsu.statusBarHeight
 import ani.dantotsu.themes.ThemeManager
+import ani.dantotsu.util.FocusEffectUtil
 import com.google.android.material.appbar.AppBarLayout
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -57,6 +58,7 @@ class CharacterDetailsActivity : AppCompatActivity(), AppBarLayout.OnOffsetChang
         ThemeManager(this).applyTheme()
         binding = ActivityCharacterBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        FocusEffectUtil.applyFocusListener(binding.root)
 
         initActivity(this)
         screenWidth = resources.displayMetrics.run { widthPixels / density }

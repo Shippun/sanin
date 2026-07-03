@@ -11,6 +11,7 @@ import ani.dantotsu.BottomSheetDialogFragment
 import ani.dantotsu.FileUrl
 import ani.dantotsu.databinding.BottomSheetWebviewBinding
 import ani.dantotsu.defaultHeaders
+import ani.dantotsu.util.FocusEffectUtil
 import eu.kanade.tachiyomi.network.NetworkHelper
 import uy.kohesive.injekt.Injekt
 import uy.kohesive.injekt.api.get
@@ -42,6 +43,7 @@ abstract class WebViewBottomDialog : BottomSheetDialogFragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = BottomSheetWebviewBinding.inflate(inflater, container, false)
+        FocusEffectUtil.applyFocusListener(binding.root)
         return binding.root
     }
 

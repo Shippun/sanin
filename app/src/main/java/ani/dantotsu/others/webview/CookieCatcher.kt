@@ -11,6 +11,7 @@ import android.webkit.WebViewClient
 import androidx.appcompat.app.AppCompatActivity
 import ani.dantotsu.R
 import ani.dantotsu.themes.ThemeManager
+import ani.dantotsu.util.FocusEffectUtil
 import eu.kanade.tachiyomi.network.NetworkHelper
 import eu.kanade.tachiyomi.util.system.getSerializableExtraCompat
 import uy.kohesive.injekt.Injekt
@@ -32,6 +33,7 @@ class CookieCatcher : AppCompatActivity() {
             if (packageName != process) WebView.setDataDirectorySuffix(process)
         }
         setContentView(R.layout.activity_discord)
+        FocusEffectUtil.applyFocusListener(findViewById(android.R.id.content))
 
         val webView = findViewById<WebView>(R.id.discordWebview)
 

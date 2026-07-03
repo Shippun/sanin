@@ -9,6 +9,7 @@ import ani.dantotsu.databinding.BottomSheetProxyBinding
 import ani.dantotsu.restartApp
 import ani.dantotsu.settings.saving.PrefManager
 import ani.dantotsu.settings.saving.PrefName
+import ani.dantotsu.util.FocusEffectUtil
 
 class ProxyDialogFragment : BottomSheetDialogFragment() {
     private var _binding: BottomSheetProxyBinding? = null
@@ -29,6 +30,7 @@ class ProxyDialogFragment : BottomSheetDialogFragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = BottomSheetProxyBinding.inflate(inflater, container, false)
+        FocusEffectUtil.applyFocusListener(binding.root)
         return binding.root
     }
 

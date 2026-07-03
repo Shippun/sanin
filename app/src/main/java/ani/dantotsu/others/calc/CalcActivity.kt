@@ -26,6 +26,7 @@ import ani.dantotsu.statusBarHeight
 import ani.dantotsu.themes.ThemeManager
 import ani.dantotsu.util.NumberConverter.Companion.toBinary
 import ani.dantotsu.util.NumberConverter.Companion.toHex
+import ani.dantotsu.util.FocusEffectUtil
 
 class CalcActivity : AppCompatActivity() {
     private lateinit var binding: ActivityCalcBinding
@@ -42,6 +43,7 @@ class CalcActivity : AppCompatActivity() {
         ThemeManager(this).applyTheme()
         binding = ActivityCalcBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        FocusEffectUtil.applyFocusListener(binding.root)
         binding.root.doOnAttach {
             initActivity(this)
             binding.displayContainer.updateLayoutParams<ViewGroup.MarginLayoutParams> {

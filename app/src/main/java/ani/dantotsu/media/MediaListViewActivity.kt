@@ -18,6 +18,7 @@ import ani.dantotsu.settings.saving.PrefManager
 import ani.dantotsu.settings.saving.PrefName
 import ani.dantotsu.statusBarHeight
 import ani.dantotsu.themes.ThemeManager
+import ani.dantotsu.util.FocusEffectUtil
 
 class MediaListViewActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMediaListViewBinding
@@ -41,6 +42,7 @@ class MediaListViewActivity : AppCompatActivity() {
         }
 
         setContentView(binding.root)
+        FocusEffectUtil.applyFocusListener(binding.root)
 
         val primaryColor = getThemeColor(com.google.android.material.R.attr.colorSurface)
         val primaryTextColor = getThemeColor(com.google.android.material.R.attr.colorPrimary)

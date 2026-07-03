@@ -14,6 +14,7 @@ import ani.dantotsu.settings.saving.PrefManager
 import ani.dantotsu.settings.saving.PrefName
 import ani.dantotsu.startMainActivity
 import ani.dantotsu.statusBarHeight
+import ani.dantotsu.util.FocusEffectUtil
 
 class OfflineFragment : Fragment() {
     private var offline = false
@@ -23,6 +24,7 @@ class OfflineFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         val binding = FragmentOfflineBinding.inflate(inflater, container, false)
+        FocusEffectUtil.applyFocusListener(binding.root)
         binding.refreshContainer.updateLayoutParams<ViewGroup.MarginLayoutParams> {
             topMargin = statusBarHeight
             bottomMargin = navBarHeight

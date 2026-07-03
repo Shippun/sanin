@@ -22,6 +22,7 @@ import ani.dantotsu.shareImage
 import ani.dantotsu.snackString
 import ani.dantotsu.toast
 import ani.dantotsu.util.StoragePermissions.Companion.downloadsPermission
+import ani.dantotsu.util.FocusEffectUtil
 import com.bumptech.glide.load.resource.bitmap.BitmapTransformation
 import com.davemorrissey.labs.subscaleview.ImageSource
 import kotlinx.coroutines.launch
@@ -56,6 +57,7 @@ class ImageViewDialog : BottomSheetDialogFragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = BottomSheetImageBinding.inflate(inflater, container, false)
+        FocusEffectUtil.applyFocusListener(binding.root)
         return binding.root
     }
 

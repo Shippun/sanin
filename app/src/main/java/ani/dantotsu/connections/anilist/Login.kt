@@ -8,6 +8,7 @@ import ani.dantotsu.settings.saving.PrefManager
 import ani.dantotsu.settings.saving.PrefName
 import ani.dantotsu.startMainActivity
 import ani.dantotsu.themes.ThemeManager
+import ani.dantotsu.util.FocusEffectUtil
 
 class Login : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

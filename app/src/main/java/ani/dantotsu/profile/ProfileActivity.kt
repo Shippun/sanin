@@ -39,6 +39,7 @@ import ani.dantotsu.snackString
 import ani.dantotsu.statusBarHeight
 import ani.dantotsu.themes.ThemeManager
 import ani.dantotsu.toast
+import ani.dantotsu.util.FocusEffectUtil
 import com.google.android.material.appbar.AppBarLayout
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -65,6 +66,7 @@ class ProfileActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedListene
         val context = this
         screenWidth = resources.displayMetrics.widthPixels.toFloat()
         navBar = binding.profileNavBar
+        FocusEffectUtil.applyFocusListener(binding.root, navBar)
         val feedTab = navBar.createTab(R.drawable.ic_round_filter_24, "Feed")
         val profileTab = navBar.createTab(R.drawable.ic_round_person_24, "Profile")
         val statsTab = navBar.createTab(R.drawable.ic_stats_24, "Stats")

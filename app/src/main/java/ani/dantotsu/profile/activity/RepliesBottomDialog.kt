@@ -17,6 +17,7 @@ import ani.dantotsu.databinding.BottomSheetRecyclerBinding
 import ani.dantotsu.profile.ProfileActivity
 import ani.dantotsu.snackString
 import ani.dantotsu.util.ActivityMarkdownCreator
+import ani.dantotsu.util.FocusEffectUtil
 import com.xwray.groupie.GroupieAdapter
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -37,6 +38,7 @@ class RepliesBottomDialog : BottomSheetDialogFragment() {
         savedInstanceState: Bundle?
     ): View? {
         _binding = BottomSheetRecyclerBinding.inflate(inflater, container, false)
+        FocusEffectUtil.applyFocusListener(binding.root)
         return _binding?.root
     }
 

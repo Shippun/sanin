@@ -26,6 +26,7 @@ import ani.dantotsu.statusBarHeight
 import ani.dantotsu.themes.ThemeManager
 import ani.dantotsu.toast
 import ani.dantotsu.util.AniMarkdown
+import ani.dantotsu.util.FocusEffectUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -46,6 +47,7 @@ class ReviewViewActivity : AppCompatActivity() {
             bottomMargin += navBarHeight
         }
         setContentView(binding.root)
+        FocusEffectUtil.applyFocusListener(binding.root)
         review = intent.getSerializableExtra("review") as Query.Review
         binding.userName.text = review.user?.name
         binding.userAvatar.loadImage(review.user?.avatar?.medium)

@@ -25,6 +25,7 @@ import ani.dantotsu.settings.saving.PrefManager
 import ani.dantotsu.settings.saving.PrefName
 import ani.dantotsu.statusBarHeight
 import ani.dantotsu.themes.ThemeManager
+import ani.dantotsu.util.FocusEffectUtil
 import nl.joery.animatedbottombar.AnimatedBottomBar
 
 class NotificationActivity : AppCompatActivity() {
@@ -52,6 +53,7 @@ class NotificationActivity : AppCompatActivity() {
             topMargin = statusBarHeight
         }
         navBar = binding.notificationNavBar
+        FocusEffectUtil.applyFocusListener(binding.root, navBar)
         binding.root.updateLayoutParams<ViewGroup.MarginLayoutParams> {
             bottomMargin = navBarHeight
         }

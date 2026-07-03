@@ -8,6 +8,7 @@ import ani.dantotsu.getThemeColor
 import ani.dantotsu.initActivity
 import ani.dantotsu.themes.ThemeManager
 import ani.dantotsu.toast
+import ani.dantotsu.util.FocusEffectUtil
 import com.github.aachartmodel.aainfographics.aachartcreator.AAOptions
 
 class SingleStatActivity : AppCompatActivity() {
@@ -18,6 +19,7 @@ class SingleStatActivity : AppCompatActivity() {
         initActivity(this)
         binding = ActivitySingleStatBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        FocusEffectUtil.applyFocusListener(binding.root)
         val chartOptions = chartOptions
         if (chartOptions != null) {
             chartOptions.chart?.backgroundColor = getThemeColor(android.R.attr.windowBackground)

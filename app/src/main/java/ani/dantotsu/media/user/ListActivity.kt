@@ -23,6 +23,7 @@ import ani.dantotsu.settings.saving.PrefManager
 import ani.dantotsu.settings.saving.PrefName
 import ani.dantotsu.statusBarHeight
 import ani.dantotsu.themes.ThemeManager
+import ani.dantotsu.util.FocusEffectUtil
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import kotlinx.coroutines.Dispatchers
@@ -67,6 +68,7 @@ class ListActivity : AppCompatActivity() {
             }
         }
         setContentView(binding.root)
+        FocusEffectUtil.applyFocusListener(binding.root)
 
         val anime = intent.getBooleanExtra("anime", true)
         binding.listTitle.text = getString(

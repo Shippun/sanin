@@ -12,6 +12,7 @@ import ani.dantotsu.navBarHeight
 import ani.dantotsu.statusBarHeight
 import ani.dantotsu.themes.ThemeManager
 import ani.dantotsu.toast
+import ani.dantotsu.util.FocusEffectUtil
 import com.xwray.groupie.GroupieAdapter
 
 class ParserTestActivity : AppCompatActivity() {
@@ -31,6 +32,7 @@ class ParserTestActivity : AppCompatActivity() {
             bottomMargin = navBarHeight
         }
         setContentView(binding.root)
+        FocusEffectUtil.applyFocusListener(binding.root)
 
         binding.extensionResultsRecyclerView.adapter = adapter
         binding.extensionResultsRecyclerView.layoutManager = LinearLayoutManager(

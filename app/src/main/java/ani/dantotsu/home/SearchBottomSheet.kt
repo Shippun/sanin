@@ -12,6 +12,7 @@ import ani.dantotsu.connections.anilist.AnilistSearch.SearchType
 import ani.dantotsu.connections.anilist.AnilistSearch.SearchType.Companion.toAnilistString
 import ani.dantotsu.databinding.BottomSheetSearchBinding
 import ani.dantotsu.media.SearchActivity
+import ani.dantotsu.util.FocusEffectUtil
 
 class SearchBottomSheet : BottomSheetDialogFragment() {
     private var _binding: BottomSheetSearchBinding? = null
@@ -23,6 +24,7 @@ class SearchBottomSheet : BottomSheetDialogFragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = BottomSheetSearchBinding.inflate(inflater, container, false)
+        FocusEffectUtil.applyFocusListener(binding.root)
         return binding.root
     }
 

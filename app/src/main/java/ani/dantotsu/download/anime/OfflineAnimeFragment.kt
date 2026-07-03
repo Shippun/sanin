@@ -48,6 +48,7 @@ import ani.dantotsu.settings.saving.PrefName
 import ani.dantotsu.snackString
 import ani.dantotsu.util.Logger
 import ani.dantotsu.util.customAlertDialog
+import ani.dantotsu.util.FocusEffectUtil
 import com.anggrayudi.storage.file.openInputStream
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.imageview.ShapeableImageView

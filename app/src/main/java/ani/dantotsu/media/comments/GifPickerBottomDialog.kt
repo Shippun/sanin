@@ -13,6 +13,7 @@ import ani.dantotsu.client
 import ani.dantotsu.databinding.BottomSheetGifPickerBinding
 import ani.dantotsu.databinding.ItemGifBinding
 import ani.dantotsu.loadImage
+import ani.dantotsu.util.FocusEffectUtil
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -42,6 +43,7 @@ class GifPickerBottomDialog : BottomSheetDialogFragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = BottomSheetGifPickerBinding.inflate(inflater, container, false)
+        FocusEffectUtil.applyFocusListener(binding.root)
         return binding.root
     }
 

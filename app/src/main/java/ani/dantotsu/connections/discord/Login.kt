@@ -25,6 +25,7 @@ import org.json.JSONObject
 import java.io.File
 import ani.dantotsu.settings.saving.PrefManager
 import ani.dantotsu.settings.saving.PrefName
+import ani.dantotsu.util.FocusEffectUtil
 
 class Login : AppCompatActivity() {
 
@@ -41,6 +42,7 @@ class Login : AppCompatActivity() {
             if (packageName != process) WebView.setDataDirectorySuffix(process)
         }
         setContentView(R.layout.activity_discord)
+        FocusEffectUtil.applyFocusListener(findViewById(android.R.id.content))
 
         val webView = findViewById<WebView>(R.id.discordWebview)
 

@@ -15,6 +15,7 @@ import ani.dantotsu.settings.paging.AnimeExtensionAdapter
 import ani.dantotsu.settings.paging.AnimeExtensionsViewModel
 import ani.dantotsu.settings.paging.AnimeExtensionsViewModelFactory
 import ani.dantotsu.settings.paging.OnAnimeInstallClickListener
+import ani.dantotsu.util.FocusEffectUtil
 import eu.kanade.tachiyomi.extension.anime.AnimeExtensionManager
 import eu.kanade.tachiyomi.extension.anime.model.AnimeExtension
 import kotlinx.coroutines.flow.collectLatest
@@ -44,6 +45,7 @@ class AnimeExtensionsFragment : Fragment(),
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentExtensionsBinding.inflate(inflater, container, false)
+        FocusEffectUtil.applyFocusListener(binding.root)
 
         binding.allExtensionsRecyclerView.isNestedScrollingEnabled = false
         binding.allExtensionsRecyclerView.adapter = adapter

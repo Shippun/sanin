@@ -9,6 +9,7 @@ import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.LinearLayoutManager
 import ani.dantotsu.BottomSheetDialogFragment
 import ani.dantotsu.databinding.BottomSheetExtensionTestSettingsBinding
+import ani.dantotsu.util.FocusEffectUtil
 import com.xwray.groupie.GroupieAdapter
 import eu.kanade.tachiyomi.extension.anime.AnimeExtensionManager
 import uy.kohesive.injekt.Injekt
@@ -26,6 +27,7 @@ class ExtensionTestSettingsBottomDialog : BottomSheetDialogFragment() {
         savedInstanceState: Bundle?
     ): View? {
         _binding = BottomSheetExtensionTestSettingsBinding.inflate(inflater, container, false)
+        FocusEffectUtil.applyFocusListener(binding.root)
         return _binding?.root
     }
 

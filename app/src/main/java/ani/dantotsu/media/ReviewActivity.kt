@@ -21,6 +21,7 @@ import ani.dantotsu.navBarHeight
 import ani.dantotsu.statusBarHeight
 import ani.dantotsu.themes.ThemeManager
 import ani.dantotsu.util.ActivityMarkdownCreator
+import ani.dantotsu.util.FocusEffectUtil
 import com.xwray.groupie.GroupieAdapter
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -47,6 +48,7 @@ class ReviewActivity : AppCompatActivity() {
             bottomMargin = navBarHeight
         }
         setContentView(binding.root)
+        FocusEffectUtil.applyFocusListener(binding.root)
         mediaId = intent.getIntExtra("mediaId", -1)
         if (mediaId == -1) {
             finish()

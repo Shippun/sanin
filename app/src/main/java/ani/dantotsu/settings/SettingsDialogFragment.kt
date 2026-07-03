@@ -34,6 +34,7 @@ import ani.dantotsu.settings.saving.PrefName
 import ani.dantotsu.startMainActivity
 import ani.dantotsu.openLinkInCustomTab
 import ani.dantotsu.util.customAlertDialog
+import ani.dantotsu.util.FocusEffectUtil
 import eu.kanade.tachiyomi.util.system.getSerializableCompat
 import java.util.Timer
 import kotlin.concurrent.schedule
@@ -54,6 +55,7 @@ class SettingsDialogFragment : BottomSheetDialogFragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = BottomSheetSettingsBinding.inflate(inflater, container, false)
+        FocusEffectUtil.applyFocusListener(binding.root)
         return binding.root
     }
 

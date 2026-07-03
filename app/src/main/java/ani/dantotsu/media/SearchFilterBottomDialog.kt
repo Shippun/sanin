@@ -20,6 +20,7 @@ import ani.dantotsu.R
 import ani.dantotsu.connections.anilist.Anilist
 import ani.dantotsu.databinding.BottomSheetSearchFilterBinding
 import ani.dantotsu.databinding.ItemChipBinding
+import ani.dantotsu.util.FocusEffectUtil
 import com.google.android.material.chip.Chip
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -38,6 +39,7 @@ class SearchFilterBottomDialog : BottomSheetDialogFragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = BottomSheetSearchFilterBinding.inflate(inflater, container, false)
+        FocusEffectUtil.applyFocusListener(binding.root)
         return binding.root
     }
 

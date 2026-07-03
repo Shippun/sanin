@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import ani.dantotsu.BottomSheetDialogFragment
 import ani.dantotsu.databinding.BottomSheetCustomBinding
+import ani.dantotsu.util.FocusEffectUtil
 
 open class CustomBottomDialog : BottomSheetDialogFragment() {
     private var _binding: BottomSheetCustomBinding? = null
@@ -52,6 +53,7 @@ open class CustomBottomDialog : BottomSheetDialogFragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = BottomSheetCustomBinding.inflate(inflater, container, false)
+        FocusEffectUtil.applyFocusListener(binding.root)
         val window = dialog?.window
         window?.statusBarColor = Color.TRANSPARENT
         return binding.root

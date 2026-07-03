@@ -14,6 +14,7 @@ import ani.dantotsu.initActivity
 import ani.dantotsu.navBarHeight
 import ani.dantotsu.statusBarHeight
 import ani.dantotsu.themes.ThemeManager
+import ani.dantotsu.util.FocusEffectUtil
 import eu.kanade.tachiyomi.util.system.copyToClipboard
 import java.io.File
 
@@ -36,6 +37,7 @@ class CrashActivity : AppCompatActivity() {
         )
         binding = ActivityCrashBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        FocusEffectUtil.applyFocusListener(binding.root)
         binding.root.updateLayoutParams<ViewGroup.MarginLayoutParams> {
             topMargin = statusBarHeight
             bottomMargin = navBarHeight

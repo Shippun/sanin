@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import ani.dantotsu.BottomSheetDialogFragment
 import ani.dantotsu.databinding.BottomSheetUsersBinding
+import ani.dantotsu.util.FocusEffectUtil
 
 
 class UsersDialogFragment : BottomSheetDialogFragment() {
@@ -24,6 +25,7 @@ class UsersDialogFragment : BottomSheetDialogFragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = BottomSheetUsersBinding.inflate(inflater, container, false)
+        FocusEffectUtil.applyFocusListener(binding.root)
         return binding.root
     }
 

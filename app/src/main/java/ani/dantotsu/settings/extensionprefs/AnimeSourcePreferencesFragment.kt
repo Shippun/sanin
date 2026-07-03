@@ -1,5 +1,7 @@
 package ani.dantotsu.settings.extensionprefs
 
+import ani.dantotsu.util.FocusEffectUtil
+
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View

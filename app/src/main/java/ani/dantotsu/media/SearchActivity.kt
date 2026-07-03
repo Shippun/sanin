@@ -31,6 +31,7 @@ import ani.dantotsu.settings.saving.PrefManager
 import ani.dantotsu.settings.saving.PrefName
 import ani.dantotsu.statusBarHeight
 import ani.dantotsu.themes.ThemeManager
+import ani.dantotsu.util.FocusEffectUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.Timer
@@ -69,6 +70,7 @@ class SearchActivity : AppCompatActivity() {
         ThemeManager(this).applyTheme()
         binding = ActivitySearchBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        FocusEffectUtil.applyFocusListener(binding.root)
         initActivity(this)
         screenWidth = resources.displayMetrics.run { widthPixels / density }
 

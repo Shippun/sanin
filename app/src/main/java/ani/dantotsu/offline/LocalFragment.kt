@@ -44,6 +44,7 @@ import ani.dantotsu.settings.saving.PrefName
 import ani.dantotsu.snackString
 import ani.dantotsu.toast
 import ani.dantotsu.util.Logger
+import ani.dantotsu.util.FocusEffectUtil
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup

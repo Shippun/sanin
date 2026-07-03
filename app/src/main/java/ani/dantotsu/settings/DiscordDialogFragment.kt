@@ -12,6 +12,7 @@ import ani.dantotsu.connections.mal.MAL
 import ani.dantotsu.databinding.BottomSheetDiscordRpcBinding
 import ani.dantotsu.settings.saving.PrefManager
 import ani.dantotsu.settings.saving.PrefName
+import ani.dantotsu.util.FocusEffectUtil
 import com.bumptech.glide.Glide
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -33,6 +34,7 @@ class DiscordDialogFragment : BottomSheetDialogFragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = BottomSheetDiscordRpcBinding.inflate(inflater, container, false)
+        FocusEffectUtil.applyFocusListener(binding.root)
         return binding.root
     }
 
