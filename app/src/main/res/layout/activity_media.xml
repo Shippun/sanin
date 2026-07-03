@@ -250,6 +250,7 @@
             android:id="@+id/mediaViewPager"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:nextFocusUp="@+id/mediaNavPills"
             android:nestedScrollingEnabled="true"
             tools:ignore="SpeakableTextPresentCheck" />
     </LinearLayout>
@@ -259,6 +260,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="top"
+        android:focusable="true"
+        android:nextFocusDown="@+id/mediaViewPager"
         android:visibility="gone" />
 
     <LinearLayout
@@ -267,6 +270,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         android:background="?attr/colorSurface"
+        android:focusable="true"
+        android:nextFocusUp="@+id/mediaNavPills"
         android:orientation="vertical"
         android:windowSoftInputMode="adjustResize"
         android:visibility="gone">

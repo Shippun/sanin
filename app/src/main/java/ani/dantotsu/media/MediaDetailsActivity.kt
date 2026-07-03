@@ -6,6 +6,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.SpannableStringBuilder
 import android.view.GestureDetector
+import android.view.KeyEvent
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
@@ -160,7 +161,7 @@ class MediaDetailsActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedLi
         binding.mediaClose.setOnClickListener {
             onBackPressedDispatcher.onBackPressed()
         }
-        FocusEffectUtil.applyFocusListener(binding.mediaClose)
+        FocusEffectUtil.applyFocusListener(binding.mediaClose, binding.mediaNavPills)
 
         val bannerAnimations: Boolean = PrefManager.getVal(PrefName.BannerAnimations)
         if (bannerAnimations) {
@@ -487,6 +488,29 @@ class MediaDetailsActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedLi
         binding.mediaCover.visibility = View.VISIBLE
         binding.mediaClose.visibility = View.VISIBLE
         binding.root.requestLayout()
+    }
+
+    override fun dispatchKeyEvent(event: KeyEvent): Boolean {
+        if (event.action == KeyEvent.ACTION_DOWN) {
+            when (event.keyCode) {
+                KeyEvent.KEYCODE_DPAD_DOWN -> {
+                    if (binding.mediaNavPills.isFocused) {
+                        val focused = currentFocus
+                        if (focused?.id == R.id.mediaNavPills) {
+                            binding.mediaViewPager.requestFocus()
+                            return true
+                        }
+                    }
+                }
+                KeyEvent.KEYCODE_DPAD_UP -> {
+                    if (binding.mediaViewPager.isFocused || binding.commentMessageContainer.isFocused) {
+                        binding.mediaNavPills.requestFocus()
+                        return true
+                    }
+                }
+            }
+        }
+        return super.dispatchKeyEvent(event)
     }
 
     // ViewPager
