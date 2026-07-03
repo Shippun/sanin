@@ -1,6 +1,11 @@
 package ani.dantotsu.connections.anilist
 
+import ani.dantotsu.connections.anilist.api.Staff
+import ani.dantotsu.connections.anilist.api.User
+import ani.dantotsu.media.Author
+import ani.dantotsu.media.Character
 import ani.dantotsu.media.Media
+import ani.dantotsu.media.Studio
 
 data class AniMangaSearchResults(
     var type: String = "",
@@ -26,29 +31,29 @@ data class AniMangaSearchResults(
 )
 
 data class CharacterSearchResults(
-    val search: String?,
-    val results: List<Any>,
-    val page: Int,
-    val hasNextPage: Boolean,
+    var search: String? = null,
+    var results: MutableList<Character> = mutableListOf(),
+    var page: Int = 0,
+    var hasNextPage: Boolean = false,
 )
 
 data class StudioSearchResults(
-    val search: String?,
-    val results: List<Any>,
-    val page: Int,
-    val hasNextPage: Boolean,
+    var search: String? = null,
+    var results: MutableList<Studio> = mutableListOf(),
+    var page: Int = 0,
+    var hasNextPage: Boolean = false,
 )
 
 data class StaffSearchResults(
-    val search: String?,
-    val results: List<Any>,
-    val page: Int,
-    val hasNextPage: Boolean,
+    var search: String? = null,
+    var results: MutableList<Author> = mutableListOf(),
+    var page: Int = 0,
+    var hasNextPage: Boolean = false,
 )
 
 data class UserSearchResults(
-    val search: String?,
-    val results: List<Any>,
-    val page: Int,
-    val hasNextPage: Boolean,
+    var search: String? = null,
+    var results: MutableList<User> = mutableListOf(),
+    var page: Int = 0,
+    var hasNextPage: Boolean = false,
 )
