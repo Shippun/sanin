@@ -98,30 +98,7 @@ class SubscriptionHelper {
             parser: MangaParser,
             subscribeMedia: SubscribeMedia
         ): MangaChapter? {
-            val selected = loadSelected(subscribeMedia.id)
-            val chp = withTimeoutOrNull(10 * 1000) {
-                tryWithSuspend {
-                    val show = parser.loadSavedShowResponse(subscribeMedia.id)
-                        ?: forceLoadShowResponse(subscribeMedia, selected, parser)
-                        ?: throw Exception(
-                            currContext()?.getString(
-                                R.string.failed_to_load_data,
-                                subscribeMedia.id
-                            )
-                        )
-                    show.sManga?.let {
-                        parser.getLatestChapter(
-                            show.link, show.extra,
-                            it, selected.latest
-                        )
-                    }
-                }
-            }
-
-            return chp?.apply {
-                selected.latest = MediaNameAdapter.findChapterNumber(number) ?: 0f
-                saveSelected(subscribeMedia.id, selected)
-            }
+            return null
         }
 
         private suspend fun forceLoadShowResponse(

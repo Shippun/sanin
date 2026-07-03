@@ -542,7 +542,7 @@ class ExoplayerView :
         animeTitle = playerView.findViewById(R.id.exo_anime_title)
         episodeTitle = playerView.findViewById(R.id.exo_ep_sel)
 
-        playerView.controllerShowTimeoutMs = PrefManager.getVal(PrefName.AutoHideTimeout) * 1000L
+        playerView.controllerShowTimeoutMs = PrefManager.getVal<Int>(PrefName.AutoHideTimeout) * 1000
 
         val audioManager = applicationContext.getSystemService(AUDIO_SERVICE) as AudioManager
 
@@ -789,7 +789,7 @@ class ExoplayerView :
                 }
             }
         listOf(
-            R.id.exo_play, R.id.exo_source, R.id.exo_settings, R.id.exo_sub,
+            androidx.media3.ui.R.id.exo_play, R.id.exo_source, R.id.exo_settings, R.id.exo_sub,
             R.id.exo_audio, R.id.exo_dub_sub, R.id.exo_screen, R.id.exo_pip,
             R.id.exo_skip_op_ed, R.id.exo_back, R.id.exo_skip, R.id.exo_next_ep,
             R.id.exo_prev_ep,
@@ -2063,8 +2063,8 @@ class ExoplayerView :
 
         // Player
         val bufferSize = PrefManager.getVal<Int>(PrefName.BufferSize)
-        val minBufferMs = bufferSize * 1000L
-        val maxBufferMs = bufferSize * 2000L
+        val minBufferMs = bufferSize * 1000
+        val maxBufferMs = bufferSize * 2000
         val loadControl =
             DefaultLoadControl
                 .Builder()
@@ -3475,7 +3475,7 @@ class ExoplayerView :
 
     private fun ensureControllerVisible() {
         if (!playerView.isControllerFullyVisible) playerView.showController()
-        playerView.controllerShowTimeoutMs = PrefManager.getVal<Int>(PrefName.AutoHideTimeout) * 1000L
+        playerView.controllerShowTimeoutMs = PrefManager.getVal<Int>(PrefName.AutoHideTimeout) * 1000
     }
 
     override fun dispatchKeyEvent(event: KeyEvent): Boolean {
@@ -3552,7 +3552,7 @@ class ExoplayerView :
             }
             KeyEvent.KEYCODE_MEDIA_REWIND,
             KeyEvent.KEYCODE_MEDIA_SKIP_BACKWARD -> {
-                if (event.action == KeyEvent.ACTION_UP) seek(false)
+                if (event.action == KeyEvent.ACTION_UP) exoPlayer.seekTo(exoPlayer.currentPosition - PrefManager.getVal<Int>(PrefName.SeekTime) * 1000)
                 return true
             }
             KeyEvent.KEYCODE_MEDIA_NEXT -> {

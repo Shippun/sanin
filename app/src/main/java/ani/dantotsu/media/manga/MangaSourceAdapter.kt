@@ -13,4 +13,8 @@ class MangaSourceAdapter(
     val id: Int,
     fragment: SourceSearchDialogFragment,
     scope: CoroutineScope
-) : SourceAdapter(sources, fragment, scope)
+) : SourceAdapter(sources, fragment, scope) {
+
+    override suspend fun onItemClick(source: ShowResponse) {
+    }
+}
