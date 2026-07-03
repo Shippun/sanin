@@ -59,7 +59,6 @@ class BannerCarouselAdapter(
             if (!logoUrl.isNullOrBlank()) {
                 holder.clearlogo.visibility = View.VISIBLE
                 holder.clearlogo.loadImage(logoUrl)
-                holder.title.visibility = View.GONE
             } else {
                 holder.clearlogo.visibility = View.GONE
                 holder.title.visibility = View.VISIBLE
