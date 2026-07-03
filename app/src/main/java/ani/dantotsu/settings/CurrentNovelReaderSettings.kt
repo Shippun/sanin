@@ -15,4 +15,6 @@ class CurrentNovelReaderSettings {
 
     var dualPageMode: CurrentReaderSettings.DualPageModes = CurrentReaderSettings.DualPageModes.Automatic
     var lineHeight: Float = 1.4f
+    var margin: Float = 0.06f
+    var maxInlineSize: Int = 60
 }
