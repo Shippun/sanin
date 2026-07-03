@@ -689,26 +689,7 @@ class AnilistQueries {
                 )
             }"""
         )
-        if (toShow.getOrNull(3) == true) {
-            queries.add("""currentManga: ${continueMediaQuery("MANGA", "CURRENT")}""")
-            queries.add("""repeatingManga: ${continueMediaQuery("MANGA", "REPEATING")}""")
-        }
-        if (toShow.getOrNull(4) == true) queries.add(
-            """favoriteManga: ${
-                favMediaQuery(
-                    false,
-                    1
-                )
-            }"""
-        )
-        if (toShow.getOrNull(5) == true) queries.add(
-            """plannedManga: ${
-                continueMediaQuery(
-                    "MANGA",
-                    "PLANNING"
-                )
-            }"""
-        )
+        if (toShow.getOrNull(3) != true && toShow.getOrNull(4) != true && toShow.getOrNull(5) != true) {}
         if (toShow.getOrNull(6) == true) {
             queries.add("""recommendationQuery: ${recommendationQuery()}""")
         }
