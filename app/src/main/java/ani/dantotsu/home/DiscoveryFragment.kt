@@ -22,7 +22,7 @@ import ani.dantotsu.databinding.FragmentDiscoverBinding
 import ani.dantotsu.media.Media
 import ani.dantotsu.media.MediaAdaptor
 import ani.dantotsu.media.SearchActivity
-import ani.dantotsu.parsers.SearchBottomSheet
+import ani.dantotsu.home.SearchBottomSheet
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job

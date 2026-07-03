@@ -182,12 +182,6 @@ class HomeFragment : Fragment() {
             binding.homeDrawer.openDrawer(Gravity.END)
             populateRightRail()
         }
-        binding.searchImageContainer.setSafeOnClickListener {
-            SearchBottomSheet.newInstance().show(
-                (it.context as androidx.appcompat.app.AppCompatActivity).supportFragmentManager,
-                "search"
-            )
-        }
         binding.homeUserAvatarContainer.setOnLongClickListener {
             it.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
             if (!PrefManager.getVal<Boolean>(PrefName.RescueMode)) {
