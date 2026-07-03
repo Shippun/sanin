@@ -3,7 +3,6 @@ package ani.dantotsu.media
 import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.content.res.Configuration
 import android.os.Bundle
 import android.text.SpannableStringBuilder
 import android.view.GestureDetector
@@ -21,7 +20,6 @@ import androidx.core.text.bold
 import androidx.core.text.color
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
-import androidx.core.view.updateMargins
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Lifecycle
@@ -42,9 +40,7 @@ import ani.dantotsu.initActivity
 import ani.dantotsu.loadImage
 import ani.dantotsu.media.anime.AnimeWatchFragment
 import ani.dantotsu.media.comments.CommentsFragment
-import ani.dantotsu.navBarHeight
 import ani.dantotsu.openLinkInBrowser
-import ani.dantotsu.others.AndroidBug5497Workaround
 import ani.dantotsu.others.ImageViewDialog
 import ani.dantotsu.others.getSerialized
 import ani.dantotsu.settings.saving.PrefManager
@@ -52,6 +48,7 @@ import ani.dantotsu.settings.saving.PrefName
 import ani.dantotsu.snackString
 import ani.dantotsu.statusBarHeight
 import ani.dantotsu.themes.ThemeManager
+import ani.dantotsu.ui.components.navigationPillFocusEffect
 import ani.dantotsu.util.FocusEffectUtil
 import ani.dantotsu.util.LauncherWrapper
 import com.flaviofaria.kenburnsview.RandomTransitionGenerator
@@ -62,7 +59,38 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
-import nl.joery.animatedbottombar.AnimatedBottomBar
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.focusable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+
 import kotlin.math.abs
 import kotlin.time.Duration.Companion.milliseconds
 
@@ -73,7 +101,6 @@ class MediaDetailsActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedLi
     private val scope = lifecycleScope
     private val model: MediaDetailsViewModel by viewModels()
     var selected = 0
-    lateinit var navBar: AnimatedBottomBar
     var anime = true
     private var adult = false
 
@@ -118,17 +145,7 @@ class MediaDetailsActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedLi
         binding = ActivityMediaBinding.inflate(layoutInflater)
         setContentView(binding.root)
         screenWidth = resources.displayMetrics.widthPixels.toFloat()
-        navBar = binding.mediaBottomBar
 
-        // Ui init
-
-
-        binding.mediaBottomBarContainer?.setPadding(0, 0, 0, navBarHeight)
-
-        AndroidBug5497Workaround.assistActivity(this) { keyboardVisible ->
-            // Optionally hide nav bar when keyboard is visible
-            navBar.visibility = if (keyboardVisible) View.GONE else View.VISIBLE
-        }
         binding.mediaBanner.updateLayoutParams { height += statusBarHeight }
         binding.mediaBannerNoKen.updateLayoutParams { height += statusBarHeight }
         binding.mediaClose.updateLayoutParams<ViewGroup.MarginLayoutParams> { topMargin += statusBarHeight }
@@ -143,7 +160,7 @@ class MediaDetailsActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedLi
         binding.mediaClose.setOnClickListener {
             onBackPressedDispatcher.onBackPressed()
         }
-        FocusEffectUtil.applyFocusListener(binding.mediaClose, binding.mediaBottomBar)
+        FocusEffectUtil.applyFocusListener(binding.mediaClose)
 
         val bannerAnimations: Boolean = PrefManager.getVal(PrefName.BannerAnimations)
         if (bannerAnimations) {
@@ -407,45 +424,39 @@ class MediaDetailsActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedLi
         selected = if (PrefManager.getVal<Int>(PrefName.CommentsEnabled) != 1 && media.selected!!.window == 2 || rescueMode && media.selected!!.window == 2) 1 else media.selected!!.window
         binding.mediaTitle.translationX = -screenWidth
 
-        val infoTab = navBar.createTab(R.drawable.ic_round_info_24, R.string.info, R.id.info)
-        val watchTab = navBar.createTab(R.drawable.ic_round_movie_filter_24, R.string.watch, R.id.watch)
-        val commentTab =
-            navBar.createTab(R.drawable.ic_round_comment_24, R.string.comments, R.id.comment)
-        navBar.addTab(infoTab)
-        navBar.addTab(watchTab)
-        if (PrefManager.getVal<Int>(PrefName.CommentsEnabled) == 1 && !rescueMode) {
-            navBar.addTab(commentTab)
-        }
+        val hasComments = PrefManager.getVal<Int>(PrefName.CommentsEnabled) == 1 && !rescueMode
         if (model.continueMedia == null && media.cameFromContinue) {
             model.continueMedia = PrefManager.getVal(PrefName.ContinueMedia)
             selected = 1
         }
-        if (intent.getStringExtra("FRAGMENT_TO_LOAD") != null && PrefManager.getVal<Int>(PrefName.CommentsEnabled) == 1 && !rescueMode) selected = 2
+        if (intent.getStringExtra("FRAGMENT_TO_LOAD") != null && hasComments) selected = 2
         if (viewPager.currentItem != selected) viewPager.post {
             viewPager.setCurrentItem(selected, false)
         }
         binding.commentInputLayout.isVisible = selected == 2
 
-        // Ensure that if we are returning from the comments tab, we go back to the media content tab
-        if (selected == 2 && (PrefManager.getVal<Int>(PrefName.CommentsEnabled) != 1 || rescueMode)) {
+        if (selected == 2 && !hasComments) {
             selected = 1
         }
-        navBar.selectTabAt(selected)
-        navBar.setOnTabSelectListener(object : AnimatedBottomBar.OnTabSelectListener {
-            override fun onTabSelected(
-                lastIndex: Int,
-                lastTab: AnimatedBottomBar.Tab?,
-                newIndex: Int,
-                newTab: AnimatedBottomBar.Tab
-            ) {
-                selected = newIndex
-                binding.commentInputLayout.isVisible = selected == 2
-                viewPager.setCurrentItem(selected, true)
-                val sel = model.loadSelected(media, isDownload)
-                sel.window = selected
-                model.saveSelected(media.id, sel)
-            }
-        })
+
+        binding.mediaNavPills.visibility = View.VISIBLE
+        binding.mediaNavPills.setViewCompositionStrategy(
+            androidx.compose.ui.platform.ViewCompositionStrategy.DisposeOnDetachedFromWindow
+        )
+        binding.mediaNavPills.setContent {
+            MediaNavPills(
+                selectedTab = selected,
+                hasComments = hasComments,
+                onTabSelected = { idx ->
+                    selected = idx
+                    binding.commentInputLayout.isVisible = selected == 2
+                    viewPager.setCurrentItem(selected, true)
+                    val sel = model.loadSelected(media, isDownload)
+                    sel.window = selected
+                    model.saveSelected(media.id, sel)
+                }
+            )
+        }
 
         val live = Refresh.activity.getOrPut(this.hashCode()) { MutableLiveData(true) }
         live.observe(this) {
@@ -456,20 +467,6 @@ class MediaDetailsActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedLi
                 }
             }
         }
-    }
-
-    override fun onConfigurationChanged(newConfig: Configuration) {
-        super.onConfigurationChanged(newConfig)
-        if (!::navBar.isInitialized) return
-        val rightMargin = if (resources.configuration.orientation ==
-            Configuration.ORIENTATION_LANDSCAPE
-        ) navBarHeight else 0
-        val bottomMargin = if (resources.configuration.orientation ==
-            Configuration.ORIENTATION_LANDSCAPE
-        ) 0 else navBarHeight
-        val params: ViewGroup.MarginLayoutParams =
-            navBar.layoutParams as ViewGroup.MarginLayoutParams
-        params.updateMargins(right = rightMargin, bottom = bottomMargin)
     }
 
     override fun onResume() {
@@ -485,14 +482,10 @@ class MediaDetailsActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedLi
             }
         }
 
-        if (::navBar.isInitialized)
-            navBar.selectTabAt(selected)
         binding.mediaAppBar.visibility = View.VISIBLE
         binding.mediaViewPager.visibility = View.VISIBLE
         binding.mediaCover.visibility = View.VISIBLE
         binding.mediaClose.visibility = View.VISIBLE
-        if (::navBar.isInitialized)
-            navBar.isVisible = true
         binding.root.requestLayout()
     }
 
@@ -649,5 +642,108 @@ class MediaDetailsActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedLi
 
     companion object {
         var mediaSingleton: Media? = null
+    }
+}
+
+private val MEDIA_TAB_ORDER = listOf("info", "watch", "comments")
+private val MEDIA_TAB_ICONS = mapOf(
+    "info" to R.drawable.ic_round_info_24,
+    "watch" to R.drawable.ic_round_movie_filter_24,
+    "comments" to R.drawable.ic_round_comment_24
+)
+private val MEDIA_TAB_LABELS = mapOf(
+    "info" to "Info",
+    "watch" to "Watch",
+    "comments" to "Comments"
+)
+
+@Composable
+fun MediaNavPills(
+    selectedTab: Int,
+    hasComments: Boolean,
+    onTabSelected: (Int) -> Unit
+) {
+    val tabs = if (hasComments) listOf("info", "watch", "comments") else listOf("info", "watch")
+    val currentTab = remember { mutableStateOf(selectedTab) }
+
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight()
+            .padding(horizontal = 16.dp, vertical = 8.dp)
+            .background(
+                brush = Brush.linearGradient(
+                    colors = listOf(
+                        Color.White.copy(alpha = 0.08f),
+                        Color.White.copy(alpha = 0.04f)
+                    )
+                ),
+                shape = RoundedCornerShape(50)
+            )
+            .border(
+                width = 1.dp,
+                brush = Brush.linearGradient(
+                    colors = listOf(
+                        Color.White.copy(alpha = 0.2f),
+                        Color.White.copy(alpha = 0.05f)
+                    )
+                ),
+                shape = RoundedCornerShape(50)
+            )
+            .padding(horizontal = 6.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+            tabs.forEachIndexed { index, tab ->
+                val isActive = currentTab.value == index
+                var isFocused by remember { mutableStateOf(false) }
+
+                Box(
+                    modifier = Modifier
+                        .height(48.dp)
+                        .graphicsLayer {
+                            scaleX = if (isFocused) 1.5f else 1.0f
+                            scaleY = if (isFocused) 1.5f else 1.0f
+                        }
+                        .background(
+                            color = if (isActive) Color.White.copy(alpha = 0.15f) else Color.Transparent,
+                            shape = RoundedCornerShape(50)
+                        )
+                        .border(
+                            width = if (isActive) 1.dp else 0.dp,
+                            color = if (isActive) Color(0xFF87CEEB).copy(alpha = 0.6f) else Color.Transparent,
+                            shape = RoundedCornerShape(50)
+                        )
+                        .focusable()
+                        .onFocusChanged { isFocused = it.isFocused }
+                        .navigationPillFocusEffect(isFocused, "glow")
+                        .clickable { currentTab.value = index; onTabSelected(index) }
+                        .padding(horizontal = 12.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(6.dp)
+                    ) {
+                        Icon(
+                            painter = painterResource(id = MEDIA_TAB_ICONS[tab] ?: R.drawable.ic_round_info_24),
+                            contentDescription = MEDIA_TAB_LABELS[tab] ?: tab,
+                            tint = if (isActive) Color(0xFF87CEEB) else Color.White.copy(alpha = 0.7f),
+                            modifier = Modifier.size(22.dp)
+                        )
+                        Text(
+                            text = MEDIA_TAB_LABELS[tab] ?: tab,
+                            color = if (isActive) Color.White else Color.White.copy(alpha = 0.6f),
+                            fontSize = 12.sp,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    }
+                }
+            }
+        }
     }
 }
