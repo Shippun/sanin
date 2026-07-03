@@ -281,7 +281,7 @@ class HomeFragment : Fragment() {
         }
         //List Images
         model.getListImages().observe(viewLifecycleOwner) {
-            if (it.isNotEmpty()) {
+            if (it != null && it.isNotEmpty()) {
                 binding.homeAnimeListImage.loadImage(it[0] ?: "https://bit.ly/31bsIHq")
                 binding.homeMangaListImage.loadImage(it[1] ?: "https://bit.ly/2ZGfcuG")
             }
@@ -394,7 +394,7 @@ class HomeFragment : Fragment() {
         )
 
         model.getAnimeContinue().observe(viewLifecycleOwner) { list ->
-            if (_binding != null && list.isNotEmpty() && PrefManager.getVal<Int>(PrefName.HomeBannerMode) == 2
+            if (_binding != null && list != null && list.isNotEmpty() && PrefManager.getVal<Int>(PrefName.HomeBannerMode) == 2
                 && navBannerCurrentMediaId == -1) {
                 updateNavigatingBanner(list[0])
             }
