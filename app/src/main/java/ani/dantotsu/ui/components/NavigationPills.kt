@@ -33,6 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -135,6 +136,10 @@ fun NavigationPill(
         modifier = Modifier
             .width(pillWidth)
             .fillMaxHeight()
+            .graphicsLayer {
+                scaleX = if (isFocused) 1.5f else 1.0f
+                scaleY = if (isFocused) 1.5f else 1.0f
+            }
             .background(
                 color = if (isActive) Color.White.copy(alpha = 0.15f) else Color.Transparent,
                 shape = RoundedCornerShape(50)

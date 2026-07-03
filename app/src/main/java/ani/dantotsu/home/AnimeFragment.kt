@@ -224,20 +224,11 @@ class AnimeFragment : Fragment() {
                         animePageAdapter.updateMostFav(MediaAdaptor(0, it, requireActivity()), it)
                     }
                 }
-                if (animePageAdapter.trendingViewPager != null) {
-                    animePageAdapter.updateHeight()
-                    model.getTrending().observe(viewLifecycleOwner) {
-                        if (it != null) {
-                            animePageAdapter.updateTrending(
-                                MediaAdaptor(
-                                    if (PrefManager.getVal(PrefName.SmallView)) 3 else 2,
-                                    it,
-                                    requireActivity(),
-                                    viewPager = animePageAdapter.trendingViewPager
-                                )
-                            )
-                            animePageAdapter.updateAvatar()
-                        }
+                animePageAdapter.updateHeight()
+                model.getTrending().observe(viewLifecycleOwner) {
+                    if (it != null) {
+                        animePageAdapter.updateTrending(it)
+                        animePageAdapter.updateAvatar()
                     }
                 }
                 binding.animePageScrollTop.translationY = -(navBarHeight).toFloat()
@@ -319,7 +310,7 @@ class AnimeFragment : Fragment() {
 
     override fun onResume() {
         if (!model.loaded) Refresh.activity[this.hashCode()]!!.postValue(true)
-        if (animePageAdapter.trendingViewPager != null) {
+        if (this::animePageAdapter.isInitialized && _binding != null) {
             binding.root.requestApplyInsets()
             binding.root.requestLayout()
         }

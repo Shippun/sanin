@@ -59,19 +59,19 @@ class AnilistHomeViewModel : ViewModel() {
         val rescueMode: Boolean = PrefManager.getVal(PrefName.RescueMode)
         if (rescueMode) {
             tryWithSuspend {
-                val res = MAL.jikan.getSeasonNow(limit = 10)
+                val res = MAL.jikan.getSeasonNow(limit = 15)
                 trendingBanner.postValue(ArrayList(res?.data?.map { Media(it, true) } ?: emptyList()))
             }
             return
         }
         val res = Anilist.query.searchAniManga(
             "ANIME",
-            perPage = 10,
-            sort = Anilist.sortBy[2],
+            perPage = 15,
+            sort = Anilist.sortBy[0],
             hd = true,
             adultOnly = PrefManager.getVal(PrefName.AdultOnly)
         )
-        trendingBanner.postValue(res?.results?.let { ArrayList(it.take(10)) })
+        trendingBanner.postValue(res?.results?.let { ArrayList(it.take(15)) })
     }
 
     private val animeContinue: MutableLiveData<ArrayList<Media>> =

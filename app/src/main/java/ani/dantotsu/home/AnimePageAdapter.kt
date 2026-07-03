@@ -1,8 +1,6 @@
 package ani.dantotsu.home
 
 import android.content.Intent
-import android.os.Handler
-import android.os.Looper
 import android.view.HapticFeedbackConstants
 import android.view.LayoutInflater
 import android.view.View
@@ -14,10 +12,12 @@ import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.core.view.updatePadding
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.LinearSnapHelper
+import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
-import androidx.viewpager2.widget.ViewPager2
-import ani.dantotsu.MediaPageTransformer
+import ani.dantotsu.home.BannerCarouselAdapter
 import ani.dantotsu.R
 import ani.dantotsu.connections.anilist.Anilist
 import ani.dantotsu.connections.mal.MAL
@@ -44,14 +44,14 @@ import ani.dantotsu.settings.saving.PrefName
 import ani.dantotsu.statusBarHeight
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.textfield.TextInputLayout
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class AnimePageAdapter : RecyclerView.Adapter<AnimePageAdapter.AnimePageViewHolder>() {
     val ready = MutableLiveData(false)
     lateinit var binding: ItemAnimePageBinding
     private lateinit var trendingBinding: LayoutTrendingBinding
-    private var trendHandler: Handler? = null
-    private lateinit var trendRun: Runnable
-    var trendingViewPager: ViewPager2? = null
+    var bannerAdapter: BannerCarouselAdapter? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AnimePageViewHolder {
         val binding =
@@ -62,7 +62,7 @@ class AnimePageAdapter : RecyclerView.Adapter<AnimePageAdapter.AnimePageViewHold
     override fun onBindViewHolder(holder: AnimePageViewHolder, position: Int) {
         binding = holder.binding
         trendingBinding = LayoutTrendingBinding.bind(binding.root)
-        trendingViewPager = trendingBinding.trendingViewPager
+        trendingBinding.trendingViewPager.overScrollMode = RecyclerView.OVER_SCROLL_NEVER
 
         val textInputLayout = holder.itemView.findViewById<TextInputLayout>(R.id.searchBar)
         val currentColor = textInputLayout.boxBackgroundColor
@@ -182,34 +182,28 @@ class AnimePageAdapter : RecyclerView.Adapter<AnimePageAdapter.AnimePageViewHold
     override fun getItemCount(): Int = 1
 
     fun updateHeight() {
-        trendingViewPager!!.updateLayoutParams { height += statusBarHeight }
+        trendingBinding.trendingViewPager.updateLayoutParams { height += statusBarHeight }
     }
 
-    fun updateTrending(adaptor: MediaAdaptor) {
+    fun updateTrending(media: ArrayList<Media>) {
         trendingBinding.trendingProgressBar.visibility = View.GONE
-        trendingBinding.trendingViewPager.adapter = adaptor
-        trendingBinding.trendingViewPager.offscreenPageLimit = 3
-        trendingBinding.trendingViewPager.getChildAt(0).overScrollMode =
-            RecyclerView.OVER_SCROLL_NEVER
-        trendingBinding.trendingViewPager.setPageTransformer(MediaPageTransformer())
-        trendHandler = Handler(Looper.getMainLooper())
-        trendRun = Runnable {
-            trendingBinding.trendingViewPager.currentItem += 1
+        val rv = trendingBinding.trendingViewPager
+        rv.layoutManager = LinearLayoutManager(rv.context, LinearLayoutManager.HORIZONTAL, false)
+        val snapHelper = PagerSnapHelper()
+        snapHelper.attachToRecyclerView(rv)
+        rv.overScrollMode = RecyclerView.OVER_SCROLL_NEVER
+        bannerAdapter = BannerCarouselAdapter(media) { item ->
+            val context = binding.root.context
+            ContextCompat.startActivity(
+                context,
+                Intent(context, ani.dantotsu.media.MediaDetailsActivity::class.java)
+                    .putExtra("media", item)
+                    .putExtra("anime", true),
+                null
+            )
         }
-        trendingBinding.trendingViewPager.registerOnPageChangeCallback(
-            object : ViewPager2.OnPageChangeCallback() {
-                override fun onPageSelected(position: Int) {
-                    super.onPageSelected(position)
-                    trendHandler?.removeCallbacks(trendRun)
-                    if (PrefManager.getVal(PrefName.TrendingScroller)) {
-                        trendHandler!!.postDelayed(trendRun, 4000)
-                    }
-                }
-            }
-        )
-
-        trendingBinding.trendingViewPager.layoutAnimation =
-            LayoutAnimationController(setSlideIn(), 0.25f)
+        rv.adapter = bannerAdapter
+        rv.layoutAnimation = LayoutAnimationController(setSlideIn(), 0.25f)
         trendingBinding.titleContainer.startAnimation(setSlideUp())
         binding.animeListContainer.layoutAnimation =
             LayoutAnimationController(setSlideIn(), 0.25f)
