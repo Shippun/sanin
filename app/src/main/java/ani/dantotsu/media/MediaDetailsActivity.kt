@@ -161,7 +161,8 @@ class MediaDetailsActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedLi
         binding.mediaClose.setOnClickListener {
             onBackPressedDispatcher.onBackPressed()
         }
-        FocusEffectUtil.applyFocusListener(binding.mediaClose, binding.mediaNavPills)
+        FocusEffectUtil.applyFocusListener(binding.mediaClose)
+        binding.mediaNavPills?.let { FocusEffectUtil.applyFocusListener(it) }
 
         val bannerAnimations: Boolean = PrefManager.getVal(PrefName.BannerAnimations)
         if (bannerAnimations) {
@@ -440,11 +441,11 @@ class MediaDetailsActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedLi
             selected = 1
         }
 
-        binding.mediaNavPills.visibility = View.VISIBLE
-        binding.mediaNavPills.setViewCompositionStrategy(
+        binding.mediaNavPills?.visibility = View.VISIBLE
+        binding.mediaNavPills?.setViewCompositionStrategy(
             androidx.compose.ui.platform.ViewCompositionStrategy.DisposeOnDetachedFromWindow
         )
-        binding.mediaNavPills.setContent {
+        binding.mediaNavPills?.setContent {
             MediaNavPills(
                 selectedTab = selected,
                 hasComments = hasComments,
@@ -494,7 +495,7 @@ class MediaDetailsActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedLi
         if (event.action == KeyEvent.ACTION_DOWN) {
             when (event.keyCode) {
                 KeyEvent.KEYCODE_DPAD_DOWN -> {
-                    if (binding.mediaNavPills.isFocused) {
+                    if (binding.mediaNavPills?.isFocused == true) {
                         val focused = currentFocus
                         if (focused?.id == R.id.mediaNavPills) {
                             binding.mediaViewPager.requestFocus()
@@ -504,7 +505,7 @@ class MediaDetailsActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedLi
                 }
                 KeyEvent.KEYCODE_DPAD_UP -> {
                     if (binding.mediaViewPager.isFocused || binding.commentMessageContainer.isFocused) {
-                        binding.mediaNavPills.requestFocus()
+                        binding.mediaNavPills?.requestFocus()
                         return true
                     }
                 }

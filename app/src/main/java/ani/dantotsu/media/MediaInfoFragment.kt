@@ -129,11 +129,9 @@ class MediaInfoFragment : Fragment() {
         binding.mediaInfoProgressBar.isGone = loaded
         binding.mediaInfoContainer.isVisible = loaded
         val activity = requireActivity() as MediaDetailsActivity
-        val baselineAnchor = activity.binding.mediaBottomBarContainer ?: activity.binding.commentMessageContainer
+        val baselineAnchor = activity.binding.commentMessageContainer
         baselineAnchor.let {
-            // If it's the unified container, it already has navBarHeight padding, so don't include it again.
-            val includeSystemPaddings = it != activity.binding.mediaBottomBarContainer
-            binding.mediaInfoScroll.setBaseline(it, includeSystemNavBar = includeSystemPaddings)
+            binding.mediaInfoScroll.setBaseline(it, includeSystemNavBar = true)
             binding.mediaInfoScroll.clipToPadding = false
         }
 
