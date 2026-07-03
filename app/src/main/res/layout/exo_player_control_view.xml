@@ -144,7 +144,7 @@
                         android:layout_height="48dp"
                         android:backgroundTint="#00FFFFFF"
                         android:src="@drawable/ic_round_music_note_24"
-                        android:visibility="gone"
+                        android:visibility="visible"
                         app:tint="#fff"
                         tools:ignore="ContentDescription,SpeakableTextPresentCheck" />
 

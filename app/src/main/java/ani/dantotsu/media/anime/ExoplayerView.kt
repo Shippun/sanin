@@ -3135,7 +3135,7 @@ class ExoplayerView :
         }
         audioTrackGroups.clear()
         audioTrackGroups.addAll(audioTracks)
-        exoDubSub.isVisible = audioTracks.size > 1
+        exoDubSub.isVisible = true
         if (audioTracks.size > 1) {
             val currentParams = exoPlayer.trackSelectionParameters
             val currentOverride = currentParams.overrides.values.firstOrNull()

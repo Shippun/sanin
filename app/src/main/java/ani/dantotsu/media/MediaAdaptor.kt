@@ -46,6 +46,17 @@ class MediaAdaptor(
     private val fav: Boolean = false,
     private val isOtherUser: Boolean = false,
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+    init {
+        if (type == 0) {
+            type = when (PrefManager.getVal<Int>(PrefName.CardStyle)) {
+                0, 4, 5, 6 -> 0
+                1 -> 0
+                2 -> 1
+                3 -> 2
+                else -> 0
+            }
+        }
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (type) {
