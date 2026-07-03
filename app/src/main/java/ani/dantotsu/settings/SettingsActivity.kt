@@ -23,9 +23,6 @@ import ani.dantotsu.databinding.ActivitySettingsBinding
 import ani.dantotsu.initActivity
 import ani.dantotsu.navBarHeight
 import ani.dantotsu.openLinkInBrowser
-import ani.dantotsu.others.AppUpdater
-import ani.dantotsu.others.CustomBottomDialog
-import ani.dantotsu.pop
 import ani.dantotsu.setSafeOnClickListener
 import ani.dantotsu.settings.saving.PrefManager
 import ani.dantotsu.settings.saving.PrefName
@@ -34,10 +31,7 @@ import ani.dantotsu.startMainActivity
 import ani.dantotsu.statusBarHeight
 import ani.dantotsu.themes.ThemeManager
 import ani.dantotsu.toast
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlin.random.Random
 
 
 class SettingsActivity : AppCompatActivity() {
@@ -162,16 +156,6 @@ class SettingsActivity : AppCompatActivity() {
                             startActivity(Intent(context, SettingsNotificationActivity::class.java))
                         },
                         isActivity = true
-                    ),
-                    Settings(
-                        type = 1,
-                        name = getString(R.string.about),
-                        desc = getString(R.string.about_desc),
-                        icon = R.drawable.ic_round_info_24,
-                        onClick = {
-                            startActivity(Intent(context, SettingsAboutActivity::class.java))
-                        },
-                        isActivity = true
                     )
                 )
             )
@@ -179,25 +163,6 @@ class SettingsActivity : AppCompatActivity() {
             settingsRecyclerView.apply {
                 layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
                 setHasFixedSize(true)
-            }
-
-            if (!BuildConfig.FLAVOR.contains("fdroid")) {
-                settingsLogo.setOnLongClickListener {
-                    lifecycleScope.launch(Dispatchers.IO) {
-                        AppUpdater.check(this@SettingsActivity, true)
-                    }
-                    true
-                }
-            }
-
-            settingBuyMeCoffee.setOnClickListener {
-                lifecycleScope.launch {
-                    it.pop()
-                }
-                openLinkInBrowser(getString(R.string.coffee))
-            }
-            lifecycleScope.launch {
-                settingBuyMeCoffee.pop()
             }
 
             loginDiscord.setOnClickListener {
@@ -214,7 +179,7 @@ class SettingsActivity : AppCompatActivity() {
             (settingsLogo.drawable as? Animatable)?.start()
             val array = resources.getStringArray(R.array.tips)
 
-            settingsLogo.setSafeOnClickListener {
+                        settingsLogo.setSafeOnClickListener {
                 cursedCounter++
                 (settingsLogo.drawable as? Animatable)?.start()
                 if (cursedCounter % 16 == 0) {
@@ -231,30 +196,6 @@ class SettingsActivity : AppCompatActivity() {
 
             }
 
-            lifecycleScope.launch(Dispatchers.IO) {
-                delay(2000)
-                runOnUiThread {
-                    if (Random.nextInt(0, 100) > 69) {
-                        CustomBottomDialog.newInstance().apply {
-                            title = this@SettingsActivity.getString(R.string.enjoying_app)
-                            addView(TextView(this@SettingsActivity).apply {
-                                text = context.getString(R.string.consider_donating)
-                            })
-
-                            setNegativeButton(this@SettingsActivity.getString(R.string.no_moners)) {
-                                snackString(R.string.you_be_rich)
-                                dismiss()
-                            }
-
-                            setPositiveButton(this@SettingsActivity.getString(R.string.donate)) {
-                                settingBuyMeCoffee.performClick()
-                                dismiss()
-                            }
-                            show(supportFragmentManager, "dialog")
-                        }
-                    }
-                }
-            }
         }
     }
 

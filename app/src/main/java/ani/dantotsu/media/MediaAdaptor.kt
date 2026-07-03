@@ -25,6 +25,7 @@ import ani.dantotsu.blurImage
 import ani.dantotsu.connections.LogoApi
 import ani.dantotsu.currActivity
 import ani.dantotsu.databinding.ItemMediaCompactBinding
+import ani.dantotsu.databinding.ItemMediaCompactLandBinding
 import ani.dantotsu.databinding.ItemMediaLargeBinding
 import ani.dantotsu.databinding.ItemMediaPageBinding
 import ani.dantotsu.databinding.ItemMediaPageSmallBinding
@@ -47,19 +48,31 @@ class MediaAdaptor(
     private val fav: Boolean = false,
     private val isOtherUser: Boolean = false,
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+    private var rawCardStyle = 0
+    private var isLandscape = false
+
     init {
         if (type == 0) {
-            type = when (PrefManager.getVal<Int>(PrefName.CardStyle)) {
-                0, 4, 5, 6 -> 0
-                1 -> 0
-                2 -> 1
-                3 -> 2
+            rawCardStyle = PrefManager.getVal<Int>(PrefName.CardStyle)
+            isLandscape = PrefManager.getVal<Int>(PrefName.CardOrientation) == 1
+            type = when (rawCardStyle) {
+                0 -> 0
+                1 -> 1
+                2 -> 2
+                3 -> 3
                 else -> 0
             }
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        if (type == 0 && isLandscape) {
+            val view = LayoutInflater.from(parent.context)
+                .inflate(R.layout.item_media_compact_land, parent, false)
+            return MediaLandscapeViewHolder(
+                ani.dantotsu.databinding.ItemMediaCompactLandBinding.bind(view)
+            )
+        }
         return when (type) {
             0 -> MediaViewHolder(
                 ItemMediaCompactBinding.inflate(
@@ -103,8 +116,12 @@ class MediaAdaptor(
     @SuppressLint("ClickableViewAccessibility")
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val cardRoundness = PrefManager.getVal<Int>(PrefName.CardRoundness).toFloat()
-        val cardOrientation = PrefManager.getVal<Int>(PrefName.CardOrientation)
         val cardImageType = PrefManager.getVal<Int>(PrefName.CardImageType)
+
+        if (holder is MediaLandscapeViewHolder) {
+            bindLandscape(holder, position, cardRoundness, cardImageType)
+            return
+        }
         when (type) {
             0 -> {
                 val b = (holder as MediaViewHolder).binding
@@ -113,18 +130,26 @@ class MediaAdaptor(
                 if (media != null) {
                     val imageUrl = if (cardImageType == 1 && media.banner != null) media.banner else media.cover
                     b.itemCompactImage.loadImage(imageUrl)
-                    if (cardOrientation == 0) {
-                        b.itemCompactImage.updateLayoutParams {
-                            width = 102
-                            height = 154
-                        }
-                    } else {
-                        b.itemCompactImage.updateLayoutParams {
-                            width = 154
-                            height = 102
-                        }
+                    val cardSize = PrefManager.getVal<Float>(PrefName.CardSize)
+                    val finalW = (102 * cardSize).toInt()
+                    val finalH = (154 * cardSize).toInt()
+                    b.itemCompactImage.updateLayoutParams {
+                        width = finalW
+                        height = finalH
                     }
-                    b.itemCompactCard.radius = cardRoundness
+                    val styleRadius = when (rawCardStyle) {
+                        4 -> 24f
+                        6 -> 4f
+                        else -> cardRoundness
+                    }
+                    b.itemCompactCard.radius = styleRadius
+                    if (rawCardStyle == 6) {
+                        b.itemCompactImageOverlay.visibility = View.GONE
+                        b.itemCompactClearlogo.visibility = View.GONE
+                        b.itemCompactOverlayTitle.visibility = View.GONE
+                    } else {
+                        b.itemCompactImageOverlay.visibility = View.VISIBLE
+                    }
                     b.itemCompactOngoing.isVisible =
                         media.status == currActivity()!!.getString(R.string.status_releasing)
                     b.itemCompactScore.text =
@@ -399,6 +424,93 @@ class MediaAdaptor(
             }
             itemView.setOnTouchListener { _, _ -> true }
             binding.itemCompactImage.setOnLongClickListener { longClicked(bindingAdapterPosition) }
+        }
+    }
+
+    inner class MediaLandscapeViewHolder(val binding: ItemMediaCompactLandBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+        init {
+            if (matchParent) itemView.updateLayoutParams { width = -1 }
+            itemView.setSafeOnClickListener {
+                clicked(
+                    bindingAdapterPosition,
+                    binding.itemCompactImage,
+                    resizeBitmap(getBitmapFromImageView(binding.itemCompactImage), 100)
+                )
+            }
+            itemView.setOnLongClickListener { longClicked(bindingAdapterPosition) }
+            FocusEffectUtil.applyFocusListener(itemView)
+        }
+    }
+
+    private fun bindLandscape(
+        holder: MediaLandscapeViewHolder,
+        position: Int,
+        cardRoundness: Float,
+        cardImageType: Int
+    ) {
+        val b = holder.binding
+        setAnimation(activity, b.root)
+        val media = mediaList?.getOrNull(position)
+        if (media != null) {
+            b.itemCompactCard.radius = cardRoundness
+            b.itemCompactOngoing.isVisible =
+                media.status == currActivity()!!.getString(R.string.status_releasing)
+            b.itemCompactScore.text =
+                ((if (media.userScore == 0) (media.meanScore ?: 0) else media.userScore) / 10.0).toString()
+            b.itemCompactScoreBG.background = ContextCompat.getDrawable(
+                b.root.context,
+                (if (media.userScore != 0) R.drawable.item_user_score else R.drawable.item_score)
+            )
+
+            when (cardImageType) {
+                0 -> { // Banner mode
+                    b.itemCompactImage.scaleType = ImageView.ScaleType.CENTER_CROP
+                    b.itemCompactImage.loadImage(media.banner ?: media.cover)
+                    b.itemCompactBanner.visibility = View.GONE
+                    b.itemCompactOverlay.visibility = View.VISIBLE
+                    b.itemCompactCoverLeft.visibility = View.GONE
+                    b.itemCompactRightContent.visibility = View.VISIBLE
+                    b.itemCompactScoreBG.visibility = View.VISIBLE
+                }
+                1 -> { // Cover mode - uncropped (fitCenter)
+                    b.itemCompactImage.scaleType = ImageView.ScaleType.FIT_CENTER
+                    b.itemCompactImage.loadImage(media.cover)
+                    b.itemCompactBanner.visibility = View.GONE
+                    b.itemCompactOverlay.visibility = View.GONE
+                    b.itemCompactCoverLeft.visibility = View.GONE
+                    b.itemCompactRightContent.visibility = View.GONE
+                    b.itemCompactScoreBG.visibility = View.VISIBLE
+                }
+                2 -> { // Both mode
+                    b.itemCompactBanner.visibility = View.VISIBLE
+                    b.itemCompactBanner.loadImage(media.banner ?: media.cover)
+                    blurImage(b.itemCompactBanner, media.banner ?: media.cover)
+                    b.itemCompactOverlay.visibility = View.VISIBLE
+                    b.itemCompactCoverLeft.visibility = View.VISIBLE
+                    b.itemCompactCoverLeft.loadImage(media.cover)
+                    b.itemCompactRightContent.visibility = View.VISIBLE
+                    b.itemCompactScoreBG.visibility = View.GONE
+                    b.itemCompactImage.visibility = View.GONE
+                }
+            }
+
+            // Clearlogo or title for modes that show right content
+            if (cardImageType != 1) {
+                logoJobs[position]?.cancel()
+                logoJobs[position] = kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.Main).launch {
+                    val logoUrl = LogoApi.getLogoUrl(media.id)
+                    if (!logoUrl.isNullOrBlank()) {
+                        b.itemCompactClearlogo.visibility = View.VISIBLE
+                        b.itemCompactClearlogo.loadImage(logoUrl)
+                        b.itemCompactOverlayTitle.visibility = View.GONE
+                    } else {
+                        b.itemCompactClearlogo.visibility = View.GONE
+                        b.itemCompactOverlayTitle.visibility = View.VISIBLE
+                        b.itemCompactOverlayTitle.text = media.userPreferredName
+                    }
+                }
+            }
         }
     }
 
