@@ -3,7 +3,7 @@ package ani.dantotsu.connections.anilist
 import ani.dantotsu.media.Media
 
 data class AniMangaSearchResults(
-    val type: String?,
+    val type: String? = null,
     val perPage: Int? = null,
     val search: String? = null,
     val sort: String? = null,
@@ -20,9 +20,9 @@ data class AniMangaSearchResults(
     val startYear: Int? = null,
     val seasonYear: Int? = null,
     val season: String? = null,
-    val results: List<Media>,
-    val page: Int,
-    val hasNextPage: Boolean,
+    val results: List<Media> = emptyList(),
+    val page: Int = 0,
+    val hasNextPage: Boolean = false,
 )
 
 data class CharacterSearchResults(
