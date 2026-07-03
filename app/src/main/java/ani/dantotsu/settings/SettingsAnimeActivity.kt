@@ -133,7 +133,7 @@ class SettingsAnimeActivity : AppCompatActivity() {
                                 val values = arrayOf("2s", "3s", "4s", "5s", "6s", "8s", "10s")
                                 singleChoiceItems(
                                     values,
-                                    PrefManager.getVal(PrefName.AutoHideTimeout) / 2 - 1
+                                    PrefManager.getVal<Int>(PrefName.AutoHideTimeout) / 2 - 1
                                 ) { index ->
                                     PrefManager.setVal(PrefName.AutoHideTimeout, (index + 1) * 2)
                                 }

@@ -29,9 +29,7 @@ class SettingsHomeActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         binding.apply {
-            settingsToolbar.title = getString(R.string.home_settings)
-            settingsBack.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
-            settingsContainer.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+            settingsAnimeLayout.updateLayoutParams<ViewGroup.MarginLayoutParams> {
                 topMargin = statusBarHeight
                 bottomMargin = navBarHeight
             }

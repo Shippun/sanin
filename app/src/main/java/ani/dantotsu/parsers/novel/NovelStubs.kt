@@ -1,5 +1,9 @@
 package ani.dantotsu.parsers.novel
 
+import android.graphics.drawable.Drawable
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+
 open class NovelExtension {
     data class Available(
         val name: String = "",
@@ -10,6 +14,13 @@ open class NovelExtension {
         val sources: List<AvailableNovelSources> = emptyList(),
         val iconUrl: String = "",
     )
+
+    data class Installed(
+        val name: String = "",
+        val pkgName: String = "",
+        val sources: List<AvailableNovelSources> = emptyList(),
+        val icon: Drawable? = null,
+    )
 }
 
 data class AvailableNovelSources(
@@ -19,4 +30,7 @@ data class AvailableNovelSources(
     val baseUrl: String = "",
 )
 
-open class NovelExtensionManager
+open class NovelExtensionManager {
+    val installedExtensionsFlow: StateFlow<List<NovelExtension.Installed>> =
+        MutableStateFlow(emptyList())
+}

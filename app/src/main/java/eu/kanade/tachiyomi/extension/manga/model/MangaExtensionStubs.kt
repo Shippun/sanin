@@ -1,6 +1,8 @@
 package eu.kanade.tachiyomi.extension.manga.model
 
 import android.graphics.drawable.Drawable
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 
 open class MangaExtension {
     data class Available(
@@ -38,4 +40,7 @@ data class AvailableMangaSources(
     val baseUrl: String = "",
 )
 
-open class MangaExtensionManager
+open class MangaExtensionManager {
+    val installedExtensionsFlow: StateFlow<List<MangaExtension.Installed>> =
+        MutableStateFlow(emptyList())
+}
