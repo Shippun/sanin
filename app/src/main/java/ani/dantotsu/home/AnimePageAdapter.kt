@@ -12,7 +12,7 @@ import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.core.view.updatePadding
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.CoroutineScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSnapHelper
 import androidx.recyclerview.widget.PagerSnapHelper
@@ -44,6 +44,7 @@ import ani.dantotsu.settings.saving.PrefName
 import ani.dantotsu.statusBarHeight
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.textfield.TextInputLayout
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -185,14 +186,14 @@ class AnimePageAdapter : RecyclerView.Adapter<AnimePageAdapter.AnimePageViewHold
         trendingBinding.trendingViewPager.updateLayoutParams { height += statusBarHeight }
     }
 
-    fun updateTrending(media: ArrayList<Media>) {
+    fun updateTrending(media: List<Media>) {
         trendingBinding.trendingProgressBar.visibility = View.GONE
         val rv = trendingBinding.trendingViewPager
         rv.layoutManager = LinearLayoutManager(rv.context, LinearLayoutManager.HORIZONTAL, false)
         val snapHelper = PagerSnapHelper()
         snapHelper.attachToRecyclerView(rv)
         rv.overScrollMode = RecyclerView.OVER_SCROLL_NEVER
-        bannerAdapter = BannerCarouselAdapter(media) { item ->
+        bannerAdapter = BannerCarouselAdapter(media, CoroutineScope(Dispatchers.Main)) { item ->
             val context = binding.root.context
             ContextCompat.startActivity(
                 context,
