@@ -47,6 +47,7 @@ import ani.dantotsu.px
 import ani.dantotsu.setSafeOnClickListener
 import ani.dantotsu.settings.saving.PrefManager
 import ani.dantotsu.settings.saving.PrefName
+import ani.dantotsu.util.FocusEffectUtil
 import ani.dantotsu.util.Logger
 import com.xwray.groupie.GroupieAdapter
 import io.noties.markwon.Markwon
