@@ -1,10 +1,13 @@
 package ani.dantotsu.home
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -18,6 +21,8 @@ import ani.dantotsu.connections.anilist.Anilist
 import ani.dantotsu.databinding.FragmentDiscoverBinding
 import ani.dantotsu.media.Media
 import ani.dantotsu.media.MediaAdaptor
+import ani.dantotsu.media.SearchActivity
+import ani.dantotsu.parsers.SearchBottomSheet
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -143,6 +148,7 @@ class DiscoveryFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setupSearchBar()
         setupGenreChips()
         setupSeasonChips()
         setupResultsGrid()
@@ -150,6 +156,25 @@ class DiscoveryFragment : Fragment() {
         binding.genreChipGroup.isFocusable = true
         binding.seasonChipGroup.isFocusable = true
         discoverViewModel.fetch()
+    }
+
+    private fun setupSearchBar() {
+        binding.discoverSearchBar.hint = getString(R.string.search)
+        binding.discoverSearchText.setOnClickListener {
+            val ctx = requireContext()
+            if (Anilist.token != null) {
+                ContextCompat.startActivity(
+                    ctx,
+                    Intent(ctx, SearchActivity::class.java).putExtra("type", "ANIME"),
+                    null
+                )
+            } else {
+                SearchBottomSheet.newInstance().show(
+                    (requireActivity() as AppCompatActivity).supportFragmentManager,
+                    "search"
+                )
+            }
+        }
     }
 
     private fun setupGenreChips() {

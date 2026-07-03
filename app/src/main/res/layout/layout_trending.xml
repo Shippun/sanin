@@ -21,38 +21,10 @@
             android:baselineAligned="false"
             android:orientation="horizontal">
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/searchBar"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+            <View
                 android:layout_width="0dp"
-                android:layout_height="56dp"
-                android:layout_marginEnd="8dp"
-                android:layout_weight="1"
-                android:textColorHint="@color/bg_opp"
-                android:transitionName="@string/search"
-                app:boxBackgroundColor="?attr/colorPrimaryContainer"
-                app:boxCornerRadiusBottomEnd="28dp"
-                app:boxCornerRadiusBottomStart="28dp"
-                app:boxCornerRadiusTopEnd="28dp"
-                app:boxCornerRadiusTopStart="28dp"
-                app:boxStrokeColor="@color/text_input_layout_stroke_color"
-                app:endIconDrawable="@drawable/ic_round_search_24"
-                app:endIconTint="@color/bg_opp"
-                app:hintAnimationEnabled="true">
-
-                <AutoCompleteTextView
-                    android:id="@+id/searchBarText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:focusable="false"
-                    android:fontFamily="@font/poppins_bold"
-                    android:inputType="none"
-                    android:padding="8dp"
-                    android:textColor="?android:attr/textColorSecondary"
-                    android:textSize="14sp"
-                    tools:ignore="LabelFor,TextContrastCheck" />
-            </com.google.android.material.textfield.TextInputLayout>
+                android:layout_height="0dp"
+                android:layout_weight="1" />
 
             <FrameLayout
                 android:layout_width="wrap_content"
@@ -70,8 +42,7 @@
                         android:id="@+id/userAvatar"
                         android:layout_width="52dp"
                         android:layout_height="52dp"
-                        android:scaleType="center"
-                        app:srcCompat="@drawable/ic_round_settings_24"
+                        android:scaleType="centerCrop"
                         tools:ignore="ContentDescription,ImageContrastCheck" />
 
                 </com.google.android.material.card.MaterialCardView>

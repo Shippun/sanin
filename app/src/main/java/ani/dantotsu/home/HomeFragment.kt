@@ -286,6 +286,67 @@ class HomeFragment : Fragment() {
                 binding.homeMangaListImage.loadImage(it[1] ?: "https://bit.ly/2ZGfcuG")
             }
         }
+        
+        fun initContinueWatchingRecyclerView(
+            mode: LiveData<ArrayList<Media>>,
+            container: View,
+            recyclerView: RecyclerView,
+            progress: View,
+            empty: View,
+            title: View,
+            more: View,
+            string: String
+        ) {
+            container.visibility = View.VISIBLE
+            progress.visibility = View.VISIBLE
+            recyclerView.visibility = View.GONE
+            empty.visibility = View.GONE
+            title.visibility = View.INVISIBLE
+            more.visibility = View.INVISIBLE
+
+            mode.observe(viewLifecycleOwner) {
+                recyclerView.visibility = View.GONE
+                empty.visibility = View.GONE
+                if (it != null) {
+                    if (it.isNotEmpty()) {
+                        rvDataMap[recyclerView] = it
+                        recyclerView.adapter = ContinueWatchingLandscapeAdapter(it) { media ->
+                            ContextCompat.startActivity(
+                                requireContext(),
+                                Intent(requireContext(), ani.dantotsu.media.MediaDetailsActivity::class.java)
+                                    .putExtra("media", media)
+                                    .putExtra("anime", true),
+                                null
+                            )
+                        }
+                        recyclerView.layoutManager = LinearLayoutManager(
+                            requireContext(),
+                            LinearLayoutManager.HORIZONTAL,
+                            false
+                        )
+                        more.setOnClickListener { i ->
+                            MediaListViewActivity.passedMedia = it
+                            ContextCompat.startActivity(
+                                i.context, Intent(i.context, MediaListViewActivity::class.java)
+                                    .putExtra("title", string),
+                                null
+                            )
+                        }
+                        recyclerView.visibility = View.VISIBLE
+                        recyclerView.layoutAnimation =
+                            LayoutAnimationController(setSlideIn(), 0.25f)
+
+                    } else {
+                        empty.visibility = View.VISIBLE
+                    }
+                    more.visibility = View.VISIBLE
+                    title.visibility = View.VISIBLE
+                    more.startAnimation(setSlideUp())
+                    title.startAnimation(setSlideUp())
+                    progress.visibility = View.GONE
+                }
+            }
+        }
 
         //Function For Recycler Views
         fun initRecyclerView(
@@ -343,7 +404,7 @@ class HomeFragment : Fragment() {
         }
 
         // Recycler Views
-        initRecyclerView(
+        initContinueWatchingRecyclerView(
             model.getAnimeContinue(),
             binding.homeContinueWatchingContainer,
             binding.homeWatchingRecyclerView,

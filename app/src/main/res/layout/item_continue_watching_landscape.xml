@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:clipToPadding="false">
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/cwCard"
+        android:layout_width="240dp"
+        android:layout_height="135dp"
+        android:translationZ="4dp"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="2dp">
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/cwImage"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            tools:ignore="ContentDescription"
+            tools:srcCompat="@tools:sample/backgrounds/scenic" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/linear_gradient_bg" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:orientation="vertical"
+            android:padding="10dp">
+
+            <TextView
+                android:id="@+id/cwTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:fontFamily="@font/poppins_bold"
+                android:maxLines="1"
+                android:textColor="@color/bg_white"
+                android:textSize="13sp"
+                tools:text="Attack on Titan" />
+
+            <TextView
+                android:id="@+id/cwSubtitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:alpha="0.8"
+                android:ellipsize="end"
+                android:fontFamily="@font/poppins"
+                android:maxLines="1"
+                android:textColor="@color/bg_white"
+                android:textSize="11sp"
+                tools:text="S1 E5 · 22 min left" />
+
+            <ProgressBar
+                android:id="@+id/cwProgress"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="3dp"
+                android:layout_marginTop="4dp"
+                android:progressTint="?attr/colorPrimary"
+                android:progressBackgroundTint="#40FFFFFF" />
+
+        </LinearLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cwOngoing"
+        android:layout_width="12dp"
+        android:layout_height="12dp"
+        android:layout_gravity="bottom|start"
+        android:layout_marginStart="6dp"
+        android:layout_marginBottom="6dp"
+        android:visibility="gone"
+        app:cardCornerRadius="6dp"
+        app:cardElevation="2dp">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#4CAF50" />
+    </androidx.cardview.widget.CardView>
+
+</FrameLayout>

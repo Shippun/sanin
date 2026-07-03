@@ -167,38 +167,6 @@
 
                         <FrameLayout
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginEnd="10dp">
-
-                            <com.google.android.material.card.MaterialCardView
-                                android:id="@+id/searchImageContainer"
-                                android:layout_width="52dp"
-                                android:layout_height="52dp"
-                                android:layout_marginTop="4dp"
-                                android:backgroundTint="@color/nav_bg_inv"
-                                android:scaleX="0.96"
-                                android:scaleY="0.96"
-                                android:focusable="true"
-                                android:nextFocusDown="@+id/homeAnimeList"
-                                app:cardCornerRadius="26dp">
-
-                                <com.google.android.material.imageview.ShapeableImageView
-                                    android:id="@+id/searchImage"
-                                    android:layout_width="52dp"
-                                    android:layout_height="52dp"
-                                    android:scaleType="center"
-                                    android:scaleX="1.2"
-                                    android:scaleY="1.2"
-                                    android:tint="@color/bg_white"
-                                    app:srcCompat="@drawable/ic_round_search_24"
-                                    tools:ignore="ContentDescription,ImageContrastCheck" />
-
-                            </com.google.android.material.card.MaterialCardView>
-
-                        </FrameLayout>
-
-                        <FrameLayout
-                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content">
 
                             <com.google.android.material.card.MaterialCardView
@@ -215,8 +183,7 @@
                                     android:id="@+id/homeUserAvatar"
                                     android:layout_width="52dp"
                                     android:layout_height="52dp"
-                                    android:scaleType="center"
-                                    app:srcCompat="@drawable/ic_round_settings_24"
+                                    android:scaleType="centerCrop"
                                     tools:ignore="ContentDescription,ImageContrastCheck" />
 
                             </com.google.android.material.card.MaterialCardView>
@@ -658,7 +625,7 @@
                 <FrameLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:minHeight="250dp">
+                    android:minHeight="135dp">
 
                     <LinearLayout
                         android:id="@+id/homeWatchingEmpty"

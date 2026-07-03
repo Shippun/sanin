@@ -30,7 +30,6 @@ import ani.dantotsu.media.GenreActivity
 import ani.dantotsu.media.Media
 import ani.dantotsu.media.MediaAdaptor
 import ani.dantotsu.media.MediaListViewActivity
-import ani.dantotsu.media.SearchActivity
 import ani.dantotsu.openLinkInCustomTab
 import ani.dantotsu.profile.ProfileActivity
 import ani.dantotsu.px
@@ -42,7 +41,6 @@ import ani.dantotsu.settings.saving.PrefManager
 import ani.dantotsu.settings.saving.PrefName
 import ani.dantotsu.statusBarHeight
 import com.google.android.material.card.MaterialCardView
-import com.google.android.material.textfield.TextInputLayout
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -64,15 +62,9 @@ class AnimePageAdapter : RecyclerView.Adapter<AnimePageAdapter.AnimePageViewHold
         trendingBinding = LayoutTrendingBinding.bind(binding.root)
         trendingBinding.trendingViewPager.overScrollMode = RecyclerView.OVER_SCROLL_NEVER
 
-        val textInputLayout = holder.itemView.findViewById<TextInputLayout>(R.id.searchBar)
-        val currentColor = textInputLayout.boxBackgroundColor
-        val semiTransparentColor = (currentColor and 0x00FFFFFF) or 0xA8000000.toInt()
-        textInputLayout.boxBackgroundColor = semiTransparentColor
         val materialCardView =
             holder.itemView.findViewById<MaterialCardView>(R.id.userAvatarContainer)
-        materialCardView.setCardBackgroundColor(semiTransparentColor)
         val color = binding.root.context.getThemeColor(android.R.attr.windowBackground)
-        textInputLayout.boxBackgroundColor = (color and 0x00FFFFFF) or 0x28000000
         materialCardView.setCardBackgroundColor((color and 0x00FFFFFF) or 0x28000000)
 
         trendingBinding.titleContainer.updatePadding(top = statusBarHeight)
@@ -82,23 +74,6 @@ class AnimePageAdapter : RecyclerView.Adapter<AnimePageAdapter.AnimePageViewHold
         }
 
         updateAvatar()
-
-        trendingBinding.searchBar.hint = binding.root.context.getString(R.string.search)
-        trendingBinding.searchBarText.setOnClickListener {
-            val context = binding.root.context
-            if (Anilist.token != null) {
-                ContextCompat.startActivity(
-                    context,
-                    Intent(context, SearchActivity::class.java).putExtra("type", "ANIME"),
-                    null
-                )
-            } else {
-                SearchBottomSheet.newInstance().show(
-                    (context as AppCompatActivity).supportFragmentManager,
-                    "search"
-                )
-            }
-        }
 
         trendingBinding.userAvatar.setSafeOnClickListener {
             val dialogFragment =
@@ -123,10 +98,6 @@ class AnimePageAdapter : RecyclerView.Adapter<AnimePageAdapter.AnimePageViewHold
                 }
             }
             false
-        }
-
-        trendingBinding.searchBar.setEndIconOnClickListener {
-            trendingBinding.searchBar.performClick()
         }
 
         val isRescueMode: Boolean = PrefManager.getVal(PrefName.RescueMode)
