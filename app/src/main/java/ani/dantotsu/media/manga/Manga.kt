@@ -5,5 +5,5 @@ import java.io.Serializable
 
 data class Manga(
     val totalChapters: Int? = null,
-    val author: Author? = null,
+    var author: Author? = null,
 ) : Serializable
