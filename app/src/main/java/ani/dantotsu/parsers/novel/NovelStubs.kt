@@ -1,6 +1,7 @@
 package ani.dantotsu.parsers.novel
 
 import android.graphics.drawable.Drawable
+import eu.kanade.tachiyomi.extension.InstallStep
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
@@ -33,4 +34,6 @@ data class AvailableNovelSources(
 open class NovelExtensionManager {
     val installedExtensionsFlow: StateFlow<List<NovelExtension.Installed>> =
         MutableStateFlow(emptyList())
+
+    fun updateInstallStep(downloadId: Long, step: InstallStep) {}
 }
