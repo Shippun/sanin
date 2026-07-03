@@ -17,4 +17,7 @@ class CurrentNovelReaderSettings {
     var lineHeight: Float = 1.4f
     var margin: Float = 0.06f
     var maxInlineSize: Int = 60
+    var maxBlockSize: Int = 100
+    var useDarkTheme: Boolean = false
+    var useOledTheme: Boolean = false
 }
