@@ -29,11 +29,11 @@ open class MangaExtension {
     )
 }
 
-object AvailableMangaSources {
-    val id: Long = 0
-    val lang: String = ""
-    val name: String = ""
-    val baseUrl: String = ""
-}
+data class AvailableMangaSources(
+    val id: Long = 0,
+    val lang: String = "",
+    val name: String = "",
+    val baseUrl: String = "",
+)
 
 open class MangaExtensionManager
