@@ -36,4 +36,5 @@ open class NovelExtensionManager {
         MutableStateFlow(emptyList())
 
     fun updateInstallStep(downloadId: Long, step: InstallStep) {}
+    fun setInstalling(downloadId: Long) {}
 }

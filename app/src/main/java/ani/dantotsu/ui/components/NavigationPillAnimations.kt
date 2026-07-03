@@ -12,6 +12,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
 
 private val FocusSpringSpec = spring<Float>(dampingRatio = 0.7f, stiffness = Spring.StiffnessLow)
@@ -22,11 +23,11 @@ val IcyBlueBorder = Color(0xFF87CEEB).copy(alpha = 0.5f)
 
 @Composable
 fun Modifier.glowFocusEffect(isFocused: Boolean): Modifier {
-    val scale by animateFloatAsState(
+    val scale = animateFloatAsState(
         targetValue = if (isFocused) 1.05f else 1.0f,
         animationSpec = FocusSpringSpec,
         label = "glowScale"
-    )
+    ).value
     return this
         .graphicsLayer { scaleX = scale; scaleY = scale }
         .then(
@@ -37,57 +38,57 @@ fun Modifier.glowFocusEffect(isFocused: Boolean): Modifier {
 
 @Composable
 fun Modifier.scaleFocusEffect(isFocused: Boolean): Modifier {
-    val scale by animateFloatAsState(
+    val scale = animateFloatAsState(
         targetValue = if (isFocused) 1.08f else 1.0f,
         animationSpec = FocusSpringSpec,
         label = "scaleAnim"
-    )
+    ).value
     return this.graphicsLayer { scaleX = scale; scaleY = scale }
 }
 
 @Composable
 fun Modifier.pulseFocusEffect(isFocused: Boolean): Modifier {
-    var pulseScale by remember { mutableStateOf(1.0f) }
+    val pulseScale = remember { mutableStateOf(1.0f) }
     LaunchedEffect(isFocused) {
         if (isFocused) {
             while (true) {
-                pulseScale = 1.12f
+                pulseScale.value = 1.12f
                 delay(400)
-                pulseScale = 1.08f
+                pulseScale.value = 1.08f
                 delay(400)
             }
         } else {
-            pulseScale = 1.0f
+            pulseScale.value = 1.0f
         }
     }
-    val scale by animateFloatAsState(
-        targetValue = pulseScale,
+    val scale = animateFloatAsState(
+        targetValue = pulseScale.value,
         animationSpec = SpringSpec,
         label = "pulse"
-    )
+    ).value
     return this.graphicsLayer { scaleX = scale; scaleY = scale }
 }
 
 @Composable
 fun Modifier.breatheFocusEffect(isFocused: Boolean): Modifier {
-    var target by remember { mutableStateOf(1.0f) }
+    val target = remember { mutableStateOf(1.0f) }
     LaunchedEffect(isFocused) {
         if (isFocused) {
             while (true) {
-                target = 1.08f
+                target.value = 1.08f
                 delay(800)
-                target = 1.0f
+                target.value = 1.0f
                 delay(800)
             }
         } else {
-            target = 1.0f
+            target.value = 1.0f
         }
     }
-    val scale by animateFloatAsState(
-        targetValue = target,
+    val scale = animateFloatAsState(
+        targetValue = target.value,
         animationSpec = BreatheSpec,
         label = "breathe"
-    )
+    ).value
     return this.graphicsLayer { scaleX = scale; scaleY = scale }
 }
 

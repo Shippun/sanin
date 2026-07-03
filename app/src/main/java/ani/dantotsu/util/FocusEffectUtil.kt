@@ -40,7 +40,7 @@ object FocusEffectUtil {
     }
 
     private fun applyFocusGain(v: View) {
-        val effect = PrefManager.getVal(PrefName.FocusEffect)
+        val effect = PrefManager.getVal<Int>(PrefName.FocusEffect)
         when (effect) {
             0 -> { // Glow
                 v.elevation = 12f

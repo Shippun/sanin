@@ -91,7 +91,7 @@ class ThemeManager(private val context: Activity) {
     }
 
     private fun applyUIScale() {
-        val scale = PrefManager.getVal(PrefName.UIScale)
+        val scale = PrefManager.getVal<Float>(PrefName.UIScale)
         if (scale == 1.0f) return
         val metrics: DisplayMetrics = context.resources.displayMetrics
         metrics.scaledDensity = metrics.density * scale
@@ -177,7 +177,7 @@ class ThemeManager(private val context: Activity) {
         }
 
         fun applyUIScale(activity: Activity) {
-            val scale = PrefManager.getVal(PrefName.UIScale)
+            val scale = PrefManager.getVal<Float>(PrefName.UIScale)
             if (scale == 1.0f) return
             val metrics: DisplayMetrics = activity.resources.displayMetrics
             metrics.scaledDensity = metrics.density * scale
