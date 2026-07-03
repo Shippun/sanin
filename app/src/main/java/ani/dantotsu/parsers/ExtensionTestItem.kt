@@ -211,7 +211,7 @@ class ExtensionTestItem(
         val chapterResultTime = System.currentTimeMillis()
         val chapterResult = extension.loadBook(searchResult.first().link, null)
         episodeResultData.time = (System.currentTimeMillis() - chapterResultTime).toInt()
-        episodeResultData.size = chapterResult.links.size
+        episodeResultData.size = chapterResult?.links?.size ?: 0
         withContext(Dispatchers.Main) {
             episodeResult()
             serverResult()

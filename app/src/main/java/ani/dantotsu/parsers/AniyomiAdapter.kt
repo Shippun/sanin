@@ -460,17 +460,18 @@ class DynamicMangaParser(extension: MangaExtension.Installed) : MangaParser() {
         mangaLink: String,
         extra: Map<String, String>?,
         sManga: SManga?,
-        sourceLanguage: Int = 0,
+        sourceLanguage: Int,
     ): List<MangaChapter> {
+        var lang = sourceLanguage
         val source = try {
-            extension.sources[sourceLanguage]
+            extension.sources[lang]
         } catch (e: Exception) {
-            sourceLanguage = 0
-            extension.sources[sourceLanguage]
+            lang = 0
+            extension.sources[lang]
         } as? HttpSource ?: return emptyList()
 
         return try {
-            val res = source.getChapterList(sManga)
+            val res = source.getChapterList(sManga ?: return emptyList())
             val reversedRes = res.reversed()
             val chapterList = reversedRes.map { sChapterToMangaChapter(it) }
             chapterList
