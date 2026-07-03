@@ -68,8 +68,6 @@ class AnimePageAdapter : RecyclerView.Adapter<AnimePageAdapter.AnimePageViewHold
             bottomMargin = (-108f).px
         }
 
-        updateAvatar()
-
         listOf(
             binding.animePreviousSeason,
             binding.animeThisSeason,

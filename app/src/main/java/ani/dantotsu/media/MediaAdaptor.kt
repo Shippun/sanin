@@ -37,6 +37,10 @@ import ani.dantotsu.settings.saving.PrefName
 import ani.dantotsu.util.FocusEffectUtil
 import com.flaviofaria.kenburnsview.RandomTransitionGenerator
 import java.io.Serializable
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 
 
 class MediaAdaptor(
@@ -111,7 +115,7 @@ class MediaAdaptor(
 
     }
 
-    private var logoJobs = mutableMapOf<Int, kotlinx.coroutines.Job>()
+    private var logoJobs = mutableMapOf<Int, Job>()
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
@@ -162,8 +166,8 @@ class MediaAdaptor(
 
                     // Clearlogo with title fallback
                     logoJobs[position]?.cancel()
-                    logoJobs[position] = kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.Main).launch {
-                        val logoUrl = ani.dantotsu.connections.LogoApi.getLogoUrl(media.id)
+                    logoJobs[position] = CoroutineScope(Dispatchers.Main).launch {
+                        val logoUrl = LogoApi.getLogoUrl(media.id)
                         if (!logoUrl.isNullOrBlank()) {
                             b.itemCompactClearlogo.visibility = View.VISIBLE
                             b.itemCompactClearlogo.loadImage(logoUrl)
@@ -498,7 +502,7 @@ class MediaAdaptor(
             // Clearlogo or title for modes that show right content
             if (cardImageType != 1) {
                 logoJobs[position]?.cancel()
-                logoJobs[position] = kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.Main).launch {
+                logoJobs[position] = CoroutineScope(Dispatchers.Main).launch {
                     val logoUrl = LogoApi.getLogoUrl(media.id)
                     if (!logoUrl.isNullOrBlank()) {
                         b.itemCompactClearlogo.visibility = View.VISIBLE

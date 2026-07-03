@@ -31,7 +31,6 @@ import ani.dantotsu.startMainActivity
 import ani.dantotsu.statusBarHeight
 import ani.dantotsu.themes.ThemeManager
 import ani.dantotsu.toast
-import kotlinx.coroutines.launch
 
 
 class SettingsActivity : AppCompatActivity() {
@@ -164,17 +163,6 @@ class SettingsActivity : AppCompatActivity() {
                 layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
                 setHasFixedSize(true)
             }
-
-            loginDiscord.setOnClickListener {
-                openLinkInBrowser(getString(R.string.discord))
-            }
-            loginGithub.setOnClickListener {
-                openLinkInBrowser(getString(R.string.github))
-            }
-            loginTelegram.setOnClickListener {
-                openLinkInBrowser(getString(R.string.telegram))
-            }
-
 
             (settingsLogo.drawable as? Animatable)?.start()
             val array = resources.getStringArray(R.array.tips)
