@@ -62,11 +62,6 @@ class AnimePageAdapter : RecyclerView.Adapter<AnimePageAdapter.AnimePageViewHold
         trendingBinding = LayoutTrendingBinding.bind(binding.root)
         trendingBinding.trendingViewPager.overScrollMode = RecyclerView.OVER_SCROLL_NEVER
 
-        val materialCardView =
-            holder.itemView.findViewById<MaterialCardView>(R.id.userAvatarContainer)
-        val color = binding.root.context.getThemeColor(android.R.attr.windowBackground)
-        materialCardView.setCardBackgroundColor((color and 0x00FFFFFF) or 0x28000000)
-
         trendingBinding.titleContainer.updatePadding(top = statusBarHeight)
 
         if (PrefManager.getVal(PrefName.SmallView)) trendingBinding.trendingContainer.updateLayoutParams<ViewGroup.MarginLayoutParams> {
@@ -74,36 +69,6 @@ class AnimePageAdapter : RecyclerView.Adapter<AnimePageAdapter.AnimePageViewHold
         }
 
         updateAvatar()
-
-        trendingBinding.userAvatar.setSafeOnClickListener {
-            val dialogFragment =
-                SettingsDialogFragment.newInstance(SettingsDialogFragment.Companion.PageType.ANIME)
-            dialogFragment.show((it.context as AppCompatActivity).supportFragmentManager, "dialog")
-        }
-        trendingBinding.userAvatar.setOnLongClickListener { view ->
-            view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
-            val rescueMode: Boolean = PrefManager.getVal(PrefName.RescueMode)
-            if (!rescueMode) {
-                ContextCompat.startActivity(
-                    view.context,
-                    Intent(view.context, ProfileActivity::class.java)
-                        .putExtra("userId", Anilist.userid), null
-                )
-            } else {
-                val malUsername = MAL.username
-                if (!malUsername.isNullOrBlank()) {
-                    openLinkInCustomTab("https://myanimelist.net/profile/$malUsername")
-                } else {
-                    ani.dantotsu.toast(view.context.getString(R.string.rescue_mode_active))
-                }
-            }
-            false
-        }
-
-        val isRescueMode: Boolean = PrefManager.getVal(PrefName.RescueMode)
-        trendingBinding.notificationCount.isVisible = !isRescueMode && Anilist.unreadNotificationCount > 0
-                && PrefManager.getVal<Boolean>(PrefName.ShowNotificationRedDot) == true
-        trendingBinding.notificationCount.text = Anilist.unreadNotificationCount.toString()
 
         listOf(
             binding.animePreviousSeason,
@@ -277,24 +242,6 @@ class AnimePageAdapter : RecyclerView.Adapter<AnimePageAdapter.AnimePageViewHold
         more.startAnimation(setSlideUp())
         recyclerView.layoutAnimation =
             LayoutAnimationController(setSlideIn(), 0.25f)
-    }
-
-    fun updateAvatar() {
-        val rescueMode: Boolean = PrefManager.getVal(PrefName.RescueMode)
-        val avatarUrl = if (rescueMode) MAL.avatar else Anilist.avatar
-        if (avatarUrl != null && ready.value == true) {
-            trendingBinding.userAvatar.loadImage(avatarUrl)
-            trendingBinding.userAvatar.imageTintList = null
-        }
-    }
-
-    fun updateNotificationCount() {
-        if (this::binding.isInitialized) {
-            val isRescueMode: Boolean = PrefManager.getVal(PrefName.RescueMode)
-            trendingBinding.notificationCount.isVisible = !isRescueMode && Anilist.unreadNotificationCount > 0
-                    && PrefManager.getVal<Boolean>(PrefName.ShowNotificationRedDot) == true
-            trendingBinding.notificationCount.text = Anilist.unreadNotificationCount.toString()
-        }
     }
 
     inner class AnimePageViewHolder(val binding: ItemAnimePageBinding) :

@@ -26,42 +26,9 @@
                 android:layout_height="0dp"
                 android:layout_weight="1" />
 
-            <FrameLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-
-                <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/userAvatarContainer"
-                    android:layout_width="52dp"
-                    android:layout_height="52dp"
-                    android:layout_marginTop="4dp"
-                    android:backgroundTint="@color/nav_bg_inv"
-                    app:cardCornerRadius="26dp">
-
-                    <com.google.android.material.imageview.ShapeableImageView
-                        android:id="@+id/userAvatar"
-                        android:layout_width="52dp"
-                        android:layout_height="52dp"
-                        android:scaleType="centerCrop"
-                        tools:ignore="ContentDescription,ImageContrastCheck" />
-
-                </com.google.android.material.card.MaterialCardView>
-
-                <TextView
-                    android:id="@+id/notificationCount"
-                    android:layout_width="18dp"
-                    android:layout_height="18dp"
-                    android:layout_gravity="end|bottom"
-                    android:background="@drawable/notification_circle"
-                    android:fontFamily="@font/poppins_semi_bold"
-                    android:gravity="center"
-                    android:textColor="#F3F3F3"
-                    android:textSize="12sp"
-                    android:visibility="gone"
-                    tools:ignore="SmallSp"
-                    tools:text="1"
-                    tools:visibility="visible" />
-            </FrameLayout>
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0dp" />
 
         </LinearLayout>
 

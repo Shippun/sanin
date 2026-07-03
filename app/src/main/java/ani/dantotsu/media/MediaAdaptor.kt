@@ -22,6 +22,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import ani.dantotsu.R
 import ani.dantotsu.blurImage
+import ani.dantotsu.connections.LogoApi
 import ani.dantotsu.currActivity
 import ani.dantotsu.databinding.ItemMediaCompactBinding
 import ani.dantotsu.databinding.ItemMediaLargeBinding
@@ -97,6 +98,8 @@ class MediaAdaptor(
 
     }
 
+    private var logoJobs = mutableMapOf<Int, kotlinx.coroutines.Job>()
+
     @SuppressLint("ClickableViewAccessibility")
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val cardRoundness = PrefManager.getVal<Int>(PrefName.CardRoundness).toFloat()
@@ -112,19 +115,18 @@ class MediaAdaptor(
                     b.itemCompactImage.loadImage(imageUrl)
                     if (cardOrientation == 0) {
                         b.itemCompactImage.updateLayoutParams {
-                            width = 154
-                            height = 102
+                            width = 102
+                            height = 154
                         }
                     } else {
                         b.itemCompactImage.updateLayoutParams {
-                            width = 102
-                            height = 154
+                            width = 154
+                            height = 102
                         }
                     }
                     b.itemCompactCard.radius = cardRoundness
                     b.itemCompactOngoing.isVisible =
                         media.status == currActivity()!!.getString(R.string.status_releasing)
-                    b.itemCompactTitle.text = media.userPreferredName
                     b.itemCompactScore.text =
                         ((if (media.userScore == 0) (media.meanScore
                             ?: 0) else media.userScore) / 10.0).toString()
@@ -132,47 +134,21 @@ class MediaAdaptor(
                         b.root.context,
                         (if (media.userScore != 0) R.drawable.item_user_score else R.drawable.item_score)
                     )
-                    b.itemCompactUserProgress.text = (media.userProgress ?: "~").toString()
-                    if (media.relation != null) {
-                        b.itemCompactRelation.text = "${media.relation}  "
-                        b.itemCompactType.visibility = View.VISIBLE
 
-                        if (media.relation!!.contains("\n")) {
-                            b.itemCompactRelation.apply {
-                                isSingleLine = false
-                                maxLines = 2
-                                ellipsize = TextUtils.TruncateAt.START
-
-                                includeFontPadding = false
-                                setLineSpacing(0f, 0.9f)
-                            }
+                    // Clearlogo with title fallback
+                    logoJobs[position]?.cancel()
+                    logoJobs[position] = kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.Main).launch {
+                        val logoUrl = ani.dantotsu.connections.LogoApi.getLogoUrl(media.id)
+                        if (!logoUrl.isNullOrBlank()) {
+                            b.itemCompactClearlogo.visibility = View.VISIBLE
+                            b.itemCompactClearlogo.loadImage(logoUrl)
+                            b.itemCompactOverlayTitle.visibility = View.GONE
                         } else {
-                            b.itemCompactRelation.isSingleLine = true
-                            b.itemCompactRelation.maxLines = 1
+                            b.itemCompactClearlogo.visibility = View.GONE
+                            b.itemCompactOverlayTitle.visibility = View.VISIBLE
+                            b.itemCompactOverlayTitle.text = media.userPreferredName
                         }
-                    } else {
-                        b.itemCompactType.visibility = View.GONE
                     }
-                    
-                    if (media.anime != null) {
-                        if (media.relation != null) b.itemCompactTypeImage.setImageDrawable(
-                            AppCompatResources.getDrawable(
-                                activity,
-                                R.drawable.ic_round_movie_filter_24
-                            )
-                        )
-                        b.itemCompactTotal.text =
-                            " | ${if (media.anime.nextAiringEpisode != null) (media.anime.nextAiringEpisode.toString() + " | " + (media.anime.totalEpisodes ?: "~").toString()) else (media.anime.totalEpisodes ?: "~").toString()}"
-                    } else if (media.manga != null) {
-                        if (media.relation != null) b.itemCompactTypeImage.setImageDrawable(
-                            AppCompatResources.getDrawable(
-                                activity,
-                                R.drawable.ic_round_import_contacts_24
-                            )
-                        )
-                        b.itemCompactTotal.text = " | ${media.manga.totalChapters ?: "~"}"
-                    }
-                    b.itemCompactProgressContainer.visibility = if (fav) View.GONE else View.VISIBLE
                 }
             }
 

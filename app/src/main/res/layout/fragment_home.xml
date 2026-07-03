@@ -1,18 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/homeDrawer"
+    android:id="@+id/homeRefresh"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:clipToPadding="false"
     tools:context=".home.HomeFragment">
-
-    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-        android:id="@+id/homeRefresh"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:clipToPadding="false">
 
         <androidx.core.widget.NestedScrollView
             android:id="@+id/homeScroll"
@@ -163,45 +157,6 @@
                                 android:indeterminate="true"
                                 tools:visibility="gone" />
 
-                        </FrameLayout>
-
-                        <FrameLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content">
-
-                            <com.google.android.material.card.MaterialCardView
-                                android:id="@+id/homeUserAvatarContainer"
-                                android:layout_width="52dp"
-                                android:layout_height="52dp"
-                                android:layout_marginTop="4dp"
-                                android:backgroundTint="@color/nav_bg_inv"
-                                android:focusable="true"
-                                android:nextFocusDown="@+id/homeContinueWatchingContainer"
-                                app:cardCornerRadius="26dp">
-
-                                <com.google.android.material.imageview.ShapeableImageView
-                                    android:id="@+id/homeUserAvatar"
-                                    android:layout_width="52dp"
-                                    android:layout_height="52dp"
-                                    android:scaleType="centerCrop"
-                                    tools:ignore="ContentDescription,ImageContrastCheck" />
-
-                            </com.google.android.material.card.MaterialCardView>
-
-                            <TextView
-                                android:id="@+id/homeNotificationCount"
-                                android:layout_width="18dp"
-                                android:layout_height="18dp"
-                                android:layout_gravity="end|bottom"
-                                android:background="@drawable/notification_circle"
-                                android:fontFamily="@font/poppins_semi_bold"
-                                android:gravity="center"
-                                android:textColor="#F3F3F3"
-                                android:textSize="12sp"
-                                android:visibility="gone"
-                                tools:ignore="SmallSp"
-                                tools:text="1"
-                                tools:visibility="visible" />
                         </FrameLayout>
 
                     </LinearLayout>
@@ -1372,7 +1327,3 @@
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
-
-    <include layout="@layout/drawer_right_rail" />
-
-</androidx.drawerlayout.widget.DrawerLayout>

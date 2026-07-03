@@ -4,15 +4,18 @@ import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.res.Configuration
+import android.graphics.Color
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.provider.Settings
+import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AnticipateInterpolator
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.addCallback
 import androidx.activity.viewModels
@@ -33,6 +36,7 @@ import ani.dantotsu.addons.torrent.TorrentServerService
 import ani.dantotsu.connections.LogoApi
 import ani.dantotsu.connections.anilist.Anilist
 import ani.dantotsu.connections.anilist.AnilistHomeViewModel
+import ani.dantotsu.connections.mal.MAL
 import ani.dantotsu.databinding.ActivityMainBinding
 import ani.dantotsu.databinding.DialogUserAgentBinding
 import ani.dantotsu.databinding.SplashScreenBinding
@@ -63,14 +67,14 @@ import ani.dantotsu.ui.components.NavigationPillsViewModel
 import ani.dantotsu.util.AudioHelper
 import ani.dantotsu.util.Logger
 import ani.dantotsu.util.customAlertDialog
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
 import eu.kanade.domain.source.service.SourcePreferences
 import io.noties.markwon.Markwon
 import io.noties.markwon.SoftBreakAddsNewLinePlugin
 import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import tachiyomi.core.util.lang.launchIO
 import uy.kohesive.injekt.Injekt
@@ -311,6 +315,19 @@ class MainActivity : AppCompatActivity() {
             val startTab = PrefManager.getVal<Int>(PrefName.DefaultStartUpTab)
             navPillsViewModel.setTab(startTab)
             switchTab(startTab)
+
+            // Setup avatar and right rail drawer
+            binding.mainAvatarContainer.visibility = View.VISIBLE
+            loadAvatar()
+            binding.mainUserAvatarContainer.setOnClickListener {
+                if (!binding.mainDrawer.isDrawerOpen(Gravity.END)) {
+                    populateRightRail()
+                    binding.mainDrawer.openDrawer(Gravity.END)
+                } else {
+                    binding.mainDrawer.closeDrawer(Gravity.END)
+                }
+            }
+            setupRightRail()
         }
 
         var launched = false
@@ -462,6 +479,11 @@ class MainActivity : AppCompatActivity() {
         window.navigationBarColor = ContextCompat.getColor(this, android.R.color.transparent)
     }
 
+    override fun onResume() {
+        super.onResume()
+        loadAvatar()
+    }
+
     private fun handleViewIntent(intent: Intent) {
         val uri: Uri? = intent.data
         try {
@@ -557,6 +579,72 @@ class MainActivity : AppCompatActivity() {
             }
             show()
         }
+    }
+
+    private fun loadAvatar() {
+        binding.mainUserAvatar.loadImage(Anilist.avatar)
+        val showRedDot = PrefManager.getVal<Boolean>(PrefName.ShowNotificationRedDot)
+        if (showRedDot == true) {
+            binding.mainNotificationCount.isVisible = Anilist.unreadNotificationCount > 0
+            binding.mainNotificationCount.text = Anilist.unreadNotificationCount.toString()
+        } else {
+            binding.mainNotificationCount.isVisible = false
+        }
+    }
+
+    private fun setupRightRail() {
+        findViewById<View>(R.id.rightRailProfile).setOnClickListener {
+            binding.mainDrawer.closeDrawer(Gravity.END)
+            ContextCompat.startActivity(this, Intent(this, ProfileActivity::class.java)
+                .putExtra("userId", Anilist.userid), null)
+        }
+        findViewById<View>(R.id.rightRailAnimeList).setOnClickListener {
+            binding.mainDrawer.closeDrawer(Gravity.END)
+            ContextCompat.startActivity(this, Intent(this, ani.dantotsu.media.user.ListActivity::class.java)
+                .putExtra("anime", true)
+                .putExtra("userId", Anilist.userid ?: 0)
+                .putExtra("username", Anilist.username), null)
+        }
+        findViewById<View>(R.id.rightRailSettings).setOnClickListener {
+            binding.mainDrawer.closeDrawer(Gravity.END)
+            startActivity(Intent(this, ani.dantotsu.settings.SettingsActivity::class.java))
+        }
+        findViewById<View>(R.id.rightRailAccount).setOnClickListener {
+            binding.mainDrawer.closeDrawer(Gravity.END)
+            startActivity(Intent(this, ani.dantotsu.settings.SettingsActivity::class.java)
+                .putExtra("openAccount", true))
+        }
+        findViewById<View>(R.id.rightRailSync).setOnClickListener {
+            binding.mainDrawer.closeDrawer(Gravity.END)
+            lifecycleScope.launch(Dispatchers.IO) {
+                ani.dantotsu.connections.syncPendingProgressUpdates()
+                ani.dantotsu.connections.syncPendingDeletions()
+            }
+            snackString("Sync triggered")
+        }
+        findViewById<View>(R.id.rightRailLogout).setOnClickListener {
+            binding.mainDrawer.closeDrawer(Gravity.END)
+            customAlertDialog().apply {
+                setTitle("Log Out")
+                setMessage("Are you sure you want to log out?")
+                setPosButton("Yes") {
+                    Anilist.removeSavedToken()
+                    MAL.removeSavedToken()
+                    startActivity(Intent(this@MainActivity, MainActivity::class.java)
+                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK))
+                    finish()
+                }
+                setNegButton("No", null)
+                show()
+            }
+        }
+    }
+
+    private fun populateRightRail() {
+        findViewById<ImageView>(R.id.rightRailAvatar).loadImage(Anilist.avatar)
+        findViewById<TextView>(R.id.rightRailUserName).text = Anilist.username ?: MAL.username ?: "User"
+        findViewById<TextView>(R.id.rightRailUserEmail).text = "AniList ID: ${Anilist.userid ?: "—"}"
+        findViewById<TextView>(R.id.rightRailEpisodesWatched).text = (Anilist.episodesWatched ?: 0).toString()
     }
 
 }

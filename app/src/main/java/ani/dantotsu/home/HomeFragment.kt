@@ -100,22 +100,16 @@ class HomeFragment : Fragment() {
 
                 if (rescueMode && MAL.token != null) {
                     binding.homeUserName.text = MAL.username ?: Anilist.username
-                    binding.homeUserAvatar.loadImage(MAL.avatar ?: Anilist.avatar)
                 } else {
                     binding.homeUserName.text = Anilist.username
-                    binding.homeUserAvatar.loadImage(Anilist.avatar)
                 }
 
                 if (!rescueMode) {
                     binding.homeUserEpisodesWatched.text = Anilist.episodesWatched.toString()
                     binding.homeUserChaptersRead.text = Anilist.chapterRead.toString()
-                    binding.homeNotificationCount.isVisible = Anilist.unreadNotificationCount > 0
-                            && PrefManager.getVal<Boolean>(PrefName.ShowNotificationRedDot) == true
-                    binding.homeNotificationCount.text = Anilist.unreadNotificationCount.toString()
                 } else {
                     binding.homeUserEpisodesWatched.text = MAL.episodesWatched?.toString() ?: "—"
                     binding.homeUserChaptersRead.text = MAL.chaptersRead?.toString() ?: "—"
-                    binding.homeNotificationCount.isVisible = false
                 }
 
                 if (isCarouselMode) {
@@ -160,7 +154,6 @@ class HomeFragment : Fragment() {
                 }
 
                 if (showProfileHeader) {
-                    binding.homeUserAvatarContainer.startAnimation(setSlideUp())
                     binding.homeUserDataContainer.visibility = View.VISIBLE
                     binding.homeUserDataContainer.layoutAnimation =
                         LayoutAnimationController(setSlideUp(), 0.25f)
@@ -178,36 +171,7 @@ class HomeFragment : Fragment() {
                 snackString(currContext()?.getString(R.string.please_reload))
             }
         }
-        binding.homeUserAvatarContainer.setSafeOnClickListener {
-            binding.homeDrawer.openDrawer(Gravity.END)
-            populateRightRail()
-        }
-        binding.homeUserAvatarContainer.setOnLongClickListener {
-            it.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
-            if (!PrefManager.getVal<Boolean>(PrefName.RescueMode)) {
-                ContextCompat.startActivity(
-                    requireContext(), Intent(requireContext(), ProfileActivity::class.java)
-                        .putExtra("userId", Anilist.userid), null
-                )
-            } else {
-                val malUsername = MAL.username
-                if (!malUsername.isNullOrBlank()) {
-                    try {
-                        CustomTabsIntent.Builder().build().launchUrl(
-                            requireContext(),
-                            Uri.parse("https://myanimelist.net/profile/$malUsername")
-                        )
-                    } catch (e: Exception) {
-                        openLinkInBrowser("https://myanimelist.net/profile/$malUsername")
-                    }
-                } else {
-                    snackString(getString(R.string.rescue_mode_active))
-                }
-            }
-            false
-        }
         setupSectionFocusChain()
-        setupRightRail()
         binding.homeContinueReadingContainer.visibility = View.GONE
         binding.homeFavMangaContainer.visibility = View.GONE
         binding.homePlannedMangaContainer.visibility = View.GONE
@@ -727,60 +691,7 @@ class HomeFragment : Fragment() {
 
     private fun <T : View> id(id: Int): T = requireView().findViewById(id)
 
-    private fun setupRightRail() {
-        id<View>(R.id.rightRailProfile).setOnClickListener {
-            binding.homeDrawer.closeDrawer(Gravity.END)
-            ContextCompat.startActivity(requireContext(), Intent(requireContext(), ProfileActivity::class.java)
-                .putExtra("userId", Anilist.userid), null)
-        }
-        id<View>(R.id.rightRailAnimeList).setOnClickListener {
-            binding.homeDrawer.closeDrawer(Gravity.END)
-            ContextCompat.startActivity(requireContext(), Intent(requireContext(), ani.dantotsu.media.user.ListActivity::class.java)
-                .putExtra("anime", true)
-                .putExtra("userId", Anilist.userid ?: 0)
-                .putExtra("username", Anilist.username), null)
-        }
-        id<View>(R.id.rightRailSettings).setOnClickListener {
-            binding.homeDrawer.closeDrawer(Gravity.END)
-            startActivity(Intent(requireContext(), ani.dantotsu.settings.SettingsActivity::class.java))
-        }
-        id<View>(R.id.rightRailAccount).setOnClickListener {
-            binding.homeDrawer.closeDrawer(Gravity.END)
-            startActivity(Intent(requireContext(), ani.dantotsu.settings.SettingsActivity::class.java)
-                .putExtra("openAccount", true))
-        }
-        id<View>(R.id.rightRailSync).setOnClickListener {
-            binding.homeDrawer.closeDrawer(Gravity.END)
-            lifecycleScope.launch(Dispatchers.IO) {
-                ani.dantotsu.connections.syncPendingProgressUpdates()
-                ani.dantotsu.connections.syncPendingDeletions()
-            }
-            ani.dantotsu.snackString("Sync triggered")
-        }
-        id<View>(R.id.rightRailLogout).setOnClickListener {
-            binding.homeDrawer.closeDrawer(Gravity.END)
-            requireContext().customAlertDialog().apply {
-                setTitle("Log Out")
-                setMessage("Are you sure you want to log out?")
-                setPosButton("Yes") {
-                    ani.dantotsu.connections.anilist.Anilist.removeSavedToken()
-                    ani.dantotsu.connections.mal.MAL.removeSavedToken()
-                    startActivity(Intent(requireContext(), ani.dantotsu.MainActivity::class.java)
-                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK))
-                    requireActivity().finish()
-                }
-                setNegButton("No", null)
-                show()
-            }
-        }
-    }
 
-    private fun populateRightRail() {
-        id<ImageView>(R.id.rightRailAvatar).loadImage(Anilist.avatar)
-        id<TextView>(R.id.rightRailUserName).text = Anilist.username ?: MAL.username ?: "User"
-        id<TextView>(R.id.rightRailUserEmail).text = "AniList ID: ${Anilist.userid ?: "—"}"
-        id<TextView>(R.id.rightRailEpisodesWatched).text = (Anilist.episodesWatched ?: 0).toString()
-    }
 
     private fun setupSectionFocusChain() {
         val sections = listOf(
@@ -907,13 +818,6 @@ class HomeFragment : Fragment() {
 
     override fun onResume() {
         if (!model.loaded) Refresh.activity[1]!!.postValue(true)
-        if (_binding != null) {
-            val rescueMode: Boolean = PrefManager.getVal(PrefName.RescueMode)
-            binding.homeNotificationCount.isVisible = !rescueMode
-                    && Anilist.unreadNotificationCount > 0
-                    && PrefManager.getVal<Boolean>(PrefName.ShowNotificationRedDot) == true
-            binding.homeNotificationCount.text = Anilist.unreadNotificationCount.toString()
-        }
         super.onResume()
     }
 

@@ -228,7 +228,6 @@ class AnimeFragment : Fragment() {
                 model.getTrending().observe(viewLifecycleOwner) {
                     if (it != null) {
                         animePageAdapter.updateTrending(it)
-                        animePageAdapter.updateAvatar()
                     }
                 }
                 binding.animePageScrollTop.translationY = -(navBarHeight).toFloat()
@@ -237,7 +236,6 @@ class AnimeFragment : Fragment() {
 
 
         fun load() = scope.launch(Dispatchers.Main) {
-            animePageAdapter.updateAvatar()
         }
 
         animePageAdapter.onSeasonClick = { i ->
@@ -313,9 +311,6 @@ class AnimeFragment : Fragment() {
         if (this::animePageAdapter.isInitialized && _binding != null) {
             binding.root.requestApplyInsets()
             binding.root.requestLayout()
-        }
-        if (this::animePageAdapter.isInitialized && _binding != null) {
-            animePageAdapter.updateNotificationCount()
         }
         super.onResume()
     }

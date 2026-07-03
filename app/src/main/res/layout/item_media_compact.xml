@@ -36,17 +36,53 @@
                 tools:ignore="ContentDescription,ImageContrastCheck"
                 tools:srcCompat="@tools:sample/backgrounds/scenic" />
 
+            <View
+                android:id="@+id/itemCompactImageOverlay"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_gravity="bottom"
+                android:background="@drawable/gradient_bottom_dark" />
+
+            <ImageView
+                android:id="@+id/itemCompactClearlogo"
+                android:layout_width="match_parent"
+                android:layout_height="32dp"
+                android:layout_gravity="bottom"
+                android:scaleType="fitCenter"
+                android:visibility="gone"
+                tools:ignore="ContentDescription"
+                tools:visibility="visible" />
+
+            <TextView
+                android:id="@+id/itemCompactOverlayTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:ellipsize="end"
+                android:gravity="center"
+                android:maxLines="1"
+                android:paddingBottom="6dp"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                android:textColor="#F3F3F3"
+                android:textSize="11sp"
+                android:visibility="visible"
+                android:transitionName="mediaTitle"
+                tools:ignore="SpUsage"
+                tools:text="Title" />
+
             <LinearLayout
                 android:id="@+id/itemCompactScoreBG"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="bottom|end"
+                android:layout_gravity="top|start"
+                android:layout_margin="4dp"
                 android:background="@drawable/item_score"
                 android:backgroundTint="#FFFFFF"
                 android:backgroundTintMode="multiply"
                 android:orientation="horizontal"
-                android:paddingStart="8dp"
-                android:paddingEnd="6dp">
+                android:paddingStart="6dp"
+                android:paddingEnd="4dp">
 
                 <TextView
                     android:id="@+id/itemCompactScore"
@@ -56,13 +92,13 @@
                     android:fontFamily="@font/poppins_bold"
                     android:paddingTop="2dp"
                     android:textColor="?attr/colorOnPrimary"
-                    android:textSize="12sp"
+                    android:textSize="11sp"
                     tools:ignore="TextContrastCheck"
                     tools:text="0.0" />
 
                 <ImageView
                     android:id="@+id/imageView2"
-                    android:layout_width="12dp"
+                    android:layout_width="10dp"
                     android:layout_height="match_parent"
                     app:srcCompat="@drawable/ic_round_star_24"
                     app:tint="?attr/colorOnPrimary"
@@ -88,93 +124,6 @@
         </androidx.cardview.widget.CardView>
     </FrameLayout>
 
-    <LinearLayout
-        android:id="@+id/itemCompactType"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="end"
-        android:layout_marginStart="24dp"
-        android:layout_marginEnd="24dp"
-        android:layout_marginBottom="4dp"
-        android:gravity="center"
-        android:orientation="horizontal"
-        android:visibility="gone"
-        tools:ignore="UseCompoundDrawables">
 
-        <ImageView
-            android:id="@+id/itemCompactTypeImage"
-            android:layout_width="18dp"
-            android:layout_height="18dp"
-            android:alpha="0.58"
-            app:srcCompat="@drawable/ic_round_movie_filter_24"
-            tools:ignore="ContentDescription" />
-
-        <TextView
-            android:id="@+id/itemCompactRelation"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:alpha="0.58"
-            android:ellipsize="end"
-            android:maxLines="2"
-            android:paddingStart="4dp"
-            android:paddingEnd="4dp"
-            android:singleLine="true"
-            android:textAlignment="textEnd"
-            android:textAllCaps="true"
-            android:textSize="12sp"
-            android:textStyle="italic"
-            android:transitionName="mediaTitle"
-            tools:ignore="TextContrastCheck"
-            tools:text="Relation" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="0dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="10dp"
-        android:orientation="vertical">
-
-        <TextView
-            android:id="@+id/itemCompactTitle"
-            android:layout_width="108dp"
-            android:layout_height="wrap_content"
-            android:ellipsize="end"
-            android:lineSpacingExtra="-4dp"
-            android:maxLines="2"
-            android:textSize="14dp"
-            android:transitionName="mediaTitle"
-            tools:ignore="SpUsage"
-            tools:text="@string/get_recommendations" />
-
-        <LinearLayout
-            android:id="@+id/itemCompactProgressContainer"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/itemCompactUserProgress"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="?attr/colorSecondary"
-                android:textSize="14dp"
-                tools:ignore="SpUsage,TextContrastCheck"
-                tools:text="0" />
-
-            <TextView
-                android:id="@+id/itemCompactTotal"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:alpha="0.58"
-                android:textSize="14dp"
-                tools:ignore="SpUsage,TextContrastCheck"
-                tools:text="/??" />
-        </LinearLayout>
-
-    </LinearLayout>
 
 </LinearLayout>
