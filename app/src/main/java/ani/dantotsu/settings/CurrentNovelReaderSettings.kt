@@ -20,4 +20,6 @@ class CurrentNovelReaderSettings {
     var maxBlockSize: Int = 100
     var useDarkTheme: Boolean = false
     var useOledTheme: Boolean = false
+    var keepScreenOn: Boolean = false
+    var volumeButtons: Boolean = false
 }

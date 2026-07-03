@@ -16,12 +16,10 @@ import ani.dantotsu.connections.anilist.Anilist
 import ani.dantotsu.connections.mal.MAL
 import ani.dantotsu.databinding.BottomSheetSettingsBinding
 import ani.dantotsu.download.anime.OfflineAnimeFragment
-import ani.dantotsu.download.manga.OfflineMangaFragment
 import ani.dantotsu.getThemeColor
 import ani.dantotsu.home.AnimeFragment
 import ani.dantotsu.home.HomeFragment
 import ani.dantotsu.home.LoginFragment
-import ani.dantotsu.home.MangaFragment
 import ani.dantotsu.home.NoInternet
 import ani.dantotsu.incognitoNotification
 import ani.dantotsu.loadImage
@@ -179,12 +177,7 @@ class SettingsDialogFragment : BottomSheetDialogFragment() {
                 if (currentActivity != null && isAdded) {
                     when (pageType) {
                         PageType.MANGA -> {
-                            val intent = Intent(currentActivity, NoInternet::class.java)
-                            intent.putExtra(
-                                "FRAGMENT_CLASS_NAME",
-                                OfflineMangaFragment::class.java.name
-                            )
-                            startActivity(intent)
+                            openMangaPage()
                         }
 
                         PageType.ANIME -> {
@@ -203,9 +196,7 @@ class SettingsDialogFragment : BottomSheetDialogFragment() {
                         }
 
                         PageType.OfflineMANGA -> {
-                            val intent = Intent(currentActivity, MainActivity::class.java)
-                            intent.putExtra("FRAGMENT_CLASS_NAME", MangaFragment::class.java.name)
-                            startActivity(intent)
+                            openMangaPage()
                         }
 
                         PageType.OfflineHOME -> {
@@ -234,6 +225,10 @@ class SettingsDialogFragment : BottomSheetDialogFragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private fun openMangaPage() {
+        snackString("Manga is not available")
     }
 
     companion object {

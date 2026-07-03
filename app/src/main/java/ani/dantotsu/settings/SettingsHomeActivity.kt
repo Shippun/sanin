@@ -10,6 +10,7 @@ import ani.dantotsu.R
 import ani.dantotsu.databinding.ActivitySettingsAnimeBinding
 import ani.dantotsu.initActivity
 import ani.dantotsu.navBarHeight
+import ani.dantotsu.restartApp
 import ani.dantotsu.settings.saving.PrefManager
 import ani.dantotsu.settings.saving.PrefName
 import ani.dantotsu.statusBarHeight
