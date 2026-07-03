@@ -589,8 +589,7 @@ class LocalFragment : Fragment(), OfflineAnimeSearchListener {
     }
 
     private fun createMediaFromLocalNovel(item: OfflineAnimeModel): Media {
-        val localSourceIndex = ani.dantotsu.parsers.NovelSources.list.indexOfFirst { it.name == "Local" }
-            .takeIf { it >= 0 } ?: 0
+        val localSourceIndex = 0
 
         return Media(
             id = 0,

@@ -8,4 +8,5 @@ data class Book(
     val link: String = "",
     val coverUrl: FileUrl? = null,
     val chapters: List<Any> = emptyList(),
+    val links: List<Any> = emptyList(),
 ) : Serializable

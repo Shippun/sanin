@@ -22,7 +22,7 @@ open class MangaExtension {
         val pkgName: String = "",
         val versionName: String = "",
         val versionCode: Long = 0,
-        val sources: List<Any> = emptyList(),
+        val sources: List<AvailableMangaSources> = emptyList(),
         val isNsfw: Boolean = false,
         val isUnofficial: Boolean = false,
         val icon: ByteArray? = null,
