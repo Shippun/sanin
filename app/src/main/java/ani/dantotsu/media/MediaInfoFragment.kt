@@ -88,22 +88,13 @@ class MediaInfoFragment : Fragment() {
     }
 
     @Suppress("UNUSED_PRIVATE_FUNCTION")
+    private fun displayMangaChapterPrediction(oldPrediction: Any?) {
+    }
+
+    @Suppress("UNUSED_PRIVATE_FUNCTION")
     private fun displayNextChapterPrediction(prediction: Any?) {
     }
 
-            binding.mediaNextChapterPrediction.text = predictionText
-
-            binding.mediaNextChapterPredictionText.fadeIn()
-            binding.mediaNextChapterPrediction.fadeIn()
-        } else {
-            binding.mediaNextChapterPredictionText.fadeOut()
-            binding.mediaNextChapterPrediction.fadeOut()
-
-            if (prediction.error != null) {
-                Logger.log("Next chapter prediction error: ${prediction.error}")
-            }
-        }
-    }
     fun View.fadeIn(duration: Long = 250) {
         if (isVisible) return
         alpha = 0f
