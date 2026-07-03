@@ -98,6 +98,7 @@ class MediaListDialogFragment : BottomSheetDialogFragment() {
                 }
                 binding.mediaListProgressLayout.suffixTextView.gravity = Gravity.CENTER
 
+                @Suppress("UNUSED_EXPRESSION", "UNCHECKED_CAST")
                 val volumeTotal = media?.manga?.totalVolumes
                 if (media?.manga != null) {
                     binding.mediaListVolumeProgressLayout.visibility = View.VISIBLE
@@ -105,8 +106,10 @@ class MediaListDialogFragment : BottomSheetDialogFragment() {
                         media?.userProgressVolumes?.toString() ?: ""
                     )
                     if (volumeTotal != null) {
+                        @Suppress("UNCHECKED_CAST")
+                        val volNum = (volumeTotal as? Number)?.toDouble() ?: 0.0
                         binding.mediaListVolumeProgress.filters = arrayOf(
-                            InputFilterMinMax(0.0, volumeTotal.toDouble()),
+                            InputFilterMinMax(0.0, volNum),
                             LengthFilter(volumeTotal.toString().length)
                         )
                     }

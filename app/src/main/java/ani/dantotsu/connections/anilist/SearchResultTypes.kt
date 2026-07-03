@@ -2,6 +2,10 @@ package ani.dantotsu.connections.anilist
 
 import ani.dantotsu.media.Media
 
+interface SearchResults<out T> {
+    var search: String?
+}
+
 data class AniMangaSearchResults(
     var type: String = "",
     var perPage: Int? = null,
@@ -25,34 +29,39 @@ data class AniMangaSearchResults(
     var hasNextPage: Boolean = false,
 )
 
+data class ChipItem(val text: String, val active: Boolean = true)
+
+fun AniMangaSearchResults.toChipList(): MutableList<ChipItem> = mutableListOf()
+fun AniMangaSearchResults.removeChip(chip: ChipItem) {}
+
 data class CharacterSearchResults(
-    var search: String? = null,
+    override var search: String? = null,
     @Suppress("UNCHECKED_CAST")
     var results: MutableList<Any> = mutableListOf(),
     var page: Int = 0,
     var hasNextPage: Boolean = false,
-)
+) : SearchResults<Character>
 
 data class StudioSearchResults(
-    var search: String? = null,
+    override var search: String? = null,
     @Suppress("UNCHECKED_CAST")
     var results: MutableList<Any> = mutableListOf(),
     var page: Int = 0,
     var hasNextPage: Boolean = false,
-)
+) : SearchResults<Studio>
 
 data class StaffSearchResults(
-    var search: String? = null,
+    override var search: String? = null,
     @Suppress("UNCHECKED_CAST")
     var results: MutableList<Any> = mutableListOf(),
     var page: Int = 0,
     var hasNextPage: Boolean = false,
-)
+) : SearchResults<Author>
 
 data class UserSearchResults(
-    var search: String? = null,
+    override var search: String? = null,
     @Suppress("UNCHECKED_CAST")
     var results: MutableList<Any> = mutableListOf(),
     var page: Int = 0,
     var hasNextPage: Boolean = false,
-)
+) : SearchResults<ani.dantotsu.profile.User>

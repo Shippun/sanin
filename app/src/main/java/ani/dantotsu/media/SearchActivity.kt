@@ -25,6 +25,7 @@ import ani.dantotsu.databinding.ActivitySearchBinding
 import ani.dantotsu.initActivity
 import ani.dantotsu.navBarHeight
 import ani.dantotsu.profile.UsersAdapter
+import ani.dantotsu.profile.User
 import ani.dantotsu.px
 import ani.dantotsu.settings.saving.PrefManager
 import ani.dantotsu.settings.saving.PrefName
@@ -134,7 +135,7 @@ class SearchActivity : AppCompatActivity() {
                     )
                 }
                 characterResult = model.characterSearchResults
-                characterAdaptor = CharacterAdapter(model.characterSearchResults.results)
+                characterAdaptor = CharacterAdapter(model.characterSearchResults.results as MutableList<Character>)
             }
 
             SearchType.STUDIO -> {
@@ -147,7 +148,7 @@ class SearchActivity : AppCompatActivity() {
                     )
                 }
                 studioResult = model.studioSearchResults
-                studioAdaptor = StudioAdapter(model.studioSearchResults.results)
+                studioAdaptor = StudioAdapter(model.studioSearchResults.results as MutableList<Studio>)
             }
 
             SearchType.STAFF -> {
@@ -160,7 +161,7 @@ class SearchActivity : AppCompatActivity() {
                     )
                 }
                 staffResult = model.staffSearchResults
-                staffAdaptor = AuthorAdapter(model.staffSearchResults.results)
+                staffAdaptor = AuthorAdapter(model.staffSearchResults.results as MutableList<Author>)
             }
 
             SearchType.USER -> {
@@ -173,7 +174,7 @@ class SearchActivity : AppCompatActivity() {
                     )
                 }
                 userResult = model.userSearchResults
-                usersAdapter = UsersAdapter(model.userSearchResults.results, grid = true)
+                usersAdapter = UsersAdapter(model.userSearchResults.results as MutableList<User>, grid = true)
             }
         }
 
@@ -283,7 +284,8 @@ class SearchActivity : AppCompatActivity() {
                         }
 
                         val prev = model.characterSearchResults.results.size
-                        val newResults = it.results.distinctBy { it.id }.filter { newItem -> model.characterSearchResults.results.none { oldItem -> oldItem.id == newItem.id } }
+                        @Suppress("UNCHECKED_CAST")
+                        val newResults = (it.results as List<Character>).distinctBy { it.id }.filter { newItem -> (model.characterSearchResults.results as List<Character>).none { oldItem -> oldItem.id == newItem.id } }
                         model.characterSearchResults.results.addAll(newResults)
                         characterAdaptor.notifyItemRangeInserted(prev, newResults.size)
 
@@ -302,7 +304,8 @@ class SearchActivity : AppCompatActivity() {
                         }
 
                         val prev = model.studioSearchResults.results.size
-                        val newResults = it.results.distinctBy { it.id }.filter { newItem -> model.studioSearchResults.results.none { oldItem -> oldItem.id == newItem.id } }
+                        @Suppress("UNCHECKED_CAST")
+                        val newResults = (it.results as List<Studio>).distinctBy { it.id }.filter { newItem -> (model.studioSearchResults.results as List<Studio>).none { oldItem -> oldItem.id == newItem.id } }
                         model.studioSearchResults.results.addAll(newResults)
                         studioAdaptor.notifyItemRangeInserted(prev, newResults.size)
 
@@ -321,7 +324,8 @@ class SearchActivity : AppCompatActivity() {
                         }
 
                         val prev = model.staffSearchResults.results.size
-                        val newResults = it.results.distinctBy { it.id }.filter { newItem -> model.staffSearchResults.results.none { oldItem -> oldItem.id == newItem.id } }
+                        @Suppress("UNCHECKED_CAST")
+                        val newResults = (it.results as List<Author>).distinctBy { it.id }.filter { newItem -> (model.staffSearchResults.results as List<Author>).none { oldItem -> oldItem.id == newItem.id } }
                         model.staffSearchResults.results.addAll(newResults)
                         staffAdaptor.notifyItemRangeInserted(prev, newResults.size)
 
@@ -340,7 +344,8 @@ class SearchActivity : AppCompatActivity() {
                         }
 
                         val prev = model.userSearchResults.results.size
-                        val newResults = it.results.distinctBy { it.id }.filter { newItem -> model.userSearchResults.results.none { oldItem -> oldItem.id == newItem.id } }
+                        @Suppress("UNCHECKED_CAST")
+                        val newResults = (it.results as List<User>).distinctBy { it.id }.filter { newItem -> (model.userSearchResults.results as List<User>).none { oldItem -> oldItem.id == newItem.id } }
                         model.userSearchResults.results.addAll(newResults)
                         usersAdapter.notifyItemRangeInserted(prev, newResults.size)
 

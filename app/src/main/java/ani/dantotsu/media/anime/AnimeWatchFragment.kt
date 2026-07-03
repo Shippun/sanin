@@ -184,7 +184,7 @@ class AnimeWatchFragment : Fragment() {
                 }
                 media = it
                 media.selected = model.loadSelected(media)
-                if (!PrefManager.getVal(PrefName.SmartSourcePersistence)) {
+                if (!PrefManager.getVal<Boolean>(PrefName.SmartSourcePersistence)) {
                     if (media.selected != null) {
                         media.selected!!.sourceIndex = 0
                         media.selected!!.server = null
