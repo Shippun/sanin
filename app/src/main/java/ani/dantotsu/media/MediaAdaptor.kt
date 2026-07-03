@@ -88,9 +88,9 @@ class MediaAdaptor(
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        val cardRoundness = PrefManager.getVal(PrefName.CardRoundness).toFloat()
-        val cardOrientation = PrefManager.getVal(PrefName.CardOrientation)
-        val cardImageType = PrefManager.getVal(PrefName.CardImageType)
+        val cardRoundness = PrefManager.getVal<Int>(PrefName.CardRoundness).toFloat()
+        val cardOrientation = PrefManager.getVal<Int>(PrefName.CardOrientation)
+        val cardImageType = PrefManager.getVal<Int>(PrefName.CardImageType)
         when (type) {
             0 -> {
                 val b = (holder as MediaViewHolder).binding

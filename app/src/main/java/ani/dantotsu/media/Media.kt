@@ -131,7 +131,6 @@ data class Media(
         ) else null,
         manga = if (apiMedia.type == MediaType.MANGA) Manga(
             totalChapters = apiMedia.chapters,
-            totalVolumes = apiMedia.volumes
         ) else null,
         format = apiMedia.format?.toString(),
     )

@@ -1,5 +1,6 @@
 package ani.dantotsu.home
 
+import android.content.Context.INPUT_METHOD_SERVICE
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -49,9 +50,9 @@ class LibraryFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val primaryColor = getThemeColor(com.google.android.material.R.attr.colorSurface)
-        val primaryTextColor = getThemeColor(com.google.android.material.R.attr.colorPrimary)
-        val secondaryTextColor = getThemeColor(com.google.android.material.R.attr.colorOutline)
+        val primaryColor = requireContext().getThemeColor(com.google.android.material.R.attr.colorSurface)
+        val primaryTextColor = requireContext().getThemeColor(com.google.android.material.R.attr.colorPrimary)
+        val secondaryTextColor = requireContext().getThemeColor(com.google.android.material.R.attr.colorOutline)
 
         binding.listTabLayout.setBackgroundColor(primaryColor)
         binding.listAppBar.setBackgroundColor(primaryColor)

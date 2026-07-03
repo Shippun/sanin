@@ -20,10 +20,8 @@ import ani.dantotsu.others.Jikan
 import ani.dantotsu.others.Kitsu
 import ani.dantotsu.parsers.AnimeSources
 import ani.dantotsu.parsers.Book
+import ani.dantotsu.parsers.MangaChapter
 import ani.dantotsu.parsers.MangaImage
-import ani.dantotsu.parsers.MangaReadSources
-import ani.dantotsu.parsers.MangaSources
-import ani.dantotsu.parsers.NovelSources
 import ani.dantotsu.parsers.ShowResponse
 import ani.dantotsu.parsers.VideoExtractor
 import ani.dantotsu.parsers.WatchSources
@@ -66,11 +64,11 @@ class MediaDetailsViewModel : ViewModel() {
                 }
 
                 media.format == "MANGA" || media.format == "ONE_SHOT" -> {
-                    MangaSources.list.size - 1
+                    0
                 }
 
                 else -> {
-                    NovelSources.list.size - 1
+                0
                 }
             }
         }
@@ -862,7 +860,7 @@ class MediaDetailsViewModel : ViewModel() {
     }
 
     //Manga
-    var mangaReadSources: MangaReadSources? = null
+    var mangaReadSources: Any? = null
 
     private val mangaChapters =
         MutableLiveData<MutableMap<Int, MutableMap<String, MangaChapter>>>(null)
@@ -895,14 +893,7 @@ class MediaDetailsViewModel : ViewModel() {
         post: Boolean = true
     ): Boolean {
 
-        return tryWithSuspend(true) {
-            chapter.addImages(
-                mangaReadSources?.get(selected.sourceIndex)
-                    ?.loadImages(chapter.link, chapter.sChapter) ?: return@tryWithSuspend false
-            )
-            if (post) mangaChapter.postValue(chapter)
-            true
-        } ?: false
+        return false
     }
 
     fun loadTransformation(mangaImage: MangaImage, source: Int): BitmapTransformation? {
@@ -910,7 +901,7 @@ class MediaDetailsViewModel : ViewModel() {
             ?.getTransformation() else null
     }
 
-    val novelSources = NovelSources
+    val novelSources = Any()
     val novelResponses = MutableLiveData<List<ShowResponse>>(null)
 
     private val novelChapters = MutableLiveData<MutableMap<Int, List<ShowResponse>>>(null)

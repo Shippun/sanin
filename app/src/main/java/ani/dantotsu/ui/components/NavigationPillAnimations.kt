@@ -7,7 +7,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -47,7 +47,7 @@ fun Modifier.scaleFocusEffect(isFocused: Boolean): Modifier {
 
 @Composable
 fun Modifier.pulseFocusEffect(isFocused: Boolean): Modifier {
-    var pulseScale by remember { mutableFloatStateOf(1.0f) }
+    var pulseScale by remember { mutableStateOf(1.0f) }
     LaunchedEffect(isFocused) {
         if (isFocused) {
             while (true) {
@@ -70,7 +70,7 @@ fun Modifier.pulseFocusEffect(isFocused: Boolean): Modifier {
 
 @Composable
 fun Modifier.breatheFocusEffect(isFocused: Boolean): Modifier {
-    var target by remember { mutableFloatStateOf(1.0f) }
+    var target by remember { mutableStateOf(1.0f) }
     LaunchedEffect(isFocused) {
         if (isFocused) {
             while (true) {

@@ -85,11 +85,6 @@ class HomeFragment : Fragment() {
         return binding.root
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
-
     val model: AnilistHomeViewModel by activityViewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -710,7 +705,7 @@ class HomeFragment : Fragment() {
         }
         id<View>(R.id.rightRailLogout).setOnClickListener {
             binding.homeDrawer.closeDrawer(Gravity.END)
-            ani.dantotsu.util.customAlertDialog().apply {
+            requireContext().customAlertDialog().apply {
                 setTitle("Log Out")
                 setMessage("Are you sure you want to log out?")
                 setPosButton("Yes") {
@@ -747,9 +742,9 @@ class HomeFragment : Fragment() {
             if (titleRow != null) {
                 titleRow.isFocusable = true
                 if (prevRecycler != null) {
-                    titleRow.nextFocusUp = prevRecycler
+                    titleRow.nextFocusUpId = prevRecycler.id
                 }
-                recycler.nextFocusUp = titleRow
+                recycler.nextFocusUpId = titleRow.id
                 prevRecycler = recycler
             }
         }
@@ -876,6 +871,7 @@ class HomeFragment : Fragment() {
     override fun onDestroyView() {
         bannerAutoScrollHandler?.removeCallbacksAndMessages(null)
         bannerSnapHelper.attachToRecyclerView(null)
+        _binding = null
         super.onDestroyView()
     }
 }

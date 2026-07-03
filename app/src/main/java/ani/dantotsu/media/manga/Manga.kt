@@ -4,6 +4,7 @@ import ani.dantotsu.media.Author
 import java.io.Serializable
 
 data class Manga(
-    val totalChapters: Int? = null,
+    var totalChapters: Int? = null,
     var author: Author? = null,
+    var chapters: Int? = null,
 ) : Serializable

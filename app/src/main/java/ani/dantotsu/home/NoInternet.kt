@@ -20,7 +20,6 @@ import ani.dantotsu.R
 import ani.dantotsu.ZoomOutPageTransformer
 import ani.dantotsu.databinding.ActivityNoInternetBinding
 import ani.dantotsu.download.anime.OfflineAnimeFragment
-import ani.dantotsu.download.manga.OfflineMangaFragment
 import ani.dantotsu.initActivity
 import ani.dantotsu.navBarHeight
 import ani.dantotsu.offline.LocalFragment
@@ -109,7 +108,6 @@ class NoInternet : AppCompatActivity() {
             return when (position) {
                 0 -> OfflineAnimeFragment()
                 1 -> LocalFragment()
-                2 -> OfflineMangaFragment()
                 else -> OfflineFragment()
             }
         }
