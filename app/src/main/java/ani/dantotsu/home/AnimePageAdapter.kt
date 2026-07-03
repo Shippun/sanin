@@ -50,6 +50,7 @@ class AnimePageAdapter : RecyclerView.Adapter<AnimePageAdapter.AnimePageViewHold
     lateinit var binding: ItemAnimePageBinding
     private lateinit var trendingBinding: LayoutTrendingBinding
     var bannerAdapter: BannerCarouselAdapter? = null
+    private var bannerSnap: PagerSnapHelper? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AnimePageViewHolder {
         val binding =
@@ -123,8 +124,9 @@ class AnimePageAdapter : RecyclerView.Adapter<AnimePageAdapter.AnimePageViewHold
         trendingBinding.trendingProgressBar.visibility = View.GONE
         val rv = trendingBinding.trendingViewPager
         rv.layoutManager = LinearLayoutManager(rv.context, LinearLayoutManager.HORIZONTAL, false)
-        val snapHelper = PagerSnapHelper()
-        snapHelper.attachToRecyclerView(rv)
+        bannerSnap?.let { it.attachToRecyclerView(null) }
+        bannerSnap = PagerSnapHelper()
+        bannerSnap?.attachToRecyclerView(rv)
         rv.overScrollMode = RecyclerView.OVER_SCROLL_NEVER
         bannerAdapter = BannerCarouselAdapter(media, CoroutineScope(Dispatchers.Main)) { item ->
             val context = binding.root.context
