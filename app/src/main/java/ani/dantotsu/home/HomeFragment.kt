@@ -701,11 +701,15 @@ class HomeFragment : Fragment() {
         )
         var prevRecycler: View? = null
         for ((container, recycler) in sections) {
+            recycler.isFocusable = true
             val titleRow = if (container.childCount > 0) container.getChildAt(0) else null
             if (titleRow != null) {
                 titleRow.isFocusable = true
+                titleRow.nextFocusDownId = recycler.id
                 if (prevRecycler != null) {
                     titleRow.nextFocusUpId = prevRecycler.id
+                } else {
+                    titleRow.nextFocusUpId = binding.homeBannerFrame.id
                 }
                 recycler.nextFocusUpId = titleRow.id
                 prevRecycler = recycler
@@ -721,6 +725,10 @@ class HomeFragment : Fragment() {
     private fun setupBannerCarousel() {
         val rv = binding.homeBannerCarousel
         rv.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+        rv.isFocusable = true
+        rv.isFocusableInTouchMode = false
+        rv.nextFocusUpId = R.id.navPills
+        rv.nextFocusDownId = R.id.homeContinueWatch
         bannerSnapHelper.attachToRecyclerView(rv)
 
         model.getTrendingBanner().observe(viewLifecycleOwner) { items ->

@@ -19,6 +19,7 @@ import ani.dantotsu.settings.saving.PrefManager
 import ani.dantotsu.settings.saving.PrefName
 import ani.dantotsu.statusBarHeight
 import ani.dantotsu.themes.ThemeManager
+import ani.dantotsu.util.FocusEffectUtil
 import ani.dantotsu.util.customAlertDialog
 import uy.kohesive.injekt.Injekt
 import uy.kohesive.injekt.api.get
@@ -39,6 +40,7 @@ class SettingsAnimeActivity : AppCompatActivity() {
                 bottomMargin = navBarHeight
             }
             animeSettingsBack.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
+            FocusEffectUtil.applyFocusListener(animeSettingsBack)
 
             settingsRecyclerView.adapter = SettingsAdapter(
                 arrayListOf(

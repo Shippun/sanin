@@ -128,6 +128,8 @@ class AnimePageAdapter : RecyclerView.Adapter<AnimePageAdapter.AnimePageViewHold
         bannerSnap = PagerSnapHelper()
         bannerSnap?.attachToRecyclerView(rv)
         rv.overScrollMode = RecyclerView.OVER_SCROLL_NEVER
+        rv.isFocusable = true
+        rv.nextFocusUpId = R.id.navPills
         bannerAdapter = BannerCarouselAdapter(media, CoroutineScope(Dispatchers.Main)) { item ->
             val context = binding.root.context
             ContextCompat.startActivity(

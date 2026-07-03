@@ -13,6 +13,7 @@ import ani.dantotsu.settings.saving.PrefManager
 import ani.dantotsu.settings.saving.PrefName
 import ani.dantotsu.statusBarHeight
 import ani.dantotsu.themes.ThemeManager
+import ani.dantotsu.util.FocusEffectUtil
 import ani.dantotsu.util.customAlertDialog
 import android.view.LayoutInflater
 import android.view.View
@@ -71,6 +72,28 @@ class UserInterfaceSettingsActivity : AppCompatActivity() {
         binding.uiSettingsBack.setOnClickListener {
             onBackPressedDispatcher.onBackPressed()
         }
+
+        FocusEffectUtil.applyFocusListener(
+            binding.uiSettingsBack,
+            binding.uiSettingsHomeLayout,
+            binding.uiSettingsOledMode,
+            binding.uiSettingsCardStyle,
+            binding.uiSettingsCardOrientation,
+            binding.uiSettingsCardImageType,
+            binding.uiSettingsCardSize,
+            binding.uiSettingsFocusEffect,
+            binding.uiSettingsAccentColor,
+            binding.uiSettingsImmersive,
+            binding.uiSettingsHideRedDot,
+            binding.uiSettingsSmallView,
+            binding.uiSettingsBannerAnimation,
+            binding.uiSettingsLayoutAnimation,
+            binding.uiSettingsTrendingScroller,
+            binding.uiSettingsBlurBanners,
+            binding.uiSettingsAnimationsEnabled,
+            binding.uiSettingsEmoji,
+            binding.uiSettingsSwapColors,
+        )
 
         binding.uiSettingsHomeLayout.setOnClickListener {
             val currentVisibility = PrefManager.getVal<List<Boolean>>(PrefName.HomeLayout).toMutableList()

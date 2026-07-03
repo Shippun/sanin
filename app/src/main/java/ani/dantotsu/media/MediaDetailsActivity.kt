@@ -52,6 +52,7 @@ import ani.dantotsu.settings.saving.PrefName
 import ani.dantotsu.snackString
 import ani.dantotsu.statusBarHeight
 import ani.dantotsu.themes.ThemeManager
+import ani.dantotsu.util.FocusEffectUtil
 import ani.dantotsu.util.LauncherWrapper
 import com.flaviofaria.kenburnsview.RandomTransitionGenerator
 import com.google.android.material.appbar.AppBarLayout
@@ -142,6 +143,7 @@ class MediaDetailsActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedLi
         binding.mediaClose.setOnClickListener {
             onBackPressedDispatcher.onBackPressed()
         }
+        FocusEffectUtil.applyFocusListener(binding.mediaClose, binding.mediaBottomBar)
 
         val bannerAnimations: Boolean = PrefManager.getVal(PrefName.BannerAnimations)
         if (bannerAnimations) {
@@ -381,6 +383,7 @@ class MediaDetailsActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedLi
                 binding.mediaCover.setOnClickListener {
                     openLinkInBrowser(media.shareLink)
                 }
+                FocusEffectUtil.applyFocusListener(binding.mediaFav, binding.mediaNotify, binding.mediaCover)
 
                 if (oldId == 0 && media.id != 0) {
                     if (media.format?.startsWith("LOCAL") == true) {

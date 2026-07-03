@@ -93,6 +93,8 @@ class AnimeFragment : Fragment() {
 
         binding.animePageRecyclerView.updatePaddingRelative(bottom = navBarHeight + 160f.px)
 
+        binding.animePageRecyclerView.nextFocusUpId = R.id.navPills
+
         animePageAdapter = AnimePageAdapter()
 
         var loading = true

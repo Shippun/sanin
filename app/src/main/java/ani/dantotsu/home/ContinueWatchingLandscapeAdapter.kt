@@ -12,6 +12,7 @@ import ani.dantotsu.loadImage
 import ani.dantotsu.media.Media
 import ani.dantotsu.settings.saving.PrefManager
 import ani.dantotsu.settings.saving.PrefName
+import ani.dantotsu.util.FocusEffectUtil
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.imageview.ShapeableImageView
 
@@ -72,6 +73,7 @@ class ContinueWatchingLandscapeAdapter(
         holder.itemView.setOnClickListener { onItemClick(media) }
         holder.itemView.isFocusable = true
         holder.itemView.isFocusableInTouchMode = false
+        FocusEffectUtil.applyFocusListener(holder.itemView)
     }
 
     override fun getItemCount() = items.size

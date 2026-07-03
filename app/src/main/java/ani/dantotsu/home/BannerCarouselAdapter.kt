@@ -16,6 +16,7 @@ import ani.dantotsu.util.FocusEffectUtil
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import android.view.KeyEvent
 
 class BannerCarouselAdapter(
     private val items: List<Media>,
@@ -69,6 +70,15 @@ class BannerCarouselAdapter(
         holder.itemView.isFocusable = true
         holder.itemView.isFocusableInTouchMode = false
         FocusEffectUtil.applyFocusListener(holder.itemView)
+        holder.itemView.setOnKeyListener { _, keyCode, event ->
+            if (event.action == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
+                val focusDown = holder.itemView.focusSearch(View.FOCUS_DOWN)
+                if (focusDown == null || focusDown == holder.itemView) {
+                    holder.itemView.requestFocus(View.FOCUS_DOWN)
+                    true
+                } else false
+            } else false
+        }
     }
 
     override fun getItemCount() = items.size

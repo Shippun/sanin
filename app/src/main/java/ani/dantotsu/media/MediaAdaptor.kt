@@ -403,6 +403,9 @@ class MediaAdaptor(
                     resizeBitmap(getBitmapFromImageView(binding.itemCompactImage), 100)
                 )
             }
+            itemView.isFocusable = true
+            itemView.isFocusableInTouchMode = false
+            FocusEffectUtil.applyFocusListener(itemView)
             itemView.setOnTouchListener { _, _ -> true }
             binding.itemCompactImage.setOnLongClickListener { longClicked(bindingAdapterPosition) }
         }
@@ -426,6 +429,9 @@ class MediaAdaptor(
                     resizeBitmap(getBitmapFromImageView(binding.itemCompactImage), 100)
                 )
             }
+            itemView.isFocusable = true
+            itemView.isFocusableInTouchMode = false
+            FocusEffectUtil.applyFocusListener(itemView)
             itemView.setOnTouchListener { _, _ -> true }
             binding.itemCompactImage.setOnLongClickListener { longClicked(bindingAdapterPosition) }
         }

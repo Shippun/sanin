@@ -15,6 +15,7 @@ import ani.dantotsu.settings.saving.PrefManager
 import ani.dantotsu.settings.saving.PrefName
 import ani.dantotsu.statusBarHeight
 import ani.dantotsu.themes.ThemeManager
+import ani.dantotsu.util.FocusEffectUtil
 import ani.dantotsu.util.customAlertDialog
 
 class SettingsHomeActivity : AppCompatActivity() {
@@ -33,6 +34,8 @@ class SettingsHomeActivity : AppCompatActivity() {
                 topMargin = statusBarHeight
                 bottomMargin = navBarHeight
             }
+            animeSettingsBack.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
+            FocusEffectUtil.applyFocusListener(animeSettingsBack)
 
             val homeBannerModes = arrayOf(
                 getString(R.string.home_banner_carousel),

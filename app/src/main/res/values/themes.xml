@@ -6,6 +6,7 @@
         <item name="android:navigationBarColor">?android:colorBackground</item>
         <item name="android:windowTranslucentStatus">false</item>
         <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowBackground">@color/bg_black</item>
         <item name="elevationOverlayEnabled">false</item>
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>

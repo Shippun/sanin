@@ -34,6 +34,7 @@ import ani.dantotsu.settings.saving.internal.PreferencePackager
 import ani.dantotsu.statusBarHeight
 import ani.dantotsu.themes.ThemeManager
 import ani.dantotsu.toast
+import ani.dantotsu.util.FocusEffectUtil
 import ani.dantotsu.util.LauncherWrapper
 import ani.dantotsu.util.StoragePermissions
 import ani.dantotsu.util.customAlertDialog
@@ -110,6 +111,7 @@ class SettingsCommonActivity : AppCompatActivity() {
             commonSettingsBack.setOnClickListener {
                 onBackPressedDispatcher.onBackPressed()
             }
+            FocusEffectUtil.applyFocusListener(commonSettingsBack)
             val exDns =
                 listOf(
                     "None",

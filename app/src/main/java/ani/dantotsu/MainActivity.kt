@@ -12,6 +12,7 @@ import android.os.Handler
 import android.os.Looper
 import android.provider.Settings
 import android.view.Gravity
+import android.view.KeyEvent
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AnticipateInterpolator
@@ -473,6 +474,36 @@ class MainActivity : AppCompatActivity() {
         } else {
             startTorrent()
         }
+    }
+
+    override fun dispatchKeyEvent(event: KeyEvent): Boolean {
+        if (event.action == KeyEvent.ACTION_DOWN) {
+            when (event.keyCode) {
+                KeyEvent.KEYCODE_DPAD_UP -> {
+                    if (binding.navPills.visibility == View.VISIBLE && currentFocus != binding.navPills) {
+                        val focusUp = currentFocus?.focusSearch(View.FOCUS_UP)
+                        if (focusUp == null || focusUp == currentFocus || focusUp == currentFocus?.parent) {
+                            binding.navPills.requestFocus()
+                            return true
+                        }
+                    }
+                }
+                KeyEvent.KEYCODE_DPAD_DOWN -> {
+                    if (currentFocus == binding.navPills) {
+                        val tag = currentFragmentTag
+                        if (tag != null) {
+                            val frag = supportFragmentManager.findFragmentByTag(tag)
+                            frag?.view?.let { v ->
+                                val first = v.findFocus() ?: v.findViewById<View>(android.R.id.content)
+                                v.requestFocus(View.FOCUS_DOWN)
+                            }
+                        }
+                        return true
+                    }
+                }
+            }
+        }
+        return super.dispatchKeyEvent(event)
     }
 
     override fun onRestart() {

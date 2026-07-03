@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import ani.dantotsu.databinding.ItemSettingsBinding
 import ani.dantotsu.databinding.ItemSettingsSwitchBinding
 import ani.dantotsu.setAnimation
+import ani.dantotsu.util.FocusEffectUtil
 
 class SettingsAdapter(private val settings: ArrayList<Settings>) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -42,24 +43,27 @@ class SettingsAdapter(private val settings: ArrayList<Settings>) :
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val settings = settings[position]
         when (settings.type) {
-            1 -> {
-                val b = (holder as SettingsViewHolder).binding
-                setAnimation(b.root.context, b.root)
+                1 -> {
+                    val b = (holder as SettingsViewHolder).binding
+                    setAnimation(b.root.context, b.root)
 
-                b.settingsTitle.text = settings.name
-                b.settingsDesc.text = settings.desc
-                b.settingsIcon.setImageDrawable(
-                    ContextCompat.getDrawable(
-                        b.root.context, settings.icon
+                    b.settingsTitle.text = settings.name
+                    b.settingsDesc.text = settings.desc
+                    b.settingsIcon.setImageDrawable(
+                        ContextCompat.getDrawable(
+                            b.root.context, settings.icon
+                        )
                     )
-                )
-                b.settingsLayout.setOnClickListener {
-                    settings.onClick?.invoke(b)
-                }
-                b.settingsLayout.setOnLongClickListener {
-                    settings.onLongClick?.invoke()
-                    true
-                }
+                    b.settingsLayout.isFocusable = true
+                    b.settingsLayout.isFocusableInTouchMode = false
+                    FocusEffectUtil.applyFocusListener(b.settingsLayout)
+                    b.settingsLayout.setOnClickListener {
+                        settings.onClick?.invoke(b)
+                    }
+                    b.settingsLayout.setOnLongClickListener {
+                        settings.onLongClick?.invoke()
+                        true
+                    }
                 if (settings.isVisible) {
                     b.settingsLayout.visibility = View.VISIBLE
                     b.settingsLayout.layoutParams = RecyclerView.LayoutParams(
@@ -78,25 +82,31 @@ class SettingsAdapter(private val settings: ArrayList<Settings>) :
                 settings.attach?.invoke(b)
             }
 
-            2 -> {
-                val b = (holder as SettingsSwitchViewHolder).binding
-                setAnimation(b.root.context, b.root)
+                2 -> {
+                    val b = (holder as SettingsSwitchViewHolder).binding
+                    setAnimation(b.root.context, b.root)
 
-                b.settingsButton.text = settings.name
-                b.settingsDesc.text = settings.desc
-                b.settingsIcon.setImageDrawable(
-                    ContextCompat.getDrawable(
-                        b.root.context, settings.icon
+                    b.settingsButton.text = settings.name
+                    b.settingsDesc.text = settings.desc
+                    b.settingsIcon.setImageDrawable(
+                        ContextCompat.getDrawable(
+                            b.root.context, settings.icon
+                        )
                     )
-                )
-                b.settingsButton.isChecked = settings.isChecked
-                b.settingsButton.setOnCheckedChangeListener { _, isChecked ->
-                    settings.switch?.invoke(isChecked, b)
-                }
-                b.settingsLayout.setOnLongClickListener {
-                    settings.onLongClick?.invoke()
-                    true
-                }
+                    b.settingsButton.isChecked = settings.isChecked
+                    b.settingsButton.isFocusable = true
+                    b.settingsButton.isFocusableInTouchMode = false
+                    FocusEffectUtil.applyFocusListener(b.settingsButton)
+                    b.settingsButton.setOnCheckedChangeListener { _, isChecked ->
+                        settings.switch?.invoke(isChecked, b)
+                    }
+                    b.settingsLayout.isFocusable = true
+                    b.settingsLayout.isFocusableInTouchMode = false
+                    FocusEffectUtil.applyFocusListener(b.settingsLayout)
+                    b.settingsLayout.setOnLongClickListener {
+                        settings.onLongClick?.invoke()
+                        true
+                    }
                 if (settings.isVisible) {
                     b.settingsLayout.visibility = View.VISIBLE
                     b.settingsLayout.layoutParams = RecyclerView.LayoutParams(
