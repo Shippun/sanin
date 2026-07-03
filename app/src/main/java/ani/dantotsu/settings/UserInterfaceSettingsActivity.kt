@@ -250,6 +250,45 @@ class UserInterfaceSettingsActivity : AppCompatActivity() {
             }
         }
 
+        binding.uiSettingsCardOrientation.setOnClickListener {
+            customAlertDialog().apply {
+                setTitle("Card Orientation")
+                val labels = arrayOf("Portrait", "Landscape")
+                singleChoiceItems(labels, PrefManager.getVal<Int>(PrefName.CardOrientation)) { index ->
+                    PrefManager.setVal(PrefName.CardOrientation, index)
+                    restartApp()
+                }
+                show()
+            }
+        }
+
+        binding.uiSettingsCardImageType.setOnClickListener {
+            customAlertDialog().apply {
+                setTitle("Landscape Card Image")
+                val labels = arrayOf("Banner", "Cover", "Both")
+                singleChoiceItems(labels, PrefManager.getVal<Int>(PrefName.CardImageType)) { index ->
+                    PrefManager.setVal(PrefName.CardImageType, index)
+                    restartApp()
+                }
+                show()
+            }
+        }
+
+        binding.uiSettingsCardSize.setOnClickListener {
+            customAlertDialog().apply {
+                setTitle("Card Size")
+                val labels = arrayOf("Small (0.5x)", "Medium (0.75x)", "Normal (1x)", "Large (1.25x)", "X-Large (1.5x)")
+                val values = arrayOf(0.5f, 0.75f, 1.0f, 1.25f, 1.5f)
+                val current = PrefManager.getVal<Float>(PrefName.CardSize)
+                val currentIdx = values.indexOfFirst { it == current }.coerceAtLeast(0)
+                singleChoiceItems(labels, currentIdx) { index ->
+                    PrefManager.setVal(PrefName.CardSize, values[index])
+                    restartApp()
+                }
+                show()
+            }
+        }
+
         binding.uiSettingsFocusEffect.setOnClickListener {
             customAlertDialog().apply {
                 setTitle("Focus Effect")
