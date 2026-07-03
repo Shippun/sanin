@@ -91,7 +91,7 @@ class SubscriptionHelper {
                 selected.sourceIndex = 0
                 saveSelected(id, selected)
             }
-            return sources[selected.sourceIndex]
+            return sources[selected.sourceIndex] ?: MangaParser()
         }
 
         suspend fun getChapter(

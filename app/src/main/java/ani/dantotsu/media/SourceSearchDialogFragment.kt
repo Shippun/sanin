@@ -22,9 +22,6 @@ import ani.dantotsu.parsers.HAnimeSources
 import ani.dantotsu.parsers.HMangaSources
 import ani.dantotsu.parsers.MangaParser
 import ani.dantotsu.parsers.MangaSources
-import ani.dantotsu.parsers.HAnimeSources
-import ani.dantotsu.parsers.HMangaSources
-import ani.dantotsu.parsers.MangaSources
 import ani.dantotsu.px
 import ani.dantotsu.tryWithSuspend
 import kotlinx.coroutines.Dispatchers
