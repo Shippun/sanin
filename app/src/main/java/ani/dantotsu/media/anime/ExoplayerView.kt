@@ -952,7 +952,7 @@ class ExoplayerView :
             fun startAnim() {
                 showTextAnim.start()
 
-                (text.compoundDrawables[1] as Animatable).apply {
+                (text.compoundDrawables[1] as? Animatable)?.apply {
                     if (!isRunning) start()
                 }
 

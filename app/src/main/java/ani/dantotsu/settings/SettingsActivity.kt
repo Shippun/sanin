@@ -211,12 +211,12 @@ class SettingsActivity : AppCompatActivity() {
             }
 
 
-            (settingsLogo.drawable as Animatable).start()
+            (settingsLogo.drawable as? Animatable)?.start()
             val array = resources.getStringArray(R.array.tips)
 
             settingsLogo.setSafeOnClickListener {
                 cursedCounter++
-                (settingsLogo.drawable as Animatable).start()
+                (settingsLogo.drawable as? Animatable)?.start()
                 if (cursedCounter % 16 == 0) {
                     val oldVal: Boolean = PrefManager.getVal(PrefName.OC)
                     if (!oldVal) {
