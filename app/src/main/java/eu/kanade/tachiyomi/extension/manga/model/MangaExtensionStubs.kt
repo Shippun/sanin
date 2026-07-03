@@ -1,0 +1,39 @@
+package eu.kanade.tachiyomi.extension.manga.model
+
+open class MangaExtension {
+    data class Available(
+        val name: String = "",
+        val pkgName: String = "",
+        val versionName: String = "",
+        val versionCode: Long = 0,
+        val libVersion: Double = 0.0,
+        val lang: String = "",
+        val isNsfw: Boolean = false,
+        val hasReadme: Boolean = false,
+        val hasChangelog: Boolean = false,
+        val sources: List<AvailableMangaSources> = emptyList(),
+        val apkName: String = "",
+        val repository: String = "",
+        val iconUrl: String = "",
+    )
+
+    data class Installed(
+        val name: String = "",
+        val pkgName: String = "",
+        val versionName: String = "",
+        val versionCode: Long = 0,
+        val sources: List<Any> = emptyList(),
+        val isNsfw: Boolean = false,
+        val isUnofficial: Boolean = false,
+        val icon: ByteArray? = null,
+    )
+}
+
+object AvailableMangaSources {
+    val id: Long = 0
+    val lang: String = ""
+    val name: String = ""
+    val baseUrl: String = ""
+}
+
+open class MangaExtensionManager

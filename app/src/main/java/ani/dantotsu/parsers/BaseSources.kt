@@ -3,7 +3,7 @@ package ani.dantotsu.parsers
 import ani.dantotsu.Lazier
 import ani.dantotsu.media.Media
 import ani.dantotsu.media.anime.Episode
-import ani.dantotsu.media.manga.MangaChapter
+import ani.dantotsu.parsers.MangaChapter
 import ani.dantotsu.tryWithSuspend
 import ani.dantotsu.util.Logger
 import eu.kanade.tachiyomi.animesource.model.SAnime
@@ -126,18 +126,7 @@ abstract class NovelReadSources : BaseSources() {
 
 }
 
-class EmptyNovelParser : NovelParser() {
 
-    override val volumeRegex: Regex = Regex("")
-
-    override suspend fun loadBook(link: String, extra: Map<String, String>?): Book {
-        return Book("", "", null, emptyList())  // Return an empty Book object or some default value
-    }
-
-    override suspend fun search(query: String): List<ShowResponse> {
-        return listOf() // Return an empty list or some default value
-    }
-}
 
 abstract class BaseSources {
     abstract val list: List<Lazier<BaseParser>>
