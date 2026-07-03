@@ -1,6 +1,7 @@
 package ani.dantotsu.parsers
 
 import android.graphics.drawable.Drawable
+import ani.dantotsu.Lazier
 import eu.kanade.tachiyomi.source.model.SChapter
 import eu.kanade.tachiyomi.source.model.SManga
 import java.io.Serializable
@@ -32,6 +33,7 @@ open class NovelParser : BaseParser() {
     override val saveName: String = ""
 
     override suspend fun search(query: String): List<ShowResponse> = emptyList()
+    open suspend fun loadBook(link: String, extra: Map<String, String>?): Book? = null
 }
 
 class EmptyNovelParser : NovelParser()
@@ -58,7 +60,7 @@ data class MangaImage(
 )
 
 object MangaSources {
-    val list = mutableListOf<Any>()
+    val list = mutableListOf<Lazier<BaseParser>>()
     val isInitialized = false
 
     operator fun get(i: Int): MangaParser? = null
@@ -66,9 +68,16 @@ object MangaSources {
 }
 
 object HMangaSources {
-    val list = mutableListOf<Any>()
+    val list = mutableListOf<Lazier<BaseParser>>()
     val isInitialized = false
 
     operator fun get(i: Int): MangaParser? = null
     fun getSource(name: String): MangaParser? = null
+}
+
+object NovelSources {
+    val list = mutableListOf<Lazier<BaseParser>>()
+    val isInitialized = false
+
+    operator fun get(i: Int): BaseParser? = null
 }

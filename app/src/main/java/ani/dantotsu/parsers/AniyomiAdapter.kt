@@ -459,7 +459,8 @@ class DynamicMangaParser(extension: MangaExtension.Installed) : MangaParser() {
     override suspend fun loadChapters(
         mangaLink: String,
         extra: Map<String, String>?,
-        sManga: SManga
+        sManga: SManga?,
+        sourceLanguage: Int = 0,
     ): List<MangaChapter> {
         val source = try {
             extension.sources[sourceLanguage]

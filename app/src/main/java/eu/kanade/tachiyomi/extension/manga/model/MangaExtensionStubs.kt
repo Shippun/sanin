@@ -1,5 +1,7 @@
 package eu.kanade.tachiyomi.extension.manga.model
 
+import android.graphics.drawable.Drawable
+
 open class MangaExtension {
     data class Available(
         val name: String = "",
@@ -25,7 +27,7 @@ open class MangaExtension {
         val sources: List<AvailableMangaSources> = emptyList(),
         val isNsfw: Boolean = false,
         val isUnofficial: Boolean = false,
-        val icon: ByteArray? = null,
+        val icon: Drawable? = null,
     )
 }
 
