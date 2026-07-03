@@ -399,7 +399,7 @@ class HomeFragment : Fragment() {
         )
 
         model.getAnimeContinue().observe(viewLifecycleOwner) { list ->
-            if (_binding != null && list.isNotEmpty() && PrefManager.getVal(PrefName.HomeBannerMode) == 2
+            if (_binding != null && list.isNotEmpty() && PrefManager.getVal<Int>(PrefName.HomeBannerMode) == 2
                 && navBannerCurrentMediaId == -1) {
                 updateNavigatingBanner(list[0])
             }
@@ -614,7 +614,7 @@ class HomeFragment : Fragment() {
                         homeLayoutOrder = (0..7).toList()
                     }
 
-                    val sectionVisibilityOverrides = listOf(
+                    val sectionVisibilityOverrides = listOf<Boolean>(
                         PrefManager.getVal(PrefName.ShowContinueWatching),
                         PrefManager.getVal(PrefName.ShowPlanned),
                         PrefManager.getVal(PrefName.ShowRecommendations),
