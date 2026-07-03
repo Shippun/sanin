@@ -30,7 +30,12 @@ open class MangaChapter(
     open val scanlator: String? = null,
     open val sChapter: Any? = null,
     open val dateUpload: Long? = null,
-) : Serializable
+) : Serializable {
+    constructor(chapter: MangaChapter) : this(
+        chapter.name, chapter.url, chapter.number,
+        chapter.date, chapter.scanlator, chapter.sChapter, chapter.dateUpload
+    )
+}
 
 data class MangaImage(
     val url: Any?,
@@ -38,22 +43,18 @@ data class MangaImage(
     val page: Any? = null,
 )
 
-object MangaSources : BaseSources() {
-    override val list = mutableListOf<SourceRef<MangaParser>>()
-    override val listener = SourceListener()
+object MangaSources {
+    val list = mutableListOf<Any>()
     val isInitialized = false
 
-    override operator fun get(i: Int): MangaParser? = null
-
-    override fun getSource(name: String): MangaParser? = null
+    operator fun get(i: Int): MangaParser? = null
+    fun getSource(name: String): MangaParser? = null
 }
 
-object HMangaSources : BaseSources() {
-    override val list = mutableListOf<SourceRef<MangaParser>>()
-    override val listener = SourceListener()
+object HMangaSources {
+    val list = mutableListOf<Any>()
     val isInitialized = false
 
-    override operator fun get(i: Int): MangaParser? = null
-
-    override fun getSource(name: String): MangaParser? = null
+    operator fun get(i: Int): MangaParser? = null
+    fun getSource(name: String): MangaParser? = null
 }

@@ -301,8 +301,10 @@ class MainActivity : AppCompatActivity() {
             binding.navPills.visibility = View.VISIBLE
 
             // Observe tab changes
-            navPillsViewModel.currentTab.observe(this) { tabIndex ->
-                switchTab(tabIndex)
+            lifecycleScope.launch {
+                navPillsViewModel.currentTab.collect { tabIndex ->
+                    switchTab(tabIndex)
+                }
             }
 
             // Load initial tab

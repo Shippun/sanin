@@ -1,8 +1,6 @@
 package ani.dantotsu.connections.anilist
 
 import ani.dantotsu.media.Media
-import ani.dantotsu.media.Character
-import ani.dantotsu.media.Studio
 
 data class AniMangaSearchResults(
     val type: String?,
@@ -22,35 +20,35 @@ data class AniMangaSearchResults(
     val startYear: Int? = null,
     val seasonYear: Int? = null,
     val season: String? = null,
-    val results: ArrayList<Media>,
+    val results: List<Media>,
     val page: Int,
     val hasNextPage: Boolean,
 )
 
 data class CharacterSearchResults(
     val search: String?,
-    val results: ArrayList<Character>,
+    val results: List<Any>,
     val page: Int,
     val hasNextPage: Boolean,
 )
 
 data class StudioSearchResults(
     val search: String?,
-    val results: ArrayList<Studio>,
+    val results: List<Any>,
     val page: Int,
     val hasNextPage: Boolean,
 )
 
 data class StaffSearchResults(
     val search: String?,
-    val results: ArrayList<Staff>,
+    val results: List<Any>,
     val page: Int,
     val hasNextPage: Boolean,
 )
 
 data class UserSearchResults(
     val search: String?,
-    val results: ArrayList<User>,
+    val results: List<Any>,
     val page: Int,
     val hasNextPage: Boolean,
 )
