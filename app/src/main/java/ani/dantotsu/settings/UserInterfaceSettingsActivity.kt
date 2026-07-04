@@ -78,8 +78,6 @@ class UserInterfaceSettingsActivity : AppCompatActivity() {
             binding.uiSettingsHomeLayout,
             binding.uiSettingsOledMode,
             binding.uiSettingsCardStyle,
-            binding.uiSettingsCardOrientation,
-            binding.uiSettingsCardImageType,
             binding.uiSettingsCardSize,
             binding.uiSettingsFocusEffect,
             binding.uiSettingsAccentColor,
@@ -267,30 +265,6 @@ class UserInterfaceSettingsActivity : AppCompatActivity() {
                 val labels = arrayOf("Rounded", "Minimal", "Classic", "Cover Only", "Liquid Glass", "Neon", "Compact")
                 singleChoiceItems(labels, PrefManager.getVal<Int>(PrefName.CardStyle)) { index ->
                     PrefManager.setVal(PrefName.CardStyle, index)
-                    restartApp()
-                }
-                show()
-            }
-        }
-
-        binding.uiSettingsCardOrientation.setOnClickListener {
-            customAlertDialog().apply {
-                setTitle("Card Orientation")
-                val labels = arrayOf("Portrait", "Landscape")
-                singleChoiceItems(labels, PrefManager.getVal<Int>(PrefName.CardOrientation)) { index ->
-                    PrefManager.setVal(PrefName.CardOrientation, index)
-                    restartApp()
-                }
-                show()
-            }
-        }
-
-        binding.uiSettingsCardImageType.setOnClickListener {
-            customAlertDialog().apply {
-                setTitle("Landscape Card Image")
-                val labels = arrayOf("Banner", "Cover", "Both")
-                singleChoiceItems(labels, PrefManager.getVal<Int>(PrefName.CardImageType)) { index ->
-                    PrefManager.setVal(PrefName.CardImageType, index)
                     restartApp()
                 }
                 show()

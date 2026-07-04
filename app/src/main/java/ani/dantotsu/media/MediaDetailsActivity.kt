@@ -49,7 +49,6 @@ import ani.dantotsu.settings.saving.PrefName
 import ani.dantotsu.snackString
 import ani.dantotsu.statusBarHeight
 import ani.dantotsu.themes.ThemeManager
-import ani.dantotsu.ui.components.navigationPillFocusEffect
 import ani.dantotsu.util.FocusEffectUtil
 import ani.dantotsu.util.LauncherWrapper
 import com.flaviofaria.kenburnsview.RandomTransitionGenerator
@@ -71,6 +70,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
@@ -91,6 +91,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
 
 import kotlin.math.abs
 import kotlin.time.Duration.Companion.milliseconds
@@ -715,7 +719,8 @@ fun MediaNavPills(
                 ),
                 shape = RoundedCornerShape(50)
             )
-            .padding(horizontal = 6.dp),
+            .padding(horizontal = 6.dp)
+            .focusable(),
         contentAlignment = Alignment.Center
     ) {
         Row(
@@ -726,45 +731,77 @@ fun MediaNavPills(
                 val isActive = currentTab.value == index
                 var isFocused by remember { mutableStateOf(false) }
 
+                val targetWidth by animateDpAsState(
+                    targetValue = if (isFocused) 96.dp else 48.dp,
+                    animationSpec = spring(
+                        dampingRatio = 0.85f,
+                        stiffness = Spring.StiffnessVeryLow
+                    ),
+                    label = "pillWidth"
+                )
+                val targetScale by animateFloatAsState(
+                    targetValue = if (isFocused) 1.5f else 1.0f,
+                    animationSpec = spring(
+                        dampingRatio = 0.85f,
+                        stiffness = Spring.StiffnessVeryLow
+                    ),
+                    label = "pillScale"
+                )
+
                 Box(
                     modifier = Modifier
+                        .width(targetWidth)
                         .height(48.dp)
                         .graphicsLayer {
-                            scaleX = if (isFocused) 1.5f else 1.0f
-                            scaleY = if (isFocused) 1.5f else 1.0f
+                            scaleX = targetScale
+                            scaleY = targetScale
+                            shadowElevation = if (isFocused) 8f else 0f
                         }
                         .background(
                             color = if (isActive) Color.White.copy(alpha = 0.15f) else Color.Transparent,
                             shape = RoundedCornerShape(50)
                         )
                         .border(
-                            width = if (isActive) 1.dp else 0.dp,
-                            color = if (isActive) Color(0xFF87CEEB).copy(alpha = 0.6f) else Color.Transparent,
+                            width = if (isFocused) 2.dp else if (isActive) 1.dp else 0.dp,
+                            color = if (isFocused)
+                                Color(0xFF87CEEB).copy(alpha = 1f)
+                            else if (isActive)
+                                Color(0xFF87CEEB).copy(alpha = 0.6f)
+                            else
+                                Color.Transparent,
                             shape = RoundedCornerShape(50)
                         )
                         .focusable()
                         .onFocusChanged { isFocused = it.isFocused }
-                        .navigationPillFocusEffect(isFocused, "glow")
-                        .clickable { currentTab.value = index; onTabSelected(index) }
-                        .padding(horizontal = 12.dp),
+                        .clickable { currentTab.value = index; onTabSelected(index) },
                     contentAlignment = Alignment.Center
                 ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(6.dp)
-                    ) {
+                    if (isFocused) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(6.dp),
+                            modifier = Modifier.padding(horizontal = 12.dp)
+                        ) {
+                            Icon(
+                                painter = painterResource(id = MEDIA_TAB_ICONS[tab] ?: R.drawable.ic_round_info_24),
+                                contentDescription = MEDIA_TAB_LABELS[tab] ?: tab,
+                                tint = if (isActive) Color(0xFF87CEEB) else Color.White.copy(alpha = 0.7f),
+                                modifier = Modifier.size(22.dp)
+                            )
+                            Text(
+                                text = MEDIA_TAB_LABELS[tab] ?: tab,
+                                color = if (isActive) Color.White else Color.White.copy(alpha = 0.6f),
+                                fontSize = 12.sp,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                        }
+                    } else {
                         Icon(
                             painter = painterResource(id = MEDIA_TAB_ICONS[tab] ?: R.drawable.ic_round_info_24),
                             contentDescription = MEDIA_TAB_LABELS[tab] ?: tab,
                             tint = if (isActive) Color(0xFF87CEEB) else Color.White.copy(alpha = 0.7f),
-                            modifier = Modifier.size(22.dp)
-                        )
-                        Text(
-                            text = MEDIA_TAB_LABELS[tab] ?: tab,
-                            color = if (isActive) Color.White else Color.White.copy(alpha = 0.6f),
-                            fontSize = 12.sp,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
+                            modifier = Modifier.size(20.dp)
                         )
                     }
                 }
