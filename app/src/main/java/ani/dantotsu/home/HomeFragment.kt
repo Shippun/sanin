@@ -710,7 +710,7 @@ class HomeFragment : Fragment() {
                 if (prevRecycler != null) {
                     titleRow.nextFocusUpId = prevRecycler.id
                 } else {
-                    titleRow.nextFocusUpId = binding.homeBannerFrame.id
+                    titleRow.nextFocusUpId = binding.homeBannerCarousel.id
                 }
                 recycler.nextFocusUpId = titleRow.id
                 prevRecycler = recycler

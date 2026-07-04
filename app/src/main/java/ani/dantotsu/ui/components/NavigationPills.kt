@@ -9,9 +9,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -33,7 +31,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -136,22 +133,13 @@ fun NavigationPill(
         modifier = Modifier
             .width(pillWidth)
             .fillMaxHeight()
-            .graphicsLayer {
-                scaleX = if (isFocused) 1.5f else 1.0f
-                scaleY = if (isFocused) 1.5f else 1.0f
-            }
             .background(
                 color = if (isActive) Color.White.copy(alpha = 0.15f) else Color.Transparent,
                 shape = RoundedCornerShape(50)
             )
-            .border(
-                width = if (isActive) 1.dp else 0.dp,
-                color = if (isActive) Color(0xFF87CEEB).copy(alpha = 0.6f) else Color.Transparent,
-                shape = RoundedCornerShape(50)
-            )
             .focusable()
             .onFocusChanged { isFocused = it.isFocused }
-            .navigationPillFocusEffect(isFocused, "glow")
+            .navigationPillFocusEffect(isFocused, "pulseglow")
             .clickable { onClick() },
         contentAlignment = Alignment.Center
     ) {

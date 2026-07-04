@@ -93,10 +93,40 @@ fun Modifier.breatheFocusEffect(isFocused: Boolean): Modifier {
 }
 
 @Composable
+fun Modifier.pulseGlowFocusEffect(isFocused: Boolean): Modifier {
+    val target = remember { mutableStateOf(1.0f) }
+    LaunchedEffect(isFocused) {
+        if (isFocused) {
+            while (true) {
+                target.value = 1.08f
+                delay(600)
+                target.value = 1.0f
+                delay(600)
+            }
+        } else {
+            target.value = 1.0f
+        }
+    }
+    val scale = animateFloatAsState(
+        targetValue = target.value,
+        animationSpec = BreatheSpec,
+        label = "pulseGlowScale"
+    ).value
+    val glowAlpha = ((scale - 1.0f) / 0.08f * 0.5f + 0.5f).coerceIn(0.3f, 1.0f)
+    return this
+        .graphicsLayer { scaleX = scale; scaleY = scale }
+        .then(
+            if (isFocused) Modifier.border(2.dp, IcyBlueBorder.copy(alpha = glowAlpha), RoundedCornerShape(50))
+            else Modifier
+        )
+}
+
+@Composable
 fun Modifier.navigationPillFocusEffect(isFocused: Boolean, effect: String): Modifier = when (effect) {
     "glow" -> this.glowFocusEffect(isFocused)
     "scale" -> this.scaleFocusEffect(isFocused)
     "pulse" -> this.pulseFocusEffect(isFocused)
     "breathe" -> this.breatheFocusEffect(isFocused)
+    "pulseglow" -> this.pulseGlowFocusEffect(isFocused)
     else -> this
 }

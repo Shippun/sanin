@@ -67,6 +67,7 @@ import ani.dantotsu.themes.ThemeManager
 import ani.dantotsu.ui.components.NavigationPills
 import ani.dantotsu.ui.components.NavigationPillsViewModel
 import ani.dantotsu.util.AudioHelper
+import ani.dantotsu.util.FocusEffectUtil
 import ani.dantotsu.util.Logger
 import ani.dantotsu.util.customAlertDialog
 import kotlinx.coroutines.Dispatchers
@@ -321,6 +322,8 @@ class MainActivity : AppCompatActivity() {
             // Setup avatar and right rail drawer
             binding.mainAvatarContainer.visibility = View.VISIBLE
             loadAvatar()
+            binding.mainUserAvatarContainer.isFocusable = true
+            FocusEffectUtil.applyFocusListener(binding.mainUserAvatarContainer)
             binding.mainUserAvatarContainer.setOnClickListener {
                 if (!binding.mainDrawer.isDrawerOpen(Gravity.END)) {
                     populateRightRail()
@@ -329,6 +332,8 @@ class MainActivity : AppCompatActivity() {
                     binding.mainDrawer.closeDrawer(Gravity.END)
                 }
             }
+            binding.mainCalendarContainer.isFocusable = true
+            FocusEffectUtil.applyFocusListener(binding.mainCalendarContainer)
             binding.mainCalendarContainer.setOnClickListener {
                 ContextCompat.startActivity(
                     it.context,

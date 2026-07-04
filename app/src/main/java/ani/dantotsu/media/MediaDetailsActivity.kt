@@ -85,15 +85,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import ani.dantotsu.ui.components.navigationPillFocusEffect
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 
 import kotlin.math.abs
@@ -736,40 +734,18 @@ fun MediaNavPills(
                     ),
                     label = "pillWidth"
                 )
-                val targetScale by animateFloatAsState(
-                    targetValue = if (isFocused) 1.5f else 1.0f,
-                    animationSpec = spring(
-                        dampingRatio = 0.85f,
-                        stiffness = Spring.StiffnessVeryLow
-                    ),
-                    label = "pillScale"
-                )
 
                 Box(
                     modifier = Modifier
                         .width(targetWidth)
                         .height(48.dp)
-                        .graphicsLayer {
-                            scaleX = targetScale
-                            scaleY = targetScale
-                            shadowElevation = if (isFocused) 8f else 0f
-                        }
                         .background(
                             color = if (isActive) Color.White.copy(alpha = 0.15f) else Color.Transparent,
                             shape = RoundedCornerShape(50)
                         )
-                        .border(
-                            width = if (isFocused) 2.dp else if (isActive) 1.dp else 0.dp,
-                            color = if (isFocused)
-                                Color(0xFF87CEEB).copy(alpha = 1f)
-                            else if (isActive)
-                                Color(0xFF87CEEB).copy(alpha = 0.6f)
-                            else
-                                Color.Transparent,
-                            shape = RoundedCornerShape(50)
-                        )
                         .focusable()
                         .onFocusChanged { isFocused = it.isFocused }
+                        .navigationPillFocusEffect(isFocused, "pulseglow")
                         .clickable { currentTab.value = index; onTabSelected(index) },
                     contentAlignment = Alignment.Center
                 ) {
