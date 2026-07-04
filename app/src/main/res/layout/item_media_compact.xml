@@ -41,6 +41,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:layout_gravity="bottom"
+                android:visibility="gone"
                 android:background="@drawable/gradient_bottom_dark" />
 
             <ImageView
@@ -66,7 +67,7 @@
                 android:paddingEnd="8dp"
                 android:textColor="#F3F3F3"
                 android:textSize="11sp"
-                android:visibility="visible"
+                android:visibility="gone"
                 android:transitionName="mediaTitle"
                 tools:ignore="SpUsage"
                 tools:text="Title" />

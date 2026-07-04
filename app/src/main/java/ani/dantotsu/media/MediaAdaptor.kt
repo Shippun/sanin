@@ -145,13 +145,6 @@ class MediaAdaptor(
                         else -> cardRoundness
                     }
                     b.itemCompactCard.radius = styleRadius
-                    if (rawCardStyle == 6) {
-                        b.itemCompactImageOverlay.visibility = View.GONE
-                        b.itemCompactClearlogo.visibility = View.GONE
-                        b.itemCompactOverlayTitle.visibility = View.GONE
-                    } else {
-                        b.itemCompactImageOverlay.visibility = View.VISIBLE
-                    }
                     b.itemCompactOngoing.isVisible =
                         media.status == currActivity()!!.getString(R.string.status_releasing)
                     b.itemCompactScore.text =
@@ -161,21 +154,6 @@ class MediaAdaptor(
                         b.root.context,
                         (if (media.userScore != 0) R.drawable.item_user_score else R.drawable.item_score)
                     )
-
-                    // Clearlogo with title fallback
-                    logoJobs[position]?.cancel()
-                    logoJobs[position] = CoroutineScope(Dispatchers.Main).launch {
-                        val logoUrl = LogoApi.getLogoUrl(media.id)
-                        if (!logoUrl.isNullOrBlank()) {
-                            b.itemCompactClearlogo.visibility = View.VISIBLE
-                            b.itemCompactClearlogo.loadImage(logoUrl)
-                            b.itemCompactOverlayTitle.visibility = View.GONE
-                        } else {
-                            b.itemCompactClearlogo.visibility = View.GONE
-                            b.itemCompactOverlayTitle.visibility = View.VISIBLE
-                            b.itemCompactOverlayTitle.text = media.userPreferredName
-                        }
-                    }
                 }
             }
 
