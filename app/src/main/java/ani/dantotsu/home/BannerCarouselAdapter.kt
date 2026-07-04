@@ -59,6 +59,7 @@ class BannerCarouselAdapter(
             val logoUrl = LogoApi.getLogoUrl(media.id)
             if (!logoUrl.isNullOrBlank()) {
                 holder.clearlogo.visibility = View.VISIBLE
+                holder.title.visibility = View.GONE
                 holder.clearlogo.loadImage(logoUrl)
             } else {
                 holder.clearlogo.visibility = View.GONE
