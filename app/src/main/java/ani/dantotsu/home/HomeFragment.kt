@@ -15,6 +15,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.LayoutAnimationController
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.content.ContextCompat
@@ -740,10 +741,54 @@ class HomeFragment : Fragment() {
                     startActivity(intent)
                 }
                 rv.adapter = bannerCarouselAdapter
+                setupBannerDots(rv, items.size)
                 startBannerAutoScroll(rv, items.size)
             }
         }
         lifecycleScope.launch(Dispatchers.IO) { model.loadTrendingBanner() }
+    }
+
+    private fun setupBannerDots(rv: RecyclerView, itemCount: Int) {
+        val dots = binding.homeBannerDots
+        dots.removeAllViews()
+        val density = resources.displayMetrics.density
+        val dotsList = mutableListOf<View>()
+        for (i in 0 until itemCount) {
+            val dot = View(requireContext())
+            val w = if (i == 0) (32 * density).toInt() else (12 * density).toInt()
+            val lp = LinearLayout.LayoutParams(w, (4 * density).toInt())
+            lp.marginEnd = (6 * density).toInt()
+            dot.layoutParams = lp
+            dot.background = if (i == 0)
+                ContextCompat.getDrawable(requireContext(), R.drawable.banner_dot_active)
+            else
+                ContextCompat.getDrawable(requireContext(), R.drawable.banner_dot_inactive)
+            dot.setOnClickListener {
+                rv.smoothScrollToPosition(i)
+            }
+            dots.addView(dot)
+            dotsList.add(dot)
+        }
+        dots.visibility = View.VISIBLE
+
+        rv.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrollStateChanged(rv: RecyclerView, newState: Int) {
+                if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                    val lm = rv.layoutManager as LinearLayoutManager
+                    val pos = lm.findFirstVisibleItemPosition()
+                    for (i in 0 until dotsList.size) {
+                        val dot = dotsList[i]
+                        val lp = dot.layoutParams
+                        lp.width = if (i == pos) (32 * density).toInt() else (12 * density).toInt()
+                        dot.layoutParams = lp
+                        dot.background = if (i == pos)
+                            ContextCompat.getDrawable(requireContext(), R.drawable.banner_dot_active)
+                        else
+                            ContextCompat.getDrawable(requireContext(), R.drawable.banner_dot_inactive)
+                    }
+                }
+            }
+        })
     }
 
     private fun startBannerAutoScroll(rv: RecyclerView, itemCount: Int) {

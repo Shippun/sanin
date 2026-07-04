@@ -40,5 +40,15 @@
             android:layout_gravity="center"
             android:layout_marginTop="64dp" />
 
+        <LinearLayout
+            android:id="@+id/trendingDots"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|center_horizontal"
+            android:layout_marginBottom="16dp"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:visibility="gone" />
+
     </FrameLayout>
 </merge>

@@ -5,6 +5,7 @@ import android.view.HapticFeedbackConstants
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import android.view.animation.LayoutAnimationController
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -141,12 +142,56 @@ class AnimePageAdapter : RecyclerView.Adapter<AnimePageAdapter.AnimePageViewHold
             )
         }
         rv.adapter = bannerAdapter
+        setupTrendingDots(rv, media.size)
         rv.layoutAnimation = LayoutAnimationController(setSlideIn(), 0.25f)
         trendingBinding.titleContainer.startAnimation(setSlideUp())
         binding.animeListContainer.layoutAnimation =
             LayoutAnimationController(setSlideIn(), 0.25f)
         binding.animeSeasonsCont.layoutAnimation =
             LayoutAnimationController(setSlideIn(), 0.25f)
+    }
+
+    private fun setupTrendingDots(rv: RecyclerView, itemCount: Int) {
+        val dots = trendingBinding.trendingDots
+        dots.removeAllViews()
+        val density = rv.context.resources.displayMetrics.density
+        val dotsList = mutableListOf<View>()
+        for (i in 0 until itemCount) {
+            val dot = View(rv.context)
+            val w = if (i == 0) (32 * density).toInt() else (12 * density).toInt()
+            val lp = LinearLayout.LayoutParams(w, (4 * density).toInt())
+            lp.marginEnd = (6 * density).toInt()
+            dot.layoutParams = lp
+            dot.background = if (i == 0)
+                ContextCompat.getDrawable(rv.context, R.drawable.banner_dot_active)
+            else
+                ContextCompat.getDrawable(rv.context, R.drawable.banner_dot_inactive)
+            dot.setOnClickListener {
+                rv.smoothScrollToPosition(i)
+            }
+            dots.addView(dot)
+            dotsList.add(dot)
+        }
+        dots.visibility = View.VISIBLE
+
+        rv.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrollStateChanged(rv: RecyclerView, newState: Int) {
+                if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                    val lm = rv.layoutManager as LinearLayoutManager
+                    val pos = lm.findFirstVisibleItemPosition()
+                    for (i in 0 until dotsList.size) {
+                        val dot = dotsList[i]
+                        val lp = dot.layoutParams
+                        lp.width = if (i == pos) (32 * density).toInt() else (12 * density).toInt()
+                        dot.layoutParams = lp
+                        dot.background = if (i == pos)
+                            ContextCompat.getDrawable(rv.context, R.drawable.banner_dot_active)
+                        else
+                            ContextCompat.getDrawable(rv.context, R.drawable.banner_dot_inactive)
+                    }
+                }
+            }
+        })
     }
 
     fun updateRecent(adaptor: MediaAdaptor, media: MutableList<Media>) {

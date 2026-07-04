@@ -60,6 +60,16 @@
                     tools:orientation="horizontal" />
 
                 <LinearLayout
+                    android:id="@+id/homeBannerDots"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom|center_horizontal"
+                    android:layout_marginBottom="16dp"
+                    android:orientation="horizontal"
+                    android:gravity="center"
+                    android:visibility="gone" />
+
+                <LinearLayout
                     android:id="@+id/homeTopContainer"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
