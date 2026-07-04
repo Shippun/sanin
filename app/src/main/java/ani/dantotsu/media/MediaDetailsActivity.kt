@@ -693,6 +693,7 @@ fun MediaNavPills(
 ) {
     val tabs = if (hasComments) listOf("info", "watch", "comments") else listOf("info", "watch")
     val currentTab = remember { mutableStateOf(selectedTab) }
+    var highlightIndex by remember { mutableStateOf(selectedTab) }
     var containerFocused by remember { mutableStateOf(false) }
 
     Box(
@@ -727,13 +728,16 @@ fun MediaNavPills(
                 if (containerFocused && event.type == KeyEventType.KeyUp) {
                     when (event.key) {
                         Key.DirectionRight -> {
-                            val next = (currentTab.value + 1).coerceAtMost(tabs.size - 1)
-                            currentTab.value = next; onTabSelected(next)
+                            highlightIndex = (highlightIndex + 1).coerceAtMost(tabs.size - 1)
                             true
                         }
                         Key.DirectionLeft -> {
-                            val prev = (currentTab.value - 1).coerceAtLeast(0)
-                            currentTab.value = prev; onTabSelected(prev)
+                            highlightIndex = (highlightIndex - 1).coerceAtLeast(0)
+                            true
+                        }
+                        Key.Enter, Key.DirectionCenter -> {
+                            currentTab.value = highlightIndex
+                            onTabSelected(highlightIndex)
                             true
                         }
                         else -> false
@@ -748,16 +752,25 @@ fun MediaNavPills(
         ) {
             tabs.forEachIndexed { index, tab ->
                 val isActive = currentTab.value == index
+                val isHighlighted = highlightIndex == index
 
                 Box(
                     modifier = Modifier
                         .width(48.dp)
                         .height(48.dp)
                         .background(
-                            color = if (isActive) Color.White.copy(alpha = 0.15f) else Color.Transparent,
+                            color = when {
+                                isActive -> Color.White.copy(alpha = 0.15f)
+                                isHighlighted -> Color.White.copy(alpha = 0.08f)
+                                else -> Color.Transparent
+                            },
                             shape = RoundedCornerShape(50)
                         )
-                        .clickable { currentTab.value = index; onTabSelected(index) },
+                        .clickable {
+                            highlightIndex = index
+                            currentTab.value = index
+                            onTabSelected(index)
+                        },
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(

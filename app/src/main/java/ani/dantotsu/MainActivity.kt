@@ -67,7 +67,6 @@ import ani.dantotsu.themes.ThemeManager
 import ani.dantotsu.ui.components.NavigationPills
 import ani.dantotsu.ui.components.NavigationPillsViewModel
 import ani.dantotsu.util.AudioHelper
-import ani.dantotsu.util.FocusEffectUtil
 import ani.dantotsu.util.Logger
 import ani.dantotsu.util.customAlertDialog
 import kotlinx.coroutines.Dispatchers
@@ -303,7 +302,20 @@ class MainActivity : AppCompatActivity() {
             // Setup Compose NavigationPills
             navPillsViewModel = ViewModelProvider(this)[NavigationPillsViewModel::class.java]
             binding.navPills.setContent {
-                NavigationPills(viewModel = navPillsViewModel)
+                NavigationPills(
+                    viewModel = navPillsViewModel,
+                    onCalendarClick = {
+                        startActivity(Intent(this, ani.dantotsu.media.CalendarActivity::class.java))
+                    },
+                    onAvatarClick = {
+                        if (!binding.mainDrawer.isDrawerOpen(Gravity.END)) {
+                            populateRightRail()
+                            binding.mainDrawer.openDrawer(Gravity.END)
+                        } else {
+                            binding.mainDrawer.closeDrawer(Gravity.END)
+                        }
+                    }
+                )
             }
             binding.navPills.visibility = View.VISIBLE
 
@@ -320,27 +332,7 @@ class MainActivity : AppCompatActivity() {
             switchTab(startTab)
 
             // Setup avatar and right rail drawer
-            binding.mainAvatarContainer.visibility = View.VISIBLE
             loadAvatar()
-            binding.mainUserAvatarContainer.isFocusable = true
-            FocusEffectUtil.applyFocusListener(binding.mainUserAvatarContainer)
-            binding.mainUserAvatarContainer.setOnClickListener {
-                if (!binding.mainDrawer.isDrawerOpen(Gravity.END)) {
-                    populateRightRail()
-                    binding.mainDrawer.openDrawer(Gravity.END)
-                } else {
-                    binding.mainDrawer.closeDrawer(Gravity.END)
-                }
-            }
-            binding.mainCalendarContainer.isFocusable = true
-            FocusEffectUtil.applyFocusListener(binding.mainCalendarContainer)
-            binding.mainCalendarContainer.setOnClickListener {
-                ContextCompat.startActivity(
-                    it.context,
-                    Intent(it.context, ani.dantotsu.media.CalendarActivity::class.java),
-                    null
-                )
-            }
             setupRightRail()
         }
 
