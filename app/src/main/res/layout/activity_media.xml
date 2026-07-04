@@ -246,14 +246,6 @@
         android:orientation="vertical"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <androidx.compose.ui.platform.ComposeView
-            android:id="@+id/mediaNavPills"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:focusable="true"
-            android:focusableInTouchMode="false"
-            android:nextFocusDown="@+id/mediaViewPager" />
-
         <androidx.viewpager2.widget.ViewPager2
             android:id="@+id/mediaViewPager"
             android:layout_width="match_parent"
@@ -262,6 +254,22 @@
             android:nestedScrollingEnabled="true"
             tools:ignore="SpeakableTextPresentCheck" />
     </LinearLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top"
+        android:translationZ="10dp"
+        android:clipChildren="false">
+
+        <androidx.compose.ui.platform.ComposeView
+            android:id="@+id/mediaNavPills"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:focusable="true"
+            android:focusableInTouchMode="false"
+            android:nextFocusDown="@+id/mediaViewPager" />
+    </FrameLayout>
 
     <LinearLayout
         android:id="@+id/commentMessageContainer"
