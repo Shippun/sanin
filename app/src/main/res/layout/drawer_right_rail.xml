@@ -19,8 +19,11 @@
         android:padding="24dp">
 
         <com.google.android.material.card.MaterialCardView
+            android:id="@+id/rightRailAvatarCard"
             android:layout_width="80dp"
             android:layout_height="80dp"
+            android:focusable="true"
+            android:nextFocusDown="@+id/rightRailExtensions"
             app:cardCornerRadius="40dp"
             app:cardElevation="4dp">
 

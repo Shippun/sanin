@@ -28,6 +28,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.doOnAttach
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.documentfile.provider.DocumentFile
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -251,17 +252,20 @@ class MainActivity : AppCompatActivity() {
 
         var doubleBackToExitPressedOnce = false
         onBackPressedDispatcher.addCallback(this) {
-            if (doubleBackToExitPressedOnce) {
+            if (binding.mainDrawer.isDrawerOpen(Gravity.END)) {
+                binding.mainDrawer.closeDrawer(Gravity.END)
+            } else if (doubleBackToExitPressedOnce) {
                 finish()
-            }
-            doubleBackToExitPressedOnce = true
-            snackString(this@MainActivity.getString(R.string.back_to_exit)).apply {
-                this?.addCallback(object : BaseTransientBottomBar.BaseCallback<Snackbar>() {
-                    override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
-                        super.onDismissed(transientBottomBar, event)
-                        doubleBackToExitPressedOnce = false
-                    }
-                })
+            } else {
+                doubleBackToExitPressedOnce = true
+                snackString(this@MainActivity.getString(R.string.back_to_exit)).apply {
+                    this?.addCallback(object : BaseTransientBottomBar.BaseCallback<Snackbar>() {
+                        override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
+                            super.onDismissed(transientBottomBar, event)
+                            doubleBackToExitPressedOnce = false
+                        }
+                    })
+                }
             }
         }
 
@@ -647,55 +651,77 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupRightRail() {
-        findViewById<View>(R.id.rightRailExtensions).setOnClickListener {
-            binding.mainDrawer.closeDrawer(Gravity.END)
-            startActivity(Intent(this, ExtensionsActivity::class.java))
-        }
-        findViewById<View>(R.id.rightRailProfile).setOnClickListener {
-            binding.mainDrawer.closeDrawer(Gravity.END)
-            ContextCompat.startActivity(this, Intent(this, ProfileActivity::class.java)
-                .putExtra("userId", Anilist.userid), null)
-        }
-        findViewById<View>(R.id.rightRailAnimeList).setOnClickListener {
-            binding.mainDrawer.closeDrawer(Gravity.END)
-            ContextCompat.startActivity(this, Intent(this, ani.dantotsu.media.user.ListActivity::class.java)
-                .putExtra("anime", true)
-                .putExtra("userId", Anilist.userid ?: 0)
-                .putExtra("username", Anilist.username), null)
-        }
-        findViewById<View>(R.id.rightRailSettings).setOnClickListener {
-            binding.mainDrawer.closeDrawer(Gravity.END)
-            startActivity(Intent(this, ani.dantotsu.settings.SettingsActivity::class.java))
-        }
-        findViewById<View>(R.id.rightRailAccount).setOnClickListener {
-            binding.mainDrawer.closeDrawer(Gravity.END)
-            startActivity(Intent(this, ani.dantotsu.settings.SettingsActivity::class.java)
-                .putExtra("openAccount", true))
-        }
-        findViewById<View>(R.id.rightRailSync).setOnClickListener {
-            binding.mainDrawer.closeDrawer(Gravity.END)
-            lifecycleScope.launch(Dispatchers.IO) {
-                ani.dantotsu.connections.syncPendingProgressUpdates()
-                ani.dantotsu.connections.syncPendingDeletions()
-            }
-            snackString("Sync triggered")
-        }
-        findViewById<View>(R.id.rightRailLogout).setOnClickListener {
-            binding.mainDrawer.closeDrawer(Gravity.END)
-            customAlertDialog().apply {
-                setTitle("Log Out")
-                setMessage("Are you sure you want to log out?")
-                setPosButton("Yes") {
-                    Anilist.removeSavedToken()
-                    MAL.removeSavedToken()
-                    startActivity(Intent(this@MainActivity, MainActivity::class.java)
-                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK))
-                    finish()
+        val drawerItems = mapOf(
+            R.id.rightRailExtensions to {
+                startActivity(Intent(this, ExtensionsActivity::class.java))
+            },
+            R.id.rightRailProfile to {
+                ContextCompat.startActivity(this, Intent(this, ProfileActivity::class.java)
+                    .putExtra("userId", Anilist.userid), null)
+            },
+            R.id.rightRailAnimeList to {
+                ContextCompat.startActivity(this, Intent(this, ani.dantotsu.media.user.ListActivity::class.java)
+                    .putExtra("anime", true)
+                    .putExtra("userId", Anilist.userid ?: 0)
+                    .putExtra("username", Anilist.username), null)
+            },
+            R.id.rightRailSettings to {
+                startActivity(Intent(this, ani.dantotsu.settings.SettingsActivity::class.java))
+            },
+            R.id.rightRailAccount to {
+                startActivity(Intent(this, ani.dantotsu.settings.SettingsActivity::class.java)
+                    .putExtra("openAccount", true))
+            },
+            R.id.rightRailSync to {
+                lifecycleScope.launch(Dispatchers.IO) {
+                    ani.dantotsu.connections.syncPendingProgressUpdates()
+                    ani.dantotsu.connections.syncPendingDeletions()
                 }
-                setNegButton("No", null)
-                show()
+                snackString("Sync triggered")
+            },
+            R.id.rightRailLogout to {
+                customAlertDialog().apply {
+                    setTitle("Log Out")
+                    setMessage("Are you sure you want to log out?")
+                    setPosButton("Yes") {
+                        Anilist.removeSavedToken()
+                        MAL.removeSavedToken()
+                        startActivity(Intent(this@MainActivity, MainActivity::class.java)
+                            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK))
+                        finish()
+                    }
+                    setNegButton("No", null)
+                    show()
+                }
             }
+        )
+
+        for ((id, action) in drawerItems) {
+            val view = findViewById<View>(id)
+            view.setOnClickListener {
+                binding.mainDrawer.closeDrawer(Gravity.END)
+                action()
+            }
+            view.setOnKeyListener { v, keyCode, event ->
+                if (event.action == KeyEvent.ACTION_UP &&
+                    (keyCode == KeyEvent.KEYCODE_DPAD_CENTER || keyCode == KeyEvent.KEYCODE_ENTER)
+                ) {
+                    binding.mainDrawer.closeDrawer(Gravity.END)
+                    action()
+                    true
+                } else false
+            }
+            FocusEffectUtil.applyFocusListener(view)
         }
+
+        binding.mainDrawer.addDrawerListener(object : DrawerLayout.DrawerListener {
+            override fun onDrawerSlide(drawerView: View, slideOffset: Float) {}
+            override fun onDrawerStateChanged(newState: Int) {}
+            override fun onDrawerOpened(drawerView: View) {
+                findViewById<View>(R.id.rightRailExtensions).requestFocus()
+            }
+            override fun onDrawerClosed(drawerView: View) {}
+        })
     }
 
     private fun populateRightRail() {
