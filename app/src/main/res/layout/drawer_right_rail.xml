@@ -140,6 +140,25 @@
         android:paddingTop="8dp">
 
         <TextView
+            android:id="@+id/rightRailExtensions"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:background="?attr/selectableItemBackground"
+            android:drawablePadding="16dp"
+            android:fontFamily="@font/poppins_bold"
+            android:focusable="true"
+            android:gravity="center_vertical"
+            android:nextFocusDown="@+id/rightRailProfile"
+            android:nextFocusUp="@+id/rightRailAvatar"
+            android:paddingStart="24dp"
+            android:paddingEnd="24dp"
+            android:text="Extensions"
+            android:textColor="?attr/colorOnSurface"
+            android:textSize="15sp"
+            app:drawableStartCompat="@drawable/ic_extension"
+            app:drawableTint="?attr/colorOnSurface" />
+
+        <TextView
             android:id="@+id/rightRailProfile"
             android:layout_width="match_parent"
             android:layout_height="56dp"
@@ -149,7 +168,7 @@
             android:focusable="true"
             android:gravity="center_vertical"
             android:nextFocusDown="@+id/rightRailAnimeList"
-            android:nextFocusUp="@+id/rightRailAvatar"
+            android:nextFocusUp="@+id/rightRailExtensions"
             android:paddingStart="24dp"
             android:paddingEnd="24dp"
             android:text="Profile"

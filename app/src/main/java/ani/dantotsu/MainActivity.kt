@@ -637,6 +637,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupRightRail() {
+        findViewById<View>(R.id.rightRailExtensions).setOnClickListener {
+            binding.mainDrawer.closeDrawer(Gravity.END)
+            startActivity(Intent(this, ExtensionsActivity::class.java))
+        }
         findViewById<View>(R.id.rightRailProfile).setOnClickListener {
             binding.mainDrawer.closeDrawer(Gravity.END)
             ContextCompat.startActivity(this, Intent(this, ProfileActivity::class.java)
