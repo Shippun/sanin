@@ -85,14 +85,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onKeyEvent
+import androidx.compose.ui.input.key.type
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ani.dantotsu.ui.components.navigationPillFocusEffect
 import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.animation.core.spring
+import ani.dantotsu.ui.components.navigationPillFocusEffect
 
 import kotlin.math.abs
 import kotlin.time.Duration.Companion.milliseconds
@@ -171,7 +175,7 @@ class MediaDetailsActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedLi
         val hasComments = PrefManager.getVal<Int>(PrefName.CommentsEnabled) == 1 && !rescueMode
 
         binding.mediaNavPills?.setViewCompositionStrategy(
-            androidx.compose.ui.platform.ViewCompositionStrategy.DisposeOnDetachedFromWindow
+            androidx.compose.ui.platform.ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed
         )
         binding.mediaNavPills?.setContent {
             MediaNavPills(
@@ -689,6 +693,7 @@ fun MediaNavPills(
 ) {
     val tabs = if (hasComments) listOf("info", "watch", "comments") else listOf("info", "watch")
     val currentTab = remember { mutableStateOf(selectedTab) }
+    var containerFocused by remember { mutableStateOf(false) }
 
     Box(
         modifier = Modifier
@@ -715,7 +720,26 @@ fun MediaNavPills(
                 shape = RoundedCornerShape(50)
             )
             .padding(horizontal = 6.dp)
-            .focusable(),
+            .focusable()
+            .onFocusChanged { containerFocused = it.isFocused }
+            .navigationPillFocusEffect(containerFocused, "pulseglow")
+            .onKeyEvent { event ->
+                if (containerFocused && event.type == KeyEventType.KeyUp) {
+                    when (event.key) {
+                        Key.DirectionRight -> {
+                            val next = (currentTab.value + 1).coerceAtMost(tabs.size - 1)
+                            currentTab.value = next; onTabSelected(next)
+                            true
+                        }
+                        Key.DirectionLeft -> {
+                            val prev = (currentTab.value - 1).coerceAtLeast(0)
+                            currentTab.value = prev; onTabSelected(prev)
+                            true
+                        }
+                        else -> false
+                    }
+                } else false
+            },
         contentAlignment = Alignment.Center
     ) {
         Row(
@@ -724,59 +748,24 @@ fun MediaNavPills(
         ) {
             tabs.forEachIndexed { index, tab ->
                 val isActive = currentTab.value == index
-                var isFocused by remember { mutableStateOf(false) }
-
-                val targetWidth by animateDpAsState(
-                    targetValue = if (isFocused) 96.dp else 48.dp,
-                    animationSpec = spring(
-                        dampingRatio = 0.85f,
-                        stiffness = Spring.StiffnessVeryLow
-                    ),
-                    label = "pillWidth"
-                )
 
                 Box(
                     modifier = Modifier
-                        .width(targetWidth)
+                        .width(48.dp)
                         .height(48.dp)
                         .background(
                             color = if (isActive) Color.White.copy(alpha = 0.15f) else Color.Transparent,
                             shape = RoundedCornerShape(50)
                         )
-                        .focusable()
-                        .onFocusChanged { isFocused = it.isFocused }
-                        .navigationPillFocusEffect(isFocused, "pulseglow")
                         .clickable { currentTab.value = index; onTabSelected(index) },
                     contentAlignment = Alignment.Center
                 ) {
-                    if (isFocused) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(6.dp),
-                            modifier = Modifier.padding(horizontal = 12.dp)
-                        ) {
-                            Icon(
-                                painter = painterResource(id = MEDIA_TAB_ICONS[tab] ?: R.drawable.ic_round_info_24),
-                                contentDescription = MEDIA_TAB_LABELS[tab] ?: tab,
-                                tint = if (isActive) Color(0xFF87CEEB) else Color.White.copy(alpha = 0.7f),
-                                modifier = Modifier.size(22.dp)
-                            )
-                            Text(
-                                text = MEDIA_TAB_LABELS[tab] ?: tab,
-                                color = if (isActive) Color.White else Color.White.copy(alpha = 0.6f),
-                                fontSize = 12.sp,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis
-                            )
-                        }
-                    } else {
-                        Icon(
-                            painter = painterResource(id = MEDIA_TAB_ICONS[tab] ?: R.drawable.ic_round_info_24),
-                            contentDescription = MEDIA_TAB_LABELS[tab] ?: tab,
-                            tint = if (isActive) Color(0xFF87CEEB) else Color.White.copy(alpha = 0.7f),
-                            modifier = Modifier.size(20.dp)
-                        )
-                    }
+                    Icon(
+                        painter = painterResource(id = MEDIA_TAB_ICONS[tab] ?: R.drawable.ic_round_info_24),
+                        contentDescription = MEDIA_TAB_LABELS[tab] ?: tab,
+                        tint = if (isActive) Color(0xFF87CEEB) else Color.White.copy(alpha = 0.7f),
+                        modifier = Modifier.size(20.dp)
+                    )
                 }
             }
         }

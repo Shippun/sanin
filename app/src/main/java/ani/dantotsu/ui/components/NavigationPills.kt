@@ -31,6 +31,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onKeyEvent
+import androidx.compose.ui.input.key.type
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -58,6 +63,7 @@ fun NavigationPills(
 ) {
     val currentTab by viewModel.currentTab.collectAsState()
     val isExpanded by viewModel.isExpanded.collectAsState()
+    var containerFocused by remember { mutableStateOf(false) }
 
     val pillHeight by animateDpAsState(
         targetValue = if (isExpanded) 56.dp else 48.dp,
@@ -94,7 +100,27 @@ fun NavigationPills(
                     ),
                     shape = RoundedCornerShape(50)
                 )
-                .padding(horizontal = 6.dp),
+                .padding(horizontal = 6.dp)
+                .focusable()
+                .onFocusChanged { containerFocused = it.isFocused }
+                .navigationPillFocusEffect(containerFocused, "pulseglow")
+                .onKeyEvent { event ->
+                    if (containerFocused && event.type == KeyEventType.KeyUp) {
+                        when (event.key) {
+                            Key.DirectionRight -> {
+                                val next = (currentTab + 1).coerceAtMost(TAB_ORDER.size - 1)
+                                viewModel.setTab(next)
+                                true
+                            }
+                            Key.DirectionLeft -> {
+                                val prev = (currentTab - 1).coerceAtLeast(0)
+                                viewModel.setTab(prev)
+                                true
+                            }
+                            else -> false
+                        }
+                    } else false
+                },
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(4.dp)
         ) {
@@ -121,7 +147,6 @@ fun NavigationPill(
     onClick: () -> Unit
 ) {
     val iconRes = TAB_ICONS[tab] ?: R.drawable.ic_round_home_24
-    var isFocused by remember { mutableStateOf(false) }
 
     val pillWidth by animateDpAsState(
         targetValue = if (isExpanded) 88.dp else 48.dp,
@@ -137,9 +162,6 @@ fun NavigationPill(
                 color = if (isActive) Color.White.copy(alpha = 0.15f) else Color.Transparent,
                 shape = RoundedCornerShape(50)
             )
-            .focusable()
-            .onFocusChanged { isFocused = it.isFocused }
-            .navigationPillFocusEffect(isFocused, "pulseglow")
             .clickable { onClick() },
         contentAlignment = Alignment.Center
     ) {

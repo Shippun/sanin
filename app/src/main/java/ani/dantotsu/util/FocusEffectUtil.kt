@@ -12,6 +12,7 @@ import ani.dantotsu.settings.saving.PrefName
 object FocusEffectUtil {
 
     private var lastFocusedView: View? = null
+    private val activeAnimators = mutableMapOf<View, List<ObjectAnimator>>()
 
     fun applyFocusListener(vararg views: View) {
         for (view in views) {
@@ -32,62 +33,75 @@ object FocusEffectUtil {
 
     private fun resetView(v: View?) {
         if (v == null) return
+        cancelAnimators(v)
         v.elevation = 0f
         v.scaleX = 1f
         v.scaleY = 1f
+        v.translationX = 0f
         v.alpha = 1f
-        v.animate().cancel()
     }
 
     private fun applyFocusGain(v: View) {
+        cancelAnimators(v)
         val effect = PrefManager.getVal<Int>(PrefName.FocusEffect)
         when (effect) {
             0 -> { // Glow
                 v.elevation = 12f
-                v.scaleX = 1.05f
-                v.scaleY = 1.05f
                 v.animate().scaleX(1.05f).scaleY(1.05f).setDuration(200).start()
             }
             1 -> { // Breathing
-                v.animate()
-                    .scaleX(1.06f).scaleY(1.06f)
-                    .setDuration(800)
-                    .setInterpolator(AccelerateDecelerateInterpolator())
-                    .withEndAction {
-                        v.animate()
-                            .scaleX(1.0f).scaleY(1.0f)
-                            .setDuration(800)
-                            .setInterpolator(AccelerateDecelerateInterpolator())
-                            .start()
-                    }
-                    .start()
+                val animX = ObjectAnimator.ofFloat(v, "scaleX", 1.06f, 1.0f).apply {
+                    duration = 800
+                    interpolator = AccelerateDecelerateInterpolator()
+                    repeatCount = ObjectAnimator.INFINITE
+                    repeatMode = ObjectAnimator.REVERSE
+                    start()
+                }
+                val animY = ObjectAnimator.ofFloat(v, "scaleY", 1.06f, 1.0f).apply {
+                    duration = 800
+                    interpolator = AccelerateDecelerateInterpolator()
+                    repeatCount = ObjectAnimator.INFINITE
+                    repeatMode = ObjectAnimator.REVERSE
+                    start()
+                }
+                activeAnimators[v] = listOf(animX, animY)
             }
             2 -> { // Pulse
-                ObjectAnimator.ofFloat(v, "scaleX", 1f, 1.15f, 1f).apply {
+                val animX = ObjectAnimator.ofFloat(v, "scaleX", 1f, 1.15f).apply {
                     duration = 400
                     interpolator = BounceInterpolator()
+                    repeatCount = ObjectAnimator.INFINITE
+                    repeatMode = ObjectAnimator.REVERSE
                     start()
                 }
-                ObjectAnimator.ofFloat(v, "scaleY", 1f, 1.15f, 1f).apply {
+                val animY = ObjectAnimator.ofFloat(v, "scaleY", 1f, 1.15f).apply {
                     duration = 400
                     interpolator = BounceInterpolator()
+                    repeatCount = ObjectAnimator.INFINITE
+                    repeatMode = ObjectAnimator.REVERSE
                     start()
                 }
+                activeAnimators[v] = listOf(animX, animY)
             }
             3 -> { // Shaking
-                val shake = ObjectAnimator.ofFloat(v, "translationX", 0f, 8f, -8f, 4f, -4f, 0f)
-                shake.duration = 400
-                shake.interpolator = AccelerateDecelerateInterpolator()
-                shake.start()
+                val shake = ObjectAnimator.ofFloat(v, "translationX", 0f, 8f, -8f, 4f, -4f, 0f).apply {
+                    duration = 400
+                    interpolator = AccelerateDecelerateInterpolator()
+                    repeatCount = ObjectAnimator.INFINITE
+                    start()
+                }
+                activeAnimators[v] = listOf(shake)
                 v.animate().scaleX(1.03f).scaleY(1.03f).setDuration(200).start()
-            }
-            else -> { // None
-                // no effect
             }
         }
     }
 
+    private fun cancelAnimators(v: View) {
+        activeAnimators.remove(v)?.forEach { it.cancel() }
+    }
+
     private fun applyFocusLoss(v: View) {
+        cancelAnimators(v)
         v.animate().cancel()
         v.scaleX = 1f
         v.scaleY = 1f

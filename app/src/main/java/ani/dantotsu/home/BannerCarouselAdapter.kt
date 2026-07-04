@@ -14,6 +14,7 @@ import ani.dantotsu.connections.LogoApi
 import ani.dantotsu.connections.anilist.Anilist
 import ani.dantotsu.loadImage
 import ani.dantotsu.media.Media
+import ani.dantotsu.util.FocusEffectUtil
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -174,11 +175,8 @@ class BannerCarouselAdapter(
         }
         holder.favBtn.visibility = View.VISIBLE
 
-        // --- Bookmark button ---
-        holder.bookmarkBtn.setOnClickListener { onItemClick(media) }
-        holder.bookmarkBtn.isFocusable = true
-        holder.bookmarkBtn.isFocusableInTouchMode = false
-        holder.bookmarkBtn.visibility = View.VISIBLE
+        // --- Focus effects ---
+        FocusEffectUtil.applyFocusListener(holder.itemView, holder.playBtn, holder.favBtn)
 
         // --- Item click ---
         holder.itemView.setOnClickListener { onItemClick(media) }
@@ -193,8 +191,6 @@ class BannerCarouselAdapter(
         holder.playBtn.nextFocusDownId = R.id.homeContinueWatch
         holder.favBtn.nextFocusUpId = View.NO_ID
         holder.favBtn.nextFocusDownId = R.id.homeContinueWatch
-        holder.bookmarkBtn.nextFocusUpId = View.NO_ID
-        holder.bookmarkBtn.nextFocusDownId = R.id.homeContinueWatch
     }
 
     override fun getItemCount() = items.size
@@ -215,6 +211,5 @@ class BannerCarouselAdapter(
 
         val playBtn: android.widget.Button = view.findViewById(R.id.bannerPlayBtn)
         val favBtn: ImageView = view.findViewById(R.id.bannerFavBtn)
-        val bookmarkBtn: ImageView = view.findViewById(R.id.bannerBookmarkBtn)
     }
 }

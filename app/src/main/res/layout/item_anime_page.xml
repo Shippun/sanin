@@ -19,6 +19,8 @@
         android:layout_marginTop="108dp"
         android:clipToPadding="false"
         android:fillViewport="true"
+        android:focusable="true"
+        android:nextFocusUpId="@+id/trendingViewPager"
         android:paddingStart="2dp"
         android:paddingEnd="2dp"
         android:scrollbarSize="0dp">
@@ -125,6 +127,7 @@
                 android:layout_height="250dp"
                 android:clipToPadding="false"
                 android:nestedScrollingEnabled="true"
+                android:nextFocusUpId="@+id/animeSeasons"
                 android:paddingStart="20dp"
                 android:paddingEnd="20dp"
                 android:requiresFadingEdge="horizontal"
@@ -181,19 +184,20 @@
             android:layout_height="48dp"
             android:layout_gravity="center" />
 
-        <ani.dantotsu.FadingEdgeRecyclerView
-            android:id="@+id/animeMoviesRecyclerView"
-            android:layout_width="match_parent"
-            android:layout_height="250dp"
-            android:clipToPadding="false"
-            android:nestedScrollingEnabled="true"
-            android:paddingStart="20dp"
-            android:paddingEnd="20dp"
-            android:requiresFadingEdge="horizontal"
-            tools:itemCount="4"
-            tools:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            tools:listitem="@layout/item_media_compact"
-            tools:orientation="horizontal" />
+            <ani.dantotsu.FadingEdgeRecyclerView
+                android:id="@+id/animeMoviesRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="250dp"
+                android:clipToPadding="false"
+                android:nestedScrollingEnabled="true"
+                android:nextFocusUpId="@+id/animeUpdatedRecyclerView"
+                android:paddingStart="20dp"
+                android:paddingEnd="20dp"
+                android:requiresFadingEdge="horizontal"
+                tools:itemCount="4"
+                tools:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:listitem="@layout/item_media_compact"
+                tools:orientation="horizontal" />
 
     </FrameLayout>
 
@@ -242,19 +246,20 @@
             android:layout_height="48dp"
             android:layout_gravity="center" />
 
-        <ani.dantotsu.FadingEdgeRecyclerView
-            android:id="@+id/animeTopRatedRecyclerView"
-            android:layout_width="match_parent"
-            android:layout_height="250dp"
-            android:clipToPadding="false"
-            android:nestedScrollingEnabled="true"
-            android:paddingStart="20dp"
-            android:paddingEnd="20dp"
-            android:requiresFadingEdge="horizontal"
-            tools:itemCount="4"
-            tools:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            tools:listitem="@layout/item_media_compact"
-            tools:orientation="horizontal" />
+            <ani.dantotsu.FadingEdgeRecyclerView
+                android:id="@+id/animeTopRatedRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="250dp"
+                android:clipToPadding="false"
+                android:nestedScrollingEnabled="true"
+                android:nextFocusUpId="@+id/animeMoviesRecyclerView"
+                android:paddingStart="20dp"
+                android:paddingEnd="20dp"
+                android:requiresFadingEdge="horizontal"
+                tools:itemCount="4"
+                tools:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:listitem="@layout/item_media_compact"
+                tools:orientation="horizontal" />
 
     </FrameLayout>
 
