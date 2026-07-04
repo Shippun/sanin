@@ -25,7 +25,6 @@ import ani.dantotsu.databinding.LayoutTrendingBinding
 import ani.dantotsu.getAppString
 import ani.dantotsu.getThemeColor
 import ani.dantotsu.loadImage
-import ani.dantotsu.media.CalendarActivity
 import ani.dantotsu.media.Media
 import ani.dantotsu.media.MediaAdaptor
 import ani.dantotsu.media.MediaListViewActivity
@@ -77,16 +76,6 @@ class AnimePageAdapter : RecyclerView.Adapter<AnimePageAdapter.AnimePageViewHold
             it.setOnLongClickListener { onSeasonLongClick.invoke(i) }
         }
 
-        binding.animeCalendarImage.loadImage("https://s4.anilist.co/file/anilistcdn/media/anime/banner/125367-hGPJLSNfprO3.jpg")
-
-        binding.animeCalendar.setOnClickListener {
-            ContextCompat.startActivity(
-                it.context,
-                Intent(it.context, CalendarActivity::class.java),
-                null
-            )
-        }
-
         val rescueMode = PrefManager.getVal<Boolean>(PrefName.RescueMode)
         binding.animeIncludeList.isVisible = if (rescueMode) MAL.token != null else Anilist.token != null
 
@@ -135,8 +124,6 @@ class AnimePageAdapter : RecyclerView.Adapter<AnimePageAdapter.AnimePageViewHold
         setupTrendingDots(rv, media.size)
         rv.layoutAnimation = LayoutAnimationController(setSlideIn(), 0.25f)
         trendingBinding.titleContainer.startAnimation(setSlideUp())
-        binding.animeListContainer.layoutAnimation =
-            LayoutAnimationController(setSlideIn(), 0.25f)
         binding.animeSeasonsCont.layoutAnimation =
             LayoutAnimationController(setSlideIn(), 0.25f)
     }
