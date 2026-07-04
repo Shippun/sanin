@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -43,15 +42,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ani.dantotsu.R
 
-private val CORE_TABS = listOf("home", "anime", "discovery", "library")
-private val ALL_ITEMS = listOf("home", "anime", "discovery", "library", "calendar", "avatar")
+private val TAB_ORDER = listOf("home", "anime", "discovery", "library")
 private val TAB_ICONS = mapOf(
     "home" to R.drawable.ic_round_home_24,
     "anime" to R.drawable.ic_round_movie_filter_24,
     "discovery" to R.drawable.ic_round_filter_list_24,
-    "library" to R.drawable.ic_round_library_books_24,
-    "calendar" to R.drawable.ic_round_calendar_today_24,
-    "avatar" to R.drawable.ic_round_person_24
+    "library" to R.drawable.ic_round_library_books_24
 )
 private val TAB_LABELS = mapOf(
     "home" to "Home",
@@ -63,9 +59,7 @@ private val TAB_LABELS = mapOf(
 @Composable
 fun NavigationPills(
     viewModel: NavigationPillsViewModel,
-    modifier: Modifier = Modifier,
-    onCalendarClick: (() -> Unit)? = null,
-    onAvatarClick: (() -> Unit)? = null
+    modifier: Modifier = Modifier
 ) {
     val currentTab by viewModel.currentTab.collectAsState()
     val isExpanded by viewModel.isExpanded.collectAsState()
@@ -115,33 +109,25 @@ fun NavigationPills(
                     if (containerFocused && event.type == KeyEventType.KeyUp) {
                         when (event.key) {
                             Key.DirectionRight -> {
-                                val next = (highlightIndex + 1).coerceAtMost(ALL_ITEMS.size - 1)
-                                highlightIndex = next
-                                if (ALL_ITEMS[next] in CORE_TABS) {
-                                    val tabIdx = CORE_TABS.indexOf(ALL_ITEMS[next])
-                                    if (tabIdx >= 0 && tabIdx != currentTab) {
-                                        // highlight only, don't activate
-                                    }
+                                val next = highlightIndex + 1
+                                if (next < TAB_ORDER.size) {
+                                    highlightIndex = next
+                                    true
+                                } else {
+                                    false
                                 }
-                                true
                             }
                             Key.DirectionLeft -> {
-                                val prev = (highlightIndex - 1).coerceAtLeast(0)
-                                highlightIndex = prev
-                                true
-                            }
-                            Key.DirectionUp -> false
-                            Key.DirectionDown -> false
-                            Key.Enter, Key.DirectionCenter -> {
-                                val item = ALL_ITEMS[highlightIndex]
-                                when (item) {
-                                    "calendar" -> onCalendarClick?.invoke()
-                                    "avatar" -> onAvatarClick?.invoke()
-                                    else -> {
-                                        val tabIdx = CORE_TABS.indexOf(item)
-                                        if (tabIdx >= 0) viewModel.setTab(tabIdx)
-                                    }
+                                val prev = highlightIndex - 1
+                                if (prev >= 0) {
+                                    highlightIndex = prev
+                                    true
+                                } else {
+                                    false
                                 }
+                            }
+                            Key.Enter, Key.DirectionCenter -> {
+                                viewModel.setTab(highlightIndex)
                                 true
                             }
                             else -> false
@@ -151,56 +137,84 @@ fun NavigationPills(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(4.dp)
         ) {
-            ALL_ITEMS.forEachIndexed { index, item ->
-                val isCoreTab = item in CORE_TABS
+            TAB_ORDER.forEachIndexed { index, tab ->
+                val isActive = currentTab == index
                 val isHighlighted = highlightIndex == index
-                val isActive = isCoreTab && CORE_TABS.indexOf(item) == currentTab
 
-                val tabWidth by animateDpAsState(
-                    targetValue = if (isExpanded && isCoreTab) 88.dp else if (isCoreTab) 48.dp else 44.dp,
-                    animationSpec = spring(dampingRatio = 0.85f, stiffness = Spring.StiffnessVeryLow),
-                    label = "itemWidth"
+                NavigationPill(
+                    tab = tab,
+                    label = TAB_LABELS[tab] ?: tab,
+                    isActive = isActive,
+                    isHighlighted = isHighlighted,
+                    isExpanded = isExpanded,
+                    onClick = {
+                        highlightIndex = index
+                        viewModel.setTab(index)
+                    }
                 )
-
-                val shape = if (item == "avatar") CircleShape else RoundedCornerShape(50)
-
-                Box(
-                    modifier = Modifier
-                        .width(tabWidth)
-                        .height(if (item == "avatar") 40.dp else 48.dp)
-                        .background(
-                            color = when {
-                                isActive -> Color.White.copy(alpha = 0.15f)
-                                isHighlighted && isCoreTab -> Color.White.copy(alpha = 0.08f)
-                                else -> Color.Transparent
-                            },
-                            shape = shape
-                        )
-                        .clickable {
-                            highlightIndex = index
-                            when (item) {
-                                "calendar" -> onCalendarClick?.invoke()
-                                "avatar" -> onAvatarClick?.invoke()
-                                else -> {
-                                    val tabIdx = CORE_TABS.indexOf(item)
-                                    if (tabIdx >= 0) viewModel.setTab(tabIdx)
-                                }
-                            }
-                        },
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        painter = painterResource(id = TAB_ICONS[item] ?: R.drawable.ic_round_home_24),
-                        contentDescription = item,
-                        tint = when {
-                            isActive -> Color(0xFF87CEEB)
-                            isHighlighted && !isCoreTab -> Color(0xFF87CEEB).copy(alpha = 0.7f)
-                            else -> Color.White.copy(alpha = 0.7f)
-                        },
-                        modifier = Modifier.size(if (isExpanded && isCoreTab) 22.dp else 20.dp)
-                    )
-                }
             }
+        }
+    }
+}
+
+@Composable
+fun NavigationPill(
+    tab: String,
+    label: String,
+    isActive: Boolean,
+    isHighlighted: Boolean,
+    isExpanded: Boolean,
+    onClick: () -> Unit
+) {
+    val iconRes = TAB_ICONS[tab] ?: R.drawable.ic_round_home_24
+
+    val pillWidth by animateDpAsState(
+        targetValue = if (isExpanded) 88.dp else 48.dp,
+        animationSpec = spring(dampingRatio = 0.85f, stiffness = Spring.StiffnessVeryLow),
+        label = "pillWidth"
+    )
+
+    Box(
+        modifier = Modifier
+            .width(pillWidth)
+            .fillMaxHeight()
+            .background(
+                color = when {
+                    isActive -> Color.White.copy(alpha = 0.15f)
+                    isHighlighted -> Color.White.copy(alpha = 0.08f)
+                    else -> Color.Transparent
+                },
+                shape = RoundedCornerShape(50)
+            )
+            .clickable { onClick() },
+        contentAlignment = Alignment.Center
+    ) {
+        if (isExpanded) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(6.dp)
+            ) {
+                Icon(
+                    painter = painterResource(id = iconRes),
+                    contentDescription = label,
+                    tint = if (isActive) Color(0xFF87CEEB) else Color.White.copy(alpha = 0.7f),
+                    modifier = Modifier.size(22.dp)
+                )
+                Text(
+                    text = label,
+                    color = if (isActive) Color.White else Color.White.copy(alpha = 0.6f),
+                    fontSize = 12.sp,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
+        } else {
+            Icon(
+                painter = painterResource(id = iconRes),
+                contentDescription = label,
+                tint = if (isActive) Color(0xFF87CEEB) else Color.White.copy(alpha = 0.7f),
+                modifier = Modifier.size(20.dp)
+            )
         }
     }
 }

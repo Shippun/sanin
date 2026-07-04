@@ -39,6 +39,7 @@ import ani.dantotsu.connections.LogoApi
 import ani.dantotsu.connections.anilist.Anilist
 import ani.dantotsu.connections.anilist.AnilistHomeViewModel
 import ani.dantotsu.connections.mal.MAL
+import ani.dantotsu.util.FocusEffectUtil
 import ani.dantotsu.databinding.ActivityMainBinding
 import ani.dantotsu.databinding.DialogUserAgentBinding
 import ani.dantotsu.databinding.SplashScreenBinding
@@ -302,22 +303,39 @@ class MainActivity : AppCompatActivity() {
             // Setup Compose NavigationPills
             navPillsViewModel = ViewModelProvider(this)[NavigationPillsViewModel::class.java]
             binding.navPills.setContent {
-                NavigationPills(
-                    viewModel = navPillsViewModel,
-                    onCalendarClick = {
-                        startActivity(Intent(this, ani.dantotsu.media.CalendarActivity::class.java))
-                    },
-                    onAvatarClick = {
-                        if (!binding.mainDrawer.isDrawerOpen(Gravity.END)) {
-                            populateRightRail()
-                            binding.mainDrawer.openDrawer(Gravity.END)
-                        } else {
-                            binding.mainDrawer.closeDrawer(Gravity.END)
-                        }
-                    }
-                )
+                NavigationPills(viewModel = navPillsViewModel)
             }
             binding.navPills.visibility = View.VISIBLE
+
+            // Setup avatar and right rail drawer
+            binding.mainAvatarContainer.visibility = View.VISIBLE
+            loadAvatar()
+            binding.mainUserAvatarContainer.setOnClickListener {
+                if (!binding.mainDrawer.isDrawerOpen(Gravity.END)) {
+                    populateRightRail()
+                    binding.mainDrawer.openDrawer(Gravity.END)
+                } else {
+                    binding.mainDrawer.closeDrawer(Gravity.END)
+                }
+            }
+            binding.mainCalendarContainer.setOnClickListener {
+                ContextCompat.startActivity(
+                    this,
+                    Intent(this, ani.dantotsu.media.CalendarActivity::class.java),
+                    null
+                )
+            }
+            // Focus chain: navPills ↔ calendar ↔ avatar (circular)
+            binding.navPills.nextFocusRightId = R.id.mainCalendarContainer
+            binding.navPills.nextFocusLeftId = R.id.mainUserAvatarContainer
+            binding.mainCalendarContainer.nextFocusLeftId = R.id.navPills
+            binding.mainCalendarContainer.nextFocusRightId = R.id.mainUserAvatarContainer
+            binding.mainUserAvatarContainer.nextFocusLeftId = R.id.mainCalendarContainer
+            binding.mainUserAvatarContainer.nextFocusRightId = R.id.navPills
+            FocusEffectUtil.applyFocusListener(
+                binding.mainCalendarContainer,
+                binding.mainUserAvatarContainer
+            )
 
             // Observe tab changes
             lifecycleScope.launch {
