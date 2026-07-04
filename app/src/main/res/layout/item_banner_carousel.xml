@@ -10,8 +10,9 @@
     <ImageView
         android:id="@+id/bannerImage"
         android:layout_width="match_parent"
-    android:layout_height="264dp"
-        android:scaleType="centerCrop"
+        android:layout_height="match_parent"
+        android:scaleType="fitCenter"
+        android:background="?android:colorBackground"
         tools:ignore="ContentDescription"
         tools:src="@tools:sample/backgrounds/scenic" />
 
