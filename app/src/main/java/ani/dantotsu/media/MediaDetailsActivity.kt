@@ -166,6 +166,10 @@ class MediaDetailsActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedLi
             onBackPressedDispatcher.onBackPressed()
         }
         FocusEffectUtil.applyFocusListener(binding.mediaClose)
+        val isDownload = intent.getBooleanExtra("download", false)
+        media.selected = model.loadSelected(media, isDownload)
+        val initialSelected = media.selected!!.window
+
         binding.mediaNavPills?.let { FocusEffectUtil.applyFocusListener(it) }
 
         binding.mediaNavPills?.setViewCompositionStrategy(
@@ -201,11 +205,6 @@ class MediaDetailsActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedLi
         viewPager.offscreenPageLimit = 2
         viewPager.isUserInputEnabled = false
         viewPager.setPageTransformer(ZoomOutPageTransformer())
-
-
-        val isDownload = intent.getBooleanExtra("download", false)
-        media.selected = model.loadSelected(media, isDownload)
-        val initialSelected = media.selected!!.window
 
         binding.mediaCoverImage.loadImage(media.cover)
         binding.mediaCoverImage.setOnLongClickListener {
