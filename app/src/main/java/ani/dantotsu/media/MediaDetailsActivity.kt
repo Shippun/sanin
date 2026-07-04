@@ -589,6 +589,13 @@ class MediaDetailsActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedLi
                 .setDuration(duration).start()
             if (PrefManager.getVal(PrefName.BannerAnimations)) binding.mediaBanner.resume()
         }
+        // Fade/slide nav pills as toolbar scrolls so they don't overlap ViewPager when collapsed
+        val progress = abs(i).toFloat() / mMaxScrollSize.coerceAtLeast(1)
+        binding.mediaNavPillsWrapper?.alpha = 1f - progress
+        binding.mediaNavPillsWrapper?.translationY = -i.toFloat()
+        binding.mediaNavPillsWrapper?.visibility =
+            if (progress > 0.85f) View.INVISIBLE else View.VISIBLE
+
         if (percentage == 1 && model.scrolledToTop.value != false) model.scrolledToTop.postValue(
             false
         )
