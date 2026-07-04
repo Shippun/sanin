@@ -329,6 +329,13 @@ class MainActivity : AppCompatActivity() {
                     binding.mainDrawer.closeDrawer(Gravity.END)
                 }
             }
+            binding.mainCalendarContainer.setOnClickListener {
+                ContextCompat.startActivity(
+                    it.context,
+                    Intent(it.context, ani.dantotsu.media.CalendarActivity::class.java),
+                    null
+                )
+            }
             setupRightRail()
         }
 

@@ -800,10 +800,10 @@ class HomeFragment : Fragment() {
                 if (itemCount == 0) return
                 currentIndex = (currentIndex + 1) % itemCount
                 rv.smoothScrollToPosition(currentIndex)
-                bannerAutoScrollHandler?.postDelayed(this, 5000L)
-            }
+            bannerAutoScrollHandler?.postDelayed(this, 15000L)
         }
-        bannerAutoScrollHandler?.postDelayed(bannerAutoScrollRunnable!!, 5000L)
+    }
+    bannerAutoScrollHandler?.postDelayed(bannerAutoScrollRunnable!!, 15000L)
     }
 
     private fun updateNavigatingBanner(media: Media) {

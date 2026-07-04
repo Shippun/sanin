@@ -1,7 +1,6 @@
 package ani.dantotsu.home
 
 import android.content.Intent
-import android.view.HapticFeedbackConstants
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -27,7 +26,6 @@ import ani.dantotsu.getAppString
 import ani.dantotsu.getThemeColor
 import ani.dantotsu.loadImage
 import ani.dantotsu.media.CalendarActivity
-import ani.dantotsu.media.GenreActivity
 import ani.dantotsu.media.Media
 import ani.dantotsu.media.MediaAdaptor
 import ani.dantotsu.media.MediaListViewActivity
@@ -79,16 +77,8 @@ class AnimePageAdapter : RecyclerView.Adapter<AnimePageAdapter.AnimePageViewHold
             it.setOnLongClickListener { onSeasonLongClick.invoke(i) }
         }
 
-        binding.animeGenreImage.loadImage("https://s4.anilist.co/file/anilistcdn/media/anime/banner/16498-8jpFCOcDmneX.jpg")
         binding.animeCalendarImage.loadImage("https://s4.anilist.co/file/anilistcdn/media/anime/banner/125367-hGPJLSNfprO3.jpg")
 
-        binding.animeGenre.setOnClickListener {
-            ContextCompat.startActivity(
-                it.context,
-                Intent(it.context, GenreActivity::class.java).putExtra("type", "ANIME"),
-                null
-            )
-        }
         binding.animeCalendar.setOnClickListener {
             ContextCompat.startActivity(
                 it.context,
