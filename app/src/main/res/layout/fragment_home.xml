@@ -29,7 +29,7 @@
                 <com.flaviofaria.kenburnsview.KenBurnsView
                     android:id="@+id/homeUserBg"
                     android:layout_width="match_parent"
-                    android:layout_height="360dp"
+                    android:layout_height="216dp"
                     android:scaleType="centerCrop"
                     tools:ignore="ContentDescription"
                     tools:src="@tools:sample/backgrounds/scenic" />
@@ -37,14 +37,14 @@
                 <ImageView
                     android:id="@+id/homeUserBgNoKen"
                     android:layout_width="match_parent"
-                    android:layout_height="360dp"
+                    android:layout_height="216dp"
                     android:scaleType="centerCrop"
                     tools:ignore="ContentDescription"
                     tools:src="@tools:sample/backgrounds/scenic" />
 
                 <ImageView
                     android:layout_width="match_parent"
-                    android:layout_height="180dp"
+                    android:layout_height="120dp"
                     android:layout_gravity="bottom"
                     android:src="@drawable/linear_gradient_bg"
                     tools:ignore="ContentDescription" />
@@ -52,7 +52,7 @@
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/homeBannerCarousel"
                     android:layout_width="match_parent"
-                    android:layout_height="360dp"
+                    android:layout_height="216dp"
                     android:clipToPadding="false"
                     android:visibility="gone"
                     tools:visibility="visible"
