@@ -246,22 +246,22 @@
         android:orientation="vertical"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
+        <androidx.compose.ui.platform.ComposeView
+            android:id="@+id/mediaNavPills"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:focusable="true"
+            android:nextFocusDown="@+id/mediaViewPager" />
+
         <androidx.viewpager2.widget.ViewPager2
             android:id="@+id/mediaViewPager"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
             android:nextFocusUp="@+id/mediaNavPills"
             android:nestedScrollingEnabled="true"
             tools:ignore="SpeakableTextPresentCheck" />
     </LinearLayout>
-
-    <androidx.compose.ui.platform.ComposeView
-        android:id="@+id/mediaNavPills"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="top"
-        android:focusable="true"
-        android:nextFocusDown="@+id/mediaViewPager" />
 
     <LinearLayout
         android:id="@+id/commentMessageContainer"
