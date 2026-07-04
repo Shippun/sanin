@@ -261,8 +261,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="top"
         android:focusable="true"
-        android:nextFocusDown="@+id/mediaViewPager"
-        android:visibility="gone" />
+        android:nextFocusDown="@+id/mediaViewPager" />
 
     <LinearLayout
         android:id="@+id/commentMessageContainer"

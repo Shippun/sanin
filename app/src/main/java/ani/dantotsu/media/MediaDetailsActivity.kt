@@ -168,6 +168,24 @@ class MediaDetailsActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedLi
         FocusEffectUtil.applyFocusListener(binding.mediaClose)
         binding.mediaNavPills?.let { FocusEffectUtil.applyFocusListener(it) }
 
+        binding.mediaNavPills?.setViewCompositionStrategy(
+            androidx.compose.ui.platform.ViewCompositionStrategy.DisposeOnDetachedFromWindow
+        )
+        binding.mediaNavPills?.setContent {
+            MediaNavPills(
+                selectedTab = initialSelected,
+                hasComments = false,
+                onTabSelected = { idx ->
+                    selected = idx
+                    binding.commentInputLayout.isVisible = selected == 2
+                    binding.mediaViewPager.setCurrentItem(selected, true)
+                    val sel = model.loadSelected(media, isDownload)
+                    sel.window = selected
+                    model.saveSelected(media.id, sel)
+                }
+            )
+        }
+
         val bannerAnimations: Boolean = PrefManager.getVal(PrefName.BannerAnimations)
         if (bannerAnimations) {
             val adi = AccelerateDecelerateInterpolator()
@@ -187,6 +205,7 @@ class MediaDetailsActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedLi
 
         val isDownload = intent.getBooleanExtra("download", false)
         media.selected = model.loadSelected(media, isDownload)
+        val initialSelected = media.selected!!.window
 
         binding.mediaCoverImage.loadImage(media.cover)
         binding.mediaCoverImage.setOnLongClickListener {
@@ -443,25 +462,6 @@ class MediaDetailsActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedLi
 
         if (selected == 2 && !hasComments) {
             selected = 1
-        }
-
-        binding.mediaNavPills?.visibility = View.VISIBLE
-        binding.mediaNavPills?.setViewCompositionStrategy(
-            androidx.compose.ui.platform.ViewCompositionStrategy.DisposeOnDetachedFromWindow
-        )
-        binding.mediaNavPills?.setContent {
-            MediaNavPills(
-                selectedTab = selected,
-                hasComments = hasComments,
-                onTabSelected = { idx ->
-                    selected = idx
-                    binding.commentInputLayout.isVisible = selected == 2
-                    viewPager.setCurrentItem(selected, true)
-                    val sel = model.loadSelected(media, isDownload)
-                    sel.window = selected
-                    model.saveSelected(media.id, sel)
-                }
-            )
         }
 
         val live = Refresh.activity.getOrPut(this.hashCode()) { MutableLiveData(true) }
