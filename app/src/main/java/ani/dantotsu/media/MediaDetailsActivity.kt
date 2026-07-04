@@ -169,6 +169,8 @@ class MediaDetailsActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedLi
         val isDownload = intent.getBooleanExtra("download", false)
         media.selected = model.loadSelected(media, isDownload)
         val initialSelected = media.selected!!.window
+        val rescueMode: Boolean = PrefManager.getVal(PrefName.RescueMode)
+        val hasComments = PrefManager.getVal<Int>(PrefName.CommentsEnabled) == 1 && !rescueMode
 
         binding.mediaNavPills?.let { FocusEffectUtil.applyFocusListener(it) }
 
@@ -178,7 +180,7 @@ class MediaDetailsActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedLi
         binding.mediaNavPills?.setContent {
             MediaNavPills(
                 selectedTab = initialSelected,
-                hasComments = false,
+                hasComments = hasComments,
                 onTabSelected = { idx ->
                     selected = idx
                     binding.commentInputLayout.isVisible = selected == 2
@@ -255,7 +257,6 @@ class MediaDetailsActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedLi
             true
         }
         binding.mediaStatus.text = media.status ?: ""
-        val rescueMode: Boolean = PrefManager.getVal(PrefName.RescueMode)
 
         fun fav(media: Media):  PopImageButton? {
             //Fav Button
