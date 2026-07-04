@@ -262,7 +262,11 @@
         android:layout_gravity="top"
         android:translationZ="10dp"
         android:focusable="true"
-        android:nextFocusDown="@+id/mediaViewPager" />
+        android:focusableInTouchMode="false"
+        android:nextFocusDown="@+id/mediaViewPager"
+        android:nextFocusUp="@+id/mediaClose"
+        android:nextFocusLeft="@id/mediaNavPills"
+        android:nextFocusRight="@id/mediaNavPills" />
 
     <LinearLayout
         android:id="@+id/commentMessageContainer"

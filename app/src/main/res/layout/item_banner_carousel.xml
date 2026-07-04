@@ -10,15 +10,10 @@
     <ImageView
         android:id="@+id/bannerImage"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+    android:layout_height="264dp"
         android:scaleType="centerCrop"
         tools:ignore="ContentDescription"
         tools:src="@tools:sample/backgrounds/scenic" />
-
-    <View
-        android:id="@+id/bannerGradientOverlay"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
 
     <LinearLayout
         android:layout_width="match_parent"

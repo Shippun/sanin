@@ -274,8 +274,8 @@ class UserInterfaceSettingsActivity : AppCompatActivity() {
         binding.uiSettingsCardSize.setOnClickListener {
             customAlertDialog().apply {
                 setTitle("Card Size")
-                val labels = arrayOf("Small (0.5x)", "Medium (0.75x)", "Normal (1x)", "Large (1.25x)", "X-Large (1.5x)")
-                val values = arrayOf(0.5f, 0.75f, 1.0f, 1.25f, 1.5f)
+                val labels = arrayOf("Small (0.5x)", "Medium (0.75x)", "Normal (1x)", "Large (1.25x)", "X-Large (1.5x)", "XX-Large (1.75x)", "XXX-Large (2.0x)")
+                val values = arrayOf(0.5f, 0.75f, 1.0f, 1.25f, 1.5f, 1.75f, 2.0f)
                 val current = PrefManager.getVal<Float>(PrefName.CardSize)
                 val currentIdx = values.indexOfFirst { it == current }.coerceAtLeast(0)
                 singleChoiceItems(labels, currentIdx) { index ->

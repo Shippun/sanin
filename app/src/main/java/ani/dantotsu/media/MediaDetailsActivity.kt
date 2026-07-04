@@ -172,8 +172,6 @@ class MediaDetailsActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedLi
         val rescueMode: Boolean = PrefManager.getVal(PrefName.RescueMode)
         val hasComments = PrefManager.getVal<Int>(PrefName.CommentsEnabled) == 1 && !rescueMode
 
-        binding.mediaNavPills?.let { FocusEffectUtil.applyFocusListener(it) }
-
         binding.mediaNavPills?.setViewCompositionStrategy(
             androidx.compose.ui.platform.ViewCompositionStrategy.DisposeOnDetachedFromWindow
         )

@@ -52,7 +52,7 @@
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/homeBannerCarousel"
                     android:layout_width="match_parent"
-                    android:layout_height="520dp"
+                    android:layout_height="264dp"
                     android:clipToPadding="false"
                     android:visibility="gone"
                     tools:visibility="visible"

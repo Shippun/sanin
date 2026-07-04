@@ -11,7 +11,7 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/trendingViewPager"
             android:layout_width="match_parent"
-            android:layout_height="520dp" />
+            android:layout_height="264dp" />
 
         <LinearLayout
             android:id="@+id/titleContainer"

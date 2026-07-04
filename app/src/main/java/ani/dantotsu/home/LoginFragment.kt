@@ -12,7 +12,10 @@ import ani.dantotsu.R
 import ani.dantotsu.connections.anilist.Anilist
 import ani.dantotsu.databinding.DialogUserAgentBinding
 import ani.dantotsu.databinding.FragmentLoginBinding
+import ani.dantotsu.loadImage
 import ani.dantotsu.openLinkInBrowser
+import ani.dantotsu.settings.saving.PrefManager
+import ani.dantotsu.settings.saving.PrefName
 import ani.dantotsu.settings.saving.internal.PreferenceKeystore
 import ani.dantotsu.settings.saving.internal.PreferencePackager
 import ani.dantotsu.toast
@@ -45,6 +48,28 @@ class LoginFragment : Fragment() {
         binding.loginDiscord.setOnClickListener { openLinkInBrowser(getString(R.string.discord)) }
         binding.loginGithub.setOnClickListener { openLinkInBrowser(getString(R.string.github)) }
         binding.loginTelegram.setOnClickListener { openLinkInBrowser(getString(R.string.telegram)) }
+
+        val oauthUrl = "https://anilist.co/api/v2/oauth/authorize?client_id=14959&response_type=token"
+        binding.loginQrButton.setOnClickListener {
+            val qrUrl = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${java.net.URLEncoder.encode(oauthUrl, "UTF-8")}"
+            binding.loginQrCode.loadImage(qrUrl)
+            binding.loginQrCode.visibility = View.VISIBLE
+            binding.loginTokenInput.visibility = View.VISIBLE
+        }
+        binding.loginTokenSubmit.setOnClickListener {
+            val token = binding.loginTokenEditText.text?.toString()?.trim()
+            if (!token.isNullOrBlank()) {
+                PrefManager.setVal(PrefName.AnilistToken, token)
+                if (Anilist.getSavedToken()) {
+                    toast("Login successful")
+                    restartApp()
+                } else {
+                    toast("Invalid token")
+                }
+            } else {
+                toast("Enter a token")
+            }
+        }
 
         val openDocumentLauncher =
             registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->

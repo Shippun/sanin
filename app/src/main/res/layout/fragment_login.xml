@@ -41,7 +41,7 @@
             android:layout_height="64dp"
             android:layout_gravity="bottom|center_horizontal"
             android:layout_marginTop="32dp"
-            android:layout_marginBottom="16dp"
+            android:layout_marginBottom="8dp"
             android:backgroundTint="?attr/colorPrimaryContainer"
             android:fontFamily="@font/poppins_bold"
             android:text="@string/login"
@@ -49,6 +49,60 @@
             app:cornerRadius="16dp"
             app:icon="@drawable/ic_anilist"
             app:iconTint="?attr/colorOnPrimaryContainer" />
+
+        <Button
+            android:id="@+id/loginQrButton"
+            android:layout_width="156dp"
+            android:layout_height="48dp"
+            android:layout_marginBottom="8dp"
+            android:backgroundTint="?attr/colorPrimaryContainer"
+            android:fontFamily="@font/poppins_bold"
+            android:text="QR Login"
+            android:textColor="?attr/colorOnPrimaryContainer"
+            android:textSize="12sp"
+            app:cornerRadius="16dp" />
+
+        <ImageView
+            android:id="@+id/loginQrCode"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:layout_marginBottom="8dp"
+            android:focusable="true"
+            android:visibility="gone"
+            tools:ignore="ContentDescription" />
+
+        <LinearLayout
+            android:id="@+id/loginTokenInput"
+            android:layout_width="280dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <EditText
+                android:id="@+id/loginTokenEditText"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:background="@drawable/card_outline"
+                android:fontFamily="@font/poppins"
+                android:hint="Paste token"
+                android:inputType="text"
+                android:padding="8dp"
+                android:textSize="12sp" />
+
+            <Button
+                android:id="@+id/loginTokenSubmit"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:backgroundTint="?attr/colorPrimaryContainer"
+                android:fontFamily="@font/poppins_bold"
+                android:text="OK"
+                android:textColor="?attr/colorOnPrimaryContainer"
+                android:textSize="12sp"
+                app:cornerRadius="16dp" />
+
+        </LinearLayout>
 
         <LinearLayout
             android:layout_width="wrap_content"

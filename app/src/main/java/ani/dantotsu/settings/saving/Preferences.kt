@@ -136,7 +136,7 @@ enum class PrefName(val data: Pref) {
     CardOrientation(Pref(Location.UI, Int::class, 1)),
     CardImageType(Pref(Location.UI, Int::class, 0)),
     CardRoundness(Pref(Location.UI, Int::class, 16)),
-    CardSize(Pref(Location.UI, Float::class, 1.0f)),
+    CardSize(Pref(Location.UI, Float::class, 1.5f)),
     ShowNewEpisodeBadge(Pref(Location.UI, Boolean::class, true)),
     ShowReleasingIndicator(Pref(Location.UI, Boolean::class, true)),
 

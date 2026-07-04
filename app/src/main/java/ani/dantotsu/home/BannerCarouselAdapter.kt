@@ -1,6 +1,5 @@
 package ani.dantotsu.home
 
-import android.graphics.drawable.GradientDrawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -54,19 +53,6 @@ class BannerCarouselAdapter(
             holder.bannerImage.loadImage(media.cover)
         }
 
-        val ta = ctx.theme.obtainStyledAttributes(intArrayOf(android.R.attr.colorBackground))
-        val bgColor = ta.getColor(0, 0xFF000000.toInt())
-        ta.recycle()
-        val gradient = GradientDrawable()
-        gradient.gradientType = GradientDrawable.RADIAL_GRADIENT
-        gradient.setGradientCenter(0.59f, 0.35f)
-        gradient.colors = intArrayOf(android.graphics.Color.TRANSPARENT, bgColor)
-        holder.gradientOverlay.post {
-            val size = Math.max(holder.gradientOverlay.width, holder.gradientOverlay.height)
-            gradient.gradientRadius = size * 0.7f
-            holder.gradientOverlay.background = gradient
-        }
-
         scope.launch(Dispatchers.Main) {
             val logoUrl = LogoApi.getLogoUrl(media.id)
             if (!logoUrl.isNullOrBlank()) {
@@ -98,7 +84,6 @@ class BannerCarouselAdapter(
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val bannerImage: ImageView = view.findViewById(R.id.bannerImage)
-        val gradientOverlay: View = view.findViewById(R.id.bannerGradientOverlay)
         val clearlogo: ImageView = view.findViewById(R.id.bannerClearlogo)
         val title: TextView = view.findViewById(R.id.bannerTitle)
         val subtitle: TextView = view.findViewById(R.id.bannerSubtitle)
