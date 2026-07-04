@@ -59,8 +59,7 @@ class BannerCarouselAdapter(
         ta.recycle()
         val gradient = GradientDrawable()
         gradient.gradientType = GradientDrawable.RADIAL_GRADIENT
-        gradient.setCenterX(0.59f)
-        gradient.setCenterY(0.35f)
+        gradient.setGradientCenter(0.59f, 0.35f)
         gradient.colors = intArrayOf(android.graphics.Color.TRANSPARENT, bgColor)
         holder.gradientOverlay.post {
             val size = Math.max(holder.gradientOverlay.width, holder.gradientOverlay.height)
