@@ -3,6 +3,7 @@ package ani.dantotsu.media
 import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.text.SpannableStringBuilder
 import android.view.GestureDetector
