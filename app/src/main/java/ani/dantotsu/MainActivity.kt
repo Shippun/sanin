@@ -310,7 +310,6 @@ class MainActivity : AppCompatActivity() {
                 NavigationPills(viewModel = navPillsViewModel)
             }
             binding.navPills.visibility = View.VISIBLE
-            FocusEffectUtil.applyFocusListener(binding.navPills)
 
             // Setup avatar and right rail drawer
             binding.mainAvatarContainer.visibility = View.VISIBLE
@@ -521,7 +520,6 @@ class MainActivity : AppCompatActivity() {
                         if (tag != null) {
                             val frag = supportFragmentManager.findFragmentByTag(tag)
                             frag?.view?.let { v ->
-                                val first = v.findFocus() ?: v.findViewById<View>(android.R.id.content)
                                 v.requestFocus(View.FOCUS_DOWN)
                             }
                         }

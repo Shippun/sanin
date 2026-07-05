@@ -68,8 +68,6 @@ fun NavigationPills(
 ) {
     val currentTab by viewModel.currentTab.collectAsState()
     val isExpanded by viewModel.isExpanded.collectAsState()
-    var containerFocused by remember { mutableStateOf(false) }
-    var highlightIndex by remember { mutableStateOf(currentTab) }
 
     val pillHeight by animateDpAsState(
         targetValue = if (isExpanded) 56.dp else 48.dp,
@@ -78,12 +76,13 @@ fun NavigationPills(
     )
 
     val view = LocalView.current
-    val focusRequester = remember { FocusRequester() }
+    val focusRequesters = remember { TAB_ORDER.map { FocusRequester() } }
 
     LaunchedEffect(Unit) {
         view.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus) {
-                view.post { focusRequester.requestFocus() }
+                val idx = currentTab.coerceIn(0, focusRequesters.lastIndex)
+                view.post { focusRequesters[idx].requestFocus() }
             }
         }
     }
@@ -98,7 +97,6 @@ fun NavigationPills(
         Row(
             modifier = Modifier
                 .height(pillHeight)
-                .focusRequester(focusRequester)
                 .background(
                     brush = Brush.linearGradient(
                         colors = listOf(
@@ -118,57 +116,24 @@ fun NavigationPills(
                     ),
                     shape = RoundedCornerShape(50)
                 )
-                .padding(horizontal = 6.dp)
-                .focusable()
-                .onFocusChanged { containerFocused = it.isFocused }
-                .navigationPillFocusEffect(containerFocused, "pulseglow")
-                .onKeyEvent { event ->
-                    if (containerFocused && event.type == KeyEventType.KeyUp) {
-                        when (event.key) {
-                            Key.DirectionRight -> {
-                                val next = highlightIndex + 1
-                                if (next < TAB_ORDER.size) {
-                                    highlightIndex = next
-                                    true
-                                } else {
-                                    view.focusSearch(View.FOCUS_RIGHT)?.requestFocus()
-                                    true
-                                }
-                            }
-                            Key.DirectionLeft -> {
-                                val prev = highlightIndex - 1
-                                if (prev >= 0) {
-                                    highlightIndex = prev
-                                    true
-                                } else {
-                                    view.focusSearch(View.FOCUS_LEFT)?.requestFocus()
-                                    true
-                                }
-                            }
-                            Key.Enter, Key.DirectionCenter -> {
-                                viewModel.setTab(highlightIndex)
-                                true
-                            }
-                            else -> false
-                        }
-                    } else false
-                },
+                .padding(horizontal = 6.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             TAB_ORDER.forEachIndexed { index, tab ->
                 val isActive = currentTab == index
-                val isHighlighted = highlightIndex == index
 
                 NavigationPill(
                     tab = tab,
                     label = TAB_LABELS[tab] ?: tab,
                     isActive = isActive,
-                    isHighlighted = isHighlighted,
                     isExpanded = isExpanded,
-                    onClick = {
-                        highlightIndex = index
-                        viewModel.setTab(index)
+                    isFirst = index == 0,
+                    isLast = index == TAB_ORDER.lastIndex,
+                    focusRequester = focusRequesters[index],
+                    onActivate = { viewModel.setTab(index) },
+                    onEdgeExit = { dir ->
+                        view.focusSearch(if (dir == 0) View.FOCUS_LEFT else View.FOCUS_RIGHT)?.requestFocus()
                     }
                 )
             }
@@ -181,11 +146,15 @@ fun NavigationPill(
     tab: String,
     label: String,
     isActive: Boolean,
-    isHighlighted: Boolean,
     isExpanded: Boolean,
-    onClick: () -> Unit
+    isFirst: Boolean,
+    isLast: Boolean,
+    focusRequester: FocusRequester,
+    onActivate: () -> Unit,
+    onEdgeExit: (direction: Int) -> Unit
 ) {
     val iconRes = TAB_ICONS[tab] ?: R.drawable.ic_round_home_24
+    var isFocused by remember { mutableStateOf(false) }
 
     val pillWidth by animateDpAsState(
         targetValue = if (isExpanded) 88.dp else 48.dp,
@@ -200,12 +169,39 @@ fun NavigationPill(
             .background(
                 color = when {
                     isActive -> Color.White.copy(alpha = 0.15f)
-                    isHighlighted -> Color.White.copy(alpha = 0.08f)
+                    isFocused -> Color.White.copy(alpha = 0.08f)
                     else -> Color.Transparent
                 },
                 shape = RoundedCornerShape(50)
             )
-            .clickable { onClick() },
+            .focusRequester(focusRequester)
+            .focusable()
+            .onFocusChanged { isFocused = it.isFocused }
+            .navigationPillFocusEffect(isFocused, "pulseglow")
+            .onClick { onActivate() }
+            .onKeyEvent { event ->
+                if (isFocused && event.type == KeyEventType.KeyUp) {
+                    when (event.key) {
+                        Key.DirectionLeft -> {
+                            if (isFirst) {
+                                onEdgeExit(-1)
+                                true
+                            } else false
+                        }
+                        Key.DirectionRight -> {
+                            if (isLast) {
+                                onEdgeExit(1)
+                                true
+                            } else false
+                        }
+                        Key.Enter, Key.DirectionCenter -> {
+                            onActivate()
+                            true
+                        }
+                        else -> false
+                    }
+                } else false
+            },
         contentAlignment = Alignment.Center
     ) {
         if (isExpanded) {
