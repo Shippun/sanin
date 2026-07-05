@@ -4,11 +4,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".settings.UserInterfaceSettingsActivity"
+    tools:context=".settings.SettingsAppearanceActivity"
     tools:ignore="SpeakableTextPresentCheck">
 
     <LinearLayout
-        android:id="@+id/uiSettingsContainer"
+        android:id="@+id/appearanceContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
@@ -28,7 +28,7 @@
                 app:cardElevation="0dp">
 
                 <ImageButton
-                    android:id="@+id/uiSettingsBack"
+                    android:id="@+id/appearanceBack"
                     android:layout_width="64dp"
                     android:layout_height="64dp"
                     android:background="@color/nav_bg_inv"
@@ -36,7 +36,7 @@
                     android:padding="16dp"
                     app:srcCompat="@drawable/ic_round_arrow_back_ios_new_24"
                     app:tint="?attr/colorOnBackground"
-                    tools:ignore="ContentDescription,SpeakableTextPresentCheck" />
+                    tools:ignore="ContentDescription" />
             </androidx.cardview.widget.CardView>
 
             <LinearLayout
@@ -44,38 +44,22 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
-                <LinearLayout
+                <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_margin="32dp"
                     android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="@font/poppins_bold"
-                        android:text="@string/ui_settings"
-                        android:textSize="28sp" />
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="8dp"
-                        android:alpha="0.58"
-                        android:fontFamily="@font/poppins_family"
-                        android:text="@string/immersive_mode_info"
-                        android:textSize="14sp" />
-                </LinearLayout>
+                    android:fontFamily="@font/poppins_bold"
+                    android:text="@string/appearance"
+                    android:textSize="28sp" />
 
                 <ImageView
-                    android:id="@+id/settingsLogo"
                     android:layout_width="96dp"
                     android:layout_height="96dp"
-                    android:layout_gravity="center"
                     android:layout_marginEnd="20dp"
                     android:padding="24dp"
                     app:srcCompat="@drawable/ic_round_auto_awesome_24"
+                    app:tint="?attr/colorOnBackground"
                     tools:ignore="ContentDescription" />
             </LinearLayout>
         </LinearLayout>
@@ -94,42 +78,12 @@
                 android:fontFamily="@font/poppins_bold"
                 android:paddingStart="32dp"
                 android:paddingEnd="32dp"
-                android:text="@string/app"
+                android:text="Display"
                 android:textColor="?attr/colorSecondary"
                 tools:ignore="TextContrastCheck" />
 
-            <com.google.android.material.materialswitch.MaterialSwitch
-                android:id="@+id/uiSettingsImmersive"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:checked="true"
-                android:drawableStart="@drawable/ic_round_fullscreen_24"
-                android:drawablePadding="16dp"
-                android:elegantTextHeight="true"
-                android:focusable="true"
-                android:fontFamily="@font/poppins_bold"
-                android:minHeight="64dp"
-                android:paddingStart="32dp"
-                android:paddingEnd="32dp"
-                android:text="@string/immersive_mode"
-                android:textAlignment="viewStart"
-                android:textColor="?attr/colorOnBackground"
-                app:cornerRadius="0dp"
-                app:drawableTint="?attr/colorPrimary"
-                app:showText="false"
-                app:thumbTint="@color/button_switch_track" />
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="16dp"
-                android:background="?android:attr/listDivider" />
-
             <Button
-                android:id="@+id/uiSettingsHomeLayout"
+                android:id="@+id/appearanceCardSize"
                 android:layout_width="match_parent"
                 android:layout_height="64dp"
                 android:background="@drawable/ui_bg"
@@ -138,37 +92,30 @@
                 android:insetBottom="0dp"
                 android:paddingStart="32dp"
                 android:paddingEnd="32dp"
-                android:text="@string/home_layout_show"
+                android:text="Card Size"
                 android:textAlignment="viewStart"
                 android:textAllCaps="false"
                 android:textColor="?attr/colorOnBackground"
                 app:cornerRadius="0dp"
-                app:icon="@drawable/ic_round_playlist_add_24"
+                app:icon="@drawable/ic_round_auto_awesome_24"
                 app:iconPadding="16dp"
                 app:iconSize="24dp"
                 app:iconTint="?attr/colorPrimary" />
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
-                android:layout_marginBottom="16dp"
-                android:background="?android:attr/listDivider" />
-
             <com.google.android.material.materialswitch.MaterialSwitch
-                android:id="@+id/uiSettingsSmallView"
+                android:id="@+id/appearanceHideRedDot"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:checked="true"
-                android:drawableStart="@drawable/ic_round_art_track_24"
+                android:checked="false"
+                android:drawableStart="@drawable/ic_round_notifications_active_24"
                 android:drawablePadding="16dp"
                 android:elegantTextHeight="true"
+                android:focusable="true"
                 android:fontFamily="@font/poppins_bold"
                 android:minHeight="64dp"
                 android:paddingStart="32dp"
                 android:paddingEnd="32dp"
-                android:text="@string/small_view"
+                android:text="@string/hide_notification_dot"
                 android:textAlignment="viewStart"
                 android:textColor="?attr/colorOnBackground"
                 app:cornerRadius="0dp"
@@ -191,69 +138,122 @@
                 android:fontFamily="@font/poppins_bold"
                 android:paddingStart="32dp"
                 android:paddingEnd="32dp"
-                android:text="Display"
+                android:text="@string/blur"
                 android:textColor="?attr/colorSecondary"
                 tools:ignore="TextContrastCheck" />
 
-            <Button
-                android:id="@+id/uiSettingsCardStyle"
-                android:layout_width="match_parent"
-                android:layout_height="64dp"
-                android:background="@drawable/ui_bg"
-                android:fontFamily="@font/poppins_bold"
-                android:insetTop="0dp"
-                android:insetBottom="0dp"
-                android:paddingStart="32dp"
-                android:paddingEnd="32dp"
-                android:text="Card Style"
-                android:textAlignment="viewStart"
-                android:textAllCaps="false"
-                android:textColor="?attr/colorOnBackground"
-                app:cornerRadius="0dp"
-                app:icon="@drawable/ic_round_auto_awesome_24"
-                app:iconPadding="16dp"
-                app:iconSize="24dp"
-                app:iconTint="?attr/colorPrimary" />
-
-            <Button
-                android:id="@+id/uiSettingsFocusEffect"
-                android:layout_width="match_parent"
-                android:layout_height="64dp"
-                android:background="@drawable/ui_bg"
-                android:fontFamily="@font/poppins_bold"
-                android:insetTop="0dp"
-                android:insetBottom="0dp"
-                android:paddingStart="32dp"
-                android:paddingEnd="32dp"
-                android:text="Focus Effect"
-                android:textAlignment="viewStart"
-                android:textAllCaps="false"
-                android:textColor="?attr/colorOnBackground"
-                app:cornerRadius="0dp"
-                app:icon="@drawable/ic_round_auto_awesome_24"
-                app:iconPadding="16dp"
-                app:iconSize="24dp"
-                app:iconTint="?attr/colorPrimary" />
-
             <com.google.android.material.materialswitch.MaterialSwitch
-                android:id="@+id/uiSettingsEmoji"
+                android:id="@+id/appearanceBlurBanners"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:checked="true"
-                android:drawableStart="@drawable/ic_round_favorite_24"
+                android:drawableStart="@drawable/blur_on"
                 android:drawablePadding="16dp"
                 android:elegantTextHeight="true"
                 android:fontFamily="@font/poppins_bold"
                 android:minHeight="64dp"
                 android:paddingStart="32dp"
                 android:paddingEnd="32dp"
-                android:text="Emoji"
+                android:text="@string/blur_banners"
                 android:textAlignment="viewStart"
                 android:textColor="?attr/colorOnBackground"
                 app:cornerRadius="0dp"
                 app:drawableTint="?attr/colorPrimary"
                 app:showText="false"
                 app:thumbTint="@color/button_switch_track" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:drawablePadding="16dp"
+                android:fontFamily="@font/poppins_bold"
+                android:paddingStart="32dp"
+                android:paddingEnd="32dp"
+                android:text="@string/radius"
+                app:drawableStartCompat="@drawable/adjust"
+                app:drawableTint="?attr/colorPrimary" />
+
+            <com.google.android.material.slider.Slider
+                android:id="@+id/appearanceBlurRadius"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="32dp"
+                android:layout_marginEnd="32dp"
+                android:stepSize="1"
+                android:value="2"
+                android:valueFrom="1.0"
+                android:valueTo="10.0"
+                app:labelBehavior="floating"
+                app:labelStyle="@style/fontTooltip"
+                app:thumbColor="?attr/colorSecondary"
+                app:tickColorInactive="?attr/colorSecondary"
+                app:trackColorActive="?attr/colorSecondary" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:drawablePadding="16dp"
+                android:fontFamily="@font/poppins_bold"
+                android:paddingStart="32dp"
+                android:paddingEnd="32dp"
+                android:text="@string/sampling"
+                app:drawableStartCompat="@drawable/stacks"
+                app:drawableTint="?attr/colorPrimary" />
+
+            <com.google.android.material.slider.Slider
+                android:id="@+id/appearanceBlurSampling"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="32dp"
+                android:layout_marginEnd="32dp"
+                android:stepSize="1"
+                android:value="2"
+                android:valueFrom="1.0"
+                android:valueTo="10.0"
+                app:labelBehavior="floating"
+                app:labelStyle="@style/fontTooltip"
+                app:thumbColor="?attr/colorSecondary"
+                app:tickColorInactive="?attr/colorSecondary"
+                app:trackColorActive="?attr/colorSecondary" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                android:background="?android:attr/listDivider" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:drawablePadding="16dp"
+                android:fontFamily="@font/poppins_bold"
+                android:paddingStart="32dp"
+                android:paddingEnd="32dp"
+                android:text="UI Scale"
+                app:drawableStartCompat="@drawable/ic_round_color_24"
+                app:drawableTint="?attr/colorPrimary" />
+
+            <com.google.android.material.slider.Slider
+                android:id="@+id/appearanceUiScale"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="32dp"
+                android:layout_marginEnd="32dp"
+                android:layout_marginBottom="32dp"
+                android:stepSize="0.05"
+                android:value="1.0"
+                android:valueFrom="0.5"
+                android:valueTo="1.5"
+                app:labelBehavior="floating"
+                app:labelStyle="@style/fontTooltip"
+                app:thumbColor="?attr/colorSecondary"
+                app:tickColorInactive="?attr/colorSecondary"
+                app:trackColorActive="?attr/colorSecondary" />
         </LinearLayout>
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>

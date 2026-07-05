@@ -100,6 +100,26 @@ class SettingsActivity : AppCompatActivity() {
                     ),
                     Settings(
                         type = 1,
+                        name = getString(R.string.appearance),
+                        desc = getString(R.string.appearance_desc),
+                        icon = R.drawable.ic_round_auto_awesome_24,
+                        onClick = {
+                            startActivity(Intent(context, SettingsAppearanceActivity::class.java))
+                        },
+                        isActivity = true
+                    ),
+                    Settings(
+                        type = 1,
+                        name = getString(R.string.animation),
+                        desc = getString(R.string.animation_desc),
+                        icon = R.drawable.ic_round_videocam_24,
+                        onClick = {
+                            startActivity(Intent(context, SettingsAnimationActivity::class.java))
+                        },
+                        isActivity = true
+                    ),
+                    Settings(
+                        type = 1,
                         name = getString(R.string.common),
                         desc = getString(R.string.common_desc),
                         icon = R.drawable.ic_lightbulb_24,

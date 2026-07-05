@@ -1007,6 +1007,10 @@ Non quae tempore quo provident laudantium qui illo dolor vel quia dolor et exerc
     <string name="restrict_messages">Restrict messages to following</string>
     <string name="restrict_messages_desc">Allow only users I follow to message me</string>
 
+    <string name="appearance">Appearance</string>
+    <string name="appearance_desc">UI Scale, Card Size, Blur and more</string>
+    <string name="animation">Animation</string>
+    <string name="animation_desc">Control all motion and transitions</string>
     <string name="notifications_desc">Customise your news and updates</string>
     <string name="about_desc">Learn more about Dantotsu</string>
     <string name="faq_desc">General questions about Dantotsu</string>

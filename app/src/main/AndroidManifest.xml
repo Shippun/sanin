@@ -151,6 +151,12 @@
             android:name=".settings.SettingsThemeActivity"
             android:parentActivityName=".MainActivity" />
         <activity
+            android:name=".settings.SettingsAppearanceActivity"
+            android:parentActivityName=".MainActivity" />
+        <activity
+            android:name=".settings.SettingsAnimationActivity"
+            android:parentActivityName=".MainActivity" />
+        <activity
             android:name=".settings.ExtensionsActivity"
             android:parentActivityName=".MainActivity"
             android:windowSoftInputMode="adjustResize|stateHidden" />

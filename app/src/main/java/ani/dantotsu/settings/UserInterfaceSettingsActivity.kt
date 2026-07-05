@@ -27,14 +27,6 @@ import com.google.android.material.materialswitch.MaterialSwitch
 class UserInterfaceSettingsActivity : AppCompatActivity() {
     lateinit var binding: ActivityUserInterfaceSettingsBinding
     private val ui = "ui_settings"
-    private fun getOledModeLabel(mode: Int): String = when (mode) {
-        0 -> "Off"
-        1 -> "Pure AMOLED"
-        2 -> "Glow Spots"
-        3 -> "Gradient"
-        4 -> "Vignette"
-        else -> "Off"
-    }
 
     private fun getCardStyleLabel(style: Int): String = when (style) {
         0 -> "Rounded"
@@ -76,21 +68,11 @@ class UserInterfaceSettingsActivity : AppCompatActivity() {
         FocusEffectUtil.applyFocusListener(
             binding.uiSettingsBack,
             binding.uiSettingsHomeLayout,
-            binding.uiSettingsOledMode,
             binding.uiSettingsCardStyle,
-            binding.uiSettingsCardSize,
             binding.uiSettingsFocusEffect,
-            binding.uiSettingsAccentColor,
             binding.uiSettingsImmersive,
-            binding.uiSettingsHideRedDot,
             binding.uiSettingsSmallView,
-            binding.uiSettingsBannerAnimation,
-            binding.uiSettingsLayoutAnimation,
-            binding.uiSettingsTrendingScroller,
-            binding.uiSettingsBlurBanners,
-            binding.uiSettingsAnimationsEnabled,
             binding.uiSettingsEmoji,
-            binding.uiSettingsSwapColors,
         )
 
         binding.uiSettingsHomeLayout.setOnClickListener {
@@ -185,79 +167,6 @@ class UserInterfaceSettingsActivity : AppCompatActivity() {
             PrefManager.setVal(PrefName.ImmersiveMode, isChecked)
             restartApp()
         }
-        binding.uiSettingsHideRedDot.isChecked =
-            !PrefManager.getVal<Boolean>(PrefName.ShowNotificationRedDot)
-        binding.uiSettingsHideRedDot.setOnCheckedChangeListener { _, isChecked ->
-            PrefManager.setVal(PrefName.ShowNotificationRedDot, !isChecked)
-        }
-        binding.uiSettingsBannerAnimation.isChecked = PrefManager.getVal(PrefName.BannerAnimations)
-        binding.uiSettingsBannerAnimation.setOnCheckedChangeListener { _, isChecked ->
-            PrefManager.setVal(PrefName.BannerAnimations, isChecked)
-            restartApp()
-        }
-
-        binding.uiSettingsLayoutAnimation.isChecked = PrefManager.getVal(PrefName.LayoutAnimations)
-        binding.uiSettingsLayoutAnimation.setOnCheckedChangeListener { _, isChecked ->
-            PrefManager.setVal(PrefName.LayoutAnimations, isChecked)
-            restartApp()
-        }
-
-        binding.uiSettingsTrendingScroller.isChecked = PrefManager.getVal(PrefName.TrendingScroller)
-        binding.uiSettingsTrendingScroller.setOnCheckedChangeListener { _, isChecked ->
-            PrefManager.setVal(PrefName.TrendingScroller, isChecked)
-        }
-
-        val map = mapOf(
-            2f to 0.5f,
-            1.75f to 0.625f,
-            1.5f to 0.75f,
-            1.25f to 0.875f,
-            1f to 1f,
-            0.75f to 1.25f,
-            0.5f to 1.5f,
-            0.25f to 1.75f,
-            0f to 0f
-        )
-        val mapReverse = map.map { it.value to it.key }.toMap()
-        binding.uiSettingsAnimationSpeed.value =
-            mapReverse[PrefManager.getVal(PrefName.AnimationSpeed)] ?: 1f
-        binding.uiSettingsAnimationSpeed.addOnChangeListener { _, value, _ ->
-            PrefManager.setVal(PrefName.AnimationSpeed, map[value] ?: 1f)
-            restartApp()
-        }
-        binding.uiSettingsBlurBanners.isChecked = PrefManager.getVal(PrefName.BlurBanners)
-        binding.uiSettingsBlurBanners.setOnCheckedChangeListener { _, isChecked ->
-            PrefManager.setVal(PrefName.BlurBanners, isChecked)
-            restartApp()
-        }
-        binding.uiSettingsBlurRadius.value = (PrefManager.getVal(PrefName.BlurRadius) as Float)
-        binding.uiSettingsBlurRadius.addOnChangeListener { _, value, _ ->
-            PrefManager.setVal(PrefName.BlurRadius, value)
-            restartApp()
-        }
-        binding.uiSettingsBlurSampling.value = (PrefManager.getVal(PrefName.BlurSampling) as Float)
-        binding.uiSettingsBlurSampling.addOnChangeListener { _, value, _ ->
-            PrefManager.setVal(PrefName.BlurSampling, value)
-            restartApp()
-        }
-
-        binding.uiSettingsOledMode.setOnClickListener {
-            customAlertDialog().apply {
-                setTitle("OLED Background Mode")
-                val labels = arrayOf(
-                    "Off\nNormal theme background",
-                    "Pure AMOLED\nPure black background",
-                    "Glow Spots\nBlack + radial glow orbs",
-                    "Gradient\nBlack + primary color gradient",
-                    "Vignette\nColored vignette from edges"
-                )
-                singleChoiceItems(labels, PrefManager.getVal<Int>(PrefName.OledMode)) { index ->
-                    PrefManager.setVal(PrefName.OledMode, index)
-                    restartApp()
-                }
-                show()
-            }
-        }
 
         binding.uiSettingsCardStyle.setOnClickListener {
             customAlertDialog().apply {
@@ -265,21 +174,6 @@ class UserInterfaceSettingsActivity : AppCompatActivity() {
                 val labels = arrayOf("Rounded", "Minimal", "Classic", "Cover Only", "Liquid Glass", "Neon", "Compact")
                 singleChoiceItems(labels, PrefManager.getVal<Int>(PrefName.CardStyle)) { index ->
                     PrefManager.setVal(PrefName.CardStyle, index)
-                    restartApp()
-                }
-                show()
-            }
-        }
-
-        binding.uiSettingsCardSize.setOnClickListener {
-            customAlertDialog().apply {
-                setTitle("Card Size")
-                val labels = arrayOf("Small (0.5x)", "Medium (0.75x)", "Normal (1x)", "Large (1.25x)", "X-Large (1.5x)", "XX-Large (1.75x)", "XXX-Large (2.0x)")
-                val values = arrayOf(0.5f, 0.75f, 1.0f, 1.25f, 1.5f, 1.75f, 2.0f)
-                val current = PrefManager.getVal<Float>(PrefName.CardSize)
-                val currentIdx = values.indexOfFirst { it == current }.coerceAtLeast(0)
-                singleChoiceItems(labels, currentIdx) { index ->
-                    PrefManager.setVal(PrefName.CardSize, values[index])
                     restartApp()
                 }
                 show()
@@ -297,46 +191,9 @@ class UserInterfaceSettingsActivity : AppCompatActivity() {
             }
         }
 
-        binding.uiSettingsAnimationsEnabled.isChecked = PrefManager.getVal(PrefName.AnimationsEnabled)
-        binding.uiSettingsAnimationsEnabled.setOnCheckedChangeListener { _, isChecked ->
-            PrefManager.setVal(PrefName.AnimationsEnabled, isChecked)
-            restartApp()
-        }
-
         binding.uiSettingsEmoji.isChecked = PrefManager.getVal(PrefName.Emoji)
         binding.uiSettingsEmoji.setOnCheckedChangeListener { _, isChecked ->
             PrefManager.setVal(PrefName.Emoji, isChecked)
-        }
-
-        val accentColors = arrayOf(
-            0 to "Default", 1 to "Red", 2 to "Pink", 3 to "Purple",
-            4 to "Deep Purple", 5 to "Indigo", 6 to "Blue", 7 to "Light Blue",
-            8 to "Cyan", 9 to "Teal", 10 to "Green", 11 to "Light Green",
-            12 to "Lime", 13 to "Yellow", 14 to "Amber", 15 to "Orange",
-            16 to "Deep Orange"
-        )
-        binding.uiSettingsAccentColor.setOnClickListener {
-            customAlertDialog().apply {
-                setTitle("Accent Color")
-                val labels = accentColors.map { it.second }.toTypedArray()
-                singleChoiceItems(labels, PrefManager.getVal<Int>(PrefName.AccentColor)) { index ->
-                    PrefManager.setVal(PrefName.AccentColor, accentColors[index].first)
-                    restartApp()
-                }
-                show()
-            }
-        }
-
-        binding.uiSettingsSwapColors.isChecked = PrefManager.getVal(PrefName.SwapColors)
-        binding.uiSettingsSwapColors.setOnCheckedChangeListener { _, isChecked ->
-            PrefManager.setVal(PrefName.SwapColors, isChecked)
-            restartApp()
-        }
-
-        binding.uiSettingsUiScale.value = PrefManager.getVal(PrefName.UIScale)
-        binding.uiSettingsUiScale.addOnChangeListener { _, value, _ ->
-            PrefManager.setVal(PrefName.UIScale, value)
-            restartApp()
         }
     }
 
