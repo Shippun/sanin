@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
 import android.widget.TextView
+import android.app.AlertDialog
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.updateLayoutParams
@@ -31,12 +32,29 @@ import ani.dantotsu.themes.ThemeManager
 import ani.dantotsu.util.customAlertDialog
 import io.noties.markwon.Markwon
 import io.noties.markwon.SoftBreakAddsNewLinePlugin
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.RequestBody.Companion.toRequestBody
+import org.json.JSONObject
+import java.net.URLEncoder
+import java.util.UUID
 
 class SettingsAccountActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySettingsAccountsBinding
     private val restartMainActivity = object : OnBackPressedCallback(false) {
         override fun handleOnBackPressed() = startMainActivity(this@SettingsAccountActivity)
+    }
+    private var pollJob: kotlinx.coroutines.Job? = null
+    private val relayClient = OkHttpClient()
+
+    companion object {
+        var relayBaseUrl: String? = null
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -153,42 +171,14 @@ class SettingsAccountActivity : AppCompatActivity() {
                                 onItemSelected = { index ->
                                     when (index) {
                                         0 -> Anilist.loginIntent(context)
-                                        1 -> {
-                                            val qrUrl = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${java.net.URLEncoder.encode("https://anilist.co/api/v2/oauth/authorize?client_id=14959&response_type=token", "UTF-8")}"
-                                            val iv = android.widget.ImageView(context).apply {
-                                                scaleType = android.widget.ImageView.ScaleType.FIT_CENTER
-                                                loadImage(qrUrl)
-                                                layoutParams = android.view.ViewGroup.LayoutParams(400, 400)
-                                            }
-                                            val tv = android.widget.TextView(context).apply {
-                                                text = "Scan with your phone, or press Open Browser to login on TV"
-                                                gravity = android.view.Gravity.CENTER
-                                                setPadding(24, 0, 24, 0)
-                                            }
-                                            val browserBtn = com.google.android.material.button.MaterialButton(context).apply {
-                                                text = "Open Browser"
-                                                setOnClickListener {
-                                                    Anilist.loginIntent(context)
-                                                }
-                                            }
-                                            val cancelBtn = com.google.android.material.button.MaterialButton(context).apply {
-                                                text = "Cancel"
-                                            }
-                                            val ll = android.widget.LinearLayout(context).apply {
-                                                orientation = android.widget.LinearLayout.VERTICAL
-                                                gravity = android.view.Gravity.CENTER
-                                                setPadding(24, 24, 24, 24)
-                                                addView(iv)
-                                                addView(tv, android.view.ViewGroup.LayoutParams(android.view.ViewGroup.LayoutParams.MATCH_PARENT, android.view.ViewGroup.LayoutParams.WRAP_CONTENT))
-                                                addView(browserBtn, android.view.ViewGroup.LayoutParams(android.view.ViewGroup.LayoutParams.MATCH_PARENT, android.view.ViewGroup.LayoutParams.WRAP_CONTENT))
-                                                addView(cancelBtn, android.view.ViewGroup.LayoutParams(android.view.ViewGroup.LayoutParams.MATCH_PARENT, android.view.ViewGroup.LayoutParams.WRAP_CONTENT))
-                                            }
-                                            customAlertDialog().apply {
-                                                setTitle("Login with QR")
-                                                setCustomView(ll)
-                                                setNegButton("Close") {}
-                                            }.show()
-                                        }
+                                         1 -> {
+                                             val relayUrl = relayBaseUrl
+                                             if (relayUrl.isNullOrBlank()) {
+                                                 snackString("QR relay not configured — deploy relay/worker.js first, then set relayBaseUrl")
+                                                 return@singleChoiceItems
+                                             }
+                                             showQrLoginDialog(relayUrl)
+                                         }
                                     }
                                 }
                             )
@@ -324,6 +314,114 @@ class SettingsAccountActivity : AppCompatActivity() {
         binding.settingsRecyclerView.layoutManager =
             LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
 
+    }
+
+    private fun showQrLoginDialog(relayUrl: String) {
+        lifecycleScope.launch {
+            try {
+                val sessionId = withContext(Dispatchers.IO) { createRelaySession(relayUrl) }
+                if (sessionId == null) {
+                    snackString("Failed to create QR session — check relay URL")
+                    return@launch
+                }
+                val authUrl = "$relayUrl/auth/$sessionId"
+                val qrImageUrl = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${URLEncoder.encode(authUrl, "UTF-8")}"
+
+                val ctx = this@SettingsAccountActivity
+                val iv = android.widget.ImageView(ctx).apply {
+                    scaleType = android.widget.ImageView.ScaleType.FIT_CENTER
+                    loadImage(qrImageUrl)
+                    layoutParams = android.view.ViewGroup.LayoutParams(400, 400)
+                }
+                val tv = android.widget.TextView(ctx).apply {
+                    text = "Scan with your phone to auto-login"
+                    gravity = android.view.Gravity.CENTER
+                    setPadding(24, 0, 24, 0)
+                }
+                val browserBtn = com.google.android.material.button.MaterialButton(ctx).apply {
+                    text = "Open Browser"
+                    setOnClickListener { Anilist.loginIntent(ctx) }
+                }
+                val cancelBtn = com.google.android.material.button.MaterialButton(ctx).apply {
+                    text = "Cancel"
+                    setOnClickListener { pollJob?.cancel(); pollJob = null }
+                }
+                val ll = android.widget.LinearLayout(ctx).apply {
+                    orientation = android.widget.LinearLayout.VERTICAL
+                    gravity = android.view.Gravity.CENTER
+                    setPadding(24, 24, 24, 24)
+                    addView(iv)
+                    addView(tv, android.view.ViewGroup.LayoutParams(android.view.ViewGroup.LayoutParams.MATCH_PARENT, android.view.ViewGroup.LayoutParams.WRAP_CONTENT))
+                    addView(browserBtn, android.view.ViewGroup.LayoutParams(android.view.ViewGroup.LayoutParams.MATCH_PARENT, android.view.ViewGroup.LayoutParams.WRAP_CONTENT))
+                    addView(cancelBtn, android.view.ViewGroup.LayoutParams(android.view.ViewGroup.LayoutParams.MATCH_PARENT, android.view.ViewGroup.LayoutParams.WRAP_CONTENT))
+                }
+                val alertDialog = arrayOf<AlertDialog?>(null)
+                customAlertDialog().apply {
+                    setTitle("QR Login")
+                    setCustomView(ll)
+                    setNegButton("Close") {
+                        pollJob?.cancel(); pollJob = null
+                    }
+                    attach { alertDialog[0] = it }
+                }.show()
+
+                pollJob = lifecycleScope.launch {
+                    while (isActive) {
+                        delay(2000)
+                        val token = withContext(Dispatchers.IO) { pollRelaySession(relayUrl, sessionId) }
+                        if (token != null) {
+                            Anilist.token = token
+                            PrefManager.setVal(PrefName.AnilistToken, token)
+                            alertDialog[0]?.dismiss()
+                            snackString("Logged in!")
+                            restartActivity()
+                            return@launch
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                snackString("QR login error: ${e.message}")
+            }
+        }
+    }
+
+    private fun createRelaySession(relayUrl: String): String? {
+        try {
+            val sessionId = UUID.randomUUID().toString().take(12)
+            val body = "{\"id\":\"$sessionId\"}".toRequestBody("application/json".toMediaType())
+            val request = Request.Builder()
+                .url("$relayUrl/api/session")
+                .post(body)
+                .build()
+            val response = relayClient.newCall(request).execute()
+            return if (response.isSuccessful) sessionId else null
+        } catch (e: Exception) {
+            return null
+        }
+    }
+
+    private fun pollRelaySession(relayUrl: String, sessionId: String): String? {
+        try {
+            val request = Request.Builder()
+                .url("$relayUrl/api/poll/$sessionId")
+                .get()
+                .build()
+            val response = relayClient.newCall(request).execute()
+            if (!response.isSuccessful) return null
+            val json = JSONObject(response.body!!.string())
+            if (json.optBoolean("authorized")) {
+                return json.optString("token", null)
+            }
+            return null
+        } catch (e: Exception) {
+            return null
+        }
+    }
+
+    private fun restartActivity() {
+        val intent = Intent(this, this.javaClass)
+        finish()
+        startActivity(intent)
     }
 
     fun reload() {
