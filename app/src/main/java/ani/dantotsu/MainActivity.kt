@@ -542,7 +542,7 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         loadAvatar()
-        blurImage(binding.homeNavRailBg!!, Anilist.bg)
+        binding.homeNavRailBg?.let { blurImage(it, Anilist.bg) }
     }
 
     private fun handleViewIntent(intent: Intent) {
@@ -665,7 +665,7 @@ class MainActivity : AppCompatActivity() {
             binding.homeNavRail.clipToOutline = true
         }
 
-        blurImage(binding.homeNavRailBg!!, Anilist.bg)
+        binding.homeNavRailBg?.let { blurImage(it, Anilist.bg) }
 
         val pills = listOf(binding.homeNavHome, binding.homeNavAnime, binding.homeNavDiscovery, binding.homeNavLibrary)
         pills.forEachIndexed { index, pill ->
