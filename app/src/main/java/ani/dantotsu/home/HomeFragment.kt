@@ -726,8 +726,8 @@ class HomeFragment : Fragment() {
     private fun setupBannerCarousel() {
         val rv = binding.homeBannerCarousel
         rv.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
-        rv.isFocusable = true
-        rv.isFocusableInTouchMode = false
+        rv.isFocusable = false
+        rv.descendantFocusability = android.view.ViewGroup.FOCUS_AFTER_DESCENDANTS
         rv.nextFocusUpId = R.id.navPills
         rv.nextFocusDownId = R.id.homeContinueWatch
         bannerSnapHelper.attachToRecyclerView(rv)

@@ -184,12 +184,12 @@ class BannerCarouselAdapter(
         holder.itemView.isFocusableInTouchMode = false
 
         // --- D-pad focus chain ---
-        holder.itemView.nextFocusUpId = View.NO_ID
+        holder.itemView.nextFocusUpId = R.id.navPills
         holder.itemView.nextFocusLeftId = View.NO_ID
         holder.itemView.nextFocusRightId = View.NO_ID
-        holder.playBtn.nextFocusUpId = View.NO_ID
+        holder.playBtn.nextFocusUpId = R.id.navPills
         holder.playBtn.nextFocusDownId = R.id.homeContinueWatch
-        holder.favBtn.nextFocusUpId = View.NO_ID
+        holder.favBtn.nextFocusUpId = R.id.navPills
         holder.favBtn.nextFocusDownId = R.id.homeContinueWatch
     }
 

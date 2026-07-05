@@ -22,6 +22,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -29,6 +30,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -75,6 +78,15 @@ fun NavigationPills(
     )
 
     val view = LocalView.current
+    val focusRequester = remember { FocusRequester() }
+
+    LaunchedEffect(Unit) {
+        view.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
+                view.post { focusRequester.requestFocus() }
+            }
+        }
+    }
 
     Box(
         modifier = modifier
@@ -86,6 +98,7 @@ fun NavigationPills(
         Row(
             modifier = Modifier
                 .height(pillHeight)
+                .focusRequester(focusRequester)
                 .background(
                     brush = Brush.linearGradient(
                         colors = listOf(

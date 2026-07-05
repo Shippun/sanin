@@ -75,14 +75,16 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -93,7 +95,6 @@ import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ani.dantotsu.ui.components.navigationPillFocusEffect
@@ -704,10 +705,19 @@ fun MediaNavPills(
     onTabSelected: (Int) -> Unit
 ) {
     val view = LocalView.current
+    val focusRequester = remember { FocusRequester() }
     val tabs = if (hasComments) listOf("info", "watch", "comments") else listOf("info", "watch")
     val currentTab = remember { mutableStateOf(selectedTab) }
     var highlightIndex by remember { mutableStateOf(selectedTab) }
     var containerFocused by remember { mutableStateOf(false) }
+
+    LaunchedEffect(Unit) {
+        view.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
+                view.post { focusRequester.requestFocus() }
+            }
+        }
+    }
 
     Box(
         modifier = Modifier
@@ -734,6 +744,7 @@ fun MediaNavPills(
                 shape = RoundedCornerShape(50)
             )
             .padding(horizontal = 6.dp)
+            .focusRequester(focusRequester)
             .focusable()
             .onFocusChanged { containerFocused = it.isFocused }
             .navigationPillFocusEffect(containerFocused, "pulseglow")

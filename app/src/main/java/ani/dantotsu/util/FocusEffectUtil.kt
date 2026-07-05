@@ -41,6 +41,23 @@ object FocusEffectUtil {
         }
     }
 
+    fun applyFocusListener(focusView: View, borderTarget: View) {
+        focusView.onFocusChangeListener = null
+        focusView.setOnFocusChangeListener { v, hasFocus ->
+            if (hasFocus) {
+                if (lastFocusedView != v) {
+                    resetView(lastFocusedView)
+                    lastFocusedView = v
+                }
+                applyBorder(borderTarget)
+                applyFocusGain(borderTarget)
+            } else {
+                removeBorder(borderTarget)
+                applyFocusLoss(borderTarget)
+            }
+        }
+    }
+
     private fun resetView(v: View?) {
         if (v == null) return
         cancelAnimators(v)
@@ -62,10 +79,7 @@ object FocusEffectUtil {
     private fun applyBorder(v: View) {
         val primaryColor = getPrimaryColor(v)
         val borderWidthPx = TypedValue.applyDimension(
-            TypedValue.COMPLEX_UNIT_DIP, 2f, v.resources.displayMetrics
-        ).toInt()
-        val insetPx = TypedValue.applyDimension(
-            TypedValue.COMPLEX_UNIT_DIP, 2f, v.resources.displayMetrics
+            TypedValue.COMPLEX_UNIT_DIP, 3f, v.resources.displayMetrics
         ).toInt()
         val cornerRadius = TypedValue.applyDimension(
             TypedValue.COMPLEX_UNIT_DIP, 8f, v.resources.displayMetrics
@@ -77,17 +91,17 @@ object FocusEffectUtil {
             setStroke(borderWidthPx, primaryColor)
             setCornerRadius(cornerRadius.toFloat())
         }
-        val insetBorder = InsetDrawable(borderDrawable, insetPx, insetPx, insetPx, insetPx)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             savedForegrounds[v] = v.foreground
-            v.foreground = insetBorder
+            v.foreground = borderDrawable
         } else {
+            if (v is androidx.cardview.widget.CardView) return
             val originalBg = v.background
             savedBackgrounds[v] = originalBg
             val layers = arrayOf(
                 originalBg ?: GradientDrawable().apply { setColor(Color.TRANSPARENT) },
-                insetBorder
+                borderDrawable
             )
             v.setBackgroundDrawable(LayerDrawable(layers))
         }
@@ -97,6 +111,7 @@ object FocusEffectUtil {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             v.foreground = savedForegrounds.remove(v) ?: savedForegrounds.remove(v)
         } else {
+            if (v is androidx.cardview.widget.CardView) return
             val original = savedBackgrounds.remove(v)
             if (original != null) {
                 v.setBackgroundDrawable(original)

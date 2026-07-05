@@ -341,6 +341,8 @@ class MediaAdaptor(
         RecyclerView.ViewHolder(binding.root) {
         init {
             if (matchParent) itemView.updateLayoutParams { width = -1 }
+            itemView.isFocusable = true
+            itemView.isFocusableInTouchMode = false
             itemView.setSafeOnClickListener {
                 clicked(
                     bindingAdapterPosition,
@@ -349,13 +351,15 @@ class MediaAdaptor(
                 )
             }
             itemView.setOnLongClickListener { longClicked(bindingAdapterPosition) }
-            FocusEffectUtil.applyFocusListener(itemView)
+            FocusEffectUtil.applyFocusListener(itemView, binding.itemCompactCard)
         }
     }
 
     inner class MediaLargeViewHolder(val binding: ItemMediaLargeBinding) :
         RecyclerView.ViewHolder(binding.root) {
         init {
+            itemView.isFocusable = true
+            itemView.isFocusableInTouchMode = false
             itemView.setSafeOnClickListener {
                 clicked(
                     bindingAdapterPosition,
@@ -364,7 +368,7 @@ class MediaAdaptor(
                 )
             }
             itemView.setOnLongClickListener { longClicked(bindingAdapterPosition) }
-            FocusEffectUtil.applyFocusListener(itemView)
+            FocusEffectUtil.applyFocusListener(itemView, binding.itemCompactCard)
         }
     }
 
@@ -381,7 +385,7 @@ class MediaAdaptor(
             }
             itemView.isFocusable = true
             itemView.isFocusableInTouchMode = false
-            FocusEffectUtil.applyFocusListener(itemView)
+            FocusEffectUtil.applyFocusListener(itemView, binding.itemCompactCard)
             itemView.setOnTouchListener { _, _ -> true }
             binding.itemCompactImage.setOnLongClickListener { longClicked(bindingAdapterPosition) }
         }
@@ -407,7 +411,7 @@ class MediaAdaptor(
             }
             itemView.isFocusable = true
             itemView.isFocusableInTouchMode = false
-            FocusEffectUtil.applyFocusListener(itemView)
+            FocusEffectUtil.applyFocusListener(itemView, binding.itemCompactCard)
             itemView.setOnTouchListener { _, _ -> true }
             binding.itemCompactImage.setOnLongClickListener { longClicked(bindingAdapterPosition) }
         }
@@ -417,6 +421,8 @@ class MediaAdaptor(
         RecyclerView.ViewHolder(binding.root) {
         init {
             if (matchParent) itemView.updateLayoutParams { width = -1 }
+            itemView.isFocusable = true
+            itemView.isFocusableInTouchMode = false
             itemView.setSafeOnClickListener {
                 clicked(
                     bindingAdapterPosition,
@@ -425,7 +431,7 @@ class MediaAdaptor(
                 )
             }
             itemView.setOnLongClickListener { longClicked(bindingAdapterPosition) }
-            FocusEffectUtil.applyFocusListener(itemView)
+            FocusEffectUtil.applyFocusListener(itemView, binding.itemCompactCard)
         }
     }
 
