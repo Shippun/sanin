@@ -142,12 +142,15 @@ class MediaDetailsActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedLi
         // Native nav pills (info/watch/comments)
         val primaryColor = getThemeColor(com.google.android.material.R.attr.colorPrimary)
         val onBgColor = getThemeColor(com.google.android.material.R.attr.colorOnBackground)
-        val navButtons = listOf(binding.navPillInfo, binding.navPillWatch, binding.navPillComments)
-        navButtons.forEach { FocusEffectUtil.applyFocusListener(it) }
+        val navInfo = binding.navPillInfo
+        val navWatch = binding.navPillWatch
+        val navComments = binding.navPillComments
+        val allNav = listOfNotNull(navInfo, navWatch, navComments)
+        allNav.forEach { FocusEffectUtil.applyFocusListener(it) }
 
         fun selectTab(idx: Int) {
             selected = idx
-            navButtons.forEachIndexed { i, btn ->
+            allNav.forEachIndexed { i, btn ->
                 btn.imageTintList = ColorStateList.valueOf(if (i == idx) primaryColor else onBgColor)
                 btn.alpha = if (i == idx) 1f else 0.45f
             }
@@ -158,11 +161,11 @@ class MediaDetailsActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedLi
             model.saveSelected(media.id, sel)
         }
 
-        binding.navPillInfo.setOnClickListener { selectTab(0) }
-        binding.navPillWatch.setOnClickListener { selectTab(1) }
-        binding.navPillComments.visibility = if (hasComments) View.VISIBLE else View.GONE
+        navInfo?.setOnClickListener { selectTab(0) }
+        navWatch?.setOnClickListener { selectTab(1) }
+        navComments?.visibility = if (hasComments) View.VISIBLE else View.GONE
         if (hasComments) {
-            binding.navPillComments.setOnClickListener { selectTab(2) }
+            navComments?.setOnClickListener { selectTab(2) }
         }
         selectTab(initialSelected)
 
