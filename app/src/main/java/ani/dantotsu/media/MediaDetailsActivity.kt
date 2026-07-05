@@ -140,6 +140,10 @@ class MediaDetailsActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedLi
         val hasComments = PrefManager.getVal<Int>(PrefName.CommentsEnabled) == 1 && !rescueMode
 
         // Native nav pills (info/watch/comments)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            binding.mediaNavPills?.outlineProvider = android.view.ViewOutlineProvider.BOUNDS
+            binding.mediaNavPills?.elevation = 10f
+        }
         val primaryColor = getThemeColor(com.google.android.material.R.attr.colorPrimary)
         val onBgColor = getThemeColor(com.google.android.material.R.attr.colorOnBackground)
         val navInfo = binding.navPillInfo
