@@ -16,7 +16,6 @@ import ani.dantotsu.notifications.TaskScheduler
 import ani.dantotsu.others.DisabledReports
 import ani.dantotsu.parsers.AnimeSources
 import ani.dantotsu.settings.SettingsActivity
-import ani.dantotsu.settings.SettingsAccountActivity
 import ani.dantotsu.settings.saving.PrefManager
 import ani.dantotsu.settings.saving.PrefName
 import ani.dantotsu.util.FinalExceptionHandler
@@ -54,8 +53,6 @@ class App : Application() {
     override fun onCreate() {
         super.onCreate()
         PrefManager.init(this)
-
-        SettingsAccountActivity.relayBaseUrl = "https://dantotsu-relay.your-name.workers.dev"
 
         val crashlytics =
             ani.dantotsu.connections.crashlytics.CrashlyticsFactory.createCrashlytics()

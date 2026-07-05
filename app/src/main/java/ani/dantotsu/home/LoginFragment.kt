@@ -15,12 +15,12 @@ import ani.dantotsu.databinding.DialogUserAgentBinding
 import ani.dantotsu.databinding.FragmentLoginBinding
 import ani.dantotsu.loadImage
 import ani.dantotsu.openLinkInBrowser
-import ani.dantotsu.settings.SettingsAccountActivity
 import ani.dantotsu.settings.saving.PrefManager
 import ani.dantotsu.settings.saving.PrefName
 import ani.dantotsu.settings.saving.internal.PreferenceKeystore
 import ani.dantotsu.settings.saving.internal.PreferencePackager
 import ani.dantotsu.toast
+import ani.dantotsu.util.LocalRelayServer
 import ani.dantotsu.util.Logger
 import ani.dantotsu.util.customAlertDialog
 import kotlinx.coroutines.Dispatchers
@@ -28,20 +28,14 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import okhttp3.RequestBody.Companion.toRequestBody
-import org.json.JSONObject
+import java.net.NetworkInterface
 import java.net.URLEncoder
-import java.util.UUID
 
 class LoginFragment : Fragment() {
 
     private var _binding: FragmentLoginBinding? = null
     private val binding get() = _binding!!
     private var pollJob: kotlinx.coroutines.Job? = null
-    private val relayClient = OkHttpClient()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -68,23 +62,25 @@ class LoginFragment : Fragment() {
         val oauthUrl = "https://anilist.co/api/v2/oauth/authorize?client_id=14959&response_type=token"
 
         binding.loginQrButton.setOnClickListener {
-            val relayUrl = SettingsAccountActivity.relayBaseUrl
-            if (relayUrl.isNullOrBlank()) {
-                val qrUrl = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${URLEncoder.encode(oauthUrl, "UTF-8")}"
-                binding.loginQrCode.loadImage(qrUrl)
-                binding.loginQrCode.visibility = View.VISIBLE
-                binding.loginTokenInput.visibility = View.VISIBLE
-                return@setOnClickListener
-            }
             viewLifecycleOwner.lifecycleScope.launch {
                 try {
-                    val sessionId = withContext(Dispatchers.IO) { createRelaySession(relayUrl) }
-                    if (sessionId == null) {
-                        toast("Failed to create QR session — check relay URL")
+                    val localIp = withContext(Dispatchers.IO) {
+                        NetworkInterface.getNetworkInterfaces()?.asSequence()
+                            ?.flatMap { it.inetAddresses.asSequence() }
+                            ?.firstOrNull {
+                                !it.isLoopbackAddress && it.hostAddress?.contains('.') == true
+                            }?.hostAddress ?: return@withContext null
+                    }
+                    if (localIp == null) {
+                        toast("Could not detect local IP — check WiFi")
                         return@launch
                     }
-                    val authUrl = "$relayUrl/auth/$sessionId"
-                    val qrUrl = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${URLEncoder.encode(authUrl, "UTF-8")}"
+                    val port = 8080 + (0..1000).random()
+                    val server = LocalRelayServer(port, localIp)
+                    withContext(Dispatchers.IO) { server.start() }
+
+                    val relayUrl = "http://$localIp:$port/auth"
+                    val qrUrl = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${URLEncoder.encode(relayUrl, "UTF-8")}"
                     binding.loginQrCode.loadImage(qrUrl)
                     binding.loginQrCode.visibility = View.VISIBLE
                     binding.loginTokenInput.visibility = View.GONE
@@ -92,9 +88,21 @@ class LoginFragment : Fragment() {
                     pollJob = viewLifecycleOwner.lifecycleScope.launch {
                         while (isActive) {
                             delay(2000)
-                            val token = withContext(Dispatchers.IO) { pollRelaySession(relayUrl, sessionId) }
+                            val token = withContext(Dispatchers.IO) {
+                                try {
+                                    val s = java.net.Socket("127.0.0.1", port)
+                                    val req = "GET /api/poll HTTP/1.1\r\nHost: 127.0.0.1\r\nConnection: close\r\n\r\n"
+                                    s.getOutputStream().write(req.toByteArray())
+                                    val resp = s.getInputStream().bufferedReader().readText()
+                                    s.close()
+                                    val body = resp.substringAfter("\r\n\r\n")
+                                    val json = org.json.JSONObject(body)
+                                    if (json.optString("status") == "authorized") json.optString("token", null) else null
+                                } catch (_: Exception) { null }
+                            }
                             if (token != null) {
                                 PrefManager.setVal(PrefName.AnilistToken, token)
+                                server.stop()
                                 if (Anilist.getSavedToken()) {
                                     toast("Login successful")
                                     restartApp()
@@ -214,39 +222,6 @@ class LoginFragment : Fragment() {
         pollJob?.cancel()
         pollJob = null
         super.onDestroyView()
-    }
-
-    private fun createRelaySession(relayUrl: String): String? {
-        try {
-            val sessionId = UUID.randomUUID().toString().take(12)
-            val body = "{\"id\":\"$sessionId\"}".toRequestBody("application/json".toMediaType())
-            val request = Request.Builder()
-                .url("$relayUrl/api/session")
-                .post(body)
-                .build()
-            val response = relayClient.newCall(request).execute()
-            return if (response.isSuccessful) sessionId else null
-        } catch (e: Exception) {
-            return null
-        }
-    }
-
-    private fun pollRelaySession(relayUrl: String, sessionId: String): String? {
-        try {
-            val request = Request.Builder()
-                .url("$relayUrl/api/poll/$sessionId")
-                .get()
-                .build()
-            val response = relayClient.newCall(request).execute()
-            if (!response.isSuccessful) return null
-            val json = JSONObject(response.body!!.string())
-            if (json.optBoolean("authorized")) {
-                return json.optString("token", null)
-            }
-            return null
-        } catch (e: Exception) {
-            return null
-        }
     }
 
 }
