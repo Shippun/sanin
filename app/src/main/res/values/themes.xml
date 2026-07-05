@@ -26,6 +26,15 @@
         </item>
         <item name="android:windowLayoutInDisplayCutoutMode" tools:targetApi="o_mr1">shortEdges
         </item>
+        <item name="android:progressBarStyle">@style/CurseMarkProgressBar</item>
+    </style>
+
+    <style name="CurseMarkProgressBar" parent="Widget.AppCompat.ProgressBar">
+        <item name="android:indeterminateDrawable">@drawable/animated_curse_mark_spinner</item>
+        <item name="android:minWidth">48dp</item>
+        <item name="android:maxWidth">48dp</item>
+        <item name="android:minHeight">48dp</item>
+        <item name="android:maxHeight">48dp</item>
     </style>
 
     <style name="Theme.Dantotsu.NoActionBar">
