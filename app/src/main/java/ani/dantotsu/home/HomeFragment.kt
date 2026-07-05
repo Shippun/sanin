@@ -728,7 +728,6 @@ class HomeFragment : Fragment() {
         rv.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         rv.isFocusable = false
         rv.descendantFocusability = android.view.ViewGroup.FOCUS_AFTER_DESCENDANTS
-        rv.nextFocusUpId = R.id.navPills
         rv.nextFocusDownId = R.id.homeContinueWatch
         bannerSnapHelper.attachToRecyclerView(rv)
 

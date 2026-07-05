@@ -29,16 +29,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="top"
             android:fitsSystemWindows="true"
-            android:gravity="center_vertical"
+            android:gravity="end"
             android:orientation="horizontal">
-
-            <androidx.compose.ui.platform.ComposeView
-                android:id="@+id/navPills"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:focusable="true"
-                android:visibility="gone" />
 
             <FrameLayout
                 android:id="@+id/mainAvatarContainer"
@@ -100,6 +92,86 @@
                     tools:visibility="visible" />
             </FrameLayout>
         </LinearLayout>
+
+        <FrameLayout
+            android:id="@+id/homeNavRail"
+            android:layout_width="44dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start|center_vertical"
+            android:layout_marginStart="8dp"
+            android:elevation="10dp"
+            android:translationZ="10dp"
+            android:focusable="true"
+            android:descendantFocusability="afterDescendants"
+            android:visibility="gone"
+            android:clipToOutline="true">
+
+            <ImageView
+                android:id="@+id/homeNavRailBg"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:focusable="false"
+                android:clickable="false"
+                android:importantForAccessibility="no" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:paddingTop="6dp"
+                android:paddingBottom="6dp">
+
+                <ImageButton
+                    android:id="@+id/homeNavHome"
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:padding="12dp"
+                    android:src="@drawable/ic_round_home_24"
+                    android:scaleType="fitCenter"
+                    android:background="@android:color/transparent"
+                    android:focusable="true"
+                    android:nextFocusUp="@id/homeNavLibrary"
+                    android:nextFocusDown="@id/homeNavAnime" />
+
+                <ImageButton
+                    android:id="@+id/homeNavAnime"
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:padding="12dp"
+                    android:src="@drawable/ic_round_movie_filter_24"
+                    android:scaleType="fitCenter"
+                    android:background="@android:color/transparent"
+                    android:focusable="true"
+                    android:nextFocusUp="@id/homeNavHome"
+                    android:nextFocusDown="@id/homeNavDiscovery" />
+
+                <ImageButton
+                    android:id="@+id/homeNavDiscovery"
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:padding="12dp"
+                    android:src="@drawable/ic_round_filter_list_24"
+                    android:scaleType="fitCenter"
+                    android:background="@android:color/transparent"
+                    android:focusable="true"
+                    android:nextFocusUp="@id/homeNavAnime"
+                    android:nextFocusDown="@id/homeNavLibrary" />
+
+                <ImageButton
+                    android:id="@+id/homeNavLibrary"
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:padding="12dp"
+                    android:src="@drawable/ic_round_library_books_24"
+                    android:scaleType="fitCenter"
+                    android:background="@android:color/transparent"
+                    android:focusable="true"
+                    android:nextFocusUp="@id/homeNavDiscovery"
+                    android:nextFocusDown="@id/homeNavHome" />
+            </LinearLayout>
+        </FrameLayout>
 
         <androidx.cardview.widget.CardView
             android:id="@+id/incognito"

@@ -155,8 +155,6 @@ class DiscoveryFragment : Fragment() {
         observeViewModel()
         binding.genreChipGroup.isFocusable = true
         binding.seasonChipGroup.isFocusable = true
-        binding.discoverRecyclerView.nextFocusUpId = R.id.navPills
-        binding.discoverSearchText.nextFocusUpId = R.id.navPills
         discoverViewModel.fetch()
     }
 

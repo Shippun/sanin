@@ -106,7 +106,6 @@ class LibraryFragment : Fragment() {
         if (PrefManager.getVal<Boolean>(PrefName.RescueMode)) {
             binding.listSort.visibility = View.GONE
         }
-        binding.listViewPager.nextFocusUpId = R.id.navPills
         binding.listSort.setOnClickListener {
             val popup = PopupMenu(requireContext(), it)
             popup.setOnMenuItemClickListener { item ->

@@ -22,7 +22,6 @@ import androidx.activity.addCallback
 import androidx.activity.viewModels
 import androidx.annotation.OptIn
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.ui.platform.ComposeView
 import androidx.core.animation.doOnEnd
 import androidx.core.content.ContextCompat
 import androidx.core.view.doOnAttach
@@ -36,6 +35,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.media3.common.util.UnstableApi
 import ani.dantotsu.addons.torrent.TorrentAddonManager
 import ani.dantotsu.addons.torrent.TorrentServerService
+import ani.dantotsu.blurImage
 import ani.dantotsu.connections.LogoApi
 import ani.dantotsu.connections.anilist.Anilist
 import ani.dantotsu.connections.anilist.AnilistHomeViewModel
@@ -66,7 +66,6 @@ import ani.dantotsu.settings.saving.SharedPreferenceBooleanLiveData
 import ani.dantotsu.settings.saving.internal.PreferenceKeystore
 import ani.dantotsu.settings.saving.internal.PreferencePackager
 import ani.dantotsu.themes.ThemeManager
-import ani.dantotsu.ui.components.NavigationPills
 import ani.dantotsu.ui.components.NavigationPillsViewModel
 import ani.dantotsu.util.AudioHelper
 import ani.dantotsu.util.Logger
@@ -304,12 +303,9 @@ class MainActivity : AppCompatActivity() {
             window.navigationBarColor = ContextCompat.getColor(this, android.R.color.transparent)
             binding.mainProgressBar.visibility = View.GONE
 
-            // Setup Compose NavigationPills
+            // Setup home side rail (replaces compose navPills)
             navPillsViewModel = ViewModelProvider(this)[NavigationPillsViewModel::class.java]
-            binding.navPills.setContent {
-                NavigationPills(viewModel = navPillsViewModel)
-            }
-            binding.navPills.visibility = View.VISIBLE
+            setupHomeNavRail()
 
             // Setup avatar and right rail drawer
             binding.mainAvatarContainer.visibility = View.VISIBLE
@@ -329,13 +325,11 @@ class MainActivity : AppCompatActivity() {
                     null
                 )
             }
-            // Focus chain: navPills ↔ calendar ↔ avatar (circular)
-            binding.navPills.nextFocusRightId = R.id.mainCalendarContainer
-            binding.navPills.nextFocusLeftId = R.id.mainUserAvatarContainer
-            binding.mainCalendarContainer.nextFocusLeftId = R.id.navPills
+            // Focus chain: calendar ↔ avatar (circular)
+            binding.mainCalendarContainer.nextFocusLeftId = R.id.mainUserAvatarContainer
             binding.mainCalendarContainer.nextFocusRightId = R.id.mainUserAvatarContainer
             binding.mainUserAvatarContainer.nextFocusLeftId = R.id.mainCalendarContainer
-            binding.mainUserAvatarContainer.nextFocusRightId = R.id.navPills
+            binding.mainUserAvatarContainer.nextFocusRightId = R.id.mainCalendarContainer
             FocusEffectUtil.applyFocusListener(
                 binding.mainCalendarContainer,
                 binding.mainUserAvatarContainer
@@ -505,24 +499,26 @@ class MainActivity : AppCompatActivity() {
     override fun dispatchKeyEvent(event: KeyEvent): Boolean {
         if (event.action == KeyEvent.ACTION_DOWN) {
             when (event.keyCode) {
-                KeyEvent.KEYCODE_DPAD_UP -> {
-                    if (binding.navPills.visibility == View.VISIBLE && currentFocus != binding.navPills) {
-                        val focusUp = currentFocus?.focusSearch(View.FOCUS_UP)
-                        if (focusUp == null || focusUp == currentFocus || focusUp == currentFocus?.parent) {
-                            binding.navPills.requestFocus()
-                            return true
-                        }
+                KeyEvent.KEYCODE_BACK, KeyEvent.KEYCODE_ESCAPE -> {
+                    if (binding.homeNavRail.visibility == View.VISIBLE) {
+                        hideHomeNavRail()
+                        return true
                     }
                 }
-                KeyEvent.KEYCODE_DPAD_DOWN -> {
-                    if (currentFocus == binding.navPills) {
-                        val tag = currentFragmentTag
-                        if (tag != null) {
-                            val frag = supportFragmentManager.findFragmentByTag(tag)
-                            frag?.view?.let { v ->
-                                v.requestFocus(View.FOCUS_DOWN)
-                            }
-                        }
+                KeyEvent.KEYCODE_DPAD_RIGHT -> {
+                    val id = currentFocus?.id
+                    if (id == R.id.homeNavHome || id == R.id.homeNavAnime || id == R.id.homeNavDiscovery || id == R.id.homeNavLibrary) {
+                        hideHomeNavRail()
+                        return true
+                    }
+                }
+                KeyEvent.KEYCODE_DPAD_LEFT -> {
+                    val id = currentFocus?.id
+                    if (id == R.id.homeNavHome || id == R.id.homeNavAnime || id == R.id.homeNavDiscovery || id == R.id.homeNavLibrary) {
+                        return true
+                    }
+                    if (binding.homeNavRail.visibility != View.VISIBLE) {
+                        showHomeNavRail()
                         return true
                     }
                 }
@@ -539,6 +535,7 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         loadAvatar()
+        blurImage(binding.homeNavRailBg!!, Anilist.bg)
     }
 
     private fun handleViewIntent(intent: Intent) {
@@ -646,6 +643,53 @@ class MainActivity : AppCompatActivity() {
             binding.mainNotificationCount.text = Anilist.unreadNotificationCount.toString()
         } else {
             binding.mainNotificationCount.isVisible = false
+        }
+    }
+
+    private fun setupHomeNavRail() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            val cornerPx = 16f * resources.displayMetrics.density
+            binding.homeNavRail.outlineProvider = object : android.view.ViewOutlineProvider() {
+                override fun getOutline(view: View, outline: android.graphics.Outline) {
+                    outline.setRoundRect(0, 0, view.width, view.height, cornerPx)
+                }
+            }
+            binding.homeNavRail.elevation = 10f
+            binding.homeNavRail.clipToOutline = true
+        }
+
+        blurImage(binding.homeNavRailBg!!, Anilist.bg)
+
+        val pills = listOf(binding.homeNavHome, binding.homeNavAnime, binding.homeNavDiscovery, binding.homeNavLibrary)
+        pills.forEachIndexed { index, pill ->
+            pill.setOnClickListener {
+                navPillsViewModel.setTab(index)
+                hideHomeNavRail()
+            }
+            FocusEffectUtil.applyFocusListener(pill)
+        }
+    }
+
+    private fun showHomeNavRail() {
+        binding.homeNavRail.visibility = View.VISIBLE
+        val tab = navPillsViewModel.currentTab.value
+        val id = when (tab) {
+            0 -> R.id.homeNavHome
+            1 -> R.id.homeNavAnime
+            2 -> R.id.homeNavDiscovery
+            3 -> R.id.homeNavLibrary
+            else -> R.id.homeNavHome
+        }
+        binding.root.findViewById<View>(id)?.requestFocus()
+    }
+
+    private fun hideHomeNavRail() {
+        binding.homeNavRail.visibility = View.GONE
+        val tag = currentFragmentTag
+        if (tag != null) {
+            supportFragmentManager.findFragmentByTag(tag)?.view?.let {
+                it.requestFocus()
+            }
         }
     }
 

@@ -114,7 +114,6 @@ class AnimePageAdapter : RecyclerView.Adapter<AnimePageAdapter.AnimePageViewHold
         rv.overScrollMode = RecyclerView.OVER_SCROLL_NEVER
         rv.isFocusable = false
         rv.descendantFocusability = android.view.ViewGroup.FOCUS_AFTER_DESCENDANTS
-        rv.nextFocusUpId = R.id.navPills
         bannerAdapter = BannerCarouselAdapter(media, CoroutineScope(Dispatchers.Main)) { item ->
             val context = binding.root.context
             ContextCompat.startActivity(

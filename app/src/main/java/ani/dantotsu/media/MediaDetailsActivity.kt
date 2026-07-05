@@ -207,7 +207,7 @@ class MediaDetailsActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedLi
         }
 
         blurImage(banner, media.banner ?: media.cover)
-        blurImage(binding.navPillBg, media.banner ?: media.cover)
+        blurImage(binding.navPillBg!!, media.banner ?: media.cover)
         val gestureDetector = GestureDetector(this, object : GesturesListener() {
             override fun onDoubleClick(event: MotionEvent) {
                 if (!(PrefManager.getVal(PrefName.BannerAnimations) as Boolean))
@@ -420,7 +420,7 @@ class MediaDetailsActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedLi
                     if (media.format?.startsWith("LOCAL") == true) {
                         binding.mediaCoverImage.loadImage(media.cover)
                         blurImage(if (bannerAnimations) binding.mediaBanner else binding.mediaBannerNoKen, media.banner ?: media.cover)
-                        blurImage(binding.navPillBg, media.banner ?: media.cover)
+                        blurImage(binding.navPillBg!!, media.banner ?: media.cover)
                     }
                 }
                 progress()
