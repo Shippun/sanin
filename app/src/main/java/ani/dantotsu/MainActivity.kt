@@ -501,7 +501,7 @@ class MainActivity : AppCompatActivity() {
             when (event.keyCode) {
                 KeyEvent.KEYCODE_BACK, KeyEvent.KEYCODE_ESCAPE -> {
                     if (binding.homeNavRail.visibility == View.VISIBLE) {
-                        if (!PrefManager.getVal(PrefName.SideRailPersist)) {
+                        if (!PrefManager.getVal<Boolean>(PrefName.SideRailPersist)) {
                             hideHomeNavRail()
                             return true
                         }

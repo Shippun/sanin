@@ -160,13 +160,13 @@ class MediaDetailsActivity : AppCompatActivity() {
         val allNav = listOfNotNull(navInfo, navWatch, navComments)
         allNav.forEach { FocusEffectUtil.applyFocusListener(it) }
 
-        binding.navPillBg.live = PrefManager.getVal(PrefName.LiveSideRail)
-        binding.navPillBg.addOnLayoutChangeListener { _, _, _, _, _, _, _, _, _ ->
+        binding.navPillBg!!.live = PrefManager.getVal(PrefName.LiveSideRail)
+        binding.navPillBg!!.addOnLayoutChangeListener { _, _, _, _, _, _, _, _, _ ->
             updateMediaNavIconTints(selected)
         }
 
         fun getNavContrastColor(yCenter: Float): Int {
-            val bg = binding.navPillBg
+            val bg = binding.navPillBg!!
             if (bg.height <= 0) return onBgColor
             val fraction = yCenter / bg.height
             val color = bg.getColorAtFraction(fraction)
@@ -300,7 +300,7 @@ class MediaDetailsActivity : AppCompatActivity() {
             when (event.keyCode) {
                 KeyEvent.KEYCODE_BACK, KeyEvent.KEYCODE_ESCAPE -> {
                     if (binding.mediaNavPills?.visibility == View.VISIBLE) {
-                        if (!PrefManager.getVal(PrefName.SideRailPersist)) {
+                        if (!PrefManager.getVal<Boolean>(PrefName.SideRailPersist)) {
                             hideNavPills()
                             return true
                         }
@@ -348,7 +348,7 @@ class MediaDetailsActivity : AppCompatActivity() {
     }
 
     private fun updateMediaNavIconTints(selectedIdx: Int) {
-        val bg = binding.navPillBg
+        val bg = binding.navPillBg ?: return
         if (bg.height <= 0) return
         val pills = listOfNotNull(binding.navPillInfo, binding.navPillWatch, binding.navPillComments)
         pills.forEachIndexed { i, pill ->
