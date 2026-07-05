@@ -478,14 +478,14 @@ class MediaDetailsActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedLi
     override fun dispatchKeyEvent(event: KeyEvent): Boolean {
         if (event.action == KeyEvent.ACTION_DOWN) {
             when (event.keyCode) {
-                KeyEvent.KEYCODE_DPAD_DOWN -> {
+                KeyEvent.KEYCODE_DPAD_RIGHT -> {
                     val focusedId = currentFocus?.id
                     if (focusedId == R.id.navPillInfo || focusedId == R.id.navPillWatch || focusedId == R.id.navPillComments) {
                         binding.mediaViewPager.requestFocus()
                         return true
                     }
                 }
-                KeyEvent.KEYCODE_DPAD_UP -> {
+                KeyEvent.KEYCODE_DPAD_LEFT -> {
                     if (binding.mediaViewPager.isFocused || binding.commentMessageContainer.isFocused) {
                         val targetId = when (selected) {
                             0 -> R.id.navPillInfo
@@ -577,7 +577,7 @@ class MediaDetailsActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedLi
         // Fade/slide nav pills as toolbar scrolls so they don't overlap ViewPager when collapsed
         val progress = abs(i).toFloat() / mMaxScrollSize.coerceAtLeast(1)
         binding.mediaNavPills?.alpha = 1f - progress
-        binding.mediaNavPills?.translationY = -i.toFloat()
+        binding.mediaNavPills?.translationX = -i.toFloat()
         binding.mediaNavPills?.visibility =
             if (progress > 0.85f) View.INVISIBLE else View.VISIBLE
 

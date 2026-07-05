@@ -476,20 +476,20 @@
 
     <LinearLayout
         android:id="@+id/mediaNavPills"
-        android:layout_width="wrap_content"
-        android:layout_height="48dp"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="320dp"
+        android:layout_width="48dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start|center_vertical"
+        android:layout_marginStart="8dp"
         android:elevation="10dp"
         android:translationZ="10dp"
-        android:orientation="horizontal"
+        android:orientation="vertical"
         android:gravity="center"
         android:background="@drawable/round_corner"
         android:focusable="true"
         android:focusableInTouchMode="false"
         android:descendantFocusability="afterDescendants"
-        android:paddingStart="6dp"
-        android:paddingEnd="6dp">
+        android:paddingTop="6dp"
+        android:paddingBottom="6dp">
 
         <ImageButton
             android:id="@+id/navPillInfo"
@@ -500,8 +500,8 @@
             android:scaleType="fitCenter"
             android:background="@android:color/transparent"
             android:focusable="true"
-            android:nextFocusLeft="@id/navPillComments"
-            android:nextFocusRight="@id/navPillWatch" />
+            android:nextFocusUp="@id/navPillComments"
+            android:nextFocusDown="@id/navPillWatch" />
 
         <ImageButton
             android:id="@+id/navPillWatch"
@@ -512,8 +512,8 @@
             android:scaleType="fitCenter"
             android:background="@android:color/transparent"
             android:focusable="true"
-            android:nextFocusLeft="@id/navPillInfo"
-            android:nextFocusRight="@id/navPillComments" />
+            android:nextFocusUp="@id/navPillInfo"
+            android:nextFocusDown="@id/navPillComments" />
 
         <ImageButton
             android:id="@+id/navPillComments"
@@ -525,8 +525,8 @@
             android:background="@android:color/transparent"
             android:visibility="gone"
             android:focusable="true"
-            android:nextFocusLeft="@id/navPillWatch"
-            android:nextFocusRight="@id/navPillInfo" />
+            android:nextFocusUp="@id/navPillWatch"
+            android:nextFocusDown="@id/navPillInfo" />
 
     </LinearLayout>
 

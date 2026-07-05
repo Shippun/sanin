@@ -6,8 +6,6 @@ import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -22,17 +20,11 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.focus.focusable
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.key.Key
@@ -76,16 +68,6 @@ fun NavigationPills(
     )
 
     val view = LocalView.current
-    val focusRequesters = remember { TAB_ORDER.map { FocusRequester() } }
-
-    LaunchedEffect(Unit) {
-        view.setOnFocusChangeListener { _, hasFocus ->
-            if (hasFocus) {
-                val idx = currentTab.coerceIn(0, focusRequesters.lastIndex)
-                view.post { focusRequesters[idx].requestFocus() }
-            }
-        }
-    }
 
     Box(
         modifier = modifier
@@ -116,25 +98,45 @@ fun NavigationPills(
                     ),
                     shape = RoundedCornerShape(50)
                 )
-                .padding(horizontal = 6.dp),
+                .padding(horizontal = 6.dp)
+                .focusable()
+                .onKeyEvent { event ->
+                    if (event.type == KeyEventType.KeyUp) {
+                        when (event.key) {
+                            Key.DirectionLeft -> {
+                                if (currentTab > 0) {
+                                    viewModel.setTab(currentTab - 1)
+                                } else {
+                                    (view.parent as? View)?.focusSearch(View.FOCUS_LEFT)?.requestFocus()
+                                }
+                                true
+                            }
+                            Key.DirectionRight -> {
+                                if (currentTab < TAB_ORDER.lastIndex) {
+                                    viewModel.setTab(currentTab + 1)
+                                } else {
+                                    (view.parent as? View)?.focusSearch(View.FOCUS_RIGHT)?.requestFocus()
+                                }
+                                true
+                            }
+                            Key.Enter, Key.DirectionCenter -> {
+                                viewModel.setTab(currentTab)
+                                true
+                            }
+                            else -> false
+                        }
+                    } else false
+                },
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             TAB_ORDER.forEachIndexed { index, tab ->
                 val isActive = currentTab == index
-
                 NavigationPill(
                     tab = tab,
                     label = TAB_LABELS[tab] ?: tab,
                     isActive = isActive,
-                    isExpanded = isExpanded,
-                    isFirst = index == 0,
-                    isLast = index == TAB_ORDER.lastIndex,
-                    focusRequester = focusRequesters[index],
-                    onActivate = { viewModel.setTab(index) },
-                    onEdgeExit = { dir ->
-                        view.focusSearch(if (dir == 0) View.FOCUS_LEFT else View.FOCUS_RIGHT)?.requestFocus()
-                    }
+                    isExpanded = isExpanded
                 )
             }
         }
@@ -146,15 +148,9 @@ fun NavigationPill(
     tab: String,
     label: String,
     isActive: Boolean,
-    isExpanded: Boolean,
-    isFirst: Boolean,
-    isLast: Boolean,
-    focusRequester: FocusRequester,
-    onActivate: () -> Unit,
-    onEdgeExit: (direction: Int) -> Unit
+    isExpanded: Boolean
 ) {
     val iconRes = TAB_ICONS[tab] ?: R.drawable.ic_round_home_24
-    var isFocused by remember { mutableStateOf(false) }
 
     val pillWidth by animateDpAsState(
         targetValue = if (isExpanded) 88.dp else 48.dp,
@@ -167,41 +163,9 @@ fun NavigationPill(
             .width(pillWidth)
             .fillMaxHeight()
             .background(
-                color = when {
-                    isActive -> Color.White.copy(alpha = 0.15f)
-                    isFocused -> Color.White.copy(alpha = 0.08f)
-                    else -> Color.Transparent
-                },
+                color = if (isActive) Color.White.copy(alpha = 0.15f) else Color.Transparent,
                 shape = RoundedCornerShape(50)
-            )
-            .focusRequester(focusRequester)
-            .focusable()
-            .onFocusChanged { isFocused = it.isFocused }
-            .navigationPillFocusEffect(isFocused, "pulseglow")
-            .clickable { onActivate() }
-            .onKeyEvent { event ->
-                if (isFocused && event.type == KeyEventType.KeyUp) {
-                    when (event.key) {
-                        Key.DirectionLeft -> {
-                            if (isFirst) {
-                                onEdgeExit(-1)
-                                true
-                            } else false
-                        }
-                        Key.DirectionRight -> {
-                            if (isLast) {
-                                onEdgeExit(1)
-                                true
-                            } else false
-                        }
-                        Key.Enter, Key.DirectionCenter -> {
-                            onActivate()
-                            true
-                        }
-                        else -> false
-                    }
-                } else false
-            },
+            ),
         contentAlignment = Alignment.Center
     ) {
         if (isExpanded) {
