@@ -178,7 +178,7 @@ fun NavigationPill(
             .focusable()
             .onFocusChanged { isFocused = it.isFocused }
             .navigationPillFocusEffect(isFocused, "pulseglow")
-            .onClick { onActivate() }
+            .clickable { onActivate() }
             .onKeyEvent { event ->
                 if (isFocused && event.type == KeyEventType.KeyUp) {
                     when (event.key) {
