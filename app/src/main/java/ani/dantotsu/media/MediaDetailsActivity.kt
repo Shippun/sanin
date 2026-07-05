@@ -501,21 +501,21 @@ class MediaDetailsActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedLi
                     }
                 }
                 KeyEvent.KEYCODE_DPAD_LEFT -> {
-                    val commentFocused = binding.commentMessageContainer?.isFocused == true
-                    if (binding.mediaViewPager.isFocused || commentFocused) {
+                    val focusedId = currentFocus?.id
+                    if (focusedId == R.id.navPillInfo || focusedId == R.id.navPillWatch || focusedId == R.id.navPillComments) {
+                        return true
+                    }
+                    if (binding.mediaNavPills?.visibility != View.VISIBLE &&
+                        currentFocus?.focusSearch(View.FOCUS_LEFT) == null) {
                         showNavPills()
-                        val targetId = when (selected) {
-                            0 -> R.id.navPillInfo
-                            1 -> R.id.navPillWatch
-                            2 -> R.id.navPillComments
-                            else -> R.id.navPillInfo
-                        }
-                        val target = binding.root.findViewById<View>(targetId)
-                        if (target?.visibility == View.VISIBLE) {
-                            target.requestFocus()
-                        } else {
-                            binding.navPillInfo?.requestFocus()
-                        }
+                        focusNavPillForSelectedTab()
+                        return true
+                    }
+                }
+                KeyEvent.KEYCODE_MENU -> {
+                    if (binding.mediaNavPills?.visibility != View.VISIBLE) {
+                        showNavPills()
+                        focusNavPillForSelectedTab()
                         return true
                     }
                 }
@@ -531,6 +531,21 @@ class MediaDetailsActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedLi
     private fun hideNavPills() {
         binding.mediaNavPills?.visibility = View.GONE
         binding.mediaViewPager.requestFocus()
+    }
+
+    private fun focusNavPillForSelectedTab() {
+        val targetId = when (selected) {
+            0 -> R.id.navPillInfo
+            1 -> R.id.navPillWatch
+            2 -> R.id.navPillComments
+            else -> R.id.navPillInfo
+        }
+        val target = binding.root.findViewById<View>(targetId)
+        if (target?.visibility == View.VISIBLE) {
+            target.requestFocus()
+        } else {
+            binding.navPillInfo?.requestFocus()
+        }
     }
 
     // ViewPager
