@@ -26,6 +26,7 @@ import ani.dantotsu.openLinkInBrowser
 import ani.dantotsu.setSafeOnClickListener
 import ani.dantotsu.settings.saving.PrefManager
 import ani.dantotsu.settings.saving.PrefName
+import ani.dantotsu.util.FocusEffectUtil
 import ani.dantotsu.snackString
 import ani.dantotsu.startMainActivity
 import ani.dantotsu.statusBarHeight
@@ -73,6 +74,7 @@ class SettingsActivity : AppCompatActivity() {
             settingsBack.setOnClickListener {
                 onBackPressedDispatcher.onBackPressed()
             }
+            FocusEffectUtil.applyFocusListener(settingsBack)
 
             binding.settingsRecyclerView.adapter = SettingsAdapter(
                 arrayListOf(

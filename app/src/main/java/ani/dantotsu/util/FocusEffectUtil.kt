@@ -1,11 +1,19 @@
 package ani.dantotsu.util
 
 import android.animation.ObjectAnimator
+import android.content.res.TypedArray
+import android.graphics.Color
+import android.graphics.drawable.Drawable
+import android.graphics.drawable.GradientDrawable
+import android.graphics.drawable.LayerDrawable
+import android.os.Build
+import android.util.TypedValue
 import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.BounceInterpolator
-import android.view.animation.CycleInterpolator
+import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
+import ani.dantotsu.R
 import ani.dantotsu.settings.saving.PrefManager
 import ani.dantotsu.settings.saving.PrefName
 
@@ -13,6 +21,8 @@ object FocusEffectUtil {
 
     private var lastFocusedView: View? = null
     private val activeAnimators = mutableMapOf<View, List<ObjectAnimator>>()
+    private val savedForegrounds = mutableMapOf<View, Drawable?>()
+    private val savedBackgrounds = mutableMapOf<View, Drawable?>()
 
     fun applyFocusListener(vararg views: View) {
         for (view in views) {
@@ -23,8 +33,10 @@ object FocusEffectUtil {
                         resetView(lastFocusedView)
                         lastFocusedView = v
                     }
+                    applyBorder(v)
                     applyFocusGain(v)
                 } else {
+                    removeBorder(v)
                     applyFocusLoss(v)
                 }
             }
@@ -34,11 +46,62 @@ object FocusEffectUtil {
     private fun resetView(v: View?) {
         if (v == null) return
         cancelAnimators(v)
+        removeBorder(v)
         v.elevation = 0f
         v.scaleX = 1f
         v.scaleY = 1f
         v.translationX = 0f
         v.alpha = 1f
+    }
+
+    private fun getPrimaryColor(v: View): Int {
+        val ta: TypedArray = v.context.theme.obtainStyledAttributes(intArrayOf(R.attr.colorPrimary))
+        val color = ta.getColor(0, Color.WHITE)
+        ta.recycle()
+        return color
+    }
+
+    private fun applyBorder(v: View) {
+        val primaryColor = getPrimaryColor(v)
+        val borderWidthPx = TypedValue.applyDimension(
+            TypedValue.COMPLEX_UNIT_DIP, 2f, v.resources.displayMetrics
+        ).toInt()
+        val cornerRadius = TypedValue.applyDimension(
+            TypedValue.COMPLEX_UNIT_DIP, 8f, v.resources.displayMetrics
+        ).toInt()
+
+        val borderDrawable = GradientDrawable().apply {
+            setShape(GradientDrawable.RECTANGLE)
+            setColor(Color.TRANSPARENT)
+            setStroke(borderWidthPx, primaryColor)
+            setCornerRadius(cornerRadius.toFloat())
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            savedForegrounds[v] = v.foreground
+            v.foreground = borderDrawable
+        } else {
+            val originalBg = v.background
+            savedBackgrounds[v] = originalBg
+            val layers = arrayOf(
+                originalBg ?: GradientDrawable().apply { setColor(Color.TRANSPARENT) },
+                borderDrawable
+            )
+            v.setBackgroundDrawable(LayerDrawable(layers))
+        }
+    }
+
+    private fun removeBorder(v: View) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            v.foreground = savedForegrounds.remove(v) ?: savedForegrounds.remove(v)
+        } else {
+            val original = savedBackgrounds.remove(v)
+            if (original != null) {
+                v.setBackgroundDrawable(original)
+            } else {
+                v.background = null
+            }
+        }
     }
 
     private fun applyFocusGain(v: View) {

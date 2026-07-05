@@ -31,6 +31,8 @@
                     android:layout_width="64dp"
                     android:layout_height="64dp"
                     android:background="@color/nav_bg_inv"
+                    android:focusable="true"
+                    android:nextFocusDown="@+id/settingsRecyclerView"
                     android:padding="16dp"
                     app:srcCompat="@drawable/ic_round_arrow_back_ios_new_24"
                     app:tint="?attr/colorOnBackground"
