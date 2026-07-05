@@ -11,9 +11,6 @@ import android.util.TypedValue
 import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.BounceInterpolator
-import androidx.core.content.ContextCompat
-import androidx.core.view.ViewCompat
-import ani.dantotsu.R
 import ani.dantotsu.settings.saving.PrefManager
 import ani.dantotsu.settings.saving.PrefName
 
@@ -55,7 +52,7 @@ object FocusEffectUtil {
     }
 
     private fun getPrimaryColor(v: View): Int {
-        val ta: TypedArray = v.context.theme.obtainStyledAttributes(intArrayOf(R.attr.colorPrimary))
+        val ta: TypedArray = v.context.theme.obtainStyledAttributes(intArrayOf(com.google.android.material.R.attr.colorPrimary))
         val color = ta.getColor(0, Color.WHITE)
         ta.recycle()
         return color
