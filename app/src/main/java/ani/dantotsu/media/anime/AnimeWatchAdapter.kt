@@ -194,8 +194,8 @@ class AnimeWatchAdapter(
             R.color.violet_400,
             fragment.subscribed,
             true
-        ) {
-            fragment.onNotificationPressed(it, binding.mediaSource.text.toString())
+        ) { enabled ->
+            fragment.onNotificationPressed(enabled, binding.mediaSource.text.toString())
         }
 
         subscribeButton(false)

@@ -1,18 +1,21 @@
 package ani.dantotsu.media
 
+import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.os.Build
 import android.os.Bundle
-import android.view.KeyEvent
 import android.view.GestureDetector
 import android.view.KeyEvent
 import android.view.MotionEvent
 import android.view.View
+import android.widget.ImageView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.content.res.AppCompatResources
+import androidx.appcompat.widget.AppCompatImageButton
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
@@ -39,9 +42,13 @@ import ani.dantotsu.snackString
 import ani.dantotsu.themes.ThemeManager
 import ani.dantotsu.util.FocusEffectUtil
 import ani.dantotsu.util.LauncherWrapper
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
+import kotlin.time.Duration.Companion.milliseconds
 
 
 class MediaDetailsActivity : AppCompatActivity() {
@@ -101,7 +108,7 @@ class MediaDetailsActivity : AppCompatActivity() {
         hasComments = PrefManager.getVal<Int>(PrefName.CommentsEnabled) == 1 && !rescueMode
 
         // Load full-screen banner background
-        binding.mediaBg.loadImage(media.banner ?: media.cover)
+        binding.mediaBg!!.loadImage(media.banner ?: media.cover)
 
         // Load cover image
         binding.mediaCoverImage.loadImage(media.cover)
@@ -161,20 +168,20 @@ class MediaDetailsActivity : AppCompatActivity() {
             when (idx) {
                 0 -> {
                     // Info: just ensure info fragment container is visible
-                    binding.mediaInfoFragmentContainer.visibility = View.VISIBLE
-                    binding.mediaRightPanel.visibility = View.VISIBLE
+                    binding.mediaInfoFragmentContainer!!.visibility = View.VISIBLE
+                    binding.mediaRightPanel!!.visibility = View.VISIBLE
                 }
                 1 -> {
                     // Watch
-                    binding.mediaInfoFragmentContainer.visibility = View.GONE
-                    binding.mediaRightPanel.visibility = View.VISIBLE
-                    binding.mediaViewPager.setCurrentItem(0, true)
+                    binding.mediaInfoFragmentContainer!!.visibility = View.GONE
+                    binding.mediaRightPanel!!.visibility = View.VISIBLE
+                    binding.mediaViewPager!!.setCurrentItem(0, true)
                 }
                 2 -> {
                     // Comments
-                    binding.mediaInfoFragmentContainer.visibility = View.GONE
-                    binding.mediaRightPanel.visibility = View.VISIBLE
-                    binding.mediaViewPager.setCurrentItem(1, true)
+                    binding.mediaInfoFragmentContainer!!.visibility = View.GONE
+                    binding.mediaRightPanel!!.visibility = View.VISIBLE
+                    binding.mediaViewPager!!.setCurrentItem(1, true)
                 }
             }
             val sel = model.loadSelected(media, isDownload)
@@ -190,7 +197,7 @@ class MediaDetailsActivity : AppCompatActivity() {
         }
 
         // ViewPager setup (2 tabs: Watch, Comments)
-        val viewPager = binding.mediaViewPager
+        val viewPager = binding.mediaViewPager!!
         viewPager.offscreenPageLimit = 2
         viewPager.isUserInputEnabled = false
         viewPager.adapter = ViewPagerAdapter(
@@ -225,7 +232,7 @@ class MediaDetailsActivity : AppCompatActivity() {
                 )
             }
         })
-        binding.mediaBg.setOnTouchListener { _, motionEvent ->
+        binding.mediaBg!!.setOnTouchListener { _, motionEvent ->
             gestureDetector.onTouchEvent(motionEvent); true
         }
 
@@ -315,7 +322,7 @@ class MediaDetailsActivity : AppCompatActivity() {
 
     private fun hideNavPills() {
         binding.mediaNavPills?.visibility = View.GONE
-        binding.mediaViewPager.requestFocus()
+        binding.mediaViewPager!!.requestFocus()
     }
 
     private fun focusNavPillForSelectedTab() {
@@ -362,5 +369,78 @@ class MediaDetailsActivity : AppCompatActivity() {
 
     companion object {
         var mediaSingleton: Media? = null
+    }
+
+    class PopImageButton(
+        private val scope: CoroutineScope,
+        private val image: ImageView,
+        private val d1: Int,
+        private val d2: Int,
+        private val c1: Int,
+        private val c2: Int,
+        var clicked: Boolean,
+        needsInitialClick: Boolean = false,
+        callback: suspend (Boolean) -> (Unit)
+    ) {
+        private var disabled = false
+        private val context = image.context
+        private var pressable = true
+
+        init {
+            enabled(true)
+            if (needsInitialClick) {
+                scope.launch {
+                    clicked()
+                }
+            }
+            image.setOnClickListener {
+                if (pressable && !disabled) {
+                    pressable = false
+                    clicked = !clicked
+                    scope.launch {
+                        launch(Dispatchers.IO) {
+                            callback.invoke(clicked)
+                        }
+                        clicked()
+                        pressable = true
+                    }
+                }
+            }
+        }
+
+        suspend fun clicked() {
+            ObjectAnimator.ofFloat(image, "scaleX", 1f, 0f).setDuration(69).start()
+            ObjectAnimator.ofFloat(image, "scaleY", 1f, 0f).setDuration(100).start()
+            delay(100.milliseconds)
+
+            if (clicked) {
+                ObjectAnimator.ofArgb(
+                    image,
+                    "ColorFilter",
+                    ContextCompat.getColor(context, c1),
+                    ContextCompat.getColor(context, c2)
+                ).setDuration(120).start()
+                image.setImageDrawable(AppCompatResources.getDrawable(context, d1))
+            } else image.setImageDrawable(AppCompatResources.getDrawable(context, d2))
+            ObjectAnimator.ofFloat(image, "scaleX", 0f, 1.5f).setDuration(120).start()
+            ObjectAnimator.ofFloat(image, "scaleY", 0f, 1.5f).setDuration(100).start()
+            delay(120.milliseconds)
+            ObjectAnimator.ofFloat(image, "scaleX", 1.5f, 1f).setDuration(100).start()
+            ObjectAnimator.ofFloat(image, "scaleY", 1.5f, 1f).setDuration(100).start()
+            delay(200.milliseconds)
+            if (clicked) {
+                ObjectAnimator.ofArgb(
+                    image,
+                    "ColorFilter",
+                    ContextCompat.getColor(context, c2),
+                    ContextCompat.getColor(context, c1)
+                ).setDuration(200).start()
+            }
+        }
+
+        fun enabled(enabled: Boolean) {
+            disabled = !enabled
+            image.alpha = if (disabled) 0.33f else 1f
+        }
     }
 }

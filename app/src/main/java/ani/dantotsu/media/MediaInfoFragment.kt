@@ -26,6 +26,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import ani.dantotsu.R
+import ani.dantotsu.Refresh
 import ani.dantotsu.connections.LogoApi
 import ani.dantotsu.connections.anilist.Anilist
 import ani.dantotsu.connections.anilist.AnilistMutations
@@ -809,8 +810,6 @@ class MediaInfoFragment : Fragment() {
     override fun onDestroy() {
         super.onDestroy()
     }
-
-    override fun getActivity() = requireActivity() as MediaDetailsActivity
 
     private fun placeholderHtml(trailerId: String): String = """
         <!DOCTYPE html><html><head>
