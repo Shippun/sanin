@@ -28,6 +28,7 @@ import ani.dantotsu.snackString
 import ani.dantotsu.startMainActivity
 import ani.dantotsu.statusBarHeight
 import ani.dantotsu.themes.ThemeManager
+import ani.dantotsu.util.customAlertDialog
 import io.noties.markwon.Markwon
 import io.noties.markwon.SoftBreakAddsNewLinePlugin
 import kotlinx.coroutines.launch
@@ -145,7 +146,53 @@ class SettingsAccountActivity : AppCompatActivity() {
                     settingsRecyclerView.visibility = View.GONE
                     settingsAnilistLogin.setText(R.string.login)
                     settingsAnilistLogin.setOnClickListener {
-                        Anilist.loginIntent(context)
+                        customAlertDialog().apply {
+                            setTitle("Login Method")
+                            singleChoiceItems(
+                                arrayOf("Browser", "QR Code"),
+                                onItemSelected = { index ->
+                                    when (index) {
+                                        0 -> Anilist.loginIntent(context)
+                                        1 -> {
+                                            val qrUrl = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${java.net.URLEncoder.encode("https://anilist.co/api/v2/oauth/authorize?client_id=14959&response_type=token", "UTF-8")}"
+                                            val iv = android.widget.ImageView(context).apply {
+                                                scaleType = android.widget.ImageView.ScaleType.FIT_CENTER
+                                                loadImage(qrUrl)
+                                                layoutParams = android.view.ViewGroup.LayoutParams(400, 400)
+                                            }
+                                            val tv = android.widget.TextView(context).apply {
+                                                text = "Scan with your phone, or press Open Browser to login on TV"
+                                                gravity = android.view.Gravity.CENTER
+                                                setPadding(24, 0, 24, 0)
+                                            }
+                                            val browserBtn = com.google.android.material.button.MaterialButton(context).apply {
+                                                text = "Open Browser"
+                                                setOnClickListener {
+                                                    Anilist.loginIntent(context)
+                                                }
+                                            }
+                                            val cancelBtn = com.google.android.material.button.MaterialButton(context).apply {
+                                                text = "Cancel"
+                                            }
+                                            val ll = android.widget.LinearLayout(context).apply {
+                                                orientation = android.widget.LinearLayout.VERTICAL
+                                                gravity = android.view.Gravity.CENTER
+                                                setPadding(24, 24, 24, 24)
+                                                addView(iv)
+                                                addView(tv, android.view.ViewGroup.LayoutParams(android.view.ViewGroup.LayoutParams.MATCH_PARENT, android.view.ViewGroup.LayoutParams.WRAP_CONTENT))
+                                                addView(browserBtn, android.view.ViewGroup.LayoutParams(android.view.ViewGroup.LayoutParams.MATCH_PARENT, android.view.ViewGroup.LayoutParams.WRAP_CONTENT))
+                                                addView(cancelBtn, android.view.ViewGroup.LayoutParams(android.view.ViewGroup.LayoutParams.MATCH_PARENT, android.view.ViewGroup.LayoutParams.WRAP_CONTENT))
+                                            }
+                                            customAlertDialog().apply {
+                                                setTitle("Login with QR")
+                                                setCustomView(ll)
+                                                setNegButton("Close") {}
+                                            }.show()
+                                        }
+                                    }
+                                }
+                            )
+                        }.show()
                     }
                     settingsMALLoginRequired.visibility = View.VISIBLE
                     settingsMALLogin.visibility = View.GONE

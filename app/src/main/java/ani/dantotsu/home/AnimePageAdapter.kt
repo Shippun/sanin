@@ -50,6 +50,8 @@ class AnimePageAdapter : RecyclerView.Adapter<AnimePageAdapter.AnimePageViewHold
     private lateinit var trendingBinding: LayoutTrendingBinding
     var bannerAdapter: BannerCarouselAdapter? = null
     private var bannerSnap: PagerSnapHelper? = null
+    private var trendingAutoScrollHandler: android.os.Handler? = null
+    private var trendingAutoScrollRunnable: Runnable? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AnimePageViewHolder {
         val binding =
@@ -128,6 +130,18 @@ class AnimePageAdapter : RecyclerView.Adapter<AnimePageAdapter.AnimePageViewHold
         trendingBinding.titleContainer.startAnimation(setSlideUp())
         binding.animeSeasonsCont.layoutAnimation =
             LayoutAnimationController(setSlideIn(), 0.25f)
+        trendingAutoScrollHandler?.removeCallbacksAndMessages(null)
+        trendingAutoScrollHandler = android.os.Handler(android.os.Looper.getMainLooper())
+        trendingAutoScrollRunnable = object : Runnable {
+            private var currentIndex = 0
+            override fun run() {
+                if (media.isEmpty()) return
+                currentIndex = (currentIndex + 1) % media.size
+                rv.smoothScrollToPosition(currentIndex)
+                trendingAutoScrollHandler?.postDelayed(this, 5000L)
+            }
+        }
+        trendingAutoScrollHandler?.postDelayed(trendingAutoScrollRunnable!!, 5000L)
     }
 
     private fun setupTrendingDots(rv: RecyclerView, itemCount: Int) {
