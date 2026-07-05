@@ -480,7 +480,6 @@ class AnimeWatchFragment : Fragment() {
                 activity.findViewById<ViewPager2>(R.id.mediaViewPager).isVisible = show
                 activity.findViewById<CardView>(R.id.mediaCover).isVisible = show
                 activity.findViewById<CardView>(R.id.mediaClose).isVisible = show
-                activity.findViewById<View>(R.id.mediaNavPillsWrapper)?.isVisible = show
                 activity.findViewById<androidx.compose.ui.platform.ComposeView>(R.id.mediaNavPills)?.isVisible = show
                 activity.findViewById<FrameLayout>(R.id.fragmentExtensionsContainer).isGone = show
             }

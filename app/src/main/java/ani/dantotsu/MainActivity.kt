@@ -310,6 +310,7 @@ class MainActivity : AppCompatActivity() {
                 NavigationPills(viewModel = navPillsViewModel)
             }
             binding.navPills.visibility = View.VISIBLE
+            FocusEffectUtil.applyFocusListener(binding.navPills)
 
             // Setup avatar and right rail drawer
             binding.mainAvatarContainer.visibility = View.VISIBLE

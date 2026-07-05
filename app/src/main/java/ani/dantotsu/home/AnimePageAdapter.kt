@@ -38,6 +38,7 @@ import ani.dantotsu.settings.SettingsDialogFragment
 import ani.dantotsu.settings.saving.PrefManager
 import ani.dantotsu.settings.saving.PrefName
 import ani.dantotsu.statusBarHeight
+import ani.dantotsu.util.FocusEffectUtil
 import com.google.android.material.card.MaterialCardView
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -74,6 +75,7 @@ class AnimePageAdapter : RecyclerView.Adapter<AnimePageAdapter.AnimePageViewHold
         ).forEachIndexed { i, it ->
             it.setSafeOnClickListener { onSeasonClick.invoke(i) }
             it.setOnLongClickListener { onSeasonLongClick.invoke(i) }
+            FocusEffectUtil.applyFocusListener(it)
         }
 
         val rescueMode = PrefManager.getVal<Boolean>(PrefName.RescueMode)

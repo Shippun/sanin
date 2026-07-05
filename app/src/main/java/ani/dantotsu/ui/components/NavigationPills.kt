@@ -1,5 +1,6 @@
 package ani.dantotsu.ui.components
 
+import android.view.View
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.spring
@@ -36,6 +37,7 @@ import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.input.key.type
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -71,6 +73,8 @@ fun NavigationPills(
         animationSpec = spring(dampingRatio = 0.85f, stiffness = Spring.StiffnessVeryLow),
         label = "pillHeight"
     )
+
+    val view = LocalView.current
 
     Box(
         modifier = modifier
@@ -114,7 +118,8 @@ fun NavigationPills(
                                     highlightIndex = next
                                     true
                                 } else {
-                                    false
+                                    view.focusSearch(View.FOCUS_RIGHT)?.requestFocus()
+                                    true
                                 }
                             }
                             Key.DirectionLeft -> {
@@ -123,7 +128,8 @@ fun NavigationPills(
                                     highlightIndex = prev
                                     true
                                 } else {
-                                    false
+                                    view.focusSearch(View.FOCUS_LEFT)?.requestFocus()
+                                    true
                                 }
                             }
                             Key.Enter, Key.DirectionCenter -> {

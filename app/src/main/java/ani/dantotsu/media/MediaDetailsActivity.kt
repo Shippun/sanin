@@ -90,6 +90,7 @@ import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.input.key.type
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -174,11 +175,13 @@ class MediaDetailsActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedLi
         val rescueMode: Boolean = PrefManager.getVal(PrefName.RescueMode)
         val hasComments = PrefManager.getVal<Int>(PrefName.CommentsEnabled) == 1 && !rescueMode
 
-        binding.mediaNavPills?.setViewCompositionStrategy(
-            androidx.compose.ui.platform.ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed
-        )
-        binding.mediaNavPills?.setContent {
-            MediaNavPills(
+        binding.mediaNavPills?.let { np ->
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                np.outlineProvider = android.view.ViewOutlineProvider.BOUNDS
+                np.elevation = 10f
+            }
+            np.setContent {
+                MediaNavPills(
                 selectedTab = initialSelected,
                 hasComments = hasComments,
                 onTabSelected = { idx ->
@@ -190,6 +193,7 @@ class MediaDetailsActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedLi
                     model.saveSelected(media.id, sel)
                 }
             )
+        }
         }
 
         val bannerAnimations: Boolean = PrefManager.getVal(PrefName.BannerAnimations)
@@ -591,9 +595,9 @@ class MediaDetailsActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedLi
         }
         // Fade/slide nav pills as toolbar scrolls so they don't overlap ViewPager when collapsed
         val progress = abs(i).toFloat() / mMaxScrollSize.coerceAtLeast(1)
-        binding.mediaNavPillsWrapper?.alpha = 1f - progress
-        binding.mediaNavPillsWrapper?.translationY = -i.toFloat()
-        binding.mediaNavPillsWrapper?.visibility =
+        binding.mediaNavPills?.alpha = 1f - progress
+        binding.mediaNavPills?.translationY = -i.toFloat()
+        binding.mediaNavPills?.visibility =
             if (progress > 0.85f) View.INVISIBLE else View.VISIBLE
 
         if (percentage == 1 && model.scrolledToTop.value != false) model.scrolledToTop.postValue(
@@ -698,6 +702,7 @@ fun MediaNavPills(
     hasComments: Boolean,
     onTabSelected: (Int) -> Unit
 ) {
+    val view = LocalView.current
     val tabs = if (hasComments) listOf("info", "watch", "comments") else listOf("info", "watch")
     val currentTab = remember { mutableStateOf(selectedTab) }
     var highlightIndex by remember { mutableStateOf(selectedTab) }
@@ -735,12 +740,24 @@ fun MediaNavPills(
                 if (containerFocused && event.type == KeyEventType.KeyUp) {
                     when (event.key) {
                         Key.DirectionRight -> {
-                            highlightIndex = (highlightIndex + 1).coerceAtMost(tabs.size - 1)
-                            true
+                            val next = highlightIndex + 1
+                            if (next < tabs.size) {
+                                highlightIndex = next
+                                true
+                            } else {
+                                view.focusSearch(View.FOCUS_RIGHT)?.requestFocus()
+                                true
+                            }
                         }
                         Key.DirectionLeft -> {
-                            highlightIndex = (highlightIndex - 1).coerceAtLeast(0)
-                            true
+                            val prev = highlightIndex - 1
+                            if (prev >= 0) {
+                                highlightIndex = prev
+                                true
+                            } else {
+                                view.focusSearch(View.FOCUS_LEFT)?.requestFocus()
+                                true
+                            }
                         }
                         Key.Enter, Key.DirectionCenter -> {
                             currentTab.value = highlightIndex

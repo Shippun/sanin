@@ -5,6 +5,7 @@ import android.content.res.TypedArray
 import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.GradientDrawable
+import android.graphics.drawable.InsetDrawable
 import android.graphics.drawable.LayerDrawable
 import android.os.Build
 import android.util.TypedValue
@@ -63,6 +64,9 @@ object FocusEffectUtil {
         val borderWidthPx = TypedValue.applyDimension(
             TypedValue.COMPLEX_UNIT_DIP, 2f, v.resources.displayMetrics
         ).toInt()
+        val insetPx = TypedValue.applyDimension(
+            TypedValue.COMPLEX_UNIT_DIP, 2f, v.resources.displayMetrics
+        ).toInt()
         val cornerRadius = TypedValue.applyDimension(
             TypedValue.COMPLEX_UNIT_DIP, 8f, v.resources.displayMetrics
         ).toInt()
@@ -73,16 +77,17 @@ object FocusEffectUtil {
             setStroke(borderWidthPx, primaryColor)
             setCornerRadius(cornerRadius.toFloat())
         }
+        val insetBorder = InsetDrawable(borderDrawable, insetPx, insetPx, insetPx, insetPx)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             savedForegrounds[v] = v.foreground
-            v.foreground = borderDrawable
+            v.foreground = insetBorder
         } else {
             val originalBg = v.background
             savedBackgrounds[v] = originalBg
             val layers = arrayOf(
                 originalBg ?: GradientDrawable().apply { setColor(Color.TRANSPARENT) },
-                borderDrawable
+                insetBorder
             )
             v.setBackgroundDrawable(LayerDrawable(layers))
         }
