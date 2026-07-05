@@ -31,21 +31,13 @@ import ani.dantotsu.themes.ThemeManager
 import ani.dantotsu.util.customAlertDialog
 import io.noties.markwon.Markwon
 import io.noties.markwon.SoftBreakAddsNewLinePlugin
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import ani.dantotsu.util.LocalRelayServer
-import java.net.NetworkInterface
-import java.net.URLEncoder
 
 class SettingsAccountActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySettingsAccountsBinding
     private val restartMainActivity = object : OnBackPressedCallback(false) {
         override fun handleOnBackPressed() = startMainActivity(this@SettingsAccountActivity)
     }
-    private var pollJob: kotlinx.coroutines.Job? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -154,18 +146,7 @@ class SettingsAccountActivity : AppCompatActivity() {
                     settingsRecyclerView.visibility = View.GONE
                     settingsAnilistLogin.setText(R.string.login)
                     settingsAnilistLogin.setOnClickListener {
-                        customAlertDialog().apply {
-                            setTitle("Login Method")
-                            singleChoiceItems(
-                                arrayOf("Browser", "QR Code"),
-                                onItemSelected = { index ->
-                                    when (index) {
-                                        0 -> Anilist.loginIntent(context)
-                                         1 -> showQrLoginDialog()
-                                    }
-                                }
-                            )
-                        }.show()
+                        Anilist.loginIntent(context)
                     }
                     settingsMALLoginRequired.visibility = View.VISIBLE
                     settingsMALLogin.visibility = View.GONE
@@ -297,104 +278,6 @@ class SettingsAccountActivity : AppCompatActivity() {
         binding.settingsRecyclerView.layoutManager =
             LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
 
-    }
-
-    private fun showQrLoginDialog() {
-        lifecycleScope.launch {
-            try {
-                val localIp = withContext(Dispatchers.IO) {
-                    NetworkInterface.getNetworkInterfaces()?.asSequence()
-                        ?.flatMap { it.inetAddresses.asSequence() }
-                        ?.firstOrNull {
-                            !it.isLoopbackAddress && it.hostAddress?.contains('.') == true
-                        }?.hostAddress ?: return@withContext null
-                }
-                if (localIp == null) {
-                    snackString("Could not detect local IP — check WiFi connection")
-                    return@launch
-                }
-                val port = 8080 + (0..1000).random()
-                val server = LocalRelayServer(port, localIp)
-                withContext(Dispatchers.IO) { server.start() }
-
-                val qrUrl = "http://$localIp:$port/auth"
-                val qrImageUrl = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${URLEncoder.encode(qrUrl, "UTF-8")}"
-
-                val ctx = this@SettingsAccountActivity
-                val iv = android.widget.ImageView(ctx).apply {
-                    scaleType = android.widget.ImageView.ScaleType.FIT_CENTER
-                    loadImage(qrImageUrl)
-                    layoutParams = android.view.ViewGroup.LayoutParams(400, 400)
-                }
-                val tv = android.widget.TextView(ctx).apply {
-                    text = "Scan with your phone (must be on same WiFi)"
-                    gravity = android.view.Gravity.CENTER
-                    setPadding(24, 0, 24, 0)
-                }
-                val browserBtn = com.google.android.material.button.MaterialButton(ctx).apply {
-                    text = "Open Browser"
-                    setOnClickListener { Anilist.loginIntent(ctx) }
-                }
-                val cancelBtn = com.google.android.material.button.MaterialButton(ctx).apply {
-                    text = "Cancel"
-                    setOnClickListener {
-                        pollJob?.cancel(); pollJob = null
-                        server.stop()
-                    }
-                }
-                val ll = android.widget.LinearLayout(ctx).apply {
-                    orientation = android.widget.LinearLayout.VERTICAL
-                    gravity = android.view.Gravity.CENTER
-                    setPadding(24, 24, 24, 24)
-                    addView(iv)
-                    addView(tv, android.view.ViewGroup.LayoutParams(android.view.ViewGroup.LayoutParams.MATCH_PARENT, android.view.ViewGroup.LayoutParams.WRAP_CONTENT))
-                    addView(browserBtn, android.view.ViewGroup.LayoutParams(android.view.ViewGroup.LayoutParams.MATCH_PARENT, android.view.ViewGroup.LayoutParams.WRAP_CONTENT))
-                    addView(cancelBtn, android.view.ViewGroup.LayoutParams(android.view.ViewGroup.LayoutParams.MATCH_PARENT, android.view.ViewGroup.LayoutParams.WRAP_CONTENT))
-                }
-                customAlertDialog().apply {
-                    setTitle("QR Login")
-                    setCustomView(ll)
-                    setNegButton("Close") {
-                        pollJob?.cancel(); pollJob = null
-                        server.stop()
-                    }
-                }.show()
-
-                pollJob = lifecycleScope.launch {
-                    while (isActive) {
-                        delay(2000)
-                        val token = withContext(Dispatchers.IO) {
-                            try {
-                                val s = java.net.Socket("127.0.0.1", port)
-                                val req = "GET /api/poll HTTP/1.1\r\nHost: 127.0.0.1\r\nConnection: close\r\n\r\n"
-                                s.getOutputStream().write(req.toByteArray())
-                                val resp = s.getInputStream().bufferedReader().readText()
-                                s.close()
-                                val body = resp.substringAfter("\r\n\r\n")
-                                val json = org.json.JSONObject(body)
-                                if (json.optString("status") == "authorized") json.optString("token", null) else null
-                            } catch (_: Exception) { null }
-                        }
-                        if (token != null) {
-                            Anilist.token = token
-                            PrefManager.setVal(PrefName.AnilistToken, token)
-                            server.stop()
-                            snackString("Logged in!")
-                            restartActivity()
-                            return@launch
-                        }
-                    }
-                }
-            } catch (e: Exception) {
-                snackString("QR login error: ${e.message}")
-            }
-        }
-    }
-
-    private fun restartActivity() {
-        val intent = Intent(this, this.javaClass)
-        finish()
-        startActivity(intent)
     }
 
     fun reload() {

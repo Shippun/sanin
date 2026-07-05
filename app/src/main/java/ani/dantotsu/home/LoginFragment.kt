@@ -8,7 +8,6 @@ import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.documentfile.provider.DocumentFile
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.lifecycleScope
 import ani.dantotsu.R
 import ani.dantotsu.connections.anilist.Anilist
 import ani.dantotsu.databinding.DialogUserAgentBinding
@@ -20,22 +19,13 @@ import ani.dantotsu.settings.saving.PrefName
 import ani.dantotsu.settings.saving.internal.PreferenceKeystore
 import ani.dantotsu.settings.saving.internal.PreferencePackager
 import ani.dantotsu.toast
-import ani.dantotsu.util.LocalRelayServer
 import ani.dantotsu.util.Logger
 import ani.dantotsu.util.customAlertDialog
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.isActive
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import java.net.NetworkInterface
-import java.net.URLEncoder
 
 class LoginFragment : Fragment() {
 
     private var _binding: FragmentLoginBinding? = null
     private val binding get() = _binding!!
-    private var pollJob: kotlinx.coroutines.Job? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -59,63 +49,7 @@ class LoginFragment : Fragment() {
         binding.loginGithub.setOnClickListener { openLinkInBrowser(getString(R.string.github)) }
         binding.loginTelegram.setOnClickListener { openLinkInBrowser(getString(R.string.telegram)) }
 
-        val oauthUrl = "https://anilist.co/api/v2/oauth/authorize?client_id=14959&response_type=token"
-
-        binding.loginQrButton.setOnClickListener {
-            viewLifecycleOwner.lifecycleScope.launch {
-                try {
-                    val localIp = withContext(Dispatchers.IO) {
-                        NetworkInterface.getNetworkInterfaces()?.asSequence()
-                            ?.flatMap { it.inetAddresses.asSequence() }
-                            ?.firstOrNull {
-                                !it.isLoopbackAddress && it.hostAddress?.contains('.') == true
-                            }?.hostAddress ?: return@withContext null
-                    }
-                    if (localIp == null) {
-                        toast("Could not detect local IP — check WiFi")
-                        return@launch
-                    }
-                    val port = 8080 + (0..1000).random()
-                    val server = LocalRelayServer(port, localIp)
-                    withContext(Dispatchers.IO) { server.start() }
-
-                    val relayUrl = "http://$localIp:$port/auth"
-                    val qrUrl = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${URLEncoder.encode(relayUrl, "UTF-8")}"
-                    binding.loginQrCode.loadImage(qrUrl)
-                    binding.loginQrCode.visibility = View.VISIBLE
-                    binding.loginTokenInput.visibility = View.GONE
-
-                    pollJob = viewLifecycleOwner.lifecycleScope.launch {
-                        while (isActive) {
-                            delay(2000)
-                            val token = withContext(Dispatchers.IO) {
-                                try {
-                                    val s = java.net.Socket("127.0.0.1", port)
-                                    val req = "GET /api/poll HTTP/1.1\r\nHost: 127.0.0.1\r\nConnection: close\r\n\r\n"
-                                    s.getOutputStream().write(req.toByteArray())
-                                    val resp = s.getInputStream().bufferedReader().readText()
-                                    s.close()
-                                    val body = resp.substringAfter("\r\n\r\n")
-                                    val json = org.json.JSONObject(body)
-                                    if (json.optString("status") == "authorized") json.optString("token", null) else null
-                                } catch (_: Exception) { null }
-                            }
-                            if (token != null) {
-                                PrefManager.setVal(PrefName.AnilistToken, token)
-                                server.stop()
-                                if (Anilist.getSavedToken()) {
-                                    toast("Login successful")
-                                    restartApp()
-                                }
-                                return@launch
-                            }
-                        }
-                    }
-                } catch (e: Exception) {
-                    toast("QR login error: ${e.message}")
-                }
-            }
-        }
+        binding.loginQrButton.visibility = View.GONE
         binding.loginTokenSubmit.setOnClickListener {
             val token = binding.loginTokenEditText.text?.toString()?.trim()
             if (!token.isNullOrBlank()) {
@@ -219,8 +153,6 @@ class LoginFragment : Fragment() {
     }
 
     override fun onDestroyView() {
-        pollJob?.cancel()
-        pollJob = null
         super.onDestroyView()
     }
 
