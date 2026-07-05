@@ -29,12 +29,27 @@ class SnakeNavRailView @JvmOverloads constructor(
 
     private var gradientOffset = 0f
     private val gradientPaint = Paint(Paint.ANTI_ALIAS_FLAG)
-    private val scalePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.argb(25, 255, 255, 255)
+    private val scaleFillPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        color = Color.argb(18, 255, 255, 255)
+        style = Paint.Style.FILL
+    }
+    private val scaleStrokePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        color = Color.argb(40, 255, 255, 255)
         style = Paint.Style.STROKE
-        strokeWidth = 2f
+        strokeWidth = 1.5f
     }
     private var animator: ValueAnimator? = null
+
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        val width = MeasureSpec.getSize(widthMeasureSpec)
+        val heightMode = MeasureSpec.getMode(heightMeasureSpec)
+        val height = when (heightMode) {
+            MeasureSpec.EXACTLY -> MeasureSpec.getSize(heightMeasureSpec)
+            MeasureSpec.AT_MOST -> suggestedMinimumHeight
+            else -> suggestedMinimumHeight
+        }
+        setMeasuredDimension(width, height)
+    }
 
     var live = true
         set(value) {
@@ -106,22 +121,28 @@ class SnakeNavRailView @JvmOverloads constructor(
     }
 
     private fun drawScales(canvas: Canvas, w: Float, h: Float) {
-        val scaleH = 18f
-        val scaleW = 16f
+        val scaleW = 20f
+        val scaleH = 16f
         var row = 0
         var y = -scaleH
         while (y < h + scaleH) {
             val offsetX = if (row % 2 == 0) 0f else scaleW / 2f
-            var x = offsetX
+            var x = offsetX - scaleW
             while (x < w + scaleW) {
-                val path = Path()
-                path.moveTo(x, y)
-                path.quadTo(x + scaleW / 2f, y - scaleH / 2f, x + scaleW, y)
-                path.quadTo(x + scaleW / 2f, y + scaleH / 2f, x, y)
-                canvas.drawPath(path, scalePaint)
+                val path = Path().apply {
+                    moveTo(x, y + scaleH / 2f)
+                    lineTo(x + scaleW / 2f, y)
+                    lineTo(x + scaleW, y + scaleH / 2f)
+                    lineTo(x + scaleW, y + scaleH * 0.8f)
+                    lineTo(x + scaleW / 2f, y + scaleH)
+                    lineTo(x, y + scaleH * 0.8f)
+                    close()
+                }
+                canvas.drawPath(path, scaleFillPaint)
+                canvas.drawPath(path, scaleStrokePaint)
                 x += scaleW * 1.5f
             }
-            y += scaleH * 1.2f
+            y += scaleH * 1.4f
             row++
         }
     }
