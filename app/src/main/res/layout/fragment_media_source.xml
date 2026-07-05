@@ -6,7 +6,15 @@
     android:layout_height="match_parent"
     android:focusable="true"
     android:nextFocusUp="@+id/mediaNavPills"
+    android:background="@android:color/transparent"
     tools:context=".media.anime.AnimeWatchFragment">
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="300dp"
+        android:background="#CC000000"
+        android:importantForAccessibility="no" />
 
     <TextView
         android:id="@+id/mediaNotSupported"
@@ -17,6 +25,7 @@
         android:fontFamily="@font/poppins_bold"
         android:text="@string/not_supported"
         android:textSize="16sp"
+        android:textColor="@android:color/white"
         android:visibility="gone" />
 
     <ProgressBar
@@ -37,6 +46,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clipToPadding="false"
+        android:paddingTop="300dp"
         android:paddingStart="24dp"
         android:paddingEnd="24dp"
         android:paddingBottom="128dp"
@@ -49,7 +59,7 @@
         android:layout_height="48dp"
         android:layout_gravity="bottom|center_horizontal"
         android:layout_marginBottom="64dp"
-        app:cardBackgroundColor="?android:colorBackground"
+        app:cardBackgroundColor="#FF333333"
         app:cardCornerRadius="24dp"
         app:contentPadding="12dp">
 
@@ -58,7 +68,7 @@
             android:layout_height="match_parent"
             android:rotation="90"
             app:srcCompat="@drawable/ic_round_arrow_back_ios_new_24"
-            app:tint="?attr/colorOnSurface"
+            app:tint="@android:color/white"
             tools:ignore="ContentDescription" />
     </androidx.cardview.widget.CardView>
 </FrameLayout>

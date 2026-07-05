@@ -1,27 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:focusable="true"
-    android:nextFocusUp="@+id/mediaNavPills"
-    app:cardBackgroundColor="?android:colorBackground"
-    app:cardCornerRadius="0dp"
-    app:cardElevation="0dp"
+    android:background="@android:color/transparent"
     tools:context=".media.MediaInfoFragment"
     tools:ignore="SpeakableTextPresentCheck">
 
     <androidx.core.widget.NestedScrollView
-
         android:id="@+id/mediaInfoScroll"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:paddingTop="300dp"
+        android:clipToPadding="false">
 
-        <FrameLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center">
+            android:orientation="vertical"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:paddingBottom="24dp">
 
             <ProgressBar
                 android:id="@+id/mediaInfoProgressBar"
@@ -41,13 +41,141 @@
                 android:visibility="gone"
                 tools:visibility="visible">
 
+                <ImageView
+                    android:id="@+id/mediaInfoLogo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="80dp"
+                    android:adjustViewBounds="true"
+                    android:scaleType="fitStart"
+                    android:visibility="gone"
+                    tools:ignore="ContentDescription"
+                    tools:visibility="visible" />
+
+                <TextView
+                    android:id="@+id/mediaInfoTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/poppins_bold"
+                    android:gravity="start"
+                    android:text="@string/slogan"
+                    android:textColor="@android:color/white"
+                    android:textSize="24sp"
+                    android:visibility="gone"
+                    tools:visibility="visible" />
+
+                <TextView
+                    android:id="@+id/mediaInfoStatus"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:alpha="0.80"
+                    android:fontFamily="@font/poppins_bold"
+                    android:gravity="start"
+                    android:text="@string/status"
+                    android:textColor="#FFD700"
+                    android:textSize="14sp" />
+
+                <Button
+                    android:id="@+id/mediaInfoAddToList"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="48dp"
+                    android:layout_marginTop="12dp"
+                    android:ellipsize="marquee"
+                    android:fontFamily="@font/poppins_bold"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    android:marqueeRepeatLimit="marquee_forever"
+                    android:minWidth="200dp"
+                    android:padding="8dp"
+                    android:singleLine="true"
+                    android:text="@string/add_list"
+                    android:textAllCaps="true"
+                    android:textColor="@android:color/white"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    app:cornerRadius="16dp"
+                    app:strokeColor="@android:color/white" />
+
+                <TextView
+                    android:id="@+id/mediaInfoTotal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:ellipsize="end"
+                    android:fontFamily="@font/poppins_family"
+                    android:lineSpacingExtra="-8sp"
+                    android:marqueeRepeatLimit="marquee_forever"
+                    android:maxLines="2"
+                    android:textColor="@android:color/white"
+                    android:textSize="14sp"
+                    tools:text="Watched 10 out of 10" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/mediaInfoMapping"
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:layout_margin="6dp"
+                        android:focusable="true"
+                        android:padding="4dp"
+                        android:visibility="gone"
+                        app:srcCompat="@drawable/ic_round_search_sources_24"
+                        app:tint="@android:color/white"
+                        tools:ignore="ContentDescription" />
+
+                    <ImageView
+                        android:id="@+id/mediaInfoFav"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:layout_margin="8dp"
+                        android:focusable="true"
+                        android:padding="8dp"
+                        app:srcCompat="@drawable/ic_round_favorite_border_24"
+                        app:tint="@android:color/white"
+                        tools:ignore="ContentDescription" />
+
+                    <ImageView
+                        android:id="@+id/mediaInfoShare"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:layout_marginStart="-8dp"
+                        android:focusable="true"
+                        android:padding="8dp"
+                        app:srcCompat="@drawable/ic_round_share_24"
+                        app:tint="@android:color/white"
+                        tools:ignore="ContentDescription" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/mediaInfoDescriptionText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:fontFamily="@font/poppins_bold"
+                    android:text="@string/description"
+                    android:textColor="@android:color/white"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/mediaInfoDescription"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="5"
+                    android:padding="8dp"
+                    android:text="@string/description"
+                    android:textColor="@android:color/white" />
+
                 <TableLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:layout_marginTop="8dp"
                     android:orientation="vertical"
-                    android:paddingHorizontal="32dp"
-                    android:paddingTop="16dp"
-                    android:paddingBottom="16dp">
+                    android:paddingHorizontal="8dp">
 
                     <TableRow
                         android:layout_width="match_parent"
@@ -59,6 +187,7 @@
                             android:layout_height="wrap_content"
                             android:alpha="0.58"
                             android:text="@string/mean_score"
+                            android:textColor="@android:color/white"
                             android:textStyle="bold" />
 
                         <TextView
@@ -67,16 +196,17 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:fontFamily="@font/poppins_bold"
-                            android:textAlignment="textEnd"
-                            android:textColor="?attr/colorPrimary" />
+                            android:textAlignment="textStart"
+                            android:textColor="@android:color/white"
+                            android:paddingStart="8dp" />
 
                         <TextView
                             android:id="@+id/textView3"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/poppins_bold"
-                            android:text="@string/score_suffix" />
-
+                            android:text="@string/score_suffix"
+                            android:textColor="@android:color/white" />
                     </TableRow>
 
                     <TableRow
@@ -89,15 +219,18 @@
                             android:layout_height="wrap_content"
                             android:alpha="0.58"
                             android:text="@string/status_title"
+                            android:textColor="@android:color/white"
                             android:textStyle="bold" />
 
                         <TextView
-                            android:id="@+id/mediaInfoStatus"
+                            android:id="@+id/mediaInfoStatusDetail"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:fontFamily="@font/poppins_bold"
-                            android:textAlignment="textEnd" />
+                            android:textAlignment="textStart"
+                            android:textColor="@android:color/white"
+                            android:paddingStart="8dp" />
                     </TableRow>
 
                     <TableRow
@@ -111,15 +244,18 @@
                             android:layout_height="wrap_content"
                             android:alpha="0.58"
                             android:text="@string/total_eps"
+                            android:textColor="@android:color/white"
                             android:textStyle="bold" />
 
                         <TextView
-                            android:id="@+id/mediaInfoTotal"
+                            android:id="@+id/mediaInfoTotalDetail"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:fontFamily="@font/poppins_bold"
-                            android:textAlignment="textEnd" />
+                            android:textAlignment="textStart"
+                            android:textColor="@android:color/white"
+                            android:paddingStart="8dp" />
                     </TableRow>
 
                     <TableRow
@@ -134,6 +270,7 @@
                             android:layout_height="wrap_content"
                             android:alpha="0.58"
                             android:text="@string/ep_duration"
+                            android:textColor="@android:color/white"
                             android:textStyle="bold" />
 
                         <TextView
@@ -142,7 +279,9 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:fontFamily="@font/poppins_bold"
-                            android:textAlignment="textEnd" />
+                            android:textAlignment="textStart"
+                            android:textColor="@android:color/white"
+                            android:paddingStart="8dp" />
                     </TableRow>
 
                     <TableRow
@@ -155,6 +294,7 @@
                             android:layout_height="wrap_content"
                             android:alpha="0.58"
                             android:text="@string/format"
+                            android:textColor="@android:color/white"
                             android:textStyle="bold" />
 
                         <TextView
@@ -163,7 +303,9 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:fontFamily="@font/poppins_bold"
-                            android:textAlignment="textEnd" />
+                            android:textAlignment="textStart"
+                            android:textColor="@android:color/white"
+                            android:paddingStart="8dp" />
                     </TableRow>
 
                     <TableRow
@@ -176,6 +318,7 @@
                             android:layout_height="wrap_content"
                             android:alpha="0.58"
                             android:text="@string/source"
+                            android:textColor="@android:color/white"
                             android:textStyle="bold" />
 
                         <TextView
@@ -184,7 +327,9 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:fontFamily="@font/poppins_bold"
-                            android:textAlignment="textEnd" />
+                            android:textAlignment="textStart"
+                            android:textColor="@android:color/white"
+                            android:paddingStart="8dp" />
                     </TableRow>
 
                     <TableRow
@@ -199,6 +344,7 @@
                             android:layout_height="wrap_content"
                             android:alpha="0.58"
                             android:text="@string/main_studio"
+                            android:textColor="@android:color/white"
                             android:textStyle="bold" />
 
                         <TextView
@@ -207,8 +353,9 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:fontFamily="@font/poppins_bold"
-                            android:textAlignment="textEnd"
-                            android:textColor="?attr/colorPrimary" />
+                            android:textAlignment="textStart"
+                            android:textColor="@android:color/white"
+                            android:paddingStart="8dp" />
                     </TableRow>
 
                     <TableRow
@@ -223,6 +370,7 @@
                             android:layout_height="wrap_content"
                             android:alpha="0.58"
                             android:text="@string/author"
+                            android:textColor="@android:color/white"
                             android:textStyle="bold" />
 
                         <TextView
@@ -231,8 +379,9 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:fontFamily="@font/poppins_bold"
-                            android:textAlignment="textEnd"
-                            android:textColor="?attr/colorPrimary" />
+                            android:textAlignment="textStart"
+                            android:textColor="@android:color/white"
+                            android:paddingStart="8dp" />
                     </TableRow>
 
                     <TableRow
@@ -247,6 +396,7 @@
                             android:layout_height="wrap_content"
                             android:alpha="0.58"
                             android:text="@string/season"
+                            android:textColor="@android:color/white"
                             android:textStyle="bold" />
 
                         <TextView
@@ -255,7 +405,9 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:fontFamily="@font/poppins_bold"
-                            android:textAlignment="textEnd" />
+                            android:textAlignment="textStart"
+                            android:textColor="@android:color/white"
+                            android:paddingStart="8dp" />
                     </TableRow>
 
                     <TableRow
@@ -268,6 +420,7 @@
                             android:layout_height="wrap_content"
                             android:alpha="0.58"
                             android:text="@string/start_date"
+                            android:textColor="@android:color/white"
                             android:textStyle="bold" />
 
                         <TextView
@@ -276,7 +429,9 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:fontFamily="@font/poppins_bold"
-                            android:textAlignment="textEnd" />
+                            android:textAlignment="textStart"
+                            android:textColor="@android:color/white"
+                            android:paddingStart="8dp" />
                     </TableRow>
 
                     <TableRow
@@ -289,6 +444,7 @@
                             android:layout_height="wrap_content"
                             android:alpha="0.58"
                             android:text="@string/end_date"
+                            android:textColor="@android:color/white"
                             android:textStyle="bold" />
 
                         <TextView
@@ -297,7 +453,9 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:fontFamily="@font/poppins_bold"
-                            android:textAlignment="textEnd" />
+                            android:textAlignment="textStart"
+                            android:textColor="@android:color/white"
+                            android:paddingStart="8dp" />
                     </TableRow>
 
                     <TableRow
@@ -310,6 +468,7 @@
                             android:layout_height="wrap_content"
                             android:alpha="0.58"
                             android:text="@string/popularity"
+                            android:textColor="@android:color/white"
                             android:textStyle="bold" />
 
                         <TextView
@@ -318,7 +477,9 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:fontFamily="@font/poppins_bold"
-                            android:textAlignment="textEnd" />
+                            android:textAlignment="textStart"
+                            android:textColor="@android:color/white"
+                            android:paddingStart="8dp" />
                     </TableRow>
 
                     <TableRow
@@ -331,6 +492,7 @@
                             android:layout_height="wrap_content"
                             android:alpha="0.58"
                             android:text="@string/favourites"
+                            android:textColor="@android:color/white"
                             android:textStyle="bold" />
 
                         <TextView
@@ -339,65 +501,20 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:fontFamily="@font/poppins_bold"
-                            android:textAlignment="textEnd" />
+                            android:textAlignment="textStart"
+                            android:textColor="@android:color/white"
+                            android:paddingStart="8dp" />
                     </TableRow>
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="16dp" />
-
-                    <LinearLayout
-                        android:id="@+id/mediaInfoNameRomajiContainer"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:visibility="gone">
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:alpha="0.58"
-                            android:text="@string/name_romaji"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:id="@+id/mediaInfoNameRomaji"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:breakStrategy="balanced"
-                            android:fontFamily="@font/poppins_bold"
-                            tools:targetApi="m" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/mediaInfoNameContainer"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:alpha="0.58"
-                            android:text="@string/name"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:id="@+id/mediaInfoName"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:breakStrategy="balanced"
-                            android:fontFamily="@font/poppins_bold"
-                            tools:targetApi="m" />
-                    </LinearLayout>
                 </TableLayout>
+
                 <TextView
                     android:id="@+id/mediaNextChapterPredictionText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="32dp"
+                    android:layout_marginHorizontal="8dp"
                     android:fontFamily="@font/poppins_bold"
                     android:text="@string/next_chapter_prediction"
+                    android:textColor="@android:color/white"
                     android:textSize="16sp"
                     android:visibility="gone" />
 
@@ -405,11 +522,12 @@
                     android:id="@+id/mediaNextChapterPrediction"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="16dp"
+                    android:layout_marginHorizontal="8dp"
                     android:ellipsize="end"
                     android:maxLines="5"
-                    android:padding="16dp"
+                    android:padding="8dp"
                     android:text="Chap: ??"
+                    android:textColor="@android:color/white"
                     android:visibility="gone"
                     tools:ignore="HardcodedText" />
 
@@ -417,9 +535,10 @@
                     android:id="@+id/mediaAnimeAdaptationText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="32dp"
+                    android:layout_marginHorizontal="8dp"
                     android:fontFamily="@font/poppins_bold"
                     android:text="@string/anime_adaptation"
+                    android:textColor="@android:color/white"
                     android:textSize="16sp"
                     android:visibility="gone" />
 
@@ -427,34 +546,64 @@
                     android:id="@+id/mediaAnimeAdaptation"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="16dp"
+                    android:layout_marginHorizontal="8dp"
                     android:ellipsize="end"
                     android:maxLines="5"
-                    android:padding="16dp"
+                    android:padding="8dp"
                     android:text="Starts: ??"
+                    android:textColor="@android:color/white"
                     android:visibility="gone"
                     tools:ignore="HardcodedText" />
 
-                <TextView
-                    android:id="@+id/mediaInfoDescriptionText"
+                <LinearLayout
+                    android:id="@+id/mediaInfoNameRomajiContainer"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="32dp"
-                    android:fontFamily="@font/poppins_bold"
-                    android:text="@string/description"
-                    android:textSize="16sp" />
+                    android:orientation="vertical"
+                    android:visibility="gone">
 
-                <TextView
-                    android:id="@+id/mediaInfoDescription"
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:alpha="0.58"
+                        android:text="@string/name_romaji"
+                        android:textColor="@android:color/white"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/mediaInfoNameRomaji"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:breakStrategy="balanced"
+                        android:fontFamily="@font/poppins_bold"
+                        android:textColor="@android:color/white"
+                        tools:targetApi="m" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/mediaInfoNameContainer"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="16dp"
-                    android:ellipsize="end"
-                    android:maxLines="5"
-                    android:padding="16dp"
-                    android:text="@string/description" />
+                    android:orientation="vertical">
 
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:alpha="0.58"
+                        android:text="@string/name"
+                        android:textColor="@android:color/white"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/mediaInfoName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:breakStrategy="balanced"
+                        android:fontFamily="@font/poppins_bold"
+                        android:textColor="@android:color/white"
+                        tools:targetApi="m" />
+                </LinearLayout>
             </LinearLayout>
-        </FrameLayout>
+        </LinearLayout>
     </androidx.core.widget.NestedScrollView>
-</androidx.cardview.widget.CardView>
+</FrameLayout>
