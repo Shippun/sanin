@@ -112,17 +112,6 @@ class MediaDetailsActivity : AppCompatActivity() {
         // Load full-screen banner background
         binding.mediaBg!!.loadImage(media.banner ?: media.cover)
 
-        // Load cover image
-        binding.mediaCoverImage.loadImage(media.cover)
-        binding.mediaCoverImage.setOnLongClickListener {
-            val coverTitle = getString(R.string.cover, media.userPreferredName)
-            ani.dantotsu.others.ImageViewDialog.newInstance(
-                this,
-                coverTitle,
-                media.cover
-            )
-        }
-
         // Close button
         binding.mediaClose.setOnClickListener {
             onBackPressedDispatcher.onBackPressed()
@@ -260,11 +249,8 @@ class MediaDetailsActivity : AppCompatActivity() {
         model.getMedia().observe(this) { updatedMedia ->
             if (updatedMedia != null) {
                 media = updatedMedia
-                binding.mediaCoverImage.loadImage(media.cover)
                 if (media.format?.startsWith("LOCAL") == true) {
-                    binding.mediaCover.setOnClickListener {
-                        openLinkInBrowser(media.shareLink)
-                    }
+                    openLinkInBrowser(media.shareLink)
                 }
             }
         }

@@ -60,28 +60,6 @@
         </FrameLayout>
     </LinearLayout>
 
-    <androidx.cardview.widget.CardView
-        android:id="@+id/mediaCover"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="start|top"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="16dp"
-        android:translationZ="5dp"
-        app:cardCornerRadius="16dp"
-        app:cardElevation="16dp">
-
-        <com.google.android.material.imageview.ShapeableImageView
-            android:id="@+id/mediaCoverImage"
-            android:layout_width="108dp"
-            android:layout_height="160dp"
-            android:scaleType="centerCrop"
-            android:transitionName="mediaCover"
-            app:shapeAppearanceOverlay="@style/roundedImageView"
-            tools:ignore="ContentDescription,ImageContrastCheck"
-            tools:srcCompat="@tools:sample/backgrounds/scenic[2]" />
-    </androidx.cardview.widget.CardView>
-
     <FrameLayout
         android:id="@+id/fragmentExtensionsContainer"
         android:layout_width="match_parent"
