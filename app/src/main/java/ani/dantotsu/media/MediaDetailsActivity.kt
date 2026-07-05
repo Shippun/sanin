@@ -3,6 +3,7 @@ package ani.dantotsu.media
 import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.content.res.ColorStateList
 import android.os.Build
 import android.os.Bundle
 import android.text.SpannableStringBuilder
@@ -60,46 +61,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.focusable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Icon
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.focus.onFocusChanged
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.key.Key
-import androidx.compose.ui.input.key.KeyEventType
-import androidx.compose.ui.input.key.key
-import androidx.compose.ui.input.key.onKeyEvent
-import androidx.compose.ui.input.key.type
-import androidx.compose.ui.platform.LocalView
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import ani.dantotsu.ui.components.navigationPillFocusEffect
-import androidx.compose.animation.core.Spring
-import ani.dantotsu.ui.components.navigationPillFocusEffect
+
 
 import kotlin.math.abs
 import kotlin.time.Duration.Companion.milliseconds
@@ -177,26 +139,32 @@ class MediaDetailsActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedLi
         val rescueMode: Boolean = PrefManager.getVal(PrefName.RescueMode)
         val hasComments = PrefManager.getVal<Int>(PrefName.CommentsEnabled) == 1 && !rescueMode
 
-        binding.mediaNavPills?.let { np ->
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                np.outlineProvider = android.view.ViewOutlineProvider.BOUNDS
-                np.elevation = 10f
+        // Native nav pills (info/watch/comments)
+        val primaryColor = getThemeColor(com.google.android.material.R.attr.colorPrimary)
+        val onBgColor = getThemeColor(com.google.android.material.R.attr.colorOnBackground)
+        val navButtons = listOf(binding.navPillInfo, binding.navPillWatch, binding.navPillComments)
+        navButtons.forEach { FocusEffectUtil.applyFocusListener(it) }
+
+        fun selectTab(idx: Int) {
+            selected = idx
+            navButtons.forEachIndexed { i, btn ->
+                btn.imageTintList = ColorStateList.valueOf(if (i == idx) primaryColor else onBgColor)
+                btn.alpha = if (i == idx) 1f else 0.45f
             }
-            np.setContent {
-                MediaNavPills(
-                selectedTab = initialSelected,
-                hasComments = hasComments,
-                onTabSelected = { idx ->
-                    selected = idx
-                    binding.commentInputLayout.isVisible = selected == 2
-                    binding.mediaViewPager.setCurrentItem(selected, true)
-                    val sel = model.loadSelected(media, isDownload)
-                    sel.window = selected
-                    model.saveSelected(media.id, sel)
-                }
-            )
+            binding.commentInputLayout.isVisible = selected == 2
+            binding.mediaViewPager.setCurrentItem(selected, true)
+            val sel = model.loadSelected(media, isDownload)
+            sel.window = selected
+            model.saveSelected(media.id, sel)
         }
+
+        binding.navPillInfo.setOnClickListener { selectTab(0) }
+        binding.navPillWatch.setOnClickListener { selectTab(1) }
+        binding.navPillComments.visibility = if (hasComments) View.VISIBLE else View.GONE
+        if (hasComments) {
+            binding.navPillComments.setOnClickListener { selectTab(2) }
         }
+        selectTab(initialSelected)
 
         val bannerAnimations: Boolean = PrefManager.getVal(PrefName.BannerAnimations)
         if (bannerAnimations) {
@@ -504,17 +472,21 @@ class MediaDetailsActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedLi
         if (event.action == KeyEvent.ACTION_DOWN) {
             when (event.keyCode) {
                 KeyEvent.KEYCODE_DPAD_DOWN -> {
-                    if (binding.mediaNavPills?.isFocused == true) {
-                        val focused = currentFocus
-                        if (focused?.id == R.id.mediaNavPills) {
-                            binding.mediaViewPager.requestFocus()
-                            return true
-                        }
+                    val focusedId = currentFocus?.id
+                    if (focusedId == R.id.navPillInfo || focusedId == R.id.navPillWatch || focusedId == R.id.navPillComments) {
+                        binding.mediaViewPager.requestFocus()
+                        return true
                     }
                 }
                 KeyEvent.KEYCODE_DPAD_UP -> {
                     if (binding.mediaViewPager.isFocused || binding.commentMessageContainer.isFocused) {
-                        binding.mediaNavPills?.requestFocus()
+                        val targetId = when (selected) {
+                            0 -> R.id.navPillInfo
+                            1 -> R.id.navPillWatch
+                            2 -> R.id.navPillComments
+                            else -> R.id.navPillInfo
+                        }
+                        binding.root.findViewById<View>(targetId)?.requestFocus()
                         return true
                     }
                 }
@@ -686,137 +658,4 @@ class MediaDetailsActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedLi
     }
 }
 
-private val MEDIA_TAB_ORDER = listOf("info", "watch", "comments")
-private val MEDIA_TAB_ICONS = mapOf(
-    "info" to R.drawable.ic_round_info_24,
-    "watch" to R.drawable.ic_round_movie_filter_24,
-    "comments" to R.drawable.ic_round_comment_24
-)
-private val MEDIA_TAB_LABELS = mapOf(
-    "info" to "Info",
-    "watch" to "Watch",
-    "comments" to "Comments"
-)
 
-@Composable
-fun MediaNavPills(
-    selectedTab: Int,
-    hasComments: Boolean,
-    onTabSelected: (Int) -> Unit
-) {
-    val view = LocalView.current
-    val focusRequester = remember { FocusRequester() }
-    val tabs = if (hasComments) listOf("info", "watch", "comments") else listOf("info", "watch")
-    val currentTab = remember { mutableStateOf(selectedTab) }
-    var highlightIndex by remember { mutableStateOf(selectedTab) }
-    var containerFocused by remember { mutableStateOf(false) }
-
-    LaunchedEffect(Unit) {
-        view.setOnFocusChangeListener { _, hasFocus ->
-            if (hasFocus) {
-                view.post { focusRequester.requestFocus() }
-            }
-        }
-    }
-
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .wrapContentHeight()
-            .padding(horizontal = 16.dp, vertical = 8.dp)
-            .background(
-                brush = Brush.linearGradient(
-                    colors = listOf(
-                        Color.White.copy(alpha = 0.08f),
-                        Color.White.copy(alpha = 0.04f)
-                    )
-                ),
-                shape = RoundedCornerShape(50)
-            )
-            .border(
-                width = 1.dp,
-                brush = Brush.linearGradient(
-                    colors = listOf(
-                        Color.White.copy(alpha = 0.2f),
-                        Color.White.copy(alpha = 0.05f)
-                    )
-                ),
-                shape = RoundedCornerShape(50)
-            )
-            .padding(horizontal = 6.dp)
-            .focusRequester(focusRequester)
-            .focusable()
-            .onFocusChanged { containerFocused = it.isFocused }
-            .navigationPillFocusEffect(containerFocused, "pulseglow")
-            .onKeyEvent { event ->
-                if (containerFocused && event.type == KeyEventType.KeyUp) {
-                    when (event.key) {
-                        Key.DirectionRight -> {
-                            val next = highlightIndex + 1
-                            if (next < tabs.size) {
-                                highlightIndex = next
-                                true
-                            } else {
-                                view.focusSearch(View.FOCUS_RIGHT)?.requestFocus()
-                                true
-                            }
-                        }
-                        Key.DirectionLeft -> {
-                            val prev = highlightIndex - 1
-                            if (prev >= 0) {
-                                highlightIndex = prev
-                                true
-                            } else {
-                                view.focusSearch(View.FOCUS_LEFT)?.requestFocus()
-                                true
-                            }
-                        }
-                        Key.Enter, Key.DirectionCenter -> {
-                            currentTab.value = highlightIndex
-                            onTabSelected(highlightIndex)
-                            true
-                        }
-                        else -> false
-                    }
-                } else false
-            },
-        contentAlignment = Alignment.Center
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(4.dp)
-        ) {
-            tabs.forEachIndexed { index, tab ->
-                val isActive = currentTab.value == index
-                val isHighlighted = highlightIndex == index
-
-                Box(
-                    modifier = Modifier
-                        .width(48.dp)
-                        .height(48.dp)
-                        .background(
-                            color = when {
-                                isActive -> Color.White.copy(alpha = 0.15f)
-                                isHighlighted -> Color.White.copy(alpha = 0.08f)
-                                else -> Color.Transparent
-                            },
-                            shape = RoundedCornerShape(50)
-                        )
-                        .clickable {
-                            highlightIndex = index
-                            currentTab.value = index
-                            onTabSelected(index)
-                        },
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        painter = painterResource(id = MEDIA_TAB_ICONS[tab] ?: R.drawable.ic_round_info_24),
-                        contentDescription = MEDIA_TAB_LABELS[tab] ?: tab,
-                        tint = if (isActive) Color(0xFF87CEEB) else Color.White.copy(alpha = 0.7f),
-                        modifier = Modifier.size(20.dp)
-                    )
-                }
-            }
-        }
-    }
-}
