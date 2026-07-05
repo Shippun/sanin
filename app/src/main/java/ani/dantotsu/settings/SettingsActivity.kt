@@ -112,7 +112,7 @@ class SettingsActivity : AppCompatActivity() {
                         type = 1,
                         name = getString(R.string.animation),
                         desc = getString(R.string.animation_desc),
-                        icon = R.drawable.ic_round_videocam_24,
+                        icon = R.drawable.ic_round_animation_24,
                         onClick = {
                             startActivity(Intent(context, SettingsAnimationActivity::class.java))
                         },
