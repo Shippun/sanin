@@ -123,6 +123,8 @@ enum class PrefName(val data: Pref) {
     GradientDirection(Pref(Location.UI, Int::class, 0)),
     Emoji(Pref(Location.UI, Boolean::class, true)),
     AnimationsEnabled(Pref(Location.UI, Boolean::class, true)),
+    LiveSideRail(Pref(Location.UI, Boolean::class, true)),
+    SideRailPersist(Pref(Location.UI, Boolean::class, false)),
     FocusEffect(Pref(Location.UI, Int::class, 0)),
     CardStyle(Pref(Location.UI, Int::class, 0)),
     SpotlightCardStyle(Pref(Location.UI, Int::class, 0)),

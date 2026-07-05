@@ -93,35 +93,34 @@
             </FrameLayout>
         </LinearLayout>
 
-        <FrameLayout
-            android:id="@+id/homeNavRail"
-            android:layout_width="44dp"
+    <FrameLayout
+        android:id="@+id/homeNavRail"
+        android:layout_width="44dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start|center_vertical"
+        android:layout_marginStart="8dp"
+        android:elevation="10dp"
+        android:translationZ="10dp"
+        android:focusable="true"
+        android:descendantFocusability="afterDescendants"
+        android:visibility="gone"
+        android:clipToOutline="true">
+
+        <ani.dantotsu.ui.components.SnakeNavRailView
+            android:id="@+id/homeNavRailBg"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:focusable="false"
+            android:clickable="false"
+            android:importantForAccessibility="no" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="start|center_vertical"
-            android:layout_marginStart="8dp"
-            android:elevation="10dp"
-            android:translationZ="10dp"
-            android:focusable="true"
-            android:descendantFocusability="afterDescendants"
-            android:visibility="gone"
-            android:clipToOutline="true">
-
-            <ImageView
-                android:id="@+id/homeNavRailBg"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:scaleType="centerCrop"
-                android:focusable="false"
-                android:clickable="false"
-                android:importantForAccessibility="no" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:gravity="center"
-                android:paddingTop="6dp"
-                android:paddingBottom="6dp">
+            android:orientation="vertical"
+            android:gravity="center"
+            android:paddingTop="6dp"
+            android:paddingBottom="6dp">
 
                 <ImageButton
                     android:id="@+id/homeNavHome"

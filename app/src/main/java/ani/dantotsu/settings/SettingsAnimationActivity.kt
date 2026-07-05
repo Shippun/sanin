@@ -35,6 +35,7 @@ class SettingsAnimationActivity : AppCompatActivity() {
             binding.animationBanner,
             binding.animationLayout,
             binding.animationTrending,
+            binding.animationLiveSideRail,
         )
 
         binding.animationEnabled.isChecked = PrefManager.getVal(PrefName.AnimationsEnabled)
@@ -58,6 +59,11 @@ class SettingsAnimationActivity : AppCompatActivity() {
         binding.animationTrending.isChecked = PrefManager.getVal(PrefName.TrendingScroller)
         binding.animationTrending.setOnCheckedChangeListener { _, isChecked ->
             PrefManager.setVal(PrefName.TrendingScroller, isChecked)
+        }
+
+        binding.animationLiveSideRail.isChecked = PrefManager.getVal(PrefName.LiveSideRail)
+        binding.animationLiveSideRail.setOnCheckedChangeListener { _, isChecked ->
+            PrefManager.setVal(PrefName.LiveSideRail, isChecked)
         }
 
         val map = mapOf(

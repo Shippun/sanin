@@ -501,8 +501,10 @@ class MainActivity : AppCompatActivity() {
             when (event.keyCode) {
                 KeyEvent.KEYCODE_BACK, KeyEvent.KEYCODE_ESCAPE -> {
                     if (binding.homeNavRail.visibility == View.VISIBLE) {
-                        hideHomeNavRail()
-                        return true
+                        if (!PrefManager.getVal(PrefName.SideRailPersist)) {
+                            hideHomeNavRail()
+                            return true
+                        }
                     }
                 }
                 KeyEvent.KEYCODE_DPAD_RIGHT -> {
@@ -542,7 +544,7 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         loadAvatar()
-        binding.homeNavRailBg?.let { blurImage(it, Anilist.bg) }
+        binding.homeNavRailBg.live = PrefManager.getVal(PrefName.LiveSideRail)
     }
 
     private fun handleViewIntent(intent: Intent) {
@@ -665,7 +667,11 @@ class MainActivity : AppCompatActivity() {
             binding.homeNavRail.clipToOutline = true
         }
 
-        binding.homeNavRailBg?.let { blurImage(it, Anilist.bg) }
+        binding.homeNavRailBg.live = PrefManager.getVal(PrefName.LiveSideRail)
+
+        binding.homeNavRailBg.addOnLayoutChangeListener { _, _, _, _, _, _, _, _, _ ->
+            updateHomeNavIconTints()
+        }
 
         val pills = listOf(binding.homeNavHome, binding.homeNavAnime, binding.homeNavDiscovery, binding.homeNavLibrary)
         pills.forEachIndexed { index, pill ->
@@ -677,8 +683,23 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun updateHomeNavIconTints() {
+        val bg = binding.homeNavRailBg
+        if (bg.height <= 0) return
+        val pills = listOf(binding.homeNavHome, binding.homeNavAnime, binding.homeNavDiscovery, binding.homeNavLibrary)
+        pills.forEach { pill ->
+            val yCenter = pill.top + pill.height / 2f
+            val fraction = yCenter / bg.height
+            val color = bg.getColorAtFraction(fraction)
+            val luminance = (0.299 * Color.red(color) + 0.587 * Color.green(color) + 0.114 * Color.blue(color)) / 255.0
+            val tintColor = if (luminance > 0.5) Color.parseColor("#2A2A2A") else Color.WHITE
+            pill.imageTintList = android.content.res.ColorStateList.valueOf(tintColor)
+        }
+    }
+
     private fun showHomeNavRail() {
         binding.homeNavRail.visibility = View.VISIBLE
+        updateHomeNavIconTints()
         val tab = navPillsViewModel.currentTab.value
         val id = when (tab) {
             0 -> R.id.homeNavHome

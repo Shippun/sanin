@@ -103,11 +103,10 @@
         android:visibility="gone"
         android:clipToOutline="true">
 
-        <ImageView
+        <ani.dantotsu.ui.components.SnakeNavRailView
             android:id="@+id/navPillBg"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scaleType="centerCrop"
             android:focusable="false"
             android:clickable="false"
             android:importantForAccessibility="no" />
