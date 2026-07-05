@@ -75,6 +75,7 @@ class MediaDetailsActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedLi
     var selected = 0
     var anime = true
     private var adult = false
+    private var hasComments = false
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -137,12 +138,18 @@ class MediaDetailsActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedLi
         media.selected = model.loadSelected(media, isDownload)
         val initialSelected = media.selected!!.window
         val rescueMode: Boolean = PrefManager.getVal(PrefName.RescueMode)
-        val hasComments = PrefManager.getVal<Int>(PrefName.CommentsEnabled) == 1 && !rescueMode
+        hasComments = PrefManager.getVal<Int>(PrefName.CommentsEnabled) == 1 && !rescueMode
 
         // Native nav pills (info/watch/comments)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            binding.mediaNavPills?.outlineProvider = android.view.ViewOutlineProvider.BOUNDS
+            val cornerPx = 16f * resources.displayMetrics.density
+            binding.mediaNavPills?.outlineProvider = object : android.view.ViewOutlineProvider() {
+                override fun getOutline(view: View, outline: android.graphics.Outline) {
+                    outline.setRoundRect(0, 0, view.width, view.height, cornerPx)
+                }
+            }
             binding.mediaNavPills?.elevation = 10f
+            binding.mediaNavPills?.clipToOutline = true
         }
         val primaryColor = getThemeColor(com.google.android.material.R.attr.colorPrimary)
         val onBgColor = getThemeColor(com.google.android.material.R.attr.colorOnBackground)
@@ -165,11 +172,11 @@ class MediaDetailsActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedLi
             model.saveSelected(media.id, sel)
         }
 
-        navInfo?.setOnClickListener { selectTab(0) }
-        navWatch?.setOnClickListener { selectTab(1) }
+        navInfo?.setOnClickListener { selectTab(0); hideNavPills() }
+        navWatch?.setOnClickListener { selectTab(1); hideNavPills() }
         navComments?.visibility = if (hasComments) View.VISIBLE else View.GONE
         if (hasComments) {
-            navComments?.setOnClickListener { selectTab(2) }
+            navComments?.setOnClickListener { selectTab(2); hideNavPills() }
         }
         selectTab(initialSelected)
 
@@ -200,6 +207,7 @@ class MediaDetailsActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedLi
         }
 
         blurImage(banner, media.banner ?: media.cover)
+        blurImage(binding.navPillBg, media.banner ?: media.cover)
         val gestureDetector = GestureDetector(this, object : GesturesListener() {
             override fun onDoubleClick(event: MotionEvent) {
                 if (!(PrefManager.getVal(PrefName.BannerAnimations) as Boolean))
@@ -412,6 +420,7 @@ class MediaDetailsActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedLi
                     if (media.format?.startsWith("LOCAL") == true) {
                         binding.mediaCoverImage.loadImage(media.cover)
                         blurImage(if (bannerAnimations) binding.mediaBanner else binding.mediaBannerNoKen, media.banner ?: media.cover)
+                        blurImage(binding.navPillBg, media.banner ?: media.cover)
                     }
                 }
                 progress()
@@ -478,28 +487,50 @@ class MediaDetailsActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedLi
     override fun dispatchKeyEvent(event: KeyEvent): Boolean {
         if (event.action == KeyEvent.ACTION_DOWN) {
             when (event.keyCode) {
+                KeyEvent.KEYCODE_BACK, KeyEvent.KEYCODE_ESCAPE -> {
+                    if (binding.mediaNavPills?.visibility == View.VISIBLE) {
+                        hideNavPills()
+                        return true
+                    }
+                }
                 KeyEvent.KEYCODE_DPAD_RIGHT -> {
                     val focusedId = currentFocus?.id
                     if (focusedId == R.id.navPillInfo || focusedId == R.id.navPillWatch || focusedId == R.id.navPillComments) {
-                        binding.mediaViewPager.requestFocus()
+                        hideNavPills()
                         return true
                     }
                 }
                 KeyEvent.KEYCODE_DPAD_LEFT -> {
-                    if (binding.mediaViewPager.isFocused || binding.commentMessageContainer.isFocused) {
+                    val commentFocused = binding.commentMessageContainer?.isFocused == true
+                    if (binding.mediaViewPager.isFocused || commentFocused) {
+                        showNavPills()
                         val targetId = when (selected) {
                             0 -> R.id.navPillInfo
                             1 -> R.id.navPillWatch
                             2 -> R.id.navPillComments
                             else -> R.id.navPillInfo
                         }
-                        binding.root.findViewById<View>(targetId)?.requestFocus()
+                        val target = binding.root.findViewById<View>(targetId)
+                        if (target?.visibility == View.VISIBLE) {
+                            target.requestFocus()
+                        } else {
+                            binding.navPillInfo?.requestFocus()
+                        }
                         return true
                     }
                 }
             }
         }
         return super.dispatchKeyEvent(event)
+    }
+
+    private fun showNavPills() {
+        binding.mediaNavPills?.visibility = View.VISIBLE
+    }
+
+    private fun hideNavPills() {
+        binding.mediaNavPills?.visibility = View.GONE
+        binding.mediaViewPager.requestFocus()
     }
 
     // ViewPager
@@ -574,13 +605,6 @@ class MediaDetailsActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedLi
                 .setDuration(duration).start()
             if (PrefManager.getVal(PrefName.BannerAnimations)) binding.mediaBanner.resume()
         }
-        // Fade/slide nav pills as toolbar scrolls so they don't overlap ViewPager when collapsed
-        val progress = abs(i).toFloat() / mMaxScrollSize.coerceAtLeast(1)
-        binding.mediaNavPills?.alpha = 1f - progress
-        binding.mediaNavPills?.translationX = -i.toFloat()
-        binding.mediaNavPills?.visibility =
-            if (progress > 0.85f) View.INVISIBLE else View.VISIBLE
-
         if (percentage == 1 && model.scrolledToTop.value != false) model.scrolledToTop.postValue(
             false
         )

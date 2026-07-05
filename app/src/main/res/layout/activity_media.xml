@@ -474,60 +474,76 @@
         android:paddingTop="16dp"
         android:visibility="gone" />
 
-    <LinearLayout
+    <FrameLayout
         android:id="@+id/mediaNavPills"
-        android:layout_width="48dp"
+        android:layout_width="44dp"
         android:layout_height="wrap_content"
         android:layout_gravity="start|center_vertical"
         android:layout_marginStart="8dp"
         android:elevation="10dp"
         android:translationZ="10dp"
-        android:orientation="vertical"
-        android:gravity="center"
-        android:background="@drawable/round_corner"
         android:focusable="true"
         android:focusableInTouchMode="false"
         android:descendantFocusability="afterDescendants"
-        android:paddingTop="6dp"
-        android:paddingBottom="6dp">
+        android:visibility="gone"
+        android:clipToOutline="true">
 
-        <ImageButton
-            android:id="@+id/navPillInfo"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:padding="14dp"
-            android:src="@drawable/ic_round_info_24"
-            android:scaleType="fitCenter"
-            android:background="@android:color/transparent"
-            android:focusable="true"
-            android:nextFocusUp="@id/navPillComments"
-            android:nextFocusDown="@id/navPillWatch" />
+        <ImageView
+            android:id="@+id/navPillBg"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:focusable="false"
+            android:clickable="false"
+            android:importantForAccessibility="no" />
 
-        <ImageButton
-            android:id="@+id/navPillWatch"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:padding="14dp"
-            android:src="@drawable/ic_round_movie_filter_24"
-            android:scaleType="fitCenter"
-            android:background="@android:color/transparent"
-            android:focusable="true"
-            android:nextFocusUp="@id/navPillInfo"
-            android:nextFocusDown="@id/navPillComments" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:paddingTop="6dp"
+            android:paddingBottom="6dp">
 
-        <ImageButton
-            android:id="@+id/navPillComments"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:padding="14dp"
-            android:src="@drawable/ic_round_comment_24"
-            android:scaleType="fitCenter"
-            android:background="@android:color/transparent"
-            android:visibility="gone"
-            android:focusable="true"
-            android:nextFocusUp="@id/navPillWatch"
-            android:nextFocusDown="@id/navPillInfo" />
+            <ImageButton
+                android:id="@+id/navPillInfo"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:padding="12dp"
+                android:src="@drawable/ic_round_info_24"
+                android:scaleType="fitCenter"
+                android:background="@android:color/transparent"
+                android:focusable="true"
+                android:nextFocusUp="@id/navPillComments"
+                android:nextFocusDown="@id/navPillWatch" />
 
-    </LinearLayout>
+            <ImageButton
+                android:id="@+id/navPillWatch"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:padding="12dp"
+                android:src="@drawable/ic_round_movie_filter_24"
+                android:scaleType="fitCenter"
+                android:background="@android:color/transparent"
+                android:focusable="true"
+                android:nextFocusUp="@id/navPillInfo"
+                android:nextFocusDown="@id/navPillComments" />
+
+            <ImageButton
+                android:id="@+id/navPillComments"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:padding="12dp"
+                android:src="@drawable/ic_round_comment_24"
+                android:scaleType="fitCenter"
+                android:background="@android:color/transparent"
+                android:visibility="gone"
+                android:focusable="true"
+                android:nextFocusUp="@id/navPillWatch"
+                android:nextFocusDown="@id/navPillInfo" />
+
+        </LinearLayout>
+
+    </FrameLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
