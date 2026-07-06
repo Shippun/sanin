@@ -1,6 +1,5 @@
 package ani.dantotsu.settings
 
-import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -8,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AutoCompleteTextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
@@ -16,11 +14,10 @@ import androidx.viewpager2.widget.ViewPager2
 import ani.dantotsu.R
 import ani.dantotsu.databinding.ActivityExtensionsBinding
 import ani.dantotsu.initActivity
-import ani.dantotsu.media.MediaType
 import ani.dantotsu.navBarHeight
+import ani.dantotsu.openLinkInBrowser
 import ani.dantotsu.others.AndroidBug5497Workaround
 import ani.dantotsu.others.LanguageMapper
-import ani.dantotsu.parsers.ParserTestActivity
 import ani.dantotsu.settings.saving.PrefManager
 import ani.dantotsu.settings.saving.PrefName
 import ani.dantotsu.statusBarHeight
@@ -56,12 +53,8 @@ class ExtensionsActivity : AppCompatActivity() {
             bottomMargin = statusBarHeight + navBarHeight
         }
 
-        binding.testButton.setOnClickListener {
-            ContextCompat.startActivity(
-                this,
-                Intent(this, ParserTestActivity::class.java),
-                null
-            )
+        binding.openSettingsButton.setOnClickListener {
+            openLinkInBrowser(getString(R.string.github))
         }
 
         val tabLayout = findViewById<TabLayout>(R.id.tabLayout)
@@ -96,15 +89,6 @@ class ExtensionsActivity : AppCompatActivity() {
                         height = ViewGroup.LayoutParams.MATCH_PARENT
                     }
 
-                    if (tab.text?.contains("Anime") == true) {
-                        generateRepositoryButton(MediaType.ANIME)
-                    }
-                    if (tab.text?.contains("Manga") == true) {
-                        generateRepositoryButton(MediaType.MANGA)
-                    }
-                    if (tab.text?.contains("Novels") == true) {
-                        generateRepositoryButton(MediaType.NOVEL)
-                    }
                 }
 
                 override fun onTabUnselected(tab: TabLayout.Tab) {
@@ -184,30 +168,6 @@ class ExtensionsActivity : AppCompatActivity() {
         }
     }
 
-    private fun generateRepositoryButton(type: MediaType) {
-        binding.openSettingsButton.setOnClickListener {
-            val repos: Set<String> = when (type) {
-                MediaType.ANIME -> {
-                    PrefManager.getVal(PrefName.AnimeExtensionRepos)
-                }
-
-                MediaType.MANGA -> {
-                    PrefManager.getVal(PrefName.MangaExtensionRepos)
-                }
-
-                MediaType.NOVEL -> {
-                    PrefManager.getVal(PrefName.NovelExtensionRepos)
-                }
-            }
-            AddRepositoryBottomSheet.newInstance(
-                type,
-                repos.toList(),
-                AddRepositoryBottomSheet::addRepo,
-                AddRepositoryBottomSheet::removeRepo
-
-            ).show(supportFragmentManager, "add_repo")
-        }
-    }
 }
 
 interface SearchQueryHandler {

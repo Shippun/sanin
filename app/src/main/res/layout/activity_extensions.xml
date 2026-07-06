@@ -42,21 +42,12 @@
             android:orientation="horizontal">
 
             <ImageButton
-                android:id="@+id/testButton"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:background="?android:attr/selectableItemBackground"
-                android:contentDescription="@string/sort_by"
-                app:srcCompat="@drawable/ic_round_search_sources_24"
-                app:tint="?attr/colorOnBackground" />
-
-            <ImageButton
                 android:id="@+id/openSettingsButton"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:background="?android:attr/selectableItemBackground"
                 android:contentDescription="@string/sort_by"
-                app:srcCompat="@drawable/ic_github"
+                app:srcCompat="@drawable/ic_round_menu_book_24"
                 app:tint="?attr/colorOnBackground" />
 
             <ImageButton
