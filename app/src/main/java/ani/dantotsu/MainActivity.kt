@@ -3,6 +3,8 @@ package ani.dantotsu
 import android.animation.ObjectAnimator
 import android.view.animation.DecelerateInterpolator
 import android.annotation.SuppressLint
+import kotlin.math.cos
+import kotlin.math.exp
 import android.content.Intent
 import android.content.res.Configuration
 import android.graphics.Color
