@@ -37,7 +37,11 @@ object OledBackgroundManager {
             })
 
             // For modes 2-4, add a transparent overlay View on top of content
-            overlayView?.let { decor.removeView(it) }
+            val decorGroup = decor as? ViewGroup
+            if (overlayView != null && decorGroup != null) {
+                decorGroup.removeView(overlayView)
+                overlayView = null
+            }
             if (oledMode in 2..4) {
                 val overlay = object : View(activity) {
                     override fun onDraw(canvas: Canvas) {
@@ -53,15 +57,15 @@ object OledBackgroundManager {
                 overlay.isClickable = false
                 overlay.isFocusable = false
                 overlay.isFocusableInTouchMode = false
-                (decor as? ViewGroup)?.addView(overlay)
+                decorGroup?.addView(overlay)
                 overlayView = overlay
             }
         }
     }
 
     fun remove(activity: Activity) {
-        overlayView?.let {
-            (activity.window.decorView as? ViewGroup)?.removeView(it)
+        if (overlayView != null) {
+            (activity.window.decorView as? ViewGroup)?.removeView(overlayView)
             overlayView = null
         }
     }
