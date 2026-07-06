@@ -72,8 +72,6 @@ class MediaInfoFragment : Fragment() {
     private var type = "ANIME"
     private val genreModel: GenresViewModel by activityViewModels()
 
-    private val tripleTab = "\t\t\t"
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -165,6 +163,23 @@ class MediaInfoFragment : Fragment() {
 
                 // Status
                 binding.mediaInfoStatus.text = media.status ?: ""
+
+                // Description (right after status, before everything else)
+                val desc = HtmlCompat.fromHtml(
+                    (media.description ?: "null").replace("\\n", "<br>").replace("\\\"", "\""),
+                    HtmlCompat.FROM_HTML_MODE_LEGACY
+                )
+                val infoDesc = if (desc.toString() != "null") desc else getString(R.string.no_description_available)
+                binding.mediaInfoDescription.text = infoDesc
+                binding.mediaInfoDescription.setOnClickListener {
+                    if (binding.mediaInfoDescription.maxLines == 5) {
+                        ObjectAnimator.ofInt(binding.mediaInfoDescription, "maxLines", 100)
+                            .setDuration(950).start()
+                    } else {
+                        ObjectAnimator.ofInt(binding.mediaInfoDescription, "maxLines", 5)
+                            .setDuration(400).start()
+                    }
+                }
 
                 // Add to List
                 val rescueMode: Boolean = PrefManager.getVal(PrefName.RescueMode)
@@ -319,7 +334,7 @@ class MediaInfoFragment : Fragment() {
                 )
 
                 // --- Existing details population from original ---
-                val infoName = tripleTab + (media.name ?: media.nameRomaji)
+                val infoName = media.name ?: media.nameRomaji
                 binding.mediaInfoName.text = infoName
                 binding.mediaInfoName.setOnLongClickListener {
                     copyToClipboard(media.name ?: media.nameRomaji)
@@ -327,7 +342,7 @@ class MediaInfoFragment : Fragment() {
                 }
                 if (media.name != null) binding.mediaInfoNameRomajiContainer.visibility =
                     View.VISIBLE
-                val infoNameRomaji = tripleTab + media.nameRomaji
+                val infoNameRomaji = media.nameRomaji
                 binding.mediaInfoNameRomaji.text = infoNameRomaji
                 binding.mediaInfoNameRomaji.setOnLongClickListener {
                     copyToClipboard(media.nameRomaji)
@@ -455,22 +470,6 @@ class MediaInfoFragment : Fragment() {
                     }
                 }
 
-                val desc = HtmlCompat.fromHtml(
-                    (media.description ?: "null").replace("\\n", "<br>").replace("\\\"", "\""),
-                    HtmlCompat.FROM_HTML_MODE_LEGACY
-                )
-                val infoDesc =
-                    tripleTab + if (desc.toString() != "null") desc else getString(R.string.no_description_available)
-                binding.mediaInfoDescription.text = infoDesc
-                binding.mediaInfoDescription.setOnClickListener {
-                    if (binding.mediaInfoDescription.maxLines == 5) {
-                        ObjectAnimator.ofInt(binding.mediaInfoDescription, "maxLines", 100)
-                            .setDuration(950).start()
-                    } else {
-                        ObjectAnimator.ofInt(binding.mediaInfoDescription, "maxLines", 5)
-                            .setDuration(400).start()
-                    }
-                }
                 displayTimer(media, binding.mediaInfoContainer)
                 val parent = _binding?.mediaInfoContainer!!
                 for (i in parent.childCount - 1 downTo 0) {

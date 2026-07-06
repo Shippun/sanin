@@ -85,16 +85,6 @@ class SettingsAnimeActivity : AppCompatActivity() {
                     ),
                     Settings(
                         type = 2,
-                        name = getString(R.string.show_yt),
-                        desc = getString(R.string.show_yt_desc),
-                        icon = R.drawable.ic_round_play_circle_24,
-                        isChecked = PrefManager.getVal(PrefName.ShowYtButton),
-                        switch = { isChecked, _ ->
-                            PrefManager.setVal(PrefName.ShowYtButton, isChecked)
-                        }
-                    ),
-                    Settings(
-                        type = 2,
                         name = getString(R.string.include_list),
                         desc = getString(R.string.include_list_anime_desc),
                         icon = R.drawable.view_list_24,

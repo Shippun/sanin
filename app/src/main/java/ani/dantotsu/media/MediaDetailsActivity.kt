@@ -175,20 +175,23 @@ class MediaDetailsActivity : AppCompatActivity() {
             binding.commentInputLayout.isVisible = selected == 2
             when (idx) {
                 0 -> {
-                    // Info: just ensure info fragment container is visible
+                    // Info: show info fragment, hide right panel
                     binding.mediaInfoFragmentContainer!!.visibility = View.VISIBLE
-                    binding.mediaRightPanel!!.visibility = View.VISIBLE
+                    binding.mediaRightPanel!!.visibility = View.GONE
+                    binding.mediaInfoAddToListBtn!!.visibility = View.GONE
                 }
                 1 -> {
-                    // Watch
+                    // Watch: hide info, show right panel
                     binding.mediaInfoFragmentContainer!!.visibility = View.GONE
                     binding.mediaRightPanel!!.visibility = View.VISIBLE
+                    binding.mediaInfoAddToListBtn!!.visibility = View.VISIBLE
                     binding.mediaViewPager!!.setCurrentItem(0, true)
                 }
                 2 -> {
                     // Comments
                     binding.mediaInfoFragmentContainer!!.visibility = View.GONE
                     binding.mediaRightPanel!!.visibility = View.VISIBLE
+                    binding.mediaInfoAddToListBtn!!.visibility = View.VISIBLE
                     binding.mediaViewPager!!.setCurrentItem(1, true)
                 }
             }
@@ -202,6 +205,19 @@ class MediaDetailsActivity : AppCompatActivity() {
         navComments?.visibility = if (hasComments) View.VISIBLE else View.GONE
         if (hasComments) {
             navComments?.setOnClickListener { selectTab(2); hideNavPills() }
+        }
+
+        // Add-to-List button for Watch & Comments tabs
+        binding.mediaInfoAddToListBtn?.setOnClickListener {
+            if (rescueMode) {
+                if (MAL.token != null) {
+                    if (supportFragmentManager.findFragmentByTag("dialog") == null)
+                        MediaListDialogFragment().show(supportFragmentManager, "dialog")
+                } else snackString("Please login to MAL")
+            } else if (Anilist.userid != null) {
+                if (supportFragmentManager.findFragmentByTag("dialog") == null)
+                    MediaListDialogFragment().show(supportFragmentManager, "dialog")
+            } else snackString(getString(R.string.please_login_anilist))
         }
 
         // ViewPager setup (2 tabs: Watch, Comments)

@@ -1,7 +1,6 @@
 package ani.dantotsu.media.anime
 
 import android.content.Intent
-import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -77,14 +76,6 @@ class AnimeWatchAdapter(
                 Intent(fragment.requireContext(), FAQActivity::class.java),
                 null
             )
-        }
-        // Youtube
-        if (media.anime?.youtube != null && PrefManager.getVal(PrefName.ShowYtButton)) {
-            binding.animeSourceYT.visibility = View.VISIBLE
-            binding.animeSourceYT.setOnClickListener {
-                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(media.anime.youtube))
-                fragment.requireContext().startActivity(intent)
-            }
         }
         binding.animeSourceDubbed.isChecked = media.selected!!.preferDub
         binding.animeSourceDubbedText.text =
