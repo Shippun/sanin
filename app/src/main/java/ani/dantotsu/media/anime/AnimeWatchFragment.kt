@@ -476,9 +476,9 @@ class AnimeWatchFragment : Fragment() {
         val changeUIVisibility: (Boolean) -> Unit = { show ->
             val activity = activity
             if (activity is MediaDetailsActivity && isAdded) {
-                activity.findViewById<AppBarLayout>(R.id.mediaAppBar).isVisible = show
-                activity.findViewById<ViewPager2>(R.id.mediaViewPager).isVisible = show
-                activity.findViewById<CardView>(R.id.mediaCover).isVisible = show
+                activity.findViewById<AppBarLayout>(R.id.mediaAppBar)?.isVisible = show
+                activity.findViewById<ViewPager2>(R.id.mediaViewPager)?.isVisible = show
+                activity.findViewById<CardView>(R.id.mediaCover)?.isVisible = show
                 activity.findViewById<CardView>(R.id.mediaClose).isVisible = show
                 activity.findViewById<View>(R.id.mediaNavPills)?.isVisible = show
                 activity.findViewById<FrameLayout>(R.id.fragmentExtensionsContainer).isGone = show
