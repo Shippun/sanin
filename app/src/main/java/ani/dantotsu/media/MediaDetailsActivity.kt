@@ -114,12 +114,17 @@ class MediaDetailsActivity : AppCompatActivity() {
         val bannerBrightness = PrefManager.getVal<Float>(PrefName.BannerBrightness)
         if (bannerBrightness > 0f) {
             binding.mediaBg?.loadImage(media.banner ?: media.cover)
-            binding.mediaBanner?.loadImage(media.banner ?: media.cover)
-            binding.mediaBannerNoKen?.loadImage(media.banner ?: media.cover)
             binding.mediaBg?.alpha = bannerBrightness
             binding.mediaBgGradient?.alpha = bannerBrightness
+            binding.mediaBanner?.loadImage(media.banner ?: media.cover)
             binding.mediaBanner?.alpha = bannerBrightness
+            binding.mediaBannerNoKen?.loadImage(media.banner ?: media.cover)
             binding.mediaBannerNoKen?.alpha = bannerBrightness
+        } else {
+            binding.mediaBg?.visibility = View.GONE
+            binding.mediaBgGradient?.visibility = View.GONE
+            binding.mediaBanner?.visibility = View.GONE
+            binding.mediaBannerNoKen?.visibility = View.GONE
         }
 
         // Close button
