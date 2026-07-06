@@ -2,14 +2,15 @@ package ani.dantotsu.settings
 
 import android.content.Context
 import android.os.Bundle
+import android.view.Gravity
 import android.view.HapticFeedbackConstants
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
+import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import ani.dantotsu.BottomSheetDialogFragment
 import ani.dantotsu.R
 import ani.dantotsu.copyToClipboard
 import ani.dantotsu.databinding.BottomSheetAddRepositoryBinding
@@ -58,7 +59,7 @@ class RepoItem(
     }
 }
 
-class AddRepositoryBottomSheet : BottomSheetDialogFragment() {
+class AddRepositoryBottomSheet : DialogFragment() {
     private var _binding: BottomSheetAddRepositoryBinding? = null
     private val binding get() = _binding!!
     private var mediaType: MediaType = MediaType.ANIME
@@ -79,6 +80,12 @@ class AddRepositoryBottomSheet : BottomSheetDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        dialog?.window?.apply {
+            setGravity(Gravity.TOP)
+            setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+            setBackgroundDrawableResource(R.drawable.top_sheet_background)
+        }
 
         binding.repositoriesRecyclerView.adapter = adapter
         binding.repositoriesRecyclerView.layoutManager = LinearLayoutManager(
