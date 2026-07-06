@@ -521,10 +521,15 @@ class MainActivity : AppCompatActivity() {
                     if (id == R.id.homeNavHome || id == R.id.homeNavAnime || id == R.id.homeNavDiscovery || id == R.id.homeNavLibrary) {
                         return true
                     }
-                    if (binding.homeNavRail.visibility != View.VISIBLE &&
-                        currentFocus?.focusSearch(View.FOCUS_LEFT) == null) {
-                        showHomeNavRail()
-                        return true
+                    if (binding.homeNavRail.visibility != View.VISIBLE) {
+                        val focus = currentFocus
+                        if (focus != null) {
+                            val railWidth = (60f * resources.displayMetrics.density).toInt()
+                            if (focus.left <= railWidth || focus.focusSearch(View.FOCUS_LEFT) == null) {
+                                showHomeNavRail()
+                                return true
+                            }
+                        }
                     }
                 }
                 KeyEvent.KEYCODE_MENU -> {
