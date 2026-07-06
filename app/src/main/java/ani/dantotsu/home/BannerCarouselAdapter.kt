@@ -36,13 +36,18 @@ class BannerCarouselAdapter(
         val media = items[position]
         val ctx = holder.itemView.context
 
-        // --- Banner images from AniZip (fallback to AniList) ---
+        // --- Banner images from AniZip (fallback to AniList with double-layer) ---
         scope.launch(Dispatchers.IO) {
             val anizipUrl = AniZip.getBackdropUrl(media.id)
             withContext(Dispatchers.Main) {
-                val url = anizipUrl ?: media.banner ?: media.cover
-                if (!url.isNullOrBlank()) {
-                    holder.bannerImage.loadImage(url)
+                if (!anizipUrl.isNullOrBlank()) {
+                    holder.bannerImage.loadImage(anizipUrl)
+                } else {
+                    val fallback = media.banner ?: media.cover
+                    if (!fallback.isNullOrBlank()) {
+                        holder.bannerBg.loadImage(fallback)
+                        holder.bannerImage.loadImage(fallback)
+                    }
                 }
             }
         }
