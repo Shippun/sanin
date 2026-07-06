@@ -19,6 +19,7 @@ import androidx.core.view.doOnLayout
 object OledBackgroundManager {
 
     private var overlayView: View? = null
+    private var overlayParentId: Int = -1
 
     fun apply(activity: Activity, oledMode: Int, primaryColor: Int, gradientDir: Int = 0) {
         val drawable = when (oledMode) {
@@ -38,9 +39,10 @@ object OledBackgroundManager {
 
             // For modes 2-4, add a transparent overlay View on top of content
             val decorGroup = decor as? ViewGroup
-            if (overlayView != null && decorGroup != null) {
+            if (overlayView != null && decorGroup != null && overlayView?.parent == decorGroup) {
                 decorGroup.removeView(overlayView)
                 overlayView = null
+                overlayParentId = -1
             }
             if (oledMode in 2..4) {
                 val overlay = object : View(activity) {
@@ -64,9 +66,10 @@ object OledBackgroundManager {
     }
 
     fun remove(activity: Activity) {
-        if (overlayView != null) {
+        if (overlayView != null && overlayView?.parent == activity.window.decorView) {
             (activity.window.decorView as? ViewGroup)?.removeView(overlayView)
             overlayView = null
+            overlayParentId = -1
         }
     }
 
