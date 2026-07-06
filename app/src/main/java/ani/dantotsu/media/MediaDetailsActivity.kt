@@ -111,9 +111,16 @@ class MediaDetailsActivity : AppCompatActivity() {
         hasComments = PrefManager.getVal<Int>(PrefName.CommentsEnabled) == 1 && !rescueMode
 
         // Load full-screen banner background (portrait mediaBg or landscape mediaBanner)
-        binding.mediaBg?.loadImage(media.banner ?: media.cover)
-        binding.mediaBanner?.loadImage(media.banner ?: media.cover)
-        binding.mediaBannerNoKen?.loadImage(media.banner ?: media.cover)
+        val bannerBrightness = PrefManager.getVal<Float>(PrefName.BannerBrightness)
+        if (bannerBrightness > 0f) {
+            binding.mediaBg?.loadImage(media.banner ?: media.cover)
+            binding.mediaBanner?.loadImage(media.banner ?: media.cover)
+            binding.mediaBannerNoKen?.loadImage(media.banner ?: media.cover)
+            binding.mediaBg?.alpha = bannerBrightness
+            binding.mediaBgGradient?.alpha = bannerBrightness
+            binding.mediaBanner?.alpha = bannerBrightness
+            binding.mediaBannerNoKen?.alpha = bannerBrightness
+        }
 
         // Close button
         binding.mediaClose.setOnClickListener {

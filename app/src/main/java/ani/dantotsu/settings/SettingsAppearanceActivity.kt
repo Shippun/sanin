@@ -38,6 +38,7 @@ class SettingsAppearanceActivity : AppCompatActivity() {
             binding.appearanceHideRedDot,
             binding.appearanceBlurBanners,
             binding.appearancePersistSideRail,
+            binding.appearanceBannerBrightness,
         )
 
         binding.appearanceCardSize.setOnClickListener {
@@ -93,6 +94,11 @@ class SettingsAppearanceActivity : AppCompatActivity() {
         binding.appearanceUiScale.addOnChangeListener { _, value, _ ->
             PrefManager.setVal(PrefName.UIScale, value)
             restartApp()
+        }
+
+        binding.appearanceBannerBrightness.value = PrefManager.getVal(PrefName.BannerBrightness)
+        binding.appearanceBannerBrightness.addOnChangeListener { _, value, _ ->
+            PrefManager.setVal(PrefName.BannerBrightness, value)
         }
 
         binding.appearancePersistSideRail.isChecked = PrefManager.getVal(PrefName.SideRailPersist)
