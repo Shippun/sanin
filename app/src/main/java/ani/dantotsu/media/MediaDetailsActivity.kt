@@ -110,8 +110,10 @@ class MediaDetailsActivity : AppCompatActivity() {
         val rescueMode: Boolean = PrefManager.getVal(PrefName.RescueMode)
         hasComments = PrefManager.getVal<Int>(PrefName.CommentsEnabled) == 1 && !rescueMode
 
-        // Load full-screen banner background
-        binding.mediaBg!!.loadImage(media.banner ?: media.cover)
+        // Load full-screen banner background (portrait mediaBg or landscape mediaBanner)
+        binding.mediaBg?.loadImage(media.banner ?: media.cover)
+        binding.mediaBanner?.loadImage(media.banner ?: media.cover)
+        binding.mediaBannerNoKen?.loadImage(media.banner ?: media.cover)
 
         // Close button
         binding.mediaClose.setOnClickListener {
@@ -257,7 +259,13 @@ class MediaDetailsActivity : AppCompatActivity() {
                 )
             }
         })
-        binding.mediaBg!!.setOnTouchListener { _, motionEvent ->
+        binding.mediaBg?.setOnTouchListener { _, motionEvent ->
+            gestureDetector.onTouchEvent(motionEvent); true
+        }
+        binding.mediaBanner?.setOnTouchListener { _, motionEvent ->
+            gestureDetector.onTouchEvent(motionEvent); true
+        }
+        binding.mediaBannerNoKen?.setOnTouchListener { _, motionEvent ->
             gestureDetector.onTouchEvent(motionEvent); true
         }
 
