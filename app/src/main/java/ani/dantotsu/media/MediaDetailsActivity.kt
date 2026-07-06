@@ -30,6 +30,7 @@ import ani.dantotsu.GesturesListener
 import ani.dantotsu.R
 import ani.dantotsu.Refresh
 import ani.dantotsu.connections.anilist.Anilist
+import ani.dantotsu.connections.anizip.AniZip
 import ani.dantotsu.connections.mal.MAL
 import ani.dantotsu.databinding.ActivityMediaBinding
 import ani.dantotsu.getThemeColor
@@ -113,13 +114,22 @@ class MediaDetailsActivity : AppCompatActivity() {
         // Load full-screen banner background (portrait mediaBg or landscape mediaBanner)
         val bannerBrightness = PrefManager.getVal<Float>(PrefName.BannerBrightness)
         if (bannerBrightness > 0f) {
-            binding.mediaBg?.loadImage(media.banner ?: media.cover)
+            val fallbackUrl = media.banner ?: media.cover
+            binding.mediaBg?.loadImage(fallbackUrl)
             binding.mediaBg?.alpha = bannerBrightness
             binding.mediaBgGradient?.alpha = bannerBrightness
-            binding.mediaBanner?.loadImage(media.banner ?: media.cover)
+            binding.mediaBanner?.loadImage(fallbackUrl)
             binding.mediaBanner?.alpha = bannerBrightness
-            binding.mediaBannerNoKen?.loadImage(media.banner ?: media.cover)
+            binding.mediaBannerNoKen?.loadImage(fallbackUrl)
             binding.mediaBannerNoKen?.alpha = bannerBrightness
+            lifecycleScope.launch {
+                val tmdbUrl = AniZip.getBackdropUrl(media.id)
+                if (tmdbUrl != null) {
+                    binding.mediaBg?.loadImage(tmdbUrl)
+                    binding.mediaBanner?.loadImage(tmdbUrl)
+                    binding.mediaBannerNoKen?.loadImage(tmdbUrl)
+                }
+            }
         } else {
             binding.mediaBg?.visibility = View.GONE
             binding.mediaBgGradient?.visibility = View.GONE
