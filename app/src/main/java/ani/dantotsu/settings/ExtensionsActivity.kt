@@ -14,8 +14,8 @@ import androidx.viewpager2.widget.ViewPager2
 import ani.dantotsu.R
 import ani.dantotsu.databinding.ActivityExtensionsBinding
 import ani.dantotsu.initActivity
+import ani.dantotsu.media.MediaType
 import ani.dantotsu.navBarHeight
-import ani.dantotsu.openLinkInBrowser
 import ani.dantotsu.others.AndroidBug5497Workaround
 import ani.dantotsu.others.LanguageMapper
 import ani.dantotsu.settings.saving.PrefManager
@@ -53,10 +53,6 @@ class ExtensionsActivity : AppCompatActivity() {
             bottomMargin = statusBarHeight + navBarHeight
         }
 
-        binding.openSettingsButton.setOnClickListener {
-            openLinkInBrowser(getString(R.string.github))
-        }
-
         val tabLayout = findViewById<TabLayout>(R.id.tabLayout)
         val viewPager = findViewById<ViewPager2>(R.id.viewPager)
         viewPager.offscreenPageLimit = 1
@@ -89,6 +85,15 @@ class ExtensionsActivity : AppCompatActivity() {
                         height = ViewGroup.LayoutParams.MATCH_PARENT
                     }
 
+                    if (tab.text?.contains("Anime") == true) {
+                        generateRepositoryButton(MediaType.ANIME)
+                    }
+                    if (tab.text?.contains("Manga") == true) {
+                        generateRepositoryButton(MediaType.MANGA)
+                    }
+                    if (tab.text?.contains("Novels") == true) {
+                        generateRepositoryButton(MediaType.NOVEL)
+                    }
                 }
 
                 override fun onTabUnselected(tab: TabLayout.Tab) {
@@ -168,6 +173,30 @@ class ExtensionsActivity : AppCompatActivity() {
         }
     }
 
+    private fun generateRepositoryButton(type: MediaType) {
+        binding.openSettingsButton.setOnClickListener {
+            val repos: Set<String> = when (type) {
+                MediaType.ANIME -> {
+                    PrefManager.getVal(PrefName.AnimeExtensionRepos)
+                }
+
+                MediaType.MANGA -> {
+                    PrefManager.getVal(PrefName.MangaExtensionRepos)
+                }
+
+                MediaType.NOVEL -> {
+                    PrefManager.getVal(PrefName.NovelExtensionRepos)
+                }
+            }
+            AddRepositoryBottomSheet.newInstance(
+                type,
+                repos.toList(),
+                AddRepositoryBottomSheet::addRepo,
+                AddRepositoryBottomSheet::removeRepo
+
+            ).show(supportFragmentManager, "add_repo")
+        }
+    }
 }
 
 interface SearchQueryHandler {
