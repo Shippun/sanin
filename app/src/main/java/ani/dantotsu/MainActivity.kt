@@ -828,7 +828,7 @@ class MainActivity : AppCompatActivity() {
 private class SpringInterpolator(
     private val damping: Float = 6f,
     private val stiffness: Float = 10f
-) : android.view.animation.BaseInterpolator {
+) : android.animation.TimeInterpolator {
     override fun getInterpolation(t: Float): Float {
         if (t <= 0f) return 0f
         if (t >= 1f) return 1f
