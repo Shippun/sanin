@@ -6,10 +6,8 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Path
-import android.util.AttributeSet
 import android.view.View
-import android.view.animation.LinearInterpolator
-import androidx.core.content.ContextCompat
+import androidx.core.animation.doOnEnd
 import com.google.android.material.color.MaterialColors
 import ani.dantotsu.R
 
@@ -73,7 +71,7 @@ class CurseMarkSpinnerView @JvmOverloads constructor(
         accentColor = try {
             MaterialColors.getColor(this, com.google.android.material.R.attr.colorPrimary)
         } catch (_: Exception) {
-            ContextCompat.getColor(context, R.color.orange)
+            Color.MAGENTA
         }
 
         val cx = width / 2f
