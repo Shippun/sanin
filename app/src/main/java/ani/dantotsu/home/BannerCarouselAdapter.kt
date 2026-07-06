@@ -42,7 +42,6 @@ class BannerCarouselAdapter(
             withContext(Dispatchers.Main) {
                 val url = anizipUrl ?: media.banner ?: media.cover
                 if (!url.isNullOrBlank()) {
-                    holder.bannerBg.loadImage(url)
                     holder.bannerImage.loadImage(url)
                 }
             }
