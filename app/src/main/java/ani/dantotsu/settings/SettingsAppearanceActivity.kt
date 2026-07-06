@@ -34,6 +34,7 @@ class SettingsAppearanceActivity : AppCompatActivity() {
         FocusEffectUtil.applyFocusListener(
             binding.appearanceBack,
             binding.appearanceCardSize,
+            binding.appearanceCardStyle,
             binding.appearanceHideRedDot,
             binding.appearanceBlurBanners,
             binding.appearancePersistSideRail,
@@ -48,6 +49,18 @@ class SettingsAppearanceActivity : AppCompatActivity() {
                 val currentIdx = values.indexOfFirst { it == current }.coerceAtLeast(0)
                 singleChoiceItems(labels, currentIdx) { index ->
                     PrefManager.setVal(PrefName.CardSize, values[index])
+                    restartApp()
+                }
+                show()
+            }
+        }
+
+        binding.appearanceCardStyle.setOnClickListener {
+            customAlertDialog().apply {
+                setTitle("Card Style")
+                val labels = arrayOf("Rounded", "Minimal", "Classic", "Cover Only", "Liquid Glass", "Neon", "Compact")
+                singleChoiceItems(labels, PrefManager.getVal<Int>(PrefName.CardStyle)) { index ->
+                    PrefManager.setVal(PrefName.CardStyle, index)
                     restartApp()
                 }
                 show()

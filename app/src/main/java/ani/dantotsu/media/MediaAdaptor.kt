@@ -59,9 +59,9 @@ class MediaAdaptor(
         if (type == 0) {
             rawCardStyle = PrefManager.getVal<Int>(PrefName.CardStyle)
             type = when (rawCardStyle) {
-                0 -> 0
+                0, 4, 6 -> 0
                 1 -> 1
-                2 -> 2
+                2, 5 -> 2
                 3 -> 3
                 else -> 0
             }

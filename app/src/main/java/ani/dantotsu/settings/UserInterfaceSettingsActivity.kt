@@ -28,17 +28,6 @@ class UserInterfaceSettingsActivity : AppCompatActivity() {
     lateinit var binding: ActivityUserInterfaceSettingsBinding
     private val ui = "ui_settings"
 
-    private fun getCardStyleLabel(style: Int): String = when (style) {
-        0 -> "Rounded"
-        1 -> "Minimal"
-        2 -> "Classic"
-        3 -> "Cover Only"
-        4 -> "Liquid Glass"
-        5 -> "Neon"
-        6 -> "Compact"
-        else -> "Rounded"
-    }
-
     private fun getFocusEffectLabel(effect: Int): String = when (effect) {
         0 -> "Glow"
         1 -> "Breathing"
@@ -68,7 +57,6 @@ class UserInterfaceSettingsActivity : AppCompatActivity() {
         FocusEffectUtil.applyFocusListener(
             binding.uiSettingsBack,
             binding.uiSettingsHomeLayout,
-            binding.uiSettingsCardStyle,
             binding.uiSettingsFocusEffect,
             binding.uiSettingsImmersive,
             binding.uiSettingsSmallView,
@@ -166,18 +154,6 @@ class UserInterfaceSettingsActivity : AppCompatActivity() {
         binding.uiSettingsImmersive.setOnCheckedChangeListener { _, isChecked ->
             PrefManager.setVal(PrefName.ImmersiveMode, isChecked)
             restartApp()
-        }
-
-        binding.uiSettingsCardStyle.setOnClickListener {
-            customAlertDialog().apply {
-                setTitle("Card Style")
-                val labels = arrayOf("Rounded", "Minimal", "Classic", "Cover Only", "Liquid Glass", "Neon", "Compact")
-                singleChoiceItems(labels, PrefManager.getVal<Int>(PrefName.CardStyle)) { index ->
-                    PrefManager.setVal(PrefName.CardStyle, index)
-                    restartApp()
-                }
-                show()
-            }
         }
 
         binding.uiSettingsFocusEffect.setOnClickListener {

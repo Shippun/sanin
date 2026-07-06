@@ -102,6 +102,26 @@
                 app:iconSize="24dp"
                 app:iconTint="?attr/colorPrimary" />
 
+            <Button
+                android:id="@+id/appearanceCardStyle"
+                android:layout_width="match_parent"
+                android:layout_height="64dp"
+                android:background="@drawable/ui_bg"
+                android:fontFamily="@font/poppins_bold"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                android:paddingStart="32dp"
+                android:paddingEnd="32dp"
+                android:text="Card Style"
+                android:textAlignment="viewStart"
+                android:textAllCaps="false"
+                android:textColor="?attr/colorOnBackground"
+                app:cornerRadius="0dp"
+                app:icon="@drawable/ic_round_auto_awesome_24"
+                app:iconPadding="16dp"
+                app:iconSize="24dp"
+                app:iconTint="?attr/colorPrimary" />
+
             <com.google.android.material.materialswitch.MaterialSwitch
                 android:id="@+id/appearanceHideRedDot"
                 android:layout_width="match_parent"
