@@ -742,8 +742,7 @@ class MainActivity : AppCompatActivity() {
                 startActivity(Intent(this, ani.dantotsu.settings.SettingsActivity::class.java))
             },
             R.id.rightRailAccount to {
-                startActivity(Intent(this, ani.dantotsu.settings.SettingsActivity::class.java)
-                    .putExtra("openAccount", true))
+                startActivity(Intent(this, ani.dantotsu.settings.SettingsAccountActivity::class.java))
             },
             R.id.rightRailSync to {
                 lifecycleScope.launch(Dispatchers.IO) {
