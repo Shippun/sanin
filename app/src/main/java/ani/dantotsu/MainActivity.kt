@@ -25,6 +25,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.animation.doOnEnd
 import androidx.core.content.ContextCompat
 import androidx.core.view.doOnAttach
+import androidx.core.view.doOnLayout
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.drawerlayout.widget.DrawerLayout
@@ -700,7 +701,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun showHomeNavRail() {
         binding.homeNavRail.visibility = View.VISIBLE
-        updateHomeNavIconTints()
+        binding.homeNavRailBg.doOnLayout { updateHomeNavIconTints() }
         val tab = navPillsViewModel.currentTab.value
         val id = when (tab) {
             0 -> R.id.homeNavHome

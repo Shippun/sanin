@@ -18,6 +18,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.appcompat.widget.AppCompatImageButton
 import androidx.core.content.ContextCompat
+import androidx.core.view.doOnLayout
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
@@ -343,7 +344,7 @@ class MediaDetailsActivity : AppCompatActivity() {
 
     private fun showNavPills() {
         binding.mediaNavPills?.visibility = View.VISIBLE
-        updateMediaNavIconTints(selected)
+        binding.navPillBg?.doOnLayout { updateMediaNavIconTints(selected) }
     }
 
     private fun hideNavPills() {
