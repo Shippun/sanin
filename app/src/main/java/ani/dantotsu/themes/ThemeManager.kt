@@ -86,6 +86,8 @@ class ThemeManager(private val context: Activity) {
             context.theme.resolveAttribute(com.google.android.material.R.attr.colorPrimary, tv, true)
             val gradientDir: Int = PrefManager.getVal(PrefName.GradientDirection)
             OledBackgroundManager.apply(context, oledMode, tv.data, gradientDir)
+        } else {
+            OledBackgroundManager.remove(context)
         }
     }
 
