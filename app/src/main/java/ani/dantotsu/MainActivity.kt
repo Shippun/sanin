@@ -1,6 +1,7 @@
 package ani.dantotsu
 
 import android.animation.ObjectAnimator
+import android.view.animation.DecelerateInterpolator
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.res.Configuration
@@ -700,8 +701,26 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showHomeNavRail() {
-        binding.homeNavRail.visibility = View.VISIBLE
-        binding.homeNavRailBg.doOnLayout { updateHomeNavIconTints() }
+        binding.homeNavRail.apply {
+            visibility = View.VISIBLE
+            pivotY = 0f
+            translationX = -60f * resources.displayMetrics.density
+            scaleY = 0.3f
+            alpha = 0f
+        }
+        binding.homeNavRailBg.doOnLayout {
+            ObjectAnimator.ofFloat(binding.homeNavRail, View.SCALE_Y, 1f).apply {
+                interpolator = SpringInterpolator()
+                duration = 700
+            }.start()
+            binding.homeNavRail.animate()
+                .translationX(0f)
+                .alpha(1f)
+                .setInterpolator(DecelerateInterpolator())
+                .setDuration(500)
+                .start()
+            updateHomeNavIconTints()
+        }
         val tab = navPillsViewModel.currentTab.value
         val id = when (tab) {
             0 -> R.id.homeNavHome
@@ -804,4 +823,17 @@ class MainActivity : AppCompatActivity() {
         findViewById<TextView>(R.id.rightRailEpisodesWatched).text = (Anilist.episodesWatched ?: 0).toString()
     }
 
+}
+
+private class SpringInterpolator(
+    private val damping: Float = 6f,
+    private val stiffness: Float = 10f
+) : android.view.animation.BaseInterpolator {
+    override fun getInterpolation(t: Float): Float {
+        if (t <= 0f) return 0f
+        if (t >= 1f) return 1f
+        val decay = exp(-t * damping)
+        val oscillation = cos(t * stiffness)
+        return 1f - decay * oscillation
+    }
 }
