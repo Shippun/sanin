@@ -29,14 +29,21 @@ class SnakeNavRailView @JvmOverloads constructor(
 
     private var gradientOffset = 0f
     private val gradientPaint = Paint(Paint.ANTI_ALIAS_FLAG)
-    private val scaleFillPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.argb(100, 0, 0, 0)
+    private val scalePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         style = Paint.Style.FILL
     }
-    private val scaleStrokePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.argb(160, 255, 255, 255)
+    private val keelPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         style = Paint.Style.STROKE
-        strokeWidth = 2.5f
+        strokeWidth = 1.8f
+        strokeCap = Paint.Cap.ROUND
+    }
+    private val shadowPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        style = Paint.Style.FILL
+    }
+    private val scaleEdgePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        color = Color.argb(45, 0, 0, 0)
+        style = Paint.Style.STROKE
+        strokeWidth = 0.8f
     }
     private var animator: ValueAnimator? = null
 
@@ -103,6 +110,7 @@ class SnakeNavRailView @JvmOverloads constructor(
         val w = width.toFloat()
         val h = height.toFloat().coerceAtLeast(1f)
 
+        val scroll = gradientOffset * h
         val positions = floatArrayOf(
             (0f + gradientOffset) % 1f,
             (0.25f + gradientOffset) % 1f,
@@ -117,34 +125,79 @@ class SnakeNavRailView @JvmOverloads constructor(
         )
         canvas.drawRect(0f, 0f, w, h, gradientPaint)
 
-        drawScales(canvas, w, h)
+        drawScales(canvas, w, h, scroll)
     }
 
-    private fun drawScales(canvas: Canvas, w: Float, h: Float) {
-        val scaleW = 20f
-        val scaleH = 16f
+    private val scalePath = buildScalePath()
+
+    private fun drawScales(canvas: Canvas, w: Float, h: Float, scroll: Float) {
+        val stepY = 30f
+        val stepX = 34f
+
         var row = 0
-        var y = -scaleH
-        while (y < h + scaleH) {
-            val offsetX = if (row % 2 == 0) 0f else scaleW / 2f
-            var x = offsetX - scaleW
-            while (x < w + scaleW) {
-                val path = Path().apply {
-                    moveTo(x, y + scaleH / 2f)
-                    lineTo(x + scaleW / 2f, y)
-                    lineTo(x + scaleW, y + scaleH / 2f)
-                    lineTo(x + scaleW, y + scaleH * 0.8f)
-                    lineTo(x + scaleW / 2f, y + scaleH)
-                    lineTo(x, y + scaleH * 0.8f)
-                    close()
-                }
-                canvas.drawPath(path, scaleFillPaint)
-                canvas.drawPath(path, scaleStrokePaint)
-                x += scaleW * 1.5f
+        var y = -stepY + (scroll % stepY)
+        while (y < h + stepY) {
+            val offsetX = if (row % 2 == 0) 0f else stepX * 0.5f
+            var x = offsetX - stepX
+            while (x < w + stepX) {
+                val cx = x + stepX * 0.5f
+                val cy = y + stepY * 0.5f
+                drawOneScale(canvas, cx, cy, h)
+                x += stepX
             }
-            y += scaleH * 1.4f
+            y += stepY
             row++
         }
+    }
+
+    private fun drawOneScale(canvas: Canvas, cx: Float, cy: Float, h: Float) {
+        canvas.save()
+        canvas.translate(cx, cy)
+
+        val baseColor = sampleGradientColor(cy, h)
+        val r = Color.red(baseColor)
+        val g = Color.green(baseColor)
+        val b = Color.blue(baseColor)
+
+        shadowPaint.color = Color.argb(70, 0, 0, 0)
+        canvas.save()
+        canvas.translate(0f, 2.5f)
+        canvas.drawPath(scalePath, shadowPaint)
+        canvas.restore()
+
+        scalePaint.color = Color.argb(180, r, g, b)
+        canvas.drawPath(scalePath, scalePaint)
+
+        canvas.drawPath(scalePath, scaleEdgePaint)
+
+        val luminance = (0.299f * r + 0.587f * g + 0.114f * b) / 255f
+        keelPaint.color = if (luminance > 0.4f)
+            Color.argb(100, 0, 0, 0)
+        else
+            Color.argb(100, 255, 255, 255)
+        canvas.drawLine(0f, -11f, 0f, 11f, keelPaint)
+
+        canvas.restore()
+    }
+
+    private fun buildScalePath(): Path {
+        val path = Path()
+        path.moveTo(0f, -16f)
+        path.cubicTo(10f, -15f, 12f, -3f, 7f, 0f)
+        path.cubicTo(4f, 3f, 2f, 10f, 0f, 16f)
+        path.cubicTo(-2f, 10f, -4f, 3f, -7f, 0f)
+        path.cubicTo(-12f, -3f, -10f, -15f, 0f, -16f)
+        path.close()
+        return path
+    }
+
+    private fun sampleGradientColor(cy: Float, h: Float): Int {
+        val norm = ((cy / h) + gradientOffset) % 1f
+        val adj = if (norm < 0f) norm + 1f else norm
+        val seg = adj * (colors.size - 1)
+        val idx = seg.toInt().coerceIn(0, colors.size - 2)
+        val t = (seg - idx).coerceIn(0f, 1f)
+        return lerpColor(colors[idx], colors[idx + 1], t)
     }
 
     private fun lerpColor(c1: Int, c2: Int, t: Float): Int {

@@ -543,7 +543,7 @@ class MainActivity : AppCompatActivity() {
         super.onResume()
         loadAvatar()
         binding.homeNavRailBg.live = PrefManager.getVal(PrefName.LiveSideRail)
-        if (PrefManager.getVal<Boolean>(PrefName.SideRailPersist)) {
+        if (PrefManager.getVal<Boolean>(PrefName.SideRailPersist) && ::navPillsViewModel.isInitialized) {
             showHomeNavRail()
         }
     }
