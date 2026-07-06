@@ -14,11 +14,21 @@ import android.graphics.drawable.Drawable
 object OledBackgroundManager {
 
     fun apply(activity: Activity, oledMode: Int, primaryColor: Int, gradientDir: Int = 0) {
-        when (oledMode) {
-            2 -> activity.window.setBackgroundDrawable(GlowSpotsDrawable(primaryColor))
-            3 -> activity.window.setBackgroundDrawable(GradientBgDrawable(primaryColor, gradientDir))
-            4 -> activity.window.setBackgroundDrawable(VignetteBgDrawable(primaryColor))
+        activity.window.decorView.post {
+            when (oledMode) {
+                1 -> activity.window.setBackgroundDrawable(DarkBgDrawable())
+                2 -> activity.window.setBackgroundDrawable(GlowSpotsDrawable(primaryColor))
+                3 -> activity.window.setBackgroundDrawable(GradientBgDrawable(primaryColor, gradientDir))
+                4 -> activity.window.setBackgroundDrawable(VignetteBgDrawable(primaryColor))
+            }
         }
+    }
+
+    private class DarkBgDrawable : Drawable() {
+        override fun draw(canvas: Canvas) { canvas.drawColor(Color.BLACK) }
+        override fun setAlpha(alpha: Int) {}
+        override fun setColorFilter(cf: ColorFilter?) {}
+        override fun getOpacity() = PixelFormat.OPAQUE
     }
 
     private class GlowSpotsDrawable(private val primaryColor: Int) : Drawable() {
