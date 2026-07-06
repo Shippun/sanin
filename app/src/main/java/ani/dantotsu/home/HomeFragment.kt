@@ -36,6 +36,7 @@ import ani.dantotsu.R
 import ani.dantotsu.Refresh
 import ani.dantotsu.blurImage
 import ani.dantotsu.connections.anilist.Anilist
+import ani.dantotsu.connections.anizip.AniZip
 import ani.dantotsu.connections.mal.MAL
 import ani.dantotsu.connections.anilist.AnilistHomeViewModel
 import ani.dantotsu.connections.anilist.getUserId
@@ -808,21 +809,27 @@ class HomeFragment : Fragment() {
     private fun updateNavigatingBanner(media: Media) {
         val b = _binding ?: return
         navBannerCurrentMediaId = media.id
-        val bannerUrl = media.banner ?: media.cover ?: return
 
-        val front = if (navBannerSlotA) b.navBannerBgA else b.navBannerBgB
-        val back = if (navBannerSlotA) b.navBannerBgB else b.navBannerBgA
+        lifecycleScope.launch(Dispatchers.IO) {
+            val anizipUrl = AniZip.getBackdropUrl(media.id)
+            val bannerUrl = anizipUrl ?: media.banner ?: media.cover ?: return@launch
+            withContext(Dispatchers.Main) {
+                if (_binding == null || navBannerCurrentMediaId != media.id) return@withContext
+                val front = if (navBannerSlotA) b.navBannerBgA else b.navBannerBgB
+                val back = if (navBannerSlotA) b.navBannerBgB else b.navBannerBgA
 
-        back.loadImage(bannerUrl)
-        back.alpha = 0f
-        back.animate()
-            .alpha(1f)
-            .setDuration(400)
-            .withEndAction {
-                front.alpha = 0f
-                navBannerSlotA = !navBannerSlotA
+                back.loadImage(bannerUrl)
+                back.alpha = 0f
+                back.animate()
+                    .alpha(1f)
+                    .setDuration(400)
+                    .withEndAction {
+                        front.alpha = 0f
+                        navBannerSlotA = !navBannerSlotA
+                    }
+                    .start()
             }
-            .start()
+        }
 
         b.navBannerTitle.text = media.userPreferredName
         b.navBannerLogo.visibility = View.GONE

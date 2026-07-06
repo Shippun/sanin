@@ -12,12 +12,14 @@ import androidx.recyclerview.widget.RecyclerView
 import ani.dantotsu.R
 import ani.dantotsu.connections.LogoApi
 import ani.dantotsu.connections.anilist.Anilist
+import ani.dantotsu.connections.anizip.AniZip
 import ani.dantotsu.loadImage
 import ani.dantotsu.media.Media
 import ani.dantotsu.util.FocusEffectUtil
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 class BannerCarouselAdapter(
     private val items: List<Media>,
     private val scope: CoroutineScope,
@@ -34,14 +36,16 @@ class BannerCarouselAdapter(
         val media = items[position]
         val ctx = holder.itemView.context
 
-        // --- Banner images (two-layer to avoid black bars) ---
-        val bannerUrl = media.banner
-        if (!bannerUrl.isNullOrBlank()) {
-            holder.bannerBg.loadImage(bannerUrl)
-            holder.bannerImage.loadImage(bannerUrl)
-        } else if (!media.cover.isNullOrBlank()) {
-            holder.bannerBg.loadImage(media.cover)
-            holder.bannerImage.loadImage(media.cover)
+        // --- Banner images from AniZip (fallback to AniList) ---
+        scope.launch(Dispatchers.IO) {
+            val anizipUrl = AniZip.getBackdropUrl(media.id)
+            withContext(Dispatchers.Main) {
+                val url = anizipUrl ?: media.banner ?: media.cover
+                if (!url.isNullOrBlank()) {
+                    holder.bannerBg.loadImage(url)
+                    holder.bannerImage.loadImage(url)
+                }
+            }
         }
 
         // --- Clearlogo (from LogoApi) / Title fallback ---
