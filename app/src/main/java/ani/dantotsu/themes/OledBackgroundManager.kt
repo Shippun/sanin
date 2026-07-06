@@ -10,17 +10,21 @@ import android.graphics.PixelFormat
 import android.graphics.RadialGradient
 import android.graphics.Shader
 import android.graphics.drawable.Drawable
+import android.os.Handler
+import android.os.Looper
 
 object OledBackgroundManager {
 
     fun apply(activity: Activity, oledMode: Int, primaryColor: Int, gradientDir: Int = 0) {
-        activity.window.decorView.post {
-            when (oledMode) {
-                1 -> activity.window.setBackgroundDrawable(DarkBgDrawable())
-                2 -> activity.window.setBackgroundDrawable(GlowSpotsDrawable(primaryColor))
-                3 -> activity.window.setBackgroundDrawable(GradientBgDrawable(primaryColor, gradientDir))
-                4 -> activity.window.setBackgroundDrawable(VignetteBgDrawable(primaryColor))
-            }
+        Handler(Looper.getMainLooper()).post {
+            try {
+                when (oledMode) {
+                    1 -> activity.window.setBackgroundDrawable(DarkBgDrawable())
+                    2 -> activity.window.setBackgroundDrawable(GlowSpotsDrawable(primaryColor))
+                    3 -> activity.window.setBackgroundDrawable(GradientBgDrawable(primaryColor, gradientDir))
+                    4 -> activity.window.setBackgroundDrawable(VignetteBgDrawable(primaryColor))
+                }
+            } catch (_: Exception) {}
         }
     }
 
