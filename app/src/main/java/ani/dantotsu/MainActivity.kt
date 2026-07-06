@@ -501,10 +501,8 @@ class MainActivity : AppCompatActivity() {
             when (event.keyCode) {
                 KeyEvent.KEYCODE_BACK, KeyEvent.KEYCODE_ESCAPE -> {
                     if (binding.homeNavRail.visibility == View.VISIBLE) {
-                        if (!PrefManager.getVal<Boolean>(PrefName.SideRailPersist)) {
-                            hideHomeNavRail()
-                            return true
-                        }
+                        hideHomeNavRail()
+                        if (binding.homeNavRail.visibility == View.VISIBLE) return true
                     }
                 }
                 KeyEvent.KEYCODE_DPAD_RIGHT -> {
@@ -545,6 +543,9 @@ class MainActivity : AppCompatActivity() {
         super.onResume()
         loadAvatar()
         binding.homeNavRailBg.live = PrefManager.getVal(PrefName.LiveSideRail)
+        if (PrefManager.getVal<Boolean>(PrefName.SideRailPersist)) {
+            showHomeNavRail()
+        }
     }
 
     private fun handleViewIntent(intent: Intent) {
@@ -712,6 +713,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun hideHomeNavRail() {
+        if (PrefManager.getVal<Boolean>(PrefName.SideRailPersist)) return
         binding.homeNavRail.visibility = View.GONE
         val tag = currentFragmentTag
         if (tag != null) {

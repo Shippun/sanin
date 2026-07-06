@@ -30,13 +30,13 @@ class SnakeNavRailView @JvmOverloads constructor(
     private var gradientOffset = 0f
     private val gradientPaint = Paint(Paint.ANTI_ALIAS_FLAG)
     private val scaleFillPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.argb(18, 255, 255, 255)
+        color = Color.argb(100, 0, 0, 0)
         style = Paint.Style.FILL
     }
     private val scaleStrokePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.argb(40, 255, 255, 255)
+        color = Color.argb(160, 255, 255, 255)
         style = Paint.Style.STROKE
-        strokeWidth = 1.5f
+        strokeWidth = 2.5f
     }
     private var animator: ValueAnimator? = null
 

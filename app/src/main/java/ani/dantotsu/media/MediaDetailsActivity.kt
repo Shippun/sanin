@@ -278,6 +278,10 @@ class MediaDetailsActivity : AppCompatActivity() {
                 extContainer.visibility = View.GONE
             }
         }
+        binding.navPillBg?.live = PrefManager.getVal(PrefName.LiveSideRail)
+        if (PrefManager.getVal<Boolean>(PrefName.SideRailPersist)) {
+            showNavPills()
+        }
         binding.root.requestLayout()
     }
 
@@ -286,10 +290,8 @@ class MediaDetailsActivity : AppCompatActivity() {
             when (event.keyCode) {
                 KeyEvent.KEYCODE_BACK, KeyEvent.KEYCODE_ESCAPE -> {
                     if (binding.mediaNavPills?.visibility == View.VISIBLE) {
-                        if (!PrefManager.getVal<Boolean>(PrefName.SideRailPersist)) {
-                            hideNavPills()
-                            return true
-                        }
+                        hideNavPills()
+                        if (binding.mediaNavPills?.visibility == View.VISIBLE) return true
                     }
                 }
                 KeyEvent.KEYCODE_DPAD_RIGHT -> {
@@ -329,6 +331,7 @@ class MediaDetailsActivity : AppCompatActivity() {
     }
 
     private fun hideNavPills() {
+        if (PrefManager.getVal<Boolean>(PrefName.SideRailPersist)) return
         binding.mediaNavPills?.visibility = View.GONE
         binding.mediaViewPager!!.requestFocus()
     }
