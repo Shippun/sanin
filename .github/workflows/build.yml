@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    runs-on: [self-hosted, linux, arm64]
+    runs-on: ubuntu-latest
     strategy:
       matrix:
         flavor: [fdroid, google]
