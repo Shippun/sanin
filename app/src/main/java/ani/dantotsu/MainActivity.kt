@@ -37,6 +37,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.media3.common.util.UnstableApi
+import androidx.recyclerview.widget.RecyclerView
 import ani.dantotsu.addons.torrent.TorrentAddonManager
 import ani.dantotsu.addons.torrent.TorrentServerService
 import ani.dantotsu.blurImage
@@ -525,7 +526,16 @@ class MainActivity : AppCompatActivity() {
                         val focus = currentFocus
                         if (focus != null) {
                             val railWidth = (60f * resources.displayMetrics.density).toInt()
-                            if (focus.left <= railWidth || focus.focusSearch(View.FOCUS_LEFT) == null) {
+                            var p = focus.parent
+                            var canScrollLeft = false
+                            while (p != null) {
+                                if (p is RecyclerView && p.canScrollHorizontally(-1)) {
+                                    canScrollLeft = true
+                                    break
+                                }
+                                p = (p as? View)?.parent
+                            }
+                            if (!canScrollLeft && (focus.left <= railWidth || focus.focusSearch(View.FOCUS_LEFT) == null)) {
                                 showHomeNavRail()
                                 return true
                             }

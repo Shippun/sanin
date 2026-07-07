@@ -190,7 +190,7 @@ class BannerCarouselAdapter(
         holder.favBtn.visibility = View.VISIBLE
 
         // --- Focus effects ---
-        FocusEffectUtil.applyFocusListener(holder.itemView, holder.playBtn, holder.favBtn)
+        FocusEffectUtil.applyFocusListener(holder.playBtn, holder.favBtn)
 
         // --- Item click ---
         holder.itemView.setOnClickListener { onItemClick(media) }

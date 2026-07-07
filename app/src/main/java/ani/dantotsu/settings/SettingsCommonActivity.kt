@@ -4,7 +4,6 @@ import android.app.AlertDialog
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.ArrayAdapter
@@ -144,6 +143,8 @@ class SettingsCommonActivity : AppCompatActivity() {
                 restartApp()
             }
 
+            val startUpTabs = arrayOf("Anime", "Home", "Manga")
+
             settingsRecyclerView.adapter =
                 SettingsAdapter(
                     arrayListOf(
@@ -161,6 +162,23 @@ class SettingsCommonActivity : AppCompatActivity() {
                                 )
                             },
                             isActivity = true,
+                        ),
+                        Settings(
+                            type = 1,
+                            name = "Startup Tab",
+                            desc = "Default tab on app launch",
+                            icon = R.drawable.ic_round_home_24,
+                            onClick = {
+                                val labels = startUpTabs
+                                customAlertDialog().apply {
+                                    setTitle("Startup Tab")
+                                    singleChoiceItems(labels, PrefManager.getVal<Int>(PrefName.DefaultStartUpTab)) { index ->
+                                        PrefManager.setVal(PrefName.DefaultStartUpTab, index)
+                                        initActivity(context)
+                                    }
+                                    show()
+                                }
+                            },
                         ),
                         Settings(
                             type = 1,
@@ -455,43 +473,6 @@ class SettingsCommonActivity : AppCompatActivity() {
             settingsRecyclerView.apply {
                 layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
                 setHasFixedSize(true)
-            }
-            var previousStart: View =
-                when (PrefManager.getVal<Int>(PrefName.DefaultStartUpTab)) {
-                    0 -> uiSettingsAnime
-                    1 -> uiSettingsHome
-                    2 -> uiSettingsManga
-                    else -> uiSettingsHome
-                }
-            previousStart.alpha = 1f
-
-            fun uiDefault(
-                mode: Int,
-                current: View,
-            ) {
-                previousStart.alpha = 0.33f
-                previousStart = current
-                current.alpha = 1f
-                PrefManager.setVal(PrefName.DefaultStartUpTab, mode)
-                initActivity(context)
-            }
-
-            uiSettingsAnime.isFocusable = true
-            FocusEffectUtil.applyFocusListener(uiSettingsAnime)
-            uiSettingsAnime.setOnClickListener {
-                uiDefault(0, it)
-            }
-
-            uiSettingsHome.isFocusable = true
-            FocusEffectUtil.applyFocusListener(uiSettingsHome)
-            uiSettingsHome.setOnClickListener {
-                uiDefault(1, it)
-            }
-
-            uiSettingsManga.isFocusable = true
-            FocusEffectUtil.applyFocusListener(uiSettingsManga)
-            uiSettingsManga.setOnClickListener {
-                uiDefault(2, it)
             }
         }
     }

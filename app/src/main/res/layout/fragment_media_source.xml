@@ -62,6 +62,8 @@
         android:id="@+id/mediaSourceRecycler"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:focusable="true"
+        android:descendantFocusability="afterDescendants"
         android:clipToPadding="false"
         android:paddingTop="300dp"
         android:paddingStart="24dp"

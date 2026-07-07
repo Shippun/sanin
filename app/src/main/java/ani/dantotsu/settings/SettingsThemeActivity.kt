@@ -1,8 +1,6 @@
 package ani.dantotsu.settings
 
 import android.os.Bundle
-import android.view.KeyEvent
-import android.view.View
 import android.view.ViewGroup
 import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
@@ -43,30 +41,7 @@ class SettingsThemeActivity : AppCompatActivity() {
             }
             FocusEffectUtil.applyFocusListener(themeSettingsBack)
 
-            var previous: View = when (PrefManager.getVal<Int>(PrefName.DarkMode)) {
-                0 -> themeAuto
-                1 -> themeLight
-                2 -> themeDark
-                else -> themeAuto
-            }
-            previous.alpha = 1f
-            fun uiTheme(mode: Int, current: View) {
-                previous.alpha = 0.33f
-                previous = current
-                current.alpha = 1f
-                PrefManager.setVal(PrefName.DarkMode, mode)
-                restartApp()
-            }
-            themeLight.isFocusable = true
-            FocusEffectUtil.applyFocusListener(themeLight)
-            themeLight.setOnClickListener { uiTheme(1, it) }
-            themeDark.isFocusable = true
-            FocusEffectUtil.applyFocusListener(themeDark)
-            themeDark.setOnClickListener { uiTheme(2, it) }
-            themeAuto.isFocusable = true
-            FocusEffectUtil.applyFocusListener(themeAuto)
-            themeAuto.setOnClickListener { uiTheme(0, it) }
-
+            val themeModes = arrayOf("Auto", "Light", "Dark")
             val accentColors = arrayOf(
                 0 to "Default", 1 to "Red", 2 to "Pink", 3 to "Purple",
                 4 to "Deep Purple", 5 to "Indigo", 6 to "Blue", 7 to "Light Blue",
@@ -77,6 +52,22 @@ class SettingsThemeActivity : AppCompatActivity() {
 
             settingsRecyclerView.adapter = SettingsAdapter(
                 arrayListOf(
+                    Settings(
+                        type = 1,
+                        name = "Theme Mode",
+                        desc = "Auto, Light, or Dark mode",
+                        icon = R.drawable.ic_round_brightness_medium_24,
+                        onClick = {
+                            customAlertDialog().apply {
+                                setTitle("Theme Mode")
+                                singleChoiceItems(themeModes, PrefManager.getVal<Int>(PrefName.DarkMode)) { index ->
+                                    PrefManager.setVal(PrefName.DarkMode, index)
+                                    restartApp()
+                                }
+                                show()
+                            }
+                        },
+                    ),
                     Settings(
                         type = 1,
                         name = "Accent Color",
@@ -137,13 +128,5 @@ class SettingsThemeActivity : AppCompatActivity() {
         }
     }
 
-    override fun dispatchKeyEvent(event: KeyEvent): Boolean {
-        if (event.action == KeyEvent.ACTION_DOWN &&
-            (event.keyCode == KeyEvent.KEYCODE_DPAD_LEFT || event.keyCode == KeyEvent.KEYCODE_DPAD_RIGHT) &&
-            binding.themeSwitcher?.hasFocus() == true
-        ) {
-            return true
-        }
-        return super.dispatchKeyEvent(event)
-    }
+
 }
