@@ -292,10 +292,6 @@ class ExoplayerView :
 
     private val audioTrackGroups = mutableListOf<Tracks.Group>()
 
-    private val DPAD_LONG_PRESS_DELAY = 600L
-    private var dpadLongPressTriggered = false
-    private val dpadSeekHandler = Handler(Looper.getMainLooper())
-        
     // Subtitle label to select the next time onTracksChanged fires (after setMediaItem+prepare).
     // Volatile so it is safely read from the Player.Listener callback thread.
     @Volatile private var pendingSubtitleLabel: String? = null
@@ -941,9 +937,6 @@ class ExoplayerView :
                 }
             }
         }
-
-        keyMap[KEYCODE_DPAD_RIGHT] = { seek(true) }
-        keyMap[KEYCODE_DPAD_LEFT] = { seek(false) }
 
         // Screen Gestures
         if (PrefManager.getVal<Boolean>(PrefName.Gestures) || PrefManager.getVal<Boolean>(PrefName.DoubleTap)) {
@@ -3350,54 +3343,15 @@ class ExoplayerView :
     override fun dispatchKeyEvent(event: KeyEvent): Boolean {
         if (!isInitialized) return super.dispatchKeyEvent(event)
         when (event.keyCode) {
-            KeyEvent.KEYCODE_DPAD_UP, KeyEvent.KEYCODE_DPAD_DOWN -> {
+            KeyEvent.KEYCODE_DPAD_UP, KeyEvent.KEYCODE_DPAD_DOWN,
+            KEYCODE_DPAD_LEFT, KEYCODE_DPAD_RIGHT -> {
                 if (event.action == KeyEvent.ACTION_DOWN) ensureControllerVisible()
-                return true
+                return false
             }
             KeyEvent.KEYCODE_DPAD_CENTER, KeyEvent.KEYCODE_ENTER -> {
                 if (event.action == KeyEvent.ACTION_UP) {
                     if (playerView.isControllerFullyVisible) exoPlay.performClick()
                     else ensureControllerVisible()
-                }
-                return true
-            }
-            KEYCODE_DPAD_RIGHT -> {
-                when (event.action) {
-                    KeyEvent.ACTION_DOWN -> if (event.repeatCount == 0) {
-                        dpadLongPressTriggered = false
-                        dpadSeekHandler.postDelayed({
-                            dpadLongPressTriggered = true
-                            exoNext.performClick()
-                        }, DPAD_LONG_PRESS_DELAY)
-                    }
-                    KeyEvent.ACTION_UP -> {
-                        dpadSeekHandler.removeCallbacksAndMessages(null)
-                        if (!dpadLongPressTriggered) {
-                            ensureControllerVisible()
-                            keyMap[KEYCODE_DPAD_RIGHT]?.invoke()
-                        }
-                        dpadLongPressTriggered = false
-                    }
-                }
-                return true
-            }
-            KEYCODE_DPAD_LEFT -> {
-                when (event.action) {
-                    KeyEvent.ACTION_DOWN -> if (event.repeatCount == 0) {
-                        dpadLongPressTriggered = false
-                        dpadSeekHandler.postDelayed({
-                            dpadLongPressTriggered = true
-                            exoPrev.performClick()
-                        }, DPAD_LONG_PRESS_DELAY)
-                    }
-                    KeyEvent.ACTION_UP -> {
-                        dpadSeekHandler.removeCallbacksAndMessages(null)
-                        if (!dpadLongPressTriggered) {
-                            ensureControllerVisible()
-                            keyMap[KEYCODE_DPAD_LEFT]?.invoke()
-                        }
-                        dpadLongPressTriggered = false
-                    }
                 }
                 return true
             }
@@ -3447,12 +3401,6 @@ class ExoplayerView :
         }
         return super.dispatchKeyEvent(event)
     }
-
-    private val keyMap: MutableMap<Int, (() -> Unit)?> =
-        mutableMapOf(
-            KEYCODE_DPAD_RIGHT to null,
-            KEYCODE_DPAD_LEFT to null,
-        )
 
     private fun startExoPlayer() {
         exoPlayer.setMediaItem(mediaItem)

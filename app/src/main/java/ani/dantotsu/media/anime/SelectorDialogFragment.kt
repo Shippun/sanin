@@ -646,7 +646,11 @@ class SelectorDialogFragment : BottomSheetDialogFragment() {
         }
 
         private inner class StreamViewHolder(val binding: ItemStreamBinding) :
-            RecyclerView.ViewHolder(binding.root)
+            RecyclerView.ViewHolder(binding.root) {
+            init {
+                itemView.isFocusable = true
+            }
+        }
     }
 
     private inner class VideoAdapter(private val extractor: VideoExtractor,private val onEpisodeDownloadHandler: EpisodeDownloadHandler?) :
@@ -853,6 +857,7 @@ class SelectorDialogFragment : BottomSheetDialogFragment() {
         private inner class UrlViewHolder(val binding: ItemUrlBinding) :
             RecyclerView.ViewHolder(binding.root) {
             init {
+                itemView.isFocusable = true
                 itemView.setSafeOnClickListener {
                     if (isDownloadMenu == true) {
                         binding.urlDownload.performClick()

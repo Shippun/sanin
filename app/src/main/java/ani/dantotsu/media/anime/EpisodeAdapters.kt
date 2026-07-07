@@ -353,6 +353,7 @@ class EpisodeAdapter(
     inner class EpisodeCompactViewHolder(val binding: ItemEpisodeCompactBinding) :
         RecyclerView.ViewHolder(binding.root) {
         init {
+            itemView.isFocusable = true
             itemView.setOnClickListener {
                 if (bindingAdapterPosition < arr.size && bindingAdapterPosition >= 0)
                     fragment.onEpisodeClick(arr[bindingAdapterPosition].number)
@@ -363,6 +364,7 @@ class EpisodeAdapter(
     inner class EpisodeGridViewHolder(val binding: ItemEpisodeGridBinding) :
         RecyclerView.ViewHolder(binding.root) {
         init {
+            itemView.isFocusable = true
             itemView.setOnClickListener {
                 if (bindingAdapterPosition < arr.size && bindingAdapterPosition >= 0)
                     fragment.onEpisodeClick(arr[bindingAdapterPosition].number)
@@ -375,6 +377,7 @@ class EpisodeAdapter(
         private val activeCoroutines = mutableSetOf<String>()
 
         init {
+            itemView.isFocusable = true
             itemView.setOnClickListener {
                 if (bindingAdapterPosition < arr.size && bindingAdapterPosition >= 0)
                     fragment.onEpisodeClick(arr[bindingAdapterPosition].number)
