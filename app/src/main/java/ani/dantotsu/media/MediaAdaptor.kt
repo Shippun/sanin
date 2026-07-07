@@ -588,7 +588,7 @@ class MediaAdaptor(
             return
         }
         gradientJobs[position] = CoroutineScope(Dispatchers.IO).launch {
-            val bitmap = BitmapUtil.downloadImageAsBitmap(media.cover ?: return@launch)
+            val bitmap = BitmapUtil.downloadImageAsBitmap(media.cover ?: return@launch) ?: return@launch
             val color = averageColor(bitmap)
             coverGradientCache[media.id] = color
             withContext(Dispatchers.Main) {
