@@ -84,7 +84,11 @@ object LogoApi {
                         ?.takeIf { it.startsWith("http") }
                 }
                 if (direct != null) return direct
-                val imagesArray = element["images"] as? JsonArray
+
+                val imagesArray =
+                    (element["mappings"] as? JsonObject)?.get("images") as? JsonArray
+                        ?: element["images"] as? JsonArray
+
                 imagesArray?.filterIsInstance<JsonObject>()
                     ?.firstOrNull { img ->
                         (img["coverType"] as? JsonPrimitive)?.contentOrNull

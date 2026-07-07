@@ -18,6 +18,7 @@ import ani.dantotsu.media.Media
 import ani.dantotsu.util.FocusEffectUtil
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 class BannerCarouselAdapter(
@@ -57,12 +58,16 @@ class BannerCarouselAdapter(
         holder.title.text = media.userPreferredName ?: media.name
         holder.title.isVisible = true
         holder.clearlogo.isVisible = false
-        scope.launch(Dispatchers.Main) {
+        holder.clearlogo.setImageDrawable(null)
+        holder.logoJob?.cancel()
+        holder.logoJob = scope.launch(Dispatchers.IO) {
             val logoUrl = LogoApi.getLogoUrl(media.id)
-            if (!logoUrl.isNullOrBlank()) {
-                holder.clearlogo.isVisible = true
-                holder.title.isVisible = false
-                holder.clearlogo.loadImage(logoUrl)
+            withContext(Dispatchers.Main) {
+                if (!logoUrl.isNullOrBlank()) {
+                    holder.clearlogo.isVisible = true
+                    holder.title.isVisible = false
+                    holder.clearlogo.loadImage(logoUrl)
+                }
             }
         }
 
@@ -206,6 +211,7 @@ class BannerCarouselAdapter(
         val bannerImage: ImageView = view.findViewById(R.id.bannerImage)
         val clearlogo: ImageView = view.findViewById(R.id.bannerClearlogo)
         val title: TextView = view.findViewById(R.id.bannerTitle)
+        var logoJob: Job? = null
 
         val formatTag: TextView = view.findViewById(R.id.bannerFormatTag)
         val statusTag: TextView = view.findViewById(R.id.bannerStatusTag)
