@@ -599,6 +599,40 @@ class MediaDetailsViewModel : ViewModel() {
         }
     }
 
+    suspend fun fetchKitsuEpisodes(media: Media): Map<String, Episode>? {
+        return try {
+            val data = Kitsu.getKitsuEpisodesDetails(media)
+            if (data != null && kitsuEpisodes.value == null) kitsuEpisodes.postValue(data)
+            data
+        } catch (e: Exception) {
+            Logger.log(e)
+            null
+        }
+    }
+
+    suspend fun fetchAnifyEpisodes(id: Int): Map<String, Episode>? {
+        return try {
+            val data = Anify.fetchAndParseMetadata(id)
+            if (data != null && anifyEpisodes.value == null) anifyEpisodes.postValue(data)
+            data
+        } catch (e: Exception) {
+            Logger.log(e)
+            null
+        }
+    }
+
+    suspend fun fetchFillerEpisodes(media: Media): Map<String, Episode>? {
+        return try {
+            val id = media.idMAL ?: return null
+            val data = Jikan.getEpisodes(id)
+            if (data != null && fillerEpisodes.value == null) fillerEpisodes.postValue(data)
+            data
+        } catch (e: Exception) {
+            Logger.log(e)
+            null
+        }
+    }
+
     var watchSources: WatchSources? = null
 
     private val episodes = MutableLiveData<MutableMap<Int, MutableMap<String, Episode>>>(null)

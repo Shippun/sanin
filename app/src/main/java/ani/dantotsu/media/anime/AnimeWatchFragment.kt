@@ -243,10 +243,13 @@ class AnimeWatchFragment : Fragment() {
                         if (offline && !isLocal) {
                             media.selected!!.sourceIndex = model.watchSources!!.list.lastIndex
                         } else if (!offline && !isLocal) {
-                            val kitsuEpisodes = async { model.loadKitsuEpisodes(media) }
-                            val anifyEpisodes = async { model.loadAnifyEpisodes(media.id) }
-                            val fillerEpisodes = async { model.loadFillerEpisodes(media) }
-                            awaitAll(kitsuEpisodes, anifyEpisodes, fillerEpisodes)
+                            val kitsuDeferred = async { model.fetchKitsuEpisodes(media) }
+                            val anifyDeferred = async { model.fetchAnifyEpisodes(media.id) }
+                            val fillerDeferred = async { model.fetchFillerEpisodes(media) }
+                            awaitAll(kitsuDeferred, anifyDeferred, fillerDeferred)
+                            media.anime?.kitsuEpisodes = kitsuDeferred.await()
+                            media.anime?.anifyEpisodes = anifyDeferred.await()
+                            media.anime?.fillerEpisodes = fillerDeferred.await()
                         }
                         model.loadEpisodes(media, media.selected!!.sourceIndex)
                     }
@@ -347,9 +350,6 @@ class AnimeWatchFragment : Fragment() {
         model.getKitsuEpisodes().observe(viewLifecycleOwner) { i ->
             if (i != null) {
                 media.anime?.kitsuEpisodes = i
-                if (loaded) {
-                    reload()
-                }
             }
         }
 
