@@ -282,8 +282,7 @@ class DownloadsManager(private val context: Context) {
             if (baseDirectory == Uri.EMPTY) return null
             var base = DocumentFile.fromTreeUri(context, baseDirectory) ?: return null
             base = base.findOrCreateFolder(BASE_LOCATION, false) ?: return null
-            return when (type) {
-                return base.findOrCreateFolder(ANIME_SUB_LOCATION, false)
+            return base.findOrCreateFolder(ANIME_SUB_LOCATION, false)
         }
 
         /**
