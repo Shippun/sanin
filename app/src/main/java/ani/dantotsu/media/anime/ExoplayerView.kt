@@ -55,8 +55,6 @@ import androidx.core.math.MathUtils.clamp
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.lifecycle.lifecycleScope
-import androidx.media3.cast.CastPlayer
-import androidx.media3.cast.SessionAvailabilityListener
 import androidx.media3.common.C
 import androidx.media3.common.C.AUDIO_CONTENT_TYPE_MOVIE
 import androidx.media3.common.C.TRACK_TYPE_AUDIO
@@ -96,7 +94,6 @@ import androidx.media3.ui.CaptionStyleCompat.EDGE_TYPE_OUTLINE
 import androidx.media3.ui.DefaultTimeBar
 import androidx.media3.ui.PlayerView
 import androidx.media3.ui.SubtitleView
-import androidx.mediarouter.app.MediaRouteButton
 import ani.dantotsu.GesturesListener
 import ani.dantotsu.media.EpisodeMapper
 import ani.dantotsu.NoPaddingArrayAdapter
@@ -158,10 +155,6 @@ import com.anggrayudi.storage.file.extension
 import java.io.File
 import kotlinx.coroutines.withContext
 import com.bumptech.glide.Glide
-import com.google.android.gms.cast.framework.CastButtonFactory
-import com.google.android.gms.cast.framework.CastContext
-import com.google.android.gms.common.ConnectionResult
-import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.material.slider.Slider
 import com.lagradost.nicehttp.ignoreAllSSLErrors
 import io.github.peerless2012.ass.media.AssHandler
@@ -197,8 +190,7 @@ import java.net.URI
 @SuppressLint("ClickableViewAccessibility")
 class ExoplayerView :
     AppCompatActivity(),
-    Player.Listener,
-    SessionAvailabilityListener {
+    Player.Listener {
     private val resumeWindow = "resumeWindow"
     private val resumePosition = "resumePosition"
     private val playerFullscreen = "playerFullscreen"
@@ -207,9 +199,6 @@ class ExoplayerView :
     private var functionstarted: Boolean = false
 
     private lateinit var exoPlayer: ExoPlayer
-    private var castPlayer: CastPlayer? = null
-    private var castContext: CastContext? = null
-    private var isCastApiAvailable = false
     private lateinit var trackSelector: DefaultTrackSelector
     private lateinit var cacheFactory: CacheDataSource.Factory
     private lateinit var playbackParameters: PlaybackParameters
@@ -226,7 +215,6 @@ class ExoplayerView :
     private lateinit var exoSubtitleView: SubtitleView
     private lateinit var exoAudioTrack: ImageButton
     private lateinit var exoDubSub: ImageButton
-    private lateinit var exoRotate: ImageButton
     private lateinit var exoSpeed: ImageButton
     private lateinit var exoScreen: ImageButton
     private lateinit var exoNext: ImageButton
@@ -478,18 +466,6 @@ class ExoplayerView :
         setContentView(binding.root)
 
         // Initialize
-        isCastApiAvailable = GoogleApiAvailability
-            .getInstance()
-            .isGooglePlayServicesAvailable(this) == ConnectionResult.SUCCESS
-        try {
-            castContext =
-                CastContext.getSharedInstance(this, Executors.newSingleThreadExecutor()).result
-            castPlayer = CastPlayer(castContext!!)
-            castPlayer!!.setSessionAvailabilityListener(this)
-        } catch (e: Exception) {
-            isCastApiAvailable = false
-        }
-
         hideSystemBarsExtendView()
 
         onBackPressedDispatcher.addCallback(this) {
@@ -504,27 +480,19 @@ class ExoplayerView :
         exoAudioTrack = playerView.findViewById(R.id.exo_audio)
         exoDubSub = playerView.findViewById(R.id.exo_dub_sub)
         exoDubSub.setOnClickListener {
-            if (audioTrackGroups.size < 2) return@setOnClickListener
-            val currentParams = exoPlayer.trackSelectionParameters
-            val currentOverride = currentParams.overrides.values.firstOrNull()
-            val currentIdx = audioTrackGroups.indexOfFirst { group ->
-                currentOverride != null && group.mediaTrackGroup.id == currentOverride.mediaTrackGroup.id
+            val selected = media.selected ?: return@setOnClickListener
+            selected.preferDub = !selected.preferDub
+            model.saveSelected(media.id, selected)
+            lifecycleScope.launch(Dispatchers.IO) {
+                model.forceLoadEpisode(media, selected.sourceIndex)
             }
-            val nextIdx = if (currentIdx < 0 || currentIdx >= audioTrackGroups.size - 1) 0 else currentIdx + 1
-            val nextGroup = audioTrackGroups[nextIdx]
-            val label = nextGroup.getTrackFormat(0)?.language?.let { lang ->
-                audioLanguages.find { it.second == lang }?.first
-            } ?: "Track ${nextIdx + 1}"
-            onSetTrackGroupOverride(nextGroup, TRACK_TYPE_AUDIO)
-            snackString("Audio: $label")
-            updateDubSubTint(nextIdx)
+            snackString(if (selected.preferDub) "Dub" else "Sub")
         }
         exoSubtitleView = playerView.findViewById(androidx.media3.ui.R.id.exo_subtitles)
         // Adjust bottom padding to absolute edge
         // 0.0f (0%) pushes subtitles to the very bottom
         exoSubtitleView?.setBottomPaddingFraction(0.0f)
 
-        exoRotate = playerView.findViewById(R.id.exo_rotate)
         exoSpeed = playerView.findViewById(androidx.media3.ui.R.id.exo_playback_speed)
         exoScreen = playerView.findViewById(R.id.exo_screen)
         exoBrightness = playerView.findViewById(R.id.exo_brightness)
@@ -553,45 +521,6 @@ class ExoplayerView :
                 AUDIOFOCUS_GAIN -> if (isInitialized && isPlayerPlaying) exoPlayer.play()
             }
         }, AUDIO_CONTENT_TYPE_MOVIE, AUDIOFOCUS_GAIN)
-
-        if (System.getInt(contentResolver, System.ACCELEROMETER_ROTATION, 0) != 1) {
-            if (PrefManager.getVal(PrefName.RotationPlayer)) {
-                orientationListener =
-                    object : OrientationEventListener(this, SensorManager.SENSOR_DELAY_UI) {
-                        override fun onOrientationChanged(orientation: Int) {
-                            when (orientation) {
-                                in 45..135 -> {
-                                    if (rotation != ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE) {
-                                        exoRotate.visibility = View.VISIBLE
-                                    }
-                                    rotation = ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE
-                                }
-
-                                in 225..315 -> {
-                                    if (rotation != ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
-                                        exoRotate.visibility = View.VISIBLE
-                                    }
-                                    rotation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
-                                }
-
-                                in 315..360, in 0..45 -> {
-                                    if (rotation != ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
-                                        exoRotate.visibility = View.VISIBLE
-                                    }
-                                    rotation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-                                }
-                            }
-                        }
-                    }
-                orientationListener?.enable()
-            }
-
-            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
-            exoRotate.setOnClickListener {
-                requestedOrientation = rotation
-                it.visibility = View.GONE
-            }
-        }
 
         if (savedInstanceState != null) {
             currentWindow = savedInstanceState.getInt(resumeWindow)
@@ -647,18 +576,12 @@ class ExoplayerView :
             if (isInitialized) {
                 isPlayerPlaying = exoPlayer.isPlaying
                 (exoPlay.drawable as Animatable?)?.start()
-                if (isPlayerPlaying || castPlayer?.isPlaying == true) {
+                if (isPlayerPlaying) {
                     Glide.with(this).load(R.drawable.anim_play_to_pause).into(exoPlay)
                     exoPlayer.pause()
-                    castPlayer?.pause()
                 } else {
-                    if (castPlayer?.isPlaying == false && castPlayer?.currentMediaItem != null) {
-                        Glide.with(this).load(R.drawable.anim_pause_to_play).into(exoPlay)
-                        castPlayer?.play()
-                    } else if (!isPlayerPlaying) {
-                        Glide.with(this).load(R.drawable.anim_pause_to_play).into(exoPlay)
-                        exoPlayer.play()
-                    }
+                    Glide.with(this).load(R.drawable.anim_pause_to_play).into(exoPlay)
+                    exoPlayer.play()
                 }
             }
         }
@@ -1367,23 +1290,6 @@ class ExoplayerView :
                 },
             )
             PrefManager.setCustomVal("${media.id}_fullscreenInt", isFullscreen)
-        }
-
-        // Cast
-        if (PrefManager.getVal(PrefName.Cast)) {
-            playerView.findViewById<CustomCastButton>(R.id.exo_cast).apply {
-                visibility = View.VISIBLE
-                if (PrefManager.getVal(PrefName.UseInternalCast)) {
-                    try {
-                        CastButtonFactory.setUpMediaRouteButton(context, this)
-                        dialogFactory = CustomCastThemeFactory()
-                    } catch (e: Exception) {
-                        isCastApiAvailable = false
-                    }
-                } else {
-                    setCastCallback { cast() }
-                }
-            }
         }
 
         // Settings
@@ -2781,9 +2687,6 @@ class ExoplayerView :
         super.onPause()
         orientationListener?.disable()
         if (isInitialized) {
-            if (castPlayer?.isPlaying == false) {
-                playerView.player?.pause()
-            }
             if (exoPlayer.currentPosition > 5000) {
                 PrefManager.setCustomVal(
                     "${media.id}_${media.anime!!.selectedEpisode}",
@@ -2810,8 +2713,7 @@ class ExoplayerView :
             } else {
                 true
             }
-        val isCasting = castPlayer?.isPlaying == true
-        if (shouldPausePlayback && !isCasting) {
+        if (shouldPausePlayback) {
             playerView.player?.pause()
         }
         super.onStop()
@@ -3360,39 +3262,6 @@ class ExoplayerView :
         super.onDestroy()
         finishAndRemoveTask()
     }
-
-    // Cast
-    private fun cast() {
-        val videoURL = video?.file?.url ?: return
-        val subtitleUrl = if (!hasExtSubtitles || subtitle == null) video!!.file.url else subtitle!!.file.url
-        val shareVideo = Intent(Intent.ACTION_VIEW)
-        shareVideo.setDataAndType(videoURL.toUri(), "video/*")
-        shareVideo.setPackage("com.instantbits.cast.webvideo")
-        if (subtitle != null) shareVideo.putExtra("subtitle", subtitleUrl)
-        shareVideo.putExtra(
-            "title",
-            media.userPreferredName + " : Ep " + episodeTitleArr[currentEpisodeIndex],
-        )
-        shareVideo.putExtra("poster", episode.thumb?.url ?: media.cover)
-        val headers = Bundle()
-        defaultHeaders.forEach {
-            headers.putString(it.key, it.value)
-        }
-        video?.file?.headers?.forEach {
-            headers.putString(it.key, it.value)
-        }
-        shareVideo.putExtra("android.media.intent.extra.HTTP_HEADERS", headers)
-        shareVideo.putExtra("secure_uri", true)
-        try {
-            startActivity(shareVideo)
-        } catch (ex: ActivityNotFoundException) {
-            val intent = Intent(Intent.ACTION_VIEW)
-            val uriString = "market://details?id=com.instantbits.cast.webvideo"
-            intent.data = uriString.toUri()
-            startActivity(intent)
-        }
-    }
-
     // Enter PiP Mode
     @Suppress("DEPRECATION")
     private fun enterPipMode() {
@@ -3585,58 +3454,10 @@ class ExoplayerView :
             KEYCODE_DPAD_LEFT to null,
         )
 
-    private fun startCastPlayer() {
-        if (!isCastApiAvailable) {
-            snackString("Cast API not available")
-            return
-        }
-        // make sure mediaItem is initialized and castPlayer is not null
-        if (!this::mediaItem.isInitialized || castPlayer == null) return
-        castPlayer?.setMediaItem(mediaItem)
-        castPlayer?.prepare()
-        playerView.player = castPlayer
-        exoPlayer.stop()
-        castPlayer?.addListener(
-            object : Player.Listener {
-                // if the player is paused changed, we want to update the UI
-                override fun onPlayWhenReadyChanged(
-                    playWhenReady: Boolean,
-                    reason: Int,
-                ) {
-                    super.onPlayWhenReadyChanged(playWhenReady, reason)
-                    if (playWhenReady) {
-                        (exoPlay.drawable as Animatable?)?.start()
-                        Glide
-                            .with(this@ExoplayerView)
-                            .load(R.drawable.anim_play_to_pause)
-                            .into(exoPlay)
-                    } else {
-                        (exoPlay.drawable as Animatable?)?.start()
-                        Glide
-                            .with(this@ExoplayerView)
-                            .load(R.drawable.anim_pause_to_play)
-                            .into(exoPlay)
-                    }
-                }
-            },
-        )
-    }
-
     private fun startExoPlayer() {
         exoPlayer.setMediaItem(mediaItem)
         exoPlayer.prepare()
         playerView.player = exoPlayer
-        castPlayer?.stop()
-    }
-
-    override fun onCastSessionAvailable() {
-        if (isCastApiAvailable && !this.isDestroyed) {
-            startCastPlayer()
-        }
-    }
-
-    override fun onCastSessionUnavailable() {
-        startExoPlayer()
     }
 
     @SuppressLint("ViewConstructor")
@@ -3657,30 +3478,4 @@ class ExoplayerView :
             isEnabled = enabled
         }
     }
-}
-
-class CustomCastButton : MediaRouteButton {
-    private var castCallback: (() -> Unit)? = null
-
-    fun setCastCallback(castCallback: () -> Unit) {
-        this.castCallback = castCallback
-    }
-
-    constructor(context: Context) : super(context)
-
-    constructor(context: Context, attrs: AttributeSet) : super(context, attrs)
-
-    constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) : super(
-        context,
-        attrs,
-        defStyleAttr,
-    )
-
-    override fun performClick(): Boolean =
-        if (PrefManager.getVal(PrefName.UseInternalCast)) {
-            super.performClick()
-        } else {
-            castCallback?.let { it() }
-            true
-        }
 }
