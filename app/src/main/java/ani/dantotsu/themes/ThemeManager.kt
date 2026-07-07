@@ -47,11 +47,11 @@ class ThemeManager(private val context: Activity) {
                 fromImage,
                 useCustom = effectiveCustom
             )
-            if (!returnedEarly) return
+            if (!returnedEarly && effectiveCustom == null) return
         } else if (useCustomTheme || accentColorIndex > 0) {
             val returnedEarly =
                 applyDynamicColors(useMaterial, context, useOLED, useCustom = effectiveCustom)
-            if (!returnedEarly) return
+            if (!returnedEarly && effectiveCustom == null) return
         } else {
             val returnedEarly = applyDynamicColors(useMaterial, context, useOLED, useCustom = null)
             if (!returnedEarly) return
