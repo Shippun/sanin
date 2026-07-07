@@ -118,6 +118,27 @@ class MediaAdaptor(
 
     private var logoJobs = mutableMapOf<Int, Job>()
 
+    private fun bindLogo(
+        clearlogo: ImageView,
+        overlayTitle: TextView,
+        media: Media,
+        position: Int
+    ) {
+        logoJobs[position]?.cancel()
+        logoJobs[position] = CoroutineScope(Dispatchers.Main).launch {
+            val logoUrl = LogoApi.getLogoUrl(media.id)
+            if (!logoUrl.isNullOrBlank()) {
+                clearlogo.visibility = View.VISIBLE
+                clearlogo.loadImage(logoUrl)
+                overlayTitle.visibility = View.GONE
+            } else {
+                clearlogo.visibility = View.GONE
+                overlayTitle.visibility = View.VISIBLE
+                overlayTitle.text = media.userPreferredName
+            }
+        }
+    }
+
     @SuppressLint("ClickableViewAccessibility")
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val cardRoundness = PrefManager.getVal<Int>(PrefName.CardRoundness).toFloat()
@@ -156,6 +177,27 @@ class MediaAdaptor(
                         b.root.context,
                         (if (media.userScore != 0) R.drawable.item_user_score else R.drawable.item_score)
                     )
+                    val titlePos = PrefManager.getVal<Int>(PrefName.CardTitlePosition)
+                    when (titlePos) {
+                        0 -> {
+                            b.itemCompactImageOverlay.visibility = View.VISIBLE
+                            b.itemCompactTitleBelow.visibility = View.GONE
+                            bindLogo(b.itemCompactClearlogo, b.itemCompactOverlayTitle, media, position)
+                        }
+                        1 -> {
+                            b.itemCompactImageOverlay.visibility = View.GONE
+                            b.itemCompactClearlogo.visibility = View.GONE
+                            b.itemCompactOverlayTitle.visibility = View.GONE
+                            b.itemCompactTitleBelow.visibility = View.VISIBLE
+                            b.itemCompactTitleBelow.text = media.userPreferredName
+                        }
+                        else -> {
+                            b.itemCompactImageOverlay.visibility = View.GONE
+                            b.itemCompactClearlogo.visibility = View.GONE
+                            b.itemCompactOverlayTitle.visibility = View.GONE
+                            b.itemCompactTitleBelow.visibility = View.GONE
+                        }
+                    }
                 }
             }
 
@@ -176,6 +218,26 @@ class MediaAdaptor(
                         b.root.context,
                         (if (media.userScore != 0) R.drawable.item_user_score else R.drawable.item_score)
                     )
+                    val titlePos = PrefManager.getVal<Int>(PrefName.CardTitlePosition)
+                    when (titlePos) {
+                        0 -> {
+                            b.itemCompactImageOverlay.visibility = View.VISIBLE
+                            b.itemCompactTitle.visibility = View.GONE
+                            bindLogo(b.itemCompactClearlogo, b.itemCompactOverlayTitle, media, position)
+                        }
+                        1 -> {
+                            b.itemCompactImageOverlay.visibility = View.GONE
+                            b.itemCompactClearlogo.visibility = View.GONE
+                            b.itemCompactOverlayTitle.visibility = View.GONE
+                            b.itemCompactTitle.visibility = View.VISIBLE
+                        }
+                        else -> {
+                            b.itemCompactImageOverlay.visibility = View.GONE
+                            b.itemCompactClearlogo.visibility = View.GONE
+                            b.itemCompactOverlayTitle.visibility = View.GONE
+                            b.itemCompactTitle.visibility = View.GONE
+                        }
+                    }
                     if (media.anime != null) {
                         val itemTotal = " " + if ((media.anime.totalEpisodes
                                 ?: 0) != 1
@@ -233,6 +295,26 @@ class MediaAdaptor(
                         b.root.context,
                         (if (media.userScore != 0) R.drawable.item_user_score else R.drawable.item_score)
                     )
+                    val titlePos = PrefManager.getVal<Int>(PrefName.CardTitlePosition)
+                    when (titlePos) {
+                        0 -> {
+                            b.itemCompactImageOverlay.visibility = View.VISIBLE
+                            b.itemCompactTitleContainer.visibility = View.GONE
+                            bindLogo(b.itemCompactClearlogo, b.itemCompactOverlayTitle, media, position)
+                        }
+                        1 -> {
+                            b.itemCompactImageOverlay.visibility = View.GONE
+                            b.itemCompactClearlogo.visibility = View.GONE
+                            b.itemCompactOverlayTitle.visibility = View.GONE
+                            b.itemCompactTitleContainer.visibility = View.VISIBLE
+                        }
+                        else -> {
+                            b.itemCompactImageOverlay.visibility = View.GONE
+                            b.itemCompactClearlogo.visibility = View.GONE
+                            b.itemCompactOverlayTitle.visibility = View.GONE
+                            b.itemCompactTitleContainer.visibility = View.GONE
+                        }
+                    }
                     if (media.anime != null) {
                         b.itemTotal.text = " " + if ((media.anime.totalEpisodes
                                 ?: 0) != 1
@@ -285,6 +367,26 @@ class MediaAdaptor(
                         b.root.context,
                         (if (media.userScore != 0) R.drawable.item_user_score else R.drawable.item_score)
                     )
+                    val titlePos = PrefManager.getVal<Int>(PrefName.CardTitlePosition)
+                    when (titlePos) {
+                        0 -> {
+                            b.itemCompactImageOverlay.visibility = View.VISIBLE
+                            b.itemCompactTitleContainer.visibility = View.GONE
+                            bindLogo(b.itemCompactClearlogo, b.itemCompactOverlayTitle, media, position)
+                        }
+                        1 -> {
+                            b.itemCompactImageOverlay.visibility = View.GONE
+                            b.itemCompactClearlogo.visibility = View.GONE
+                            b.itemCompactOverlayTitle.visibility = View.GONE
+                            b.itemCompactTitleContainer.visibility = View.VISIBLE
+                        }
+                        else -> {
+                            b.itemCompactImageOverlay.visibility = View.GONE
+                            b.itemCompactClearlogo.visibility = View.GONE
+                            b.itemCompactOverlayTitle.visibility = View.GONE
+                            b.itemCompactTitleContainer.visibility = View.GONE
+                        }
+                    }
                     media.genres.apply {
                         if (isNotEmpty()) {
                             var genres = ""
@@ -467,23 +569,29 @@ class MediaAdaptor(
                 b.itemCompactImage.loadImage(media.cover)
             }
             b.itemCompactBanner.visibility = View.GONE
+            val titlePos = PrefManager.getVal<Int>(PrefName.CardTitlePosition)
             b.itemCompactOverlay.visibility = View.VISIBLE
             b.itemCompactCoverLeft.visibility = View.GONE
-            b.itemCompactRightContent.visibility = View.VISIBLE
+            b.itemCompactRightContent.visibility = if (titlePos != 2) View.VISIBLE else View.GONE
             b.itemCompactScoreBG.visibility = View.VISIBLE
 
-            logoJobs[position]?.cancel()
-            logoJobs[position] = CoroutineScope(Dispatchers.Main).launch {
-                val logoUrl = LogoApi.getLogoUrl(media.id)
-                if (!logoUrl.isNullOrBlank()) {
-                    b.itemCompactClearlogo.visibility = View.VISIBLE
-                    b.itemCompactClearlogo.loadImage(logoUrl)
-                    b.itemCompactOverlayTitle.visibility = View.GONE
-                } else {
-                    b.itemCompactClearlogo.visibility = View.GONE
-                    b.itemCompactOverlayTitle.visibility = View.VISIBLE
-                    b.itemCompactOverlayTitle.text = media.userPreferredName
+            if (titlePos != 2) {
+                logoJobs[position]?.cancel()
+                logoJobs[position] = CoroutineScope(Dispatchers.Main).launch {
+                    val logoUrl = LogoApi.getLogoUrl(media.id)
+                    if (!logoUrl.isNullOrBlank()) {
+                        b.itemCompactClearlogo.visibility = View.VISIBLE
+                        b.itemCompactClearlogo.loadImage(logoUrl)
+                        b.itemCompactOverlayTitle.visibility = View.GONE
+                    } else {
+                        b.itemCompactClearlogo.visibility = View.GONE
+                        b.itemCompactOverlayTitle.visibility = View.VISIBLE
+                        b.itemCompactOverlayTitle.text = media.userPreferredName
+                    }
                 }
+            } else {
+                b.itemCompactClearlogo.visibility = View.GONE
+                b.itemCompactOverlayTitle.visibility = View.GONE
             }
         }
     }

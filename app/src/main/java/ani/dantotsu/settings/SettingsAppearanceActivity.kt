@@ -36,6 +36,7 @@ class SettingsAppearanceActivity : AppCompatActivity() {
             binding.appearanceCardSize,
             binding.appearanceCardStyle,
             binding.appearanceCardOrientation,
+            binding.appearanceCardTitlePosition,
             binding.appearanceHideRedDot,
             binding.appearanceBlurBanners,
             binding.appearancePersistSideRail,
@@ -76,6 +77,19 @@ class SettingsAppearanceActivity : AppCompatActivity() {
                 val current = PrefManager.getVal<Int>(PrefName.CardOrientation)
                 singleChoiceItems(labels, current) { index ->
                     PrefManager.setVal(PrefName.CardOrientation, index)
+                    restartApp()
+                }
+                show()
+            }
+        }
+
+        binding.appearanceCardTitlePosition.setOnClickListener {
+            customAlertDialog().apply {
+                setTitle("Card Title Position")
+                val labels = arrayOf("Bottom Overlay", "Below Card", "Hidden")
+                val current = PrefManager.getVal<Int>(PrefName.CardTitlePosition)
+                singleChoiceItems(labels, current) { index ->
+                    PrefManager.setVal(PrefName.CardTitlePosition, index)
                     restartApp()
                 }
                 show()

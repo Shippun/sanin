@@ -55,6 +55,41 @@
                     tools:ignore="ContentDescription,ImageContrastCheck"
                     tools:srcCompat="@tools:sample/backgrounds/scenic" />
 
+                <View
+                    android:id="@+id/itemCompactImageOverlay"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_gravity="bottom"
+                    android:visibility="gone"
+                    android:background="@drawable/gradient_bottom_dark" />
+
+                <ImageView
+                    android:id="@+id/itemCompactClearlogo"
+                    android:layout_width="match_parent"
+                    android:layout_height="32dp"
+                    android:layout_gravity="bottom"
+                    android:scaleType="fitCenter"
+                    android:visibility="gone"
+                    tools:ignore="ContentDescription" />
+
+                <TextView
+                    android:id="@+id/itemCompactOverlayTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:ellipsize="end"
+                    android:gravity="center"
+                    android:maxLines="1"
+                    android:paddingBottom="6dp"
+                    android:paddingStart="8dp"
+                    android:paddingEnd="8dp"
+                    android:textColor="#F3F3F3"
+                    android:textSize="11sp"
+                    android:visibility="gone"
+                    android:transitionName="mediaTitle"
+                    tools:ignore="SpUsage"
+                    tools:text="Title" />
+
                 <LinearLayout
                     android:id="@+id/itemCompactScoreBG"
                     android:layout_width="wrap_content"
