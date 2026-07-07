@@ -28,6 +28,7 @@ import ani.dantotsu.snackString
 import ani.dantotsu.startMainActivity
 import ani.dantotsu.statusBarHeight
 import ani.dantotsu.themes.ThemeManager
+import ani.dantotsu.util.FocusEffectUtil
 import ani.dantotsu.util.customAlertDialog
 import io.noties.markwon.Markwon
 import io.noties.markwon.SoftBreakAddsNewLinePlugin
@@ -55,6 +56,7 @@ class SettingsAccountActivity : AppCompatActivity() {
             }
             accountSettingsBack.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
 
+            settingsAccountHelp.isFocusable = true
             settingsAccountHelp.setOnClickListener {
                 CustomBottomDialog.newInstance().apply {
                     setTitleText(context.getString(R.string.account_help))
@@ -69,6 +71,19 @@ class SettingsAccountActivity : AppCompatActivity() {
             }
 
             fun reload() {
+                settingsAnilistLogin.isFocusable = true
+                settingsAnilistAvatar.isFocusable = true
+                settingsAnilistTokenExpiry.isFocusable = true
+                settingsMALLogin.isFocusable = true
+                settingsMALAvatar.isFocusable = true
+                settingsDiscordLogin.isFocusable = true
+                settingsDiscordAvatar.isFocusable = true
+                settingsPresenceSwitcher.isFocusable = true
+                FocusEffectUtil.applyFocusListener(
+                    settingsAnilistLogin, settingsAnilistAvatar, settingsAnilistTokenExpiry,
+                    settingsMALLogin, settingsMALAvatar,
+                    settingsDiscordLogin, settingsDiscordAvatar, settingsPresenceSwitcher
+                )
                 if (Anilist.token != null) {
                     settingsAnilistLogin.setText(R.string.logout)
                     settingsAnilistLogin.setOnClickListener {
