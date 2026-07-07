@@ -71,9 +71,12 @@ android {
             manifestPlaceholders["icon_placeholder"] = "@mipmap/ic_launcher_alpha"
             manifestPlaceholders["icon_placeholder_round"] = "@mipmap/ic_launcher_alpha_round"
             isDebuggable = true
-            isJniDebuggable = true
-            isMinifyEnabled = false
-            isShrinkResources = false
+            isMinifyEnabled = true
+            isShrinkResources = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
             isDefault = true
         }
 
@@ -83,6 +86,12 @@ android {
             manifestPlaceholders["icon_placeholder"] = "@mipmap/ic_launcher_beta"
             manifestPlaceholders["icon_placeholder_round"] = "@mipmap/ic_launcher_beta_round"
             isDebuggable = false
+            isMinifyEnabled = true
+            isShrinkResources = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
 
         getByName("release") {
