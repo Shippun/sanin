@@ -45,6 +45,7 @@ import ani.dantotsu.media.MediaDetailsActivity
 import ani.dantotsu.media.MediaDetailsViewModel
 import ani.dantotsu.media.MediaNameAdapter
 import ani.dantotsu.media.MediaType
+import ani.dantotsu.FileUrl
 import ani.dantotsu.navBarHeight
 import ani.dantotsu.notifications.subscription.SubscriptionHelper
 import ani.dantotsu.notifications.subscription.SubscriptionHelper.Companion.saveSubscription
@@ -305,6 +306,14 @@ class AnimeWatchFragment : Fragment() {
                         } else {
                             applyKitsu()
                             applyAniZip()
+                        }
+
+                        // Fetch thumbnails from AniList streaming episodes
+                        val anilistThumb = media.streamingEpisodes?.firstOrNull { se ->
+                            se.title?.matches(Regex("""Episode\s*$i[\s:.,]?""", RegexOption.IGNORE_CASE)) == true
+                        }?.thumbnail
+                        if (anilistThumb != null) {
+                            episode.thumb = FileUrl(anilistThumb)
                         }
 
                         // Title fallback order: AniZip English -> Kitsu -> Jikan/MAL -> "Episode X"
