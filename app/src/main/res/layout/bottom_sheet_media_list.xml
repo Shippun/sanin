@@ -24,41 +24,48 @@
             android:id="@+id/mediaListLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="32dp"
             android:orientation="vertical"
+            android:padding="20dp"
             android:visibility="invisible"
             tools:visibility="visible">
 
+            <!-- Header -->
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal">
+                android:layout_height="wrap_content"
+                android:background="@drawable/snake_scale_bg"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="16dp">
 
                 <TextView
                     android:id="@+id/mediaTitle"
                     android:layout_width="0dp"
-                    android:layout_height="54dp"
+                    android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:fontFamily="@font/poppins"
-                    android:gravity="center_vertical"
-                    android:paddingStart="16dp"
-                    android:paddingEnd="16dp"
                     android:text="@string/list_editor"
-                    android:textSize="20sp"
+                    android:textColor="?android:attr/textColorPrimary"
+                    android:textSize="22sp"
                     android:textStyle="bold" />
 
             </LinearLayout>
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="8dp" />
+
+            <!-- Status -->
             <com.google.android.material.textfield.TextInputLayout
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
-                android:layout_marginTop="16dp"
+                android:background="@drawable/snake_input_bg"
                 android:hint="@string/status"
-                app:boxCornerRadiusBottomEnd="16dp"
-                app:boxCornerRadiusBottomStart="16dp"
-                app:boxCornerRadiusTopEnd="16dp"
-                app:boxCornerRadiusTopStart="16dp"
+                app:boxCornerRadiusBottomEnd="12dp"
+                app:boxCornerRadiusBottomStart="12dp"
+                app:boxCornerRadiusTopEnd="12dp"
+                app:boxCornerRadiusTopStart="12dp"
                 app:boxStrokeColor="@color/text_input_layout_stroke_color"
                 app:hintAnimationEnabled="true"
                 app:startIconDrawable="@drawable/ic_round_playlist_play_24">
@@ -75,16 +82,21 @@
                     android:text="@string/watch"
                     android:textAllCaps="true"
                     android:textColor="?android:attr/textColorSecondary"
-
                     android:textSize="14sp"
                     tools:ignore="LabelFor,TextContrastCheck,DuplicateSpeakableTextCheck" />
             </com.google.android.material.textfield.TextInputLayout>
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="8dp" />
+
+            <!-- Progress + Increment -->
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginTop="16dp"
-                android:orientation="horizontal">
+                android:layout_height="wrap_content"
+                android:background="@drawable/snake_input_bg"
+                android:orientation="horizontal"
+                android:padding="4dp">
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/mediaListProgressLayout"
@@ -93,10 +105,10 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:hint="@string/progress"
-                    app:boxCornerRadiusBottomEnd="16dp"
-                    app:boxCornerRadiusBottomStart="16dp"
-                    app:boxCornerRadiusTopEnd="16dp"
-                    app:boxCornerRadiusTopStart="16dp"
+                    app:boxCornerRadiusBottomEnd="12dp"
+                    app:boxCornerRadiusBottomStart="12dp"
+                    app:boxCornerRadiusTopEnd="12dp"
+                    app:boxCornerRadiusTopStart="12dp"
                     app:boxStrokeColor="@color/text_input_layout_stroke_color"
                     app:endIconMode="none"
                     app:hintAnimationEnabled="true"
@@ -115,7 +127,6 @@
                         android:textColor="?android:attr/textColorSecondary"
                         android:textSize="14sp"
                         tools:ignore="LabelFor,TextContrastCheck" />
-
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <View
@@ -138,24 +149,28 @@
                     android:singleLine="true"
                     android:text="+1\u0020"
                     android:textSize="16sp"
-                    app:cornerRadius="16dp"
+                    app:cornerRadius="12dp"
                     app:strokeColor="?attr/colorPrimaryContainer"
                     tools:ignore="HardcodedText" />
-
             </LinearLayout>
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="8dp" />
+
+            <!-- Volume Progress -->
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/mediaListVolumeProgressLayout"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
-                android:layout_marginTop="16dp"
+                android:background="@drawable/snake_input_bg"
                 android:hint="@string/volume_progress"
                 android:visibility="gone"
-                app:boxCornerRadiusBottomEnd="16dp"
-                app:boxCornerRadiusBottomStart="16dp"
-                app:boxCornerRadiusTopEnd="16dp"
-                app:boxCornerRadiusTopStart="16dp"
+                app:boxCornerRadiusBottomEnd="12dp"
+                app:boxCornerRadiusBottomStart="12dp"
+                app:boxCornerRadiusTopEnd="12dp"
+                app:boxCornerRadiusTopStart="12dp"
                 app:boxStrokeColor="@color/text_input_layout_stroke_color"
                 app:endIconMode="none"
                 app:hintAnimationEnabled="true"
@@ -174,20 +189,24 @@
                     android:textColor="?android:attr/textColorSecondary"
                     android:textSize="14sp"
                     tools:ignore="LabelFor,TextContrastCheck" />
-
             </com.google.android.material.textfield.TextInputLayout>
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="8dp" />
+
+            <!-- Score -->
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/mediaListScoreLayout"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
-                android:layout_marginTop="16dp"
+                android:background="@drawable/snake_input_bg"
                 android:hint="@string/score"
-                app:boxCornerRadiusBottomEnd="16dp"
-                app:boxCornerRadiusBottomStart="16dp"
-                app:boxCornerRadiusTopEnd="16dp"
-                app:boxCornerRadiusTopStart="16dp"
+                app:boxCornerRadiusBottomEnd="12dp"
+                app:boxCornerRadiusBottomStart="12dp"
+                app:boxCornerRadiusTopEnd="12dp"
+                app:boxCornerRadiusTopStart="12dp"
                 app:boxStrokeColor="@color/text_input_layout_stroke_color"
                 app:endIconMode="none"
                 app:hintAnimationEnabled="true"
@@ -206,28 +225,33 @@
                     android:textColor="?android:attr/textColorSecondary"
                     android:textSize="14sp"
                     tools:ignore="LabelFor,TextContrastCheck" />
-
             </com.google.android.material.textfield.TextInputLayout>
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="8dp" />
+
+            <!-- Start & End Date -->
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/snake_input_bg"
                 android:baselineAligned="false"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:padding="4dp">
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/mediaListStartLayout"
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                     android:layout_width="0dp"
                     android:layout_height="56dp"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginEnd="16dp"
+                    android:layout_marginEnd="8dp"
                     android:layout_weight="1"
                     android:hint="@string/started_at"
-                    app:boxCornerRadiusBottomEnd="16dp"
-                    app:boxCornerRadiusBottomStart="16dp"
-                    app:boxCornerRadiusTopEnd="16dp"
-                    app:boxCornerRadiusTopStart="16dp"
+                    app:boxCornerRadiusBottomEnd="12dp"
+                    app:boxCornerRadiusBottomStart="12dp"
+                    app:boxCornerRadiusTopEnd="12dp"
+                    app:boxCornerRadiusTopStart="12dp"
                     app:boxStrokeColor="@color/text_input_layout_stroke_color"
                     app:endIconMode="none"
                     app:hintAnimationEnabled="true"
@@ -248,7 +272,6 @@
                         android:textColor="?android:attr/textColorSecondary"
                         android:textSize="14sp"
                         tools:ignore="LabelFor,TextContrastCheck" />
-
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
@@ -256,14 +279,12 @@
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                     android:layout_width="0dp"
                     android:layout_height="56dp"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginBottom="16dp"
                     android:layout_weight="1"
                     android:hint="@string/completed_at"
-                    app:boxCornerRadiusBottomEnd="16dp"
-                    app:boxCornerRadiusBottomStart="16dp"
-                    app:boxCornerRadiusTopEnd="16dp"
-                    app:boxCornerRadiusTopStart="16dp"
+                    app:boxCornerRadiusBottomEnd="12dp"
+                    app:boxCornerRadiusBottomStart="12dp"
+                    app:boxCornerRadiusTopEnd="12dp"
+                    app:boxCornerRadiusTopStart="12dp"
                     app:boxStrokeColor="@color/text_input_layout_stroke_color"
                     app:endIconMode="none"
                     app:hintAnimationEnabled="true"
@@ -283,22 +304,28 @@
                         android:textColor="?android:attr/textColorSecondary"
                         android:textSize="14sp"
                         tools:ignore="LabelFor,TextContrastCheck" />
-
                 </com.google.android.material.textfield.TextInputLayout>
-
             </LinearLayout>
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="8dp" />
+
+            <!-- Expandable: Other -->
             <ani.dantotsu.others.Xpandable
                 android:id="@+id/mediaListExpandable"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:background="@drawable/snake_input_bg"
+                android:orientation="vertical"
+                android:padding="4dp">
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="48dp"
                     android:fontFamily="@font/poppins_bold"
                     android:gravity="center_vertical"
+                    android:paddingStart="12dp"
                     android:text="@string/other"
                     android:textColor="?attr/colorSecondary"
                     app:drawableEndCompat="@drawable/ic_round_arrow_drop_down_24" />
@@ -309,10 +336,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/total_repeats"
-                    app:boxCornerRadiusBottomEnd="16dp"
-                    app:boxCornerRadiusBottomStart="16dp"
-                    app:boxCornerRadiusTopEnd="16dp"
-                    app:boxCornerRadiusTopStart="16dp"
+                    app:boxCornerRadiusBottomEnd="12dp"
+                    app:boxCornerRadiusBottomStart="12dp"
+                    app:boxCornerRadiusTopEnd="12dp"
+                    app:boxCornerRadiusTopStart="12dp"
                     app:endIconMode="none"
                     app:hintAnimationEnabled="true"
                     app:startIconDrawable="@drawable/ic_round_refresh_24"
@@ -330,20 +357,22 @@
                         android:textColor="?android:attr/textColorSecondary"
                         android:textSize="14sp"
                         tools:ignore="LabelFor,TextContrastCheck" />
-
                 </com.google.android.material.textfield.TextInputLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="8dp" />
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/mediaListNotesLayout"
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
                     android:hint="@string/note"
-                    app:boxCornerRadiusBottomEnd="16dp"
-                    app:boxCornerRadiusBottomStart="16dp"
-                    app:boxCornerRadiusTopEnd="16dp"
-                    app:boxCornerRadiusTopStart="16dp"
+                    app:boxCornerRadiusBottomEnd="12dp"
+                    app:boxCornerRadiusBottomStart="12dp"
+                    app:boxCornerRadiusTopEnd="12dp"
+                    app:boxCornerRadiusTopStart="12dp"
                     app:endIconMode="none"
                     app:hintAnimationEnabled="true"
                     app:startIconDrawable="@drawable/ic_round_edit_note_24"
@@ -360,30 +389,39 @@
                         android:textColor="?android:attr/textColorSecondary"
                         android:textSize="14sp"
                         tools:ignore="LabelFor,TextContrastCheck" />
-
                 </com.google.android.material.textfield.TextInputLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="8dp" />
 
                 <com.google.android.material.materialswitch.MaterialSwitch
                     android:id="@+id/mediaListPrivate"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
                     android:fontFamily="@font/poppins_bold"
+                    android:padding="8dp"
                     android:text="@string/list_private" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="8dp" />
 
                 <com.google.android.material.materialswitch.MaterialSwitch
                     android:id="@+id/mediaListShow"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
                     android:fontFamily="@font/poppins_bold"
+                    android:padding="8dp"
                     android:text="@string/hide_in_home_screen" />
+
                 <TextView
                     android:id="@+id/mediaListAddCustomList"
                     android:layout_width="match_parent"
                     android:layout_height="48dp"
                     android:fontFamily="@font/poppins_bold"
                     android:gravity="center_vertical"
+                    android:paddingStart="12dp"
                     android:text="@string/custom_lists"
                     android:textColor="?attr/colorPrimary" />
 
@@ -391,39 +429,41 @@
                     android:id="@+id/mediaListCustomListContainer"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
-
-                </LinearLayout>
-
+                    android:orientation="vertical" />
             </ani.dantotsu.others.Xpandable>
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="12dp" />
+
+            <!-- Action Buttons -->
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginTop="16dp"
+                android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
                 <Button
                     android:id="@+id/mediaListDelete"
                     style="@style/Widget.Material3.Button.OutlinedButton"
-                    android:layout_width="128dp"
-                    android:layout_height="56dp"
-                    android:layout_gravity="center"
+                    android:layout_width="0dp"
+                    android:layout_height="52dp"
+                    android:layout_marginEnd="6dp"
+                    android:layout_weight="1"
                     android:fontFamily="@font/poppins_bold"
                     android:insetTop="0dp"
                     android:insetBottom="0dp"
                     android:padding="8dp"
                     android:text="@string/delete"
                     android:textSize="16sp"
-                    app:cornerRadius="16dp"
+                    app:cornerRadius="12dp"
                     app:strokeColor="?attr/colorPrimaryContainer" />
 
                 <Button
                     android:id="@+id/mediaListSave"
                     style="@style/Widget.Material3.Button.OutlinedButton"
                     android:layout_width="0dp"
-                    android:layout_height="56dp"
-                    android:layout_marginStart="16dp"
+                    android:layout_height="52dp"
+                    android:layout_marginStart="6dp"
                     android:layout_weight="1"
                     android:fontFamily="@font/poppins_bold"
                     android:insetTop="0dp"
@@ -431,7 +471,7 @@
                     android:padding="8dp"
                     android:text="@string/save"
                     android:textSize="16sp"
-                    app:cornerRadius="16dp"
+                    app:cornerRadius="12dp"
                     app:strokeColor="?attr/colorPrimaryContainer" />
             </LinearLayout>
         </LinearLayout>
@@ -443,9 +483,6 @@
             android:layout_marginTop="14dp"
             app:cardBackgroundColor="?attr/colorPrimary"
             app:cardCornerRadius="2dp"
-            app:cardElevation="0dp">
-
-        </androidx.cardview.widget.CardView>
-
+            app:cardElevation="0dp" />
     </FrameLayout>
 </androidx.core.widget.NestedScrollView>

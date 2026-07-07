@@ -20,6 +20,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import ani.dantotsu.R
 import ani.dantotsu.buildMarkwon
+import ani.dantotsu.connections.LogoApi
 import ani.dantotsu.connections.anilist.Anilist
 import ani.dantotsu.connections.comments.Comment
 import ani.dantotsu.connections.comments.CommentResponse
@@ -136,6 +137,16 @@ class CommentsFragment : Fragment() {
         val model: MediaDetailsViewModel by activityViewModels()
         model.getMedia().observe(viewLifecycleOwner) { newMedia ->
             if (newMedia != null && newMedia.id != 0) {
+                lifecycleScope.launch(Dispatchers.Main) {
+                    val logoUrl = LogoApi.getLogoUrl(newMedia.id)
+                    if (!logoUrl.isNullOrBlank()) {
+                        binding.commentsLogo.visibility = View.VISIBLE
+                        binding.commentsLogo.loadImage(logoUrl)
+                    } else {
+                        binding.commentsTitle.visibility = View.VISIBLE
+                        binding.commentsTitle.text = newMedia.userPreferredName ?: newMedia.name
+                    }
+                }
                 isAnime = newMedia.anime != null
                 userProgress = newMedia.userProgress
                 totalEpisodesOrChapters = if (isAnime)

@@ -9,6 +9,30 @@
     android:background="@android:color/transparent"
     tools:context=".media.anime.AnimeWatchFragment">
 
+    <ImageView
+        android:id="@+id/mediaWatchLogo"
+        android:layout_width="wrap_content"
+        android:layout_height="80dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="200dp"
+        android:adjustViewBounds="true"
+        android:scaleType="fitStart"
+        android:visibility="gone"
+        tools:ignore="ContentDescription"
+        tools:visibility="visible" />
+
+    <TextView
+        android:id="@+id/mediaWatchTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="210dp"
+        android:fontFamily="@font/poppins_bold"
+        android:textColor="@android:color/white"
+        android:textSize="24sp"
+        android:visibility="gone"
+        tools:visibility="visible" />
+
     <TextView
         android:id="@+id/mediaNotSupported"
         android:layout_width="wrap_content"

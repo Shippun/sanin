@@ -29,7 +29,9 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import ani.dantotsu.R
 import ani.dantotsu.addons.download.DownloadAddonManager
+import ani.dantotsu.connections.LogoApi
 import ani.dantotsu.databinding.FragmentMediaSourceBinding
+import ani.dantotsu.loadImage
 import ani.dantotsu.download.DownloadedType
 import ani.dantotsu.download.DownloadsManager
 import ani.dantotsu.download.DownloadsManager.Companion.compareName
@@ -184,6 +186,17 @@ class AnimeWatchFragment : Fragment() {
                 }
                 media = it
                 media.selected = model.loadSelected(media)
+
+                lifecycleScope.launch(Dispatchers.Main) {
+                    val logoUrl = LogoApi.getLogoUrl(media.id)
+                    if (!logoUrl.isNullOrBlank()) {
+                        binding.mediaWatchLogo.visibility = View.VISIBLE
+                        binding.mediaWatchLogo.loadImage(logoUrl)
+                    } else {
+                        binding.mediaWatchTitle.visibility = View.VISIBLE
+                        binding.mediaWatchTitle.text = media.userPreferredName ?: media.name
+                    }
+                }
                 if (!PrefManager.getVal<Boolean>(PrefName.SmartSourcePersistence)) {
                     if (media.selected != null) {
                         media.selected!!.sourceIndex = 0
