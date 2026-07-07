@@ -161,6 +161,7 @@ class MediaAdaptor(
                 if (media != null) {
                     val imageUrl = media.cover
                     b.itemCompactImage.loadImage(imageUrl)
+                    loadGradientOverlay(b.itemCompactImageOverlay, media, position)
                     val cardSize = PrefManager.getVal<Float>(PrefName.CardSize)
                     val finalW = (102 * cardSize).toInt()
                     val finalH = (154 * cardSize).toInt()
@@ -214,6 +215,7 @@ class MediaAdaptor(
                 if (media != null) {
                     b.itemCompactImage.loadImage(media.cover)
                     blurImage(b.itemCompactBanner, media.banner ?: media.cover)
+                    loadGradientOverlay(b.imageView, media, position)
                     b.itemCompactOngoing.isVisible =
                         media.status == currActivity()!!.getString(R.string.status_releasing)
                     b.itemCompactTitle.text = media.userPreferredName
@@ -230,6 +232,7 @@ class MediaAdaptor(
                             b.itemCompactImageOverlay.visibility = View.VISIBLE
                             b.itemCompactTitle.visibility = View.GONE
                             bindLogo(b.itemCompactClearlogo, b.itemCompactOverlayTitle, media, position)
+                            loadGradientOverlay(b.itemCompactImageOverlay, media, position)
                         }
                         1 -> {
                             b.itemCompactImageOverlay.visibility = View.GONE
@@ -547,10 +550,15 @@ class MediaAdaptor(
             )
 
             b.itemCompactImage.scaleType = ImageView.ScaleType.CENTER_CROP
+            b.itemCompactImage.loadImage(media.cover)
             logoJobs[position]?.cancel()
-            logoJobs[position] = CoroutineScope(Dispatchers.Main).launch {
+            logoJobs[position] = CoroutineScope(Dispatchers.IO).launch {
                 val posterUrl = AniZip.getPosterUrl(media.id)
-                b.itemCompactImage.loadImage(posterUrl ?: media.cover)
+                if (posterUrl != null) {
+                    withContext(Dispatchers.Main) {
+                        b.itemCompactImage.loadImage(posterUrl)
+                    }
+                }
             }
             b.itemCompactBanner.visibility = View.GONE
             val titlePos = PrefManager.getVal<Int>(PrefName.CardTitlePosition)
@@ -580,11 +588,11 @@ class MediaAdaptor(
         }
     }
 
-    private fun loadGradientOverlay(gradientView: ImageView, media: Media, position: Int) {
+    private fun loadGradientOverlay(view: View, media: Media, position: Int) {
         gradientJobs[position]?.cancel()
         val cached = coverGradientCache[media.id]
         if (cached != null) {
-            setGradient(gradientView, cached)
+            setGradient(view, cached)
             return
         }
         gradientJobs[position] = CoroutineScope(Dispatchers.IO).launch {
@@ -592,19 +600,19 @@ class MediaAdaptor(
             val color = averageColor(bitmap)
             coverGradientCache[media.id] = color
             withContext(Dispatchers.Main) {
-                setGradient(gradientView, color)
+                setGradient(view, color)
             }
         }
     }
 
-    private fun setGradient(gradientView: ImageView, color: Int) {
+    private fun setGradient(view: View, color: Int) {
         val startColor = Color.argb(180, Color.red(color), Color.green(color), Color.blue(color))
         val endColor = Color.argb(200, 0, 0, 0)
         val gradient = GradientDrawable(
             GradientDrawable.Orientation.TOP_BOTTOM,
             intArrayOf(startColor, endColor)
         )
-        gradientView.setImageDrawable(gradient)
+        view.background = gradient
     }
 
     private fun averageColor(bitmap: Bitmap): Int {
