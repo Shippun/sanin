@@ -108,6 +108,7 @@ class SettingsCommonActivity : AppCompatActivity() {
                 topMargin = statusBarHeight
                 bottomMargin = navBarHeight
             }
+            commonSettingsBack.isFocusable = true
             commonSettingsBack.setOnClickListener {
                 onBackPressedDispatcher.onBackPressed()
             }
@@ -475,14 +476,20 @@ class SettingsCommonActivity : AppCompatActivity() {
                 initActivity(context)
             }
 
+            uiSettingsAnime.isFocusable = true
+            FocusEffectUtil.applyFocusListener(uiSettingsAnime)
             uiSettingsAnime.setOnClickListener {
                 uiDefault(0, it)
             }
 
+            uiSettingsHome.isFocusable = true
+            FocusEffectUtil.applyFocusListener(uiSettingsHome)
             uiSettingsHome.setOnClickListener {
                 uiDefault(1, it)
             }
 
+            uiSettingsManga.isFocusable = true
+            FocusEffectUtil.applyFocusListener(uiSettingsManga)
             uiSettingsManga.setOnClickListener {
                 uiDefault(2, it)
             }

@@ -28,6 +28,7 @@ class SettingsAppearanceActivity : AppCompatActivity() {
             topMargin = statusBarHeight
             bottomMargin = navBarHeight
         }
+        binding.appearanceBack.isFocusable = true
         binding.appearanceBack.setOnClickListener {
             onBackPressedDispatcher.onBackPressed()
         }
@@ -43,6 +44,7 @@ class SettingsAppearanceActivity : AppCompatActivity() {
             binding.appearanceBannerBrightness,
         )
 
+        binding.appearanceCardSize.isFocusable = true
         binding.appearanceCardSize.setOnClickListener {
             customAlertDialog().apply {
                 setTitle("Card Size")
@@ -58,6 +60,7 @@ class SettingsAppearanceActivity : AppCompatActivity() {
             }
         }
 
+        binding.appearanceCardStyle.isFocusable = true
         binding.appearanceCardStyle.setOnClickListener {
             customAlertDialog().apply {
                 setTitle("Card Style")
@@ -70,6 +73,7 @@ class SettingsAppearanceActivity : AppCompatActivity() {
             }
         }
 
+        binding.appearanceCardOrientation.isFocusable = true
         binding.appearanceCardOrientation.setOnClickListener {
             customAlertDialog().apply {
                 setTitle("Card Orientation")
@@ -83,6 +87,7 @@ class SettingsAppearanceActivity : AppCompatActivity() {
             }
         }
 
+        binding.appearanceCardTitlePosition.isFocusable = true
         binding.appearanceCardTitlePosition.setOnClickListener {
             customAlertDialog().apply {
                 setTitle("Card Title Position")

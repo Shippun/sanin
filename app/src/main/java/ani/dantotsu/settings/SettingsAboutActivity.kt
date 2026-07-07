@@ -20,6 +20,7 @@ import ani.dantotsu.restartApp
 import ani.dantotsu.settings.saving.PrefManager
 import ani.dantotsu.settings.saving.PrefName
 import ani.dantotsu.statusBarHeight
+import ani.dantotsu.util.FocusEffectUtil
 import ani.dantotsu.themes.ThemeManager
 import ani.dantotsu.util.Logger
 import kotlinx.coroutines.CoroutineScope
@@ -42,6 +43,8 @@ class SettingsAboutActivity : AppCompatActivity() {
                 topMargin = statusBarHeight
                 bottomMargin = navBarHeight
             }
+            aboutSettingsBack.isFocusable = true
+            FocusEffectUtil.applyFocusListener(aboutSettingsBack)
             aboutSettingsBack.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
 
             settingsRecyclerView.adapter = SettingsAdapter(
@@ -92,6 +95,8 @@ class SettingsAboutActivity : AppCompatActivity() {
                         attachToSwitch = {
                             it.settingsExtraIcon.visibility = View.VISIBLE
                             it.settingsExtraIcon.setImageResource(R.drawable.ic_round_share_24)
+                            it.settingsExtraIcon.isFocusable = true
+                            FocusEffectUtil.applyFocusListener(it.settingsExtraIcon)
                             it.settingsExtraIcon.setOnClickListener {
                                 Logger.shareLog(context)
                             }

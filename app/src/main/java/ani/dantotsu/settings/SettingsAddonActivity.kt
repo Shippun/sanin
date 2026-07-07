@@ -22,6 +22,7 @@ import ani.dantotsu.settings.saving.PrefName
 import ani.dantotsu.snackString
 import ani.dantotsu.statusBarHeight
 import ani.dantotsu.themes.ThemeManager
+import ani.dantotsu.util.FocusEffectUtil
 import ani.dantotsu.util.Logger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -53,6 +54,8 @@ class SettingsAddonActivity : AppCompatActivity() {
                 bottomMargin = navBarHeight
             }
 
+            addonSettingsBack.isFocusable = true
+            FocusEffectUtil.applyFocusListener(addonSettingsBack)
             addonSettingsBack.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
 
             settingsRecyclerView.adapter = SettingsAdapter(

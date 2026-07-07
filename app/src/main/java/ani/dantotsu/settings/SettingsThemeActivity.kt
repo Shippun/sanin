@@ -37,6 +37,7 @@ class SettingsThemeActivity : AppCompatActivity() {
             onBackPressedDispatcher.addCallback(context) {
                 finish()
             }
+            themeSettingsBack.isFocusable = true
             themeSettingsBack.setOnClickListener {
                 onBackPressedDispatcher.onBackPressed()
             }
@@ -56,8 +57,14 @@ class SettingsThemeActivity : AppCompatActivity() {
                 PrefManager.setVal(PrefName.DarkMode, mode)
                 restartApp()
             }
+            themeLight.isFocusable = true
+            FocusEffectUtil.applyFocusListener(themeLight)
             themeLight.setOnClickListener { uiTheme(1, it) }
+            themeDark.isFocusable = true
+            FocusEffectUtil.applyFocusListener(themeDark)
             themeDark.setOnClickListener { uiTheme(2, it) }
+            themeAuto.isFocusable = true
+            FocusEffectUtil.applyFocusListener(themeAuto)
             themeAuto.setOnClickListener { uiTheme(0, it) }
 
             val accentColors = arrayOf(

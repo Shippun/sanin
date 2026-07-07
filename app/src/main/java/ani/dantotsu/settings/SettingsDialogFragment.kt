@@ -121,6 +121,13 @@ class SettingsDialogFragment : BottomSheetDialogFragment() {
             )
         }
 
+        binding.settingsLogin.isFocusable = true
+        FocusEffectUtil.applyFocusListener(binding.settingsLogin)
+        binding.settingsUserAvatar.isFocusable = true
+        FocusEffectUtil.applyFocusListener(binding.settingsUserAvatar)
+        binding.settingsNotification.isFocusable = true
+        FocusEffectUtil.applyFocusListener(binding.settingsNotification)
+
         binding.settingsIncognito.isChecked = PrefManager.getVal(PrefName.Incognito)
         binding.settingsIncognito.setOnCheckedChangeListener { _, isChecked ->
             // Added check to ensure fragment is still active before updating

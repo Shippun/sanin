@@ -27,6 +27,7 @@ import ani.dantotsu.openSettings
 import ani.dantotsu.settings.saving.PrefManager
 import ani.dantotsu.settings.saving.PrefName
 import ani.dantotsu.statusBarHeight
+import ani.dantotsu.util.FocusEffectUtil
 import ani.dantotsu.themes.ThemeManager
 import ani.dantotsu.toast
 import ani.dantotsu.util.customAlertDialog
@@ -59,6 +60,8 @@ class SettingsNotificationActivity : AppCompatActivity() {
                 topMargin = statusBarHeight
                 bottomMargin = navBarHeight
             }
+            notificationSettingsBack.isFocusable = true
+            FocusEffectUtil.applyFocusListener(notificationSettingsBack)
             notificationSettingsBack.setOnClickListener {
                 onBackPressedDispatcher.onBackPressed()
             }

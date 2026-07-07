@@ -34,6 +34,7 @@ class SettingsHomeActivity : AppCompatActivity() {
                 topMargin = statusBarHeight
                 bottomMargin = navBarHeight
             }
+            animeSettingsBack.isFocusable = true
             animeSettingsBack.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
             FocusEffectUtil.applyFocusListener(animeSettingsBack)
 

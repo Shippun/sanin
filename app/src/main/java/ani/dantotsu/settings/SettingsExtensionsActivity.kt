@@ -20,6 +20,7 @@ import ani.dantotsu.restartApp
 import ani.dantotsu.settings.saving.PrefManager
 import ani.dantotsu.settings.saving.PrefName
 import ani.dantotsu.statusBarHeight
+import ani.dantotsu.util.FocusEffectUtil
 import ani.dantotsu.themes.ThemeManager
 import ani.dantotsu.util.customAlertDialog
 import eu.kanade.domain.base.BasePreferences
@@ -42,6 +43,8 @@ class SettingsExtensionsActivity : AppCompatActivity() {
                 topMargin = statusBarHeight
                 bottomMargin = navBarHeight
             }
+            extensionSettingsBack.isFocusable = true
+            FocusEffectUtil.applyFocusListener(extensionSettingsBack)
             extensionSettingsBack.setOnClickListener {
                 onBackPressedDispatcher.onBackPressed()
             }

@@ -39,6 +39,7 @@ class SettingsAnimeActivity : AppCompatActivity() {
                 topMargin = statusBarHeight
                 bottomMargin = navBarHeight
             }
+            animeSettingsBack.isFocusable = true
             animeSettingsBack.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
             FocusEffectUtil.applyFocusListener(animeSettingsBack)
 
@@ -195,14 +196,20 @@ class SettingsAnimeActivity : AppCompatActivity() {
                 PrefManager.setVal(PrefName.AnimeDefaultView, mode)
             }
 
+            settingsEpList.isFocusable = true
+            FocusEffectUtil.applyFocusListener(settingsEpList)
             settingsEpList.setOnClickListener {
                 uiEp(0, it)
             }
 
+            settingsEpGrid.isFocusable = true
+            FocusEffectUtil.applyFocusListener(settingsEpGrid)
             settingsEpGrid.setOnClickListener {
                 uiEp(1, it)
             }
 
+            settingsEpCompact.isFocusable = true
+            FocusEffectUtil.applyFocusListener(settingsEpCompact)
             settingsEpCompact.setOnClickListener {
                 uiEp(2, it)
             }

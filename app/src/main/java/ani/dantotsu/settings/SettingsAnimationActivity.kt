@@ -26,6 +26,7 @@ class SettingsAnimationActivity : AppCompatActivity() {
             topMargin = statusBarHeight
             bottomMargin = navBarHeight
         }
+        binding.animationBack.isFocusable = true
         binding.animationBack.setOnClickListener {
             onBackPressedDispatcher.onBackPressed()
         }
