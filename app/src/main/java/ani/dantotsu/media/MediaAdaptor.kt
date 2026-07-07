@@ -154,14 +154,12 @@ class MediaAdaptor(
             return
         }
         when (type) {
-            0 -> {
+             0 -> {
                 val b = (holder as MediaViewHolder).binding
                 setAnimation(activity, b.root)
                 val media = mediaList?.getOrNull(position)
                 if (media != null) {
-                    val imageUrl = media.cover
-                    b.itemCompactImage.loadImage(imageUrl)
-                    loadGradientOverlay(b.itemCompactImageOverlay, media, position)
+                    b.itemCompactImage.loadImage(media.cover)
                     val cardSize = PrefManager.getVal<Float>(PrefName.CardSize)
                     val finalW = (102 * cardSize).toInt()
                     val finalH = (154 * cardSize).toInt()
@@ -184,27 +182,7 @@ class MediaAdaptor(
                         b.root.context,
                         (if (media.userScore != 0) R.drawable.item_user_score else R.drawable.item_score)
                     )
-                    val titlePos = PrefManager.getVal<Int>(PrefName.CardTitlePosition)
-                    when (titlePos) {
-                        0 -> {
-                            b.itemCompactImageOverlay.visibility = View.VISIBLE
-                            b.itemCompactTitleBelow.visibility = View.GONE
-                            bindLogo(b.itemCompactClearlogo, b.itemCompactOverlayTitle, media, position)
-                        }
-                        1 -> {
-                            b.itemCompactImageOverlay.visibility = View.GONE
-                            b.itemCompactClearlogo.visibility = View.GONE
-                            b.itemCompactOverlayTitle.visibility = View.GONE
-                            b.itemCompactTitleBelow.visibility = View.VISIBLE
-                            b.itemCompactTitleBelow.text = media.userPreferredName
-                        }
-                        else -> {
-                            b.itemCompactImageOverlay.visibility = View.GONE
-                            b.itemCompactClearlogo.visibility = View.GONE
-                            b.itemCompactOverlayTitle.visibility = View.GONE
-                            b.itemCompactTitleBelow.visibility = View.GONE
-                        }
-                    }
+                    b.itemCompactTitle.text = media.userPreferredName
                 }
             }
 
