@@ -35,8 +35,8 @@ class LocalMappingSearchDialog : BottomSheetDialogFragment() {
     private var searched = false
 
     var folderName: String? = null
-    var searchType: String = "ANIME" // ANIME or MANGA
-    var searchFormat: String? = null // NOVEL for local novels
+    var searchType: String = "ANIME"
+    var searchFormat: String? = null
     var onMappingSelected: ((Int) -> Unit)? = null
 
     override fun onCreateView(
@@ -134,8 +134,8 @@ class LocalMappingSearchDialog : BottomSheetDialogFragment() {
         ): LocalMappingSearchDialog {
             return LocalMappingSearchDialog().apply {
                 this.folderName = folderName
-                this.searchType = if (isAnime) "ANIME" else "MANGA"
-                this.searchFormat = if (isNovel) "NOVEL" else null
+                this.searchType = "ANIME"
+                this.searchFormat = null
                 this.onMappingSelected = onMappingSelected
             }
         }

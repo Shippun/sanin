@@ -448,26 +448,6 @@ class MediaInfoFragment : Fragment() {
                     else
                         (media.anime.totalEpisodes ?: "~").toString()
                     binding.mediaInfoTotalDetail.text = infoTotal
-                } else if (media.manga != null) {
-                    type = "MANGA"
-                    binding.mediaInfoTotalTitle.setText(R.string.total_chaps)
-                    binding.mediaInfoTotalDetail.text = (media.manga.totalChapters ?: "~").toString()
-                    if (media.manga.author != null) {
-                        binding.mediaInfoAuthorContainer.visibility = View.VISIBLE
-                        binding.mediaInfoAuthor.text = media.manga.author!!.name
-                        if (!offline) {
-                            binding.mediaInfoAuthorContainer.setOnClickListener {
-                                ContextCompat.startActivity(
-                                    requireActivity(),
-                                    Intent(activity, AuthorActivity::class.java).putExtra(
-                                        "author",
-                                        media.manga.author!! as Serializable
-                                    ),
-                                    null
-                                )
-                            }
-                        }
-                    }
                 }
 
                 displayTimer(media, binding.mediaInfoContainer)
@@ -514,8 +494,7 @@ class MediaInfoFragment : Fragment() {
                                 status = media.userStatus,
                                 score = media.userScore.toFloat(),
                                 progress = media.userProgress,
-                                totalEpisodes = media.anime?.totalEpisodes
-                                    ?: media.manga?.totalChapters,
+                                totalEpisodes = media.anime?.totalEpisodes,
                                 nextAiringEpisode = media.anime?.nextAiringEpisode
                             )
                         )

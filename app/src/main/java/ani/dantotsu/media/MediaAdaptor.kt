@@ -250,14 +250,6 @@ class MediaAdaptor(
                             if (media.anime.nextAiringEpisode != null) (media.anime.nextAiringEpisode.toString() + " / " + (media.anime.totalEpisodes
                                 ?: "??").toString()) else (media.anime.totalEpisodes
                                 ?: "??").toString()
-                    } else if (media.manga != null) {
-                        val itemTotal = " " + if ((media.manga.totalChapters
-                                ?: 0) != 1
-                        ) currActivity()!!.getString(R.string.chapter_plural) else currActivity()!!.getString(
-                            R.string.chapter_singular
-                        )
-                        b.itemTotal.text = itemTotal
-                        b.itemCompactTotal.text = "${media.manga.totalChapters ?: "??"}"
                     }
                     if (position == mediaList.size - 2 && viewPager != null) viewPager.post {
                         val start = mediaList.size
@@ -325,12 +317,6 @@ class MediaAdaptor(
                             if (media.anime.nextAiringEpisode != null) (media.anime.nextAiringEpisode.toString() + " / " + (media.anime.totalEpisodes
                                 ?: "??").toString()) else (media.anime.totalEpisodes
                                 ?: "??").toString()
-                    } else if (media.manga != null) {
-                        b.itemTotal.text = " " + if ((media.manga.totalChapters
-                                ?: 0) != 1
-                        ) currActivity()!!.getString(R.string.chapter_plural)
-                        else currActivity()!!.getString(R.string.chapter_singular)
-                        b.itemCompactTotal.text = "${media.manga.totalChapters ?: "??"}"
                     }
                     @SuppressLint("NotifyDataSetChanged")
                     if (position == mediaList!!.size - 2 && viewPager != null) viewPager.post {
@@ -406,12 +392,6 @@ class MediaAdaptor(
                             if (media.anime.nextAiringEpisode != null) (media.anime.nextAiringEpisode.toString() + " / " + (media.anime.totalEpisodes
                                 ?: "??").toString()) else (media.anime.totalEpisodes
                                 ?: "??").toString()
-                    } else if (media.manga != null) {
-                        b.itemTotal.text = " " + if ((media.manga.totalChapters
-                                ?: 0) != 1
-                        ) currActivity()!!.getString(R.string.chapter_plural)
-                        else currActivity()!!.getString(R.string.chapter_singular)
-                        b.itemCompactTotal.text = "${media.manga.totalChapters ?: "??"}"
                     }
                     @SuppressLint("NotifyDataSetChanged")
                     if (position == mediaList!!.size - 2 && viewPager != null) viewPager.post {

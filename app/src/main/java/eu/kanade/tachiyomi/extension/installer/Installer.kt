@@ -27,8 +27,6 @@ import java.util.concurrent.atomic.AtomicReference
 abstract class Installer(private val service: Service) {
 
     private val animeExtensionManager: AnimeExtensionManager by injectLazy()
-    private val mangaExtensionManager: MangaExtensionManager by injectLazy()
-    private val novelExtensionManager: NovelExtensionManager by injectLazy()
     private val torrentAddonManager: TorrentAddonManager by injectLazy()
     private val downloadAddonManager: DownloadAddonManager by injectLazy()
 
@@ -70,11 +68,7 @@ abstract class Installer(private val service: Service) {
     @CallSuper
     open fun processEntry(entry: Entry) {
         if (entry.type is MediaType) {
-            when (entry.type) {
-                MediaType.ANIME -> animeExtensionManager.setInstalling(entry.downloadId)
-                MediaType.MANGA -> mangaExtensionManager.setInstalling(entry.downloadId)
-                MediaType.NOVEL -> novelExtensionManager.setInstalling(entry.downloadId)
-            }
+            animeExtensionManager.setInstalling(entry.downloadId)
         } else {
             when (entry.type) {
                 AddonType.TORRENT -> torrentAddonManager.setInstalling(entry.downloadId)
@@ -104,22 +98,10 @@ abstract class Installer(private val service: Service) {
         val completedEntry = waitingInstall.getAndSet(null)
         if (completedEntry != null) {
             if (completedEntry.type is MediaType) {
-                when (completedEntry.type) {
-                    MediaType.ANIME -> animeExtensionManager.updateInstallStep(
-                        completedEntry.downloadId,
-                        resultStep
-                    )
-
-                    MediaType.MANGA -> mangaExtensionManager.updateInstallStep(
-                        completedEntry.downloadId,
-                        resultStep
-                    )
-
-                    MediaType.NOVEL -> novelExtensionManager.updateInstallStep(
-                        completedEntry.downloadId,
-                        resultStep
-                    )
-                }
+                animeExtensionManager.updateInstallStep(
+                    completedEntry.downloadId,
+                    resultStep
+                )
             } else {
                 when (completedEntry.type) {
                     AddonType.TORRENT -> torrentAddonManager.updateInstallStep(
@@ -167,22 +149,10 @@ abstract class Installer(private val service: Service) {
         queue.forEach {
 
             if (it.type is MediaType) {
-                when (it.type) {
-                    MediaType.ANIME -> animeExtensionManager.updateInstallStep(
-                        it.downloadId,
-                        InstallStep.Error
-                    )
-
-                    MediaType.MANGA -> mangaExtensionManager.updateInstallStep(
-                        it.downloadId,
-                        InstallStep.Error
-                    )
-
-                    MediaType.NOVEL -> novelExtensionManager.updateInstallStep(
-                        it.downloadId,
-                        InstallStep.Error
-                    )
-                }
+                animeExtensionManager.updateInstallStep(
+                    it.downloadId,
+                    InstallStep.Error
+                )
             } else {
                 when (it.type) {
                     AddonType.TORRENT -> torrentAddonManager.updateInstallStep(

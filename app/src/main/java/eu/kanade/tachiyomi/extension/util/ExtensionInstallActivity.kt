@@ -9,10 +9,8 @@ import ani.dantotsu.addons.download.DownloadAddonManager
 import ani.dantotsu.addons.torrent.TorrentAddonManager
 import ani.dantotsu.media.AddonType
 import ani.dantotsu.media.MediaType
-import ani.dantotsu.parsers.novel.NovelExtensionManager
 import eu.kanade.tachiyomi.extension.InstallStep
 import eu.kanade.tachiyomi.extension.anime.AnimeExtensionManager
-import eu.kanade.tachiyomi.extension.manga.MangaExtensionManager
 import eu.kanade.tachiyomi.util.system.getSerializableExtraCompat
 import eu.kanade.tachiyomi.util.system.hasMiuiPackageInstaller
 import eu.kanade.tachiyomi.util.system.toast
@@ -91,20 +89,8 @@ class ExtensionInstallActivity : AppCompatActivity() {
             RESULT_CANCELED -> InstallStep.Idle
             else -> InstallStep.Error
         }
-        if (mediaType != null) {
-            when (mediaType) {
-                MediaType.ANIME -> {
-                    Injekt.get<AnimeExtensionManager>().updateInstallStep(downloadId, newStep)
-                }
-
-                MediaType.MANGA -> {
-                    Injekt.get<MangaExtensionManager>().updateInstallStep(downloadId, newStep)
-                }
-
-                else -> {
-                    Injekt.get<NovelExtensionManager>().updateInstallStep(downloadId, newStep)
-                }
-            }
+        if (mediaType == MediaType.ANIME) {
+            Injekt.get<AnimeExtensionManager>().updateInstallStep(downloadId, newStep)
         } else {
             when (addonType) {
                 AddonType.TORRENT -> {

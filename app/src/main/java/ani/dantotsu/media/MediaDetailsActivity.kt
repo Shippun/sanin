@@ -77,13 +77,8 @@ class MediaDetailsActivity : AppCompatActivity() {
                 withContext(Dispatchers.IO) {
                     if (rescueMode) {
                         val animeNode = MAL.query.getAnimeDetails(id)
-                        if (animeNode != null) {
-                            media = Media(animeNode, true)
-                        } else {
-                            val mangaNode = MAL.query.getMangaDetails(id)
-                            media = if (mangaNode != null) Media(mangaNode, false)
-                            else emptyMedia()
-                        }
+                        media = if (animeNode != null) Media(animeNode, true)
+                        else emptyMedia()
                     } else {
                         media = Anilist.query.getMedia(id, false) ?: emptyMedia()
                     }

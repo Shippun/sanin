@@ -23,7 +23,6 @@ import ani.dantotsu.snackString
 import ani.dantotsu.connections.syncPendingProgressUpdates
 import ani.dantotsu.connections.syncPendingDeletions
 import ani.dantotsu.media.anime.Anime
-import ani.dantotsu.media.manga.Manga
 import ani.dantotsu.tryWithSuspend
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

@@ -73,7 +73,7 @@ class ListActivity : AppCompatActivity() {
         val anime = intent.getBooleanExtra("anime", true)
         binding.listTitle.text = getString(
             R.string.user_list, intent.getStringExtra("username"),
-            if (anime) getString(R.string.anime) else getString(R.string.manga)
+            getString(R.string.anime)
         )
         binding.listTabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab?) {

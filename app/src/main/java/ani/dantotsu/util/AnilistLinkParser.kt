@@ -8,11 +8,9 @@ object AnilistLinkParser {
         val endIndex: Int
     )
     enum class MediaType {
-        ANIME,
-        MANGA
+        ANIME
     }
     private val ANIME_URL_PATTERN = Regex("""https://anilist\.co/anime/(\d+)/?\S*""")
-    private val MANGA_URL_PATTERN = Regex("""https://anilist\.co/manga/(\d+)/?\S*""")
     fun extractAnilistLinks(text: String): List<AnilistLink> {
         val links = mutableListOf<AnilistLink>()
 
@@ -23,21 +21,6 @@ object AnilistLinkParser {
                     AnilistLink(
                         id = id,
                         type = MediaType.ANIME,
-                        url = matchResult.value,
-                        startIndex = matchResult.range.first,
-                        endIndex = matchResult.range.last + 1
-                    )
-                )
-            }
-        }
-
-        MANGA_URL_PATTERN.findAll(text).forEach { matchResult ->
-            val id = matchResult.groupValues[1].toIntOrNull()
-            if (id != null) {
-                links.add(
-                    AnilistLink(
-                        id = id,
-                        type = MediaType.MANGA,
                         url = matchResult.value,
                         startIndex = matchResult.range.first,
                         endIndex = matchResult.range.last + 1
@@ -65,7 +48,6 @@ object AnilistLinkParser {
 
         // Pattern 3: Remove bare AniList URLs (not in anchor tags)
         result = ANIME_URL_PATTERN.replace(result, "")
-        result = MANGA_URL_PATTERN.replace(result, "")
 
         // Clean up extra whitespace
         // Multiple spaces → single space
@@ -106,10 +88,6 @@ object AnilistLinkParser {
 
         // Pattern 3: bare AniList URLs not wrapped in an anchor
         result = ANIME_URL_PATTERN.replace(result) { matchResult ->
-            val id = matchResult.groupValues[1].toIntOrNull()
-            titleMap[id]?.let { "<u><b>$it</b></u>" } ?: ""
-        }
-        result = MANGA_URL_PATTERN.replace(result) { matchResult ->
             val id = matchResult.groupValues[1].toIntOrNull()
             titleMap[id]?.let { "<u><b>$it</b></u>" } ?: ""
         }

@@ -199,12 +199,8 @@ internal object ExtensionLoader {
     }
 
     private fun isPackageAnExtension(type: MediaType, pkgInfo: PackageInfo): Boolean {
-        return if (type == MediaType.NOVEL) {
-            pkgInfo.packageName.startsWith("some.random")
-        } else {
-            pkgInfo.reqFeatures.orEmpty().any {
-                it.name == ANIME_PACKAGE
-            }
+        return pkgInfo.reqFeatures.orEmpty().any {
+            it.name == ANIME_PACKAGE
         }
     }
 }

@@ -149,10 +149,7 @@ class CommentsFragment : Fragment() {
                 }
                 isAnime = newMedia.anime != null
                 userProgress = newMedia.userProgress
-                totalEpisodesOrChapters = if (isAnime)
-                    newMedia.anime?.totalEpisodes
-                else
-                    newMedia.manga?.totalChapters
+                totalEpisodesOrChapters = newMedia.anime?.totalEpisodes
                 updateCurrentProgressButton()
 
                 if (!commentsLoaded || newMedia.id != this.mediaId) {
@@ -286,12 +283,12 @@ class CommentsFragment : Fragment() {
             if (progress <= 0) return@setOnLongClickListener false
             val total = totalEpisodesOrChapters ?: progress
             val maxEp = maxOf(total, progress)
-            val label = if (isAnime) "Ep" else "Ch"
+            val label = "Ep"
 
             val items = Array(maxEp) { i -> "$label ${i + 1}" }
             val currentSelection = if (filterTag != null) filterTag!! - 1 else progress - 1
             activity.customAlertDialog().apply {
-                setTitle("Filter by ${if (isAnime) "Episode" else "Chapter"}")
+                setTitle("Filter by Episode")
                 singleChoiceItems(items, currentSelection) { selected ->
                     filterTag = selected + 1
                     isAutoFilterOn = true
@@ -522,20 +519,6 @@ class CommentsFragment : Fragment() {
             } else {
                 snackString("Episode $tag not found for this provider")
             }
-        } else {
-            val selected = currentMedia.selected
-            if (selected?.sourceIndex == null) {
-                snackString("Please select an extension first")
-                return
-            }
-            val sourceIndex = selected.sourceIndex
-
-            val isNovel = currentMedia.format == "NOVEL"
-            if (isNovel) {
-                snackString("Novel chapter $tag not found")
-            } else {
-                snackString("Manga chapter $tag not found")
-            }
         }
     }
 
@@ -564,7 +547,7 @@ class CommentsFragment : Fragment() {
             binding.commentCurrentProgress.visibility = View.GONE
             return
         }
-        val label = if (isAnime) "Ep" else "Ch"
+        val label = "Ep"
         val isManualFilter = filterTag != null && filterTag != progress
         val activeFilter = filterTag ?: progress
 
@@ -638,7 +621,7 @@ class CommentsFragment : Fragment() {
             return
         }
 
-        val label = if (isAnime) "episode" else "chapter"
+        val label = "episode"
         val total = totalEpisodesOrChapters
         val defaultProgress = userProgress ?: 0
 

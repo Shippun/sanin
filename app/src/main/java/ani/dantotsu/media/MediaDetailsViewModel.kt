@@ -19,9 +19,6 @@ import ani.dantotsu.others.Anify
 import ani.dantotsu.others.Jikan
 import ani.dantotsu.others.Kitsu
 import ani.dantotsu.parsers.AnimeSources
-import ani.dantotsu.parsers.Book
-import ani.dantotsu.parsers.MangaChapter
-import ani.dantotsu.parsers.MangaImage
 import ani.dantotsu.parsers.ShowResponse
 import ani.dantotsu.parsers.VideoExtractor
 import ani.dantotsu.parsers.WatchSources
@@ -30,7 +27,6 @@ import ani.dantotsu.settings.saving.PrefName
 import ani.dantotsu.snackString
 import ani.dantotsu.tryWithSuspend
 import ani.dantotsu.util.Logger
-import com.bumptech.glide.load.resource.bitmap.BitmapTransformation
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.async
@@ -93,8 +89,8 @@ class MediaDetailsViewModel : ViewModel() {
                     var mappedId = PrefManager.getCustomVal<Int>("local_mapping_$mapKeyStr", 0)
                     if (mappedId == 0) {
                         try {
-                            val searchType = if (m.manga != null) "MANGA" else "ANIME"
-                            val searchFormat = if (m.format == "LOCAL_NOVEL") "NOVEL" else null
+                            val searchType = "ANIME"
+                            val searchFormat = null as String?
                             var results = Anilist.query.searchAniManga(searchType, search = m.name, format = searchFormat)
                             if (results == null || results.results.isEmpty()) {
                                 if (m.folderName != null && m.folderName != m.name) {
@@ -128,14 +124,10 @@ class MediaDetailsViewModel : ViewModel() {
                     media.postValue(m)
                 } else if (rescueMode && m.idMAL != null) {
                     tryWithSuspend {
-                        val isAnime = m.anime != null
                         val malId = m.idMAL!!
-                        val malNode = if (isAnime)
-                            MAL.query.getAnimeDetails(malId)
-                        else
-                            MAL.query.getMangaDetails(malId)
+                        val malNode = MAL.query.getAnimeDetails(malId)
                         if (malNode != null) {
-                            val detailed = Media(malNode, isAnime)
+                            val detailed = Media(malNode, true)
                             detailed.userProgress = m.userProgress ?: detailed.userProgress
                             detailed.userStatus = m.userStatus ?: detailed.userStatus
                             detailed.userScore = if (m.userScore != 0) m.userScore else detailed.userScore
@@ -148,22 +140,15 @@ class MediaDetailsViewModel : ViewModel() {
                             detailed.cameFromContinue = m.cameFromContinue
                             detailed.selected = m.selected
                             detailed.isFav = m.isFav
-                            detailed.shareLink = "https://myanimelist.net/${if (isAnime) "anime" else "manga"}/$malId"
-                            if (isAnime) {
-                                detailed.anime?.episodes = m.anime?.episodes
-                            } else {
-                                detailed.manga?.chapters = m.manga?.chapters
-                            }
+                            detailed.shareLink = "https://myanimelist.net/anime/$malId"
+                            detailed.anime?.episodes = m.anime?.episodes
                             enrichRescueModeDetails(detailed)
                             media.postValue(detailed)
                             launchBackgroundEnrichment(detailed)
                         } else {
-                            val jikanData = if (isAnime)
-                                MAL.jikan.getAnimeById(malId)
-                            else
-                                MAL.jikan.getMangaById(malId)
+                            val jikanData = MAL.jikan.getAnimeById(malId)
                             if (jikanData != null) {
-                                val detailed = Media(jikanData, isAnime)
+                                val detailed = Media(jikanData, true)
                                 detailed.userProgress = m.userProgress ?: detailed.userProgress
                                 detailed.userStatus = m.userStatus ?: detailed.userStatus
                                 detailed.userScore = if (m.userScore != 0) m.userScore else detailed.userScore
@@ -176,12 +161,8 @@ class MediaDetailsViewModel : ViewModel() {
                                 detailed.cameFromContinue = m.cameFromContinue
                                 detailed.selected = m.selected
                                 detailed.isFav = m.isFav
-                                detailed.shareLink = "https://myanimelist.net/${if (isAnime) "anime" else "manga"}/$malId"
-                                if (isAnime) {
-                                    detailed.anime?.episodes = m.anime?.episodes
-                                } else {
-                                    detailed.manga?.chapters = m.manga?.chapters
-                                }
+                                detailed.shareLink = "https://myanimelist.net/anime/$malId"
+                                detailed.anime?.episodes = m.anime?.episodes
                                 enrichRescueModeDetails(detailed)
                                 media.postValue(detailed)
                                 launchBackgroundEnrichment(detailed)
@@ -215,26 +196,25 @@ class MediaDetailsViewModel : ViewModel() {
     private suspend fun enrichRescueModeDetails(media: Media) {
         val malId = media.idMAL ?: return
         supervisorScope {
-            val isAnime = media.anime != null
             val fullDeferred = async {
-                if (isAnime) MAL.jikan.getAnimeById(malId) else MAL.jikan.getMangaById(malId)
+                MAL.jikan.getAnimeById(malId)
             }
             val charactersDeferred = async {
-                if (isAnime) MAL.jikan.getAnimeCharacters(malId) else MAL.jikan.getMangaCharacters(malId)
+                MAL.jikan.getAnimeCharacters(malId)
             }
             val staffDeferred = async {
-                if (isAnime) MAL.jikan.getAnimeStaff(malId) else emptyList()
+                MAL.jikan.getAnimeStaff(malId)
             }
             val reviewsDeferred = async {
-                if (isAnime) MAL.jikan.getAnimeReviews(malId) else MAL.jikan.getMangaReviews(malId)
+                MAL.jikan.getAnimeReviews(malId)
             }
             val recommendationsDeferred = async {
-                MAL.jikan.getRecommendations(isAnime, malId)
+                MAL.jikan.getRecommendations(true, malId)
             }
 
             val fullData = fullDeferred.await()
             if (fullData != null) {
-                val fullMapped = Media(fullData, isAnime)
+                val fullMapped = Media(fullData, true)
                 if (media.description.isNullOrBlank() && !fullMapped.description.isNullOrBlank()) {
                     media.description = fullMapped.description
                 }
@@ -264,28 +244,24 @@ class MediaDetailsViewModel : ViewModel() {
                     media.recommendations = fullMapped.recommendations
                 }
                 if (!fullMapped.trailer.isNullOrBlank()) media.trailer = fullMapped.trailer
-                if (isAnime) {
-                    fullMapped.anime?.let { anime ->
-                        if (anime.op.isNotEmpty()) media.anime?.op = anime.op
-                        if (anime.ed.isNotEmpty()) media.anime?.ed = anime.ed
-                        anime.mainStudio?.let { media.anime?.mainStudio = it }
-                        if (!anime.producers.isNullOrEmpty()) media.anime?.producers = anime.producers
-                        anime.season?.let { media.anime?.season = it }
-                        anime.seasonYear?.let { media.anime?.seasonYear = it }
-                        if (media.anime?.nextAiringEpisodeTime == null && anime.nextAiringEpisodeTime != null) {
-                            media.anime?.nextAiringEpisodeTime = anime.nextAiringEpisodeTime
-                        }
-                        val estimated = anime.nextAiringEpisode ?: 0
-                        val watched = media.userProgress ?: 0
-                        val nextAiring = if (watched > 0) {
-                            if (watched >= (estimated + 1)) watched else estimated
-                        } else {
-                            estimated
-                        }
-                        media.anime?.nextAiringEpisode = nextAiring
+                fullMapped.anime?.let { anime ->
+                    if (anime.op.isNotEmpty()) media.anime?.op = anime.op
+                    if (anime.ed.isNotEmpty()) media.anime?.ed = anime.ed
+                    anime.mainStudio?.let { media.anime?.mainStudio = it }
+                    if (!anime.producers.isNullOrEmpty()) media.anime?.producers = anime.producers
+                    anime.season?.let { media.anime?.season = it }
+                    anime.seasonYear?.let { media.anime?.seasonYear = it }
+                    if (media.anime?.nextAiringEpisodeTime == null && anime.nextAiringEpisodeTime != null) {
+                        media.anime?.nextAiringEpisodeTime = anime.nextAiringEpisodeTime
                     }
-                } else {
-                    fullMapped.manga?.author?.let { media.manga?.author = it }
+                    val estimated = anime.nextAiringEpisode ?: 0
+                    val watched = media.userProgress ?: 0
+                    val nextAiring = if (watched > 0) {
+                        if (watched >= (estimated + 1)) watched else estimated
+                    } else {
+                        estimated
+                    }
+                    media.anime?.nextAiringEpisode = nextAiring
                 }
             }
 
@@ -356,26 +332,14 @@ class MediaDetailsViewModel : ViewModel() {
                     )
                 }
 
-            val mangaAuthors = if (!isAnime && fullData != null) {
-                fullData.authors?.mapNotNull { author ->
-                    val person = author.person ?: return@mapNotNull null
-                    Author(
-                        id = person.malId,
-                        name = person.name,
-                        image = person.images?.jpg?.largeImageUrl ?: person.images?.jpg?.imageUrl,
-                        role = author.position
-                    )
-                } ?: emptyList()
-            } else emptyList()
-
-            val allStaff = (mappedStaff + mangaAuthors).distinctBy { it.id }
+            val allStaff = mappedStaff.distinctBy { it.id }
             if (allStaff.isNotEmpty()) {
                 media.staff = ArrayList(
                     ((media.staff ?: arrayListOf()) + allStaff).distinctBy { it.id }
                 )
             }
 
-            mapJikanReviews(media, reviewsDeferred.await(), isAnime, malId)
+            mapJikanReviews(media, reviewsDeferred.await(), true, malId)
         }
     }
 
@@ -397,8 +361,7 @@ class MediaDetailsViewModel : ViewModel() {
         val recs = media.recommendations?.take(15) ?: return
         val recsToEnrich = recs.filter { rec ->
             rec.meanScore == null || rec.meanScore == 0 ||
-            (rec.anime != null && rec.anime?.totalEpisodes == null) ||
-            (rec.manga != null && rec.manga?.totalChapters == null)
+            (rec.anime != null && rec.anime?.totalEpisodes == null)
         }
         if (recsToEnrich.isEmpty()) return
         kotlinx.coroutines.supervisorScope {
@@ -406,35 +369,30 @@ class MediaDetailsViewModel : ViewModel() {
                 async {
                     try {
                         val recMalId = rec.idMAL ?: return@async
-                        val isRecAnime = rec.anime != null
                         
                         val coverUrl: String?
                         val score: Int?
                         val statusStr: String?
                         val episodesCount: Int?
-                        val chaptersCount: Int?
 
-                        val node = if (isRecAnime) MAL.query.getAnimeDetails(recMalId) else MAL.query.getMangaDetails(recMalId)
+                        val node = MAL.query.getAnimeDetails(recMalId)
                         if (node != null) {
                             coverUrl = node.mainPicture?.large ?: node.mainPicture?.medium
                             score = ((node.mean ?: 0f) * 10f).toInt()
                             statusStr = node.status?.replace("_", " ")?.uppercase(java.util.Locale.US)
                             episodesCount = node.numEpisodes
-                            chaptersCount = node.numChapters
                         } else {
-                            val jikanNode = if (isRecAnime) MAL.jikan.getAnimeById(recMalId) else MAL.jikan.getMangaById(recMalId)
+                            val jikanNode = MAL.jikan.getAnimeById(recMalId)
                             if (jikanNode != null) {
                                 coverUrl = jikanNode.images?.jpg?.largeImageUrl ?: jikanNode.images?.jpg?.imageUrl
                                 score = ((jikanNode.score ?: 0f) * 10f).toInt()
                                 statusStr = jikanNode.status?.replace("_", " ")?.uppercase(java.util.Locale.US)
                                 episodesCount = jikanNode.episodes
-                                chaptersCount = jikanNode.chapters
                             } else {
                                 coverUrl = null
                                 score = null
                                 statusStr = null
                                 episodesCount = null
-                                chaptersCount = null
                             }
                         }
 
@@ -448,14 +406,8 @@ class MediaDetailsViewModel : ViewModel() {
                             if (statusStr != null) {
                                 rec.status = statusStr
                             }
-                            if (isRecAnime) {
-                                if (episodesCount != null) {
-                                    rec.anime?.totalEpisodes = episodesCount
-                                }
-                            } else {
-                                if (chaptersCount != null) {
-                                    rec.manga?.totalChapters = chaptersCount
-                                }
+                            if (episodesCount != null) {
+                                rec.anime?.totalEpisodes = episodesCount
                             }
                         }
                     } catch (_: Exception) {}
@@ -533,46 +485,34 @@ class MediaDetailsViewModel : ViewModel() {
                 async {
                     val relMalId = rel.idMAL ?: return@async
                     val relIsAnime = rel.anime != null || rel.relation?.contains("ANIME", true) == true
-                            || (rel.manga == null)
                     try {
                         val coverUrl: String?
                         val score: Int?
                         val statusStr: String?
                         val episodesCount: Int?
-                        val chaptersCount: Int?
                         var resolvedFmt: String? = null
 
-                        val node = if (relIsAnime) MAL.query.getAnimeDetails(relMalId) else MAL.query.getMangaDetails(relMalId)
+                        val node = MAL.query.getAnimeDetails(relMalId)
                         if (node != null) {
                             coverUrl = node.mainPicture?.large ?: node.mainPicture?.medium
                             score = ((node.mean ?: 0f) * 10f).toInt()
                             statusStr = node.status?.replace("_", " ")?.uppercase(java.util.Locale.US)
                             episodesCount = node.numEpisodes
-                            chaptersCount = node.numChapters
                             resolvedFmt = node.mediaType?.uppercase(java.util.Locale.US)
                         } else {
-                            val jikanNode = if (relIsAnime) MAL.jikan.getAnimeById(relMalId) else MAL.jikan.getMangaById(relMalId)
+                            val jikanNode = MAL.jikan.getAnimeById(relMalId)
                             if (jikanNode != null) {
                                 coverUrl = jikanNode.images?.jpg?.largeImageUrl ?: jikanNode.images?.jpg?.imageUrl
                                 score = ((jikanNode.score ?: 0f) * 10f).toInt()
                                 statusStr = jikanNode.status?.replace("_", " ")?.uppercase(java.util.Locale.US)
                                 episodesCount = jikanNode.episodes
-                                chaptersCount = jikanNode.chapters
                                 val typeStr = jikanNode.type?.uppercase(java.util.Locale.US)
-                                resolvedFmt = when (typeStr) {
-                                    "LIGHT NOVEL", "NOVEL" -> "NOVEL"
-                                    "ONE-SHOT" -> "ONE_SHOT"
-                                    "DOUJINSHI" -> "DOUJINSHI"
-                                    "MANHWA" -> "MANHWA"
-                                    "MANHUA" -> "MANHUA"
-                                    else -> typeStr ?: if (relIsAnime) "TV" else "MANGA"
-                                }
+                                resolvedFmt = typeStr ?: "TV"
                             } else {
                                 coverUrl = null
                                 score = null
                                 statusStr = null
                                 episodesCount = null
-                                chaptersCount = null
                             }
                         }
 
@@ -587,14 +527,8 @@ class MediaDetailsViewModel : ViewModel() {
                             if (statusStr != null && rel.status == null) {
                                 rel.status = statusStr
                             }
-                            if (relIsAnime) {
-                                if (episodesCount != null) {
-                                    rel.anime?.totalEpisodes = episodesCount
-                                }
-                            } else {
-                                if (chaptersCount != null) {
-                                    rel.manga?.totalChapters = chaptersCount
-                                }
+                            if (episodesCount != null) {
+                                rel.anime?.totalEpisodes = episodesCount
                             }
                             if (resolvedFmt != null) {
                                 rel.format = resolvedFmt
@@ -857,60 +791,6 @@ class MediaDetailsViewModel : ViewModel() {
                 selector.show(manager, "dialog")
             }
         }
-    }
-
-    //Manga
-    var mangaReadSources: Any? = null
-
-    private val mangaChapters =
-        MutableLiveData<MutableMap<Int, MutableMap<String, MangaChapter>>>(null)
-    private val mangaLoaded = mutableMapOf<Int, MutableMap<String, MangaChapter>>()
-    fun getMangaChapters(): LiveData<MutableMap<Int, MutableMap<String, MangaChapter>>> =
-        mangaChapters
-
-    suspend fun loadMangaChapters(media: Media, i: Int, invalidate: Boolean = false) {
-        Logger.log("Loading Manga Chapters : $mangaLoaded")
-    }
-
-    suspend fun overrideMangaChapters(i: Int, source: ShowResponse, id: Int) {
-    }
-
-    private val mangaChapter = MutableLiveData<MangaChapter?>(null)
-    fun getMangaChapter(): LiveData<MangaChapter?> = mangaChapter
-    suspend fun loadMangaChapterImages(
-        chapter: MangaChapter,
-        selected: Selected,
-        post: Boolean = true
-    ): Boolean {
-
-        return false
-    }
-
-    fun loadTransformation(mangaImage: MangaImage, source: Int): BitmapTransformation? {
-        return null
-    }
-
-    val novelSources = Any()
-    val novelResponses = MutableLiveData<List<ShowResponse>>(null)
-
-    private val novelChapters = MutableLiveData<MutableMap<Int, List<ShowResponse>>>(null)
-    private val novelLoaded = mutableMapOf<Int, List<ShowResponse>>()
-    fun getNovelChapters(): LiveData<MutableMap<Int, List<ShowResponse>>> = novelChapters
-
-    suspend fun searchNovels(query: String, i: Int) {
-    }
-
-    suspend fun autoSearchNovels(media: Media) {
-    }
-
-    suspend fun loadNovelChapters(media: Media, i: Int, invalidate: Boolean = false) {
-    }
-
-    suspend fun overrideNovelChapters(i: Int, source: ShowResponse, mediaId: Int) {
-    }
-
-    val book: MutableLiveData<Book> = MutableLiveData(null)
-    suspend fun loadBook(novel: ShowResponse, i: Int) {
     }
 
     private val fetchedOnlineSubtitles = mutableMapOf<String, List<Any>>()
