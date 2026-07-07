@@ -1,149 +1,150 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/itemCompactCardLand"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:padding="22dp">
+    android:clipToPadding="false"
+    android:gravity="center_horizontal"
+    android:orientation="vertical">
 
-    <androidx.cardview.widget.CardView
-        android:id="@+id/itemCompactCard"
+    <FrameLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:translationZ="8dp"
-        app:cardCornerRadius="16dp"
-        app:cardElevation="4dp">
+        android:clipToPadding="false"
+        android:padding="22dp">
 
-        <!-- Banner/cover image fills the card -->
-        <com.google.android.material.imageview.ShapeableImageView
-            android:id="@+id/itemCompactImage"
-            android:layout_width="260dp"
-            android:layout_height="146dp"
-            android:scaleType="centerCrop"
-            android:transitionName="mediaCover"
-            app:shapeAppearanceOverlay="@style/roundedImageView"
-            tools:ignore="ContentDescription,ImageContrastCheck"
-            tools:srcCompat="@tools:sample/backgrounds/scenic" />
-
-        <!-- Blurred banner BG for "both" mode -->
-        <com.google.android.material.imageview.ShapeableImageView
-            android:id="@+id/itemCompactBanner"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scaleType="centerCrop"
-            android:visibility="gone"
-            app:shapeAppearanceOverlay="@style/roundedImageView"
-            tools:ignore="ContentDescription" />
-
-        <!-- Dark overlay for text readability -->
-        <View
-            android:id="@+id/itemCompactOverlay"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="gone" />
-
-        <!-- Left cover image for "both" mode -->
-        <com.google.android.material.imageview.ShapeableImageView
-            android:id="@+id/itemCompactCoverLeft"
-            android:layout_width="80dp"
-            android:layout_height="120dp"
-            android:layout_gravity="start|center_vertical"
-            android:layout_marginStart="12dp"
-            android:scaleType="centerCrop"
-            android:visibility="gone"
-            app:shapeAppearanceOverlay="@style/roundedImageView"
-            tools:ignore="ContentDescription"
-            tools:srcCompat="@tools:sample/backgrounds/scenic" />
-
-        <!-- Right content (clearlogo/title) -->
-        <LinearLayout
-            android:id="@+id/itemCompactRightContent"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end|center_vertical"
-            android:layout_marginEnd="16dp"
-            android:orientation="vertical"
-            android:visibility="gone">
-
-            <ImageView
-                android:id="@+id/itemCompactClearlogo"
-                android:layout_width="140dp"
-                android:layout_height="48dp"
-                android:scaleType="fitCenter"
-                android:visibility="gone"
-                tools:ignore="ContentDescription"
-                tools:srcCompat="@tools:sample/backgrounds/scenic"
-                tools:visibility="visible" />
-
-            <TextView
-                android:id="@+id/itemCompactOverlayTitle"
-                android:layout_width="140dp"
-                android:layout_height="wrap_content"
-                android:ellipsize="end"
-                android:maxLines="3"
-                android:textColor="#F3F3F3"
-                android:textSize="13sp"
-                android:visibility="visible"
-                tools:ignore="SpUsage"
-                tools:text="Title" />
-
-        </LinearLayout>
-
-        <!-- Score badge -->
-        <LinearLayout
-            android:id="@+id/itemCompactScoreBG"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="top|start"
-            android:layout_margin="4dp"
-            android:background="@drawable/item_score"
-            android:backgroundTint="#FFFFFF"
-            android:backgroundTintMode="multiply"
-            android:orientation="horizontal"
-            android:paddingStart="6dp"
-            android:paddingEnd="4dp"
-            android:visibility="gone">
-
-            <TextView
-                android:id="@+id/itemCompactScore"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="2dp"
-                android:fontFamily="@font/poppins_bold"
-                android:paddingTop="2dp"
-                android:textColor="?attr/colorOnPrimary"
-                android:textSize="11sp"
-                tools:ignore="TextContrastCheck"
-                tools:text="0.0" />
-
-            <ImageView
-                android:id="@+id/imageView2"
-                android:layout_width="10dp"
-                android:layout_height="match_parent"
-                app:srcCompat="@drawable/ic_round_star_24"
-                app:tint="?attr/colorOnPrimary"
-                tools:ignore="ContentDescription" />
-
-        </LinearLayout>
-
-        <!-- Ongoing badge -->
         <androidx.cardview.widget.CardView
-            android:id="@+id/itemCompactOngoing"
-            android:layout_width="16dp"
-            android:layout_height="16dp"
-            android:layout_gravity="bottom|end"
-            android:layout_margin="8dp"
+            android:id="@+id/itemCompactCard"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:translationZ="8dp"
-            app:cardCornerRadius="8dp"
+            app:cardCornerRadius="16dp"
             app:cardElevation="4dp">
 
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/itemCompactImage"
+                android:layout_width="260dp"
+                android:layout_height="148dp"
+                android:scaleType="centerCrop"
+                android:transitionName="mediaCover"
+                app:shapeAppearanceOverlay="@style/roundedImageView"
+                tools:ignore="ContentDescription,ImageContrastCheck"
+                tools:srcCompat="@tools:sample/backgrounds/scenic" />
+
             <View
+                android:id="@+id/itemCompactOverlay"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@drawable/item_ongoing" />
+                android:visibility="gone" />
+
+            <LinearLayout
+                android:id="@+id/itemCompactOverlayContent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|start"
+                android:layout_margin="12dp"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <ImageView
+                    android:id="@+id/itemCompactClearlogo"
+                    android:layout_width="140dp"
+                    android:layout_height="48dp"
+                    android:scaleType="fitCenter"
+                    android:visibility="gone"
+                    tools:ignore="ContentDescription"
+                    tools:srcCompat="@tools:sample/backgrounds/scenic"
+                    tools:visibility="visible" />
+
+                <TextView
+                    android:id="@+id/itemCompactOverlayTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="3"
+                    android:textColor="#F3F3F3"
+                    android:textSize="13sp"
+                    android:visibility="gone"
+                    tools:ignore="SpUsage"
+                    tools:text="Title"
+                    tools:visibility="visible" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/itemCompactScoreBG"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top|start"
+                android:layout_margin="4dp"
+                android:background="@drawable/item_score"
+                android:backgroundTint="#FFFFFF"
+                android:backgroundTintMode="multiply"
+                android:orientation="horizontal"
+                android:paddingStart="6dp"
+                android:paddingEnd="4dp"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/itemCompactScore"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="2dp"
+                    android:fontFamily="@font/poppins_bold"
+                    android:paddingTop="2dp"
+                    android:textColor="?attr/colorOnPrimary"
+                    android:textSize="11sp"
+                    tools:ignore="TextContrastCheck"
+                    tools:text="0.0" />
+
+                <ImageView
+                    android:id="@+id/imageView2"
+                    android:layout_width="10dp"
+                    android:layout_height="match_parent"
+                    app:srcCompat="@drawable/ic_round_star_24"
+                    app:tint="?attr/colorOnPrimary"
+                    tools:ignore="ContentDescription" />
+
+            </LinearLayout>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/itemCompactOngoing"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:layout_gravity="bottom|end"
+                android:layout_margin="8dp"
+                android:translationZ="8dp"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="4dp">
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/item_ongoing" />
+            </androidx.cardview.widget.CardView>
+
         </androidx.cardview.widget.CardView>
 
-    </androidx.cardview.widget.CardView>
+    </FrameLayout>
 
-</FrameLayout>
+    <TextView
+        android:id="@+id/itemCompactTitleBelow"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="-10dp"
+        android:ellipsize="end"
+        android:fontFamily="@font/poppins_bold"
+        android:maxLines="2"
+        android:paddingTop="2dp"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
+        android:textAlignment="center"
+        android:textColor="?attr/colorOnBackground"
+        android:textSize="11sp"
+        android:visibility="gone"
+        tools:ignore="SpUsage"
+        tools:text="Title"
+        tools:visibility="visible" />
+
+</LinearLayout>

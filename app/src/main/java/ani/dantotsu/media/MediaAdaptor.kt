@@ -560,32 +560,44 @@ class MediaAdaptor(
                     }
                 }
             }
-            b.itemCompactBanner.visibility = View.GONE
             val titlePos = PrefManager.getVal<Int>(PrefName.CardTitlePosition)
-            b.itemCompactOverlay.visibility = View.VISIBLE
-            loadGradientOverlay(b.itemCompactOverlay, media, position, GradientDrawable.Orientation.RIGHT_LEFT)
-            b.itemCompactCoverLeft.visibility = View.GONE
-            b.itemCompactRightContent.visibility = if (titlePos != 2) View.VISIBLE else View.GONE
-            b.itemCompactScoreBG.visibility = View.VISIBLE
-
-            if (titlePos != 2) {
-                logoJobs[position]?.cancel()
-                logoJobs[position] = CoroutineScope(Dispatchers.Main).launch {
-                    val logoUrl = LogoApi.getLogoUrl(media.id)
-                    if (!logoUrl.isNullOrBlank()) {
-                        b.itemCompactClearlogo.visibility = View.VISIBLE
-                        b.itemCompactClearlogo.loadImage(logoUrl)
-                        b.itemCompactOverlayTitle.visibility = View.GONE
-                    } else {
-                        b.itemCompactClearlogo.visibility = View.GONE
-                        b.itemCompactOverlayTitle.visibility = View.VISIBLE
-                        b.itemCompactOverlayTitle.text = media.userPreferredName
+            when (titlePos) {
+                0 -> {
+                    b.itemCompactOverlay.visibility = View.VISIBLE
+                    loadGradientOverlay(b.itemCompactOverlay, media, position, GradientDrawable.Orientation.TOP_BOTTOM)
+                    b.itemCompactOverlayContent.visibility = View.VISIBLE
+                    b.itemCompactTitleBelow.visibility = View.GONE
+                    logoJobs[position]?.cancel()
+                    logoJobs[position] = CoroutineScope(Dispatchers.Main).launch {
+                        val logoUrl = LogoApi.getLogoUrl(media.id)
+                        if (!logoUrl.isNullOrBlank()) {
+                            b.itemCompactClearlogo.visibility = View.VISIBLE
+                            b.itemCompactClearlogo.loadImage(logoUrl)
+                            b.itemCompactOverlayTitle.visibility = View.GONE
+                        } else {
+                            b.itemCompactClearlogo.visibility = View.GONE
+                            b.itemCompactOverlayTitle.visibility = View.VISIBLE
+                            b.itemCompactOverlayTitle.text = media.userPreferredName
+                        }
                     }
                 }
-            } else {
-                b.itemCompactClearlogo.visibility = View.GONE
-                b.itemCompactOverlayTitle.visibility = View.GONE
+                1 -> {
+                    b.itemCompactOverlay.visibility = View.GONE
+                    b.itemCompactOverlayContent.visibility = View.GONE
+                    b.itemCompactClearlogo.visibility = View.GONE
+                    b.itemCompactOverlayTitle.visibility = View.GONE
+                    b.itemCompactTitleBelow.visibility = View.VISIBLE
+                    b.itemCompactTitleBelow.text = media.userPreferredName
+                }
+                else -> {
+                    b.itemCompactOverlay.visibility = View.GONE
+                    b.itemCompactOverlayContent.visibility = View.GONE
+                    b.itemCompactClearlogo.visibility = View.GONE
+                    b.itemCompactOverlayTitle.visibility = View.GONE
+                    b.itemCompactTitleBelow.visibility = View.GONE
+                }
             }
+            b.itemCompactScoreBG.visibility = View.VISIBLE
         }
     }
 
