@@ -28,6 +28,7 @@
                     android:layout_width="52dp"
                     android:layout_height="52dp"
                     android:layout_margin="4dp"
+                    android:focusable="true"
                     android:backgroundTint="@color/nav_bg_inv"
                     app:cardCornerRadius="26dp">
 
@@ -85,6 +86,7 @@
                     <com.google.android.material.card.MaterialCardView
                         android:layout_width="52dp"
                         android:layout_height="52dp"
+                        android:focusable="true"
                         app:strokeColor="@color/transparent"
                         android:backgroundTint="@color/nav_bg_inv"
                         app:cardCornerRadius="26dp">
@@ -123,6 +125,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="64dp"
                 android:checked="false"
+                android:focusable="true"
                 android:drawableStart="@drawable/ic_incognito_24"
                 android:drawablePadding="16dp"
                 android:elegantTextHeight="true"
@@ -145,6 +148,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="64dp"
                 android:checked="false"
+                android:focusable="true"
                 android:drawableStart="@drawable/ic_myanimelist"
                 android:drawablePadding="16dp"
                 android:elegantTextHeight="true"
@@ -167,6 +171,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="64dp"
                 android:checked="false"
+                android:focusable="true"
                 android:drawableStart="@drawable/ic_download_24"
                 android:drawablePadding="16dp"
                 android:elegantTextHeight="true"
@@ -195,6 +200,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="64dp"
                 android:fontFamily="@font/poppins_bold"
+                android:focusable="true"
                 android:insetTop="0dp"
                 android:insetBottom="0dp"
                 android:paddingStart="32dp"
@@ -214,6 +220,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="64dp"
                 android:fontFamily="@font/poppins_bold"
+                android:focusable="true"
                 android:insetTop="0dp"
                 android:insetBottom="0dp"
                 android:paddingStart="32dp"
@@ -234,6 +241,7 @@
                 android:layout_height="64dp"
                 android:layout_marginBottom="16dp"
                 android:fontFamily="@font/poppins_bold"
+                android:focusable="true"
                 android:insetTop="0dp"
                 android:insetBottom="0dp"
                 android:paddingStart="32dp"

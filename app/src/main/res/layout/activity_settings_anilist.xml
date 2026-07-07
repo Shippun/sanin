@@ -311,6 +311,7 @@
                 android:layout_marginHorizontal="36dp"
                 android:layout_marginVertical="12dp"
                 android:src="@drawable/ic_circle_add"
+                android:focusable="true"
                 android:background="?android:attr/selectableItemBackground"
                 app:tint="?attr/colorPrimary"/>
 
@@ -337,6 +338,7 @@
                 android:layout_marginHorizontal="36dp"
                 android:layout_marginVertical="12dp"
                 android:src="@drawable/ic_circle_add"
+                android:focusable="true"
                 android:background="?android:attr/selectableItemBackground"
                 app:tint="?attr/colorPrimary"/>
 
@@ -346,6 +348,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="32dp"
                 android:layout_gravity="end"
+                android:focusable="true"
                 android:fontFamily="@font/poppins_bold"
                 android:text="@string/save" />
 
