@@ -169,7 +169,7 @@ class ExtensionsActivity : AppCompatActivity() {
 
     private fun generateRepositoryButton(type: MediaType) {
         binding.openSettingsButton.setOnClickListener {
-            val repos = PrefManager.getVal(PrefName.AnimeExtensionRepos)
+            val repos = PrefManager.getVal<Set<String>>(PrefName.AnimeExtensionRepos)
             AddRepositoryBottomSheet.newInstance(
                 type,
                 repos.toList(),

@@ -189,22 +189,10 @@ abstract class Installer(private val service: Service) {
                 checkQueue()
             }
             if (toCancel.type is MediaType) {
-                when (toCancel.type) {
-                    MediaType.ANIME -> animeExtensionManager.updateInstallStep(
-                        downloadId,
-                        InstallStep.Idle
-                    )
-
-                    MediaType.MANGA -> mangaExtensionManager.updateInstallStep(
-                        downloadId,
-                        InstallStep.Idle
-                    )
-
-                    MediaType.NOVEL -> novelExtensionManager.updateInstallStep(
-                        downloadId,
-                        InstallStep.Idle
-                    )
+                val manager = when (toCancel.type) {
+                    MediaType.ANIME -> animeExtensionManager
                 }
+                manager?.updateInstallStep(downloadId, InstallStep.Idle)
             } else {
                 when (toCancel.type) {
                     AddonType.TORRENT -> torrentAddonManager.updateInstallStep(
