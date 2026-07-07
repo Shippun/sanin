@@ -107,7 +107,7 @@ data class Media(
         popularity = apiMedia.popularity,
         name = apiMedia.title!!.english,
         nameRomaji = apiMedia.title!!.romaji,
-        userPreferredName = apiMedia.title!!.userPreferred,
+        userPreferredName = apiMedia.title!!.english ?: apiMedia.title!!.romaji,
         cover = apiMedia.coverImage?.large ?: apiMedia.coverImage?.medium,
         banner = apiMedia.bannerImage,
         status = apiMedia.status.toString(),

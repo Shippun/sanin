@@ -4,8 +4,9 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.drawable.BitmapDrawable
-import android.text.TextUtils
+import android.graphics.drawable.GradientDrawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -24,7 +25,6 @@ import androidx.viewpager2.widget.ViewPager2
 import ani.dantotsu.R
 import ani.dantotsu.blurImage
 import ani.dantotsu.connections.LogoApi
-import ani.dantotsu.connections.anizip.AniZip
 import ani.dantotsu.currActivity
 import ani.dantotsu.databinding.ItemMediaCompactBinding
 import ani.dantotsu.databinding.ItemMediaCompactLandBinding
@@ -36,6 +36,7 @@ import ani.dantotsu.setAnimation
 import ani.dantotsu.setSafeOnClickListener
 import ani.dantotsu.settings.saving.PrefManager
 import ani.dantotsu.settings.saving.PrefName
+import ani.dantotsu.util.BitmapUtil
 import ani.dantotsu.util.FocusEffectUtil
 import com.flaviofaria.kenburnsview.RandomTransitionGenerator
 import java.io.Serializable
@@ -43,6 +44,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 
 class MediaAdaptor(
@@ -118,6 +120,8 @@ class MediaAdaptor(
     }
 
     private var logoJobs = mutableMapOf<Int, Job>()
+    private var gradientJobs = mutableMapOf<Int, Job>()
+    private val coverGradientCache = mutableMapOf<Int, Int>()
 
     private fun bindLogo(
         clearlogo: ImageView,
@@ -267,6 +271,7 @@ class MediaAdaptor(
 
                     val bannerAnimations: Boolean = PrefManager.getVal(PrefName.BannerAnimations)
                     b.itemCompactImage.loadImage(media.cover)
+                    loadGradientOverlay(b.itemCompactGradientOverlay, media, position)
                     if (bannerAnimations)
                         b.itemCompactBanner.setTransitionGenerator(
                             RandomTransitionGenerator(
@@ -333,6 +338,7 @@ class MediaAdaptor(
                 if (media != null) {
                     val bannerAnimations: Boolean = PrefManager.getVal(PrefName.BannerAnimations)
                     b.itemCompactImage.loadImage(media.cover)
+                    loadGradientOverlay(b.itemCompactGradientOverlay, media, position)
                     if (bannerAnimations)
                         b.itemCompactBanner.setTransitionGenerator(
                             RandomTransitionGenerator(
@@ -540,15 +546,7 @@ class MediaAdaptor(
             )
 
             b.itemCompactImage.scaleType = ImageView.ScaleType.CENTER_CROP
-            if (isLandscape) {
-                logoJobs[position]?.cancel()
-                logoJobs[position] = CoroutineScope(Dispatchers.Main).launch {
-                    val posterUrl = AniZip.getPosterUrl(media.id)
-                    b.itemCompactImage.loadImage(posterUrl ?: media.cover)
-                }
-            } else {
-                b.itemCompactImage.loadImage(media.cover)
-            }
+            b.itemCompactImage.loadImage(media.cover)
             b.itemCompactBanner.visibility = View.GONE
             val titlePos = PrefManager.getVal<Int>(PrefName.CardTitlePosition)
             b.itemCompactOverlay.visibility = View.VISIBLE
@@ -575,6 +573,48 @@ class MediaAdaptor(
                 b.itemCompactOverlayTitle.visibility = View.GONE
             }
         }
+    }
+
+    private fun loadGradientOverlay(gradientView: ImageView, media: Media, position: Int) {
+        gradientJobs[position]?.cancel()
+        val cached = coverGradientCache[media.id]
+        if (cached != null) {
+            setGradient(gradientView, cached)
+            return
+        }
+        gradientJobs[position] = CoroutineScope(Dispatchers.IO).launch {
+            val bitmap = BitmapUtil.downloadImageAsBitmap(media.cover ?: return@launch)
+            val color = averageColor(bitmap)
+            coverGradientCache[media.id] = color
+            withContext(Dispatchers.Main) {
+                setGradient(gradientView, color)
+            }
+        }
+    }
+
+    private fun setGradient(gradientView: ImageView, color: Int) {
+        val startColor = Color.argb(180, Color.red(color), Color.green(color), Color.blue(color))
+        val endColor = Color.argb(200, 0, 0, 0)
+        val gradient = GradientDrawable(
+            GradientDrawable.Orientation.TOP_BOTTOM,
+            intArrayOf(startColor, endColor)
+        )
+        gradientView.setImageDrawable(gradient)
+    }
+
+    private fun averageColor(bitmap: Bitmap): Int {
+        val sample = Bitmap.createScaledBitmap(bitmap, 32, 32, true)
+        var r = 0L; var g = 0L; var b = 0L
+        val pixels = IntArray(1024)
+        sample.getPixels(pixels, 0, 32, 0, 0, 32, 32)
+        for (pixel in pixels) {
+            r += Color.red(pixel)
+            g += Color.green(pixel)
+            b += Color.blue(pixel)
+        }
+        sample.recycle()
+        val count = pixels.size
+        return Color.rgb((r / count).toInt(), (g / count).toInt(), (b / count).toInt())
     }
 
     fun clicked(position: Int, itemCompactImage: ImageView?, bitmap: Bitmap? = null) {
