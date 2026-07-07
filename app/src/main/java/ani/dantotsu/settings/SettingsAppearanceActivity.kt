@@ -35,6 +35,7 @@ class SettingsAppearanceActivity : AppCompatActivity() {
             binding.appearanceBack,
             binding.appearanceCardSize,
             binding.appearanceCardStyle,
+            binding.appearanceCardOrientation,
             binding.appearanceHideRedDot,
             binding.appearanceBlurBanners,
             binding.appearancePersistSideRail,
@@ -62,6 +63,19 @@ class SettingsAppearanceActivity : AppCompatActivity() {
                 val labels = arrayOf("Rounded", "Minimal", "Classic", "Cover Only", "Liquid Glass", "Neon", "Compact")
                 singleChoiceItems(labels, PrefManager.getVal<Int>(PrefName.CardStyle)) { index ->
                     PrefManager.setVal(PrefName.CardStyle, index)
+                    restartApp()
+                }
+                show()
+            }
+        }
+
+        binding.appearanceCardOrientation.setOnClickListener {
+            customAlertDialog().apply {
+                setTitle("Card Orientation")
+                val labels = arrayOf("Landscape", "Portrait")
+                val current = PrefManager.getVal<Int>(PrefName.CardOrientation)
+                singleChoiceItems(labels, current) { index ->
+                    PrefManager.setVal(PrefName.CardOrientation, index)
                     restartApp()
                 }
                 show()
