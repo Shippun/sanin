@@ -77,7 +77,7 @@ enum class PrefName(val data: Pref) {
     EpisodeMetadataSource(Pref(Location.UI, Int::class, 0)),
     UseOLED(Pref(Location.UI, Boolean::class, false)),
     UseCustomTheme(Pref(Location.UI, Boolean::class, false)),
-    CustomThemeInt(Pref(Location.UI, Int::class, Color.parseColor("#6200EE"))),
+    CustomThemeInt(Pref(Location.UI, Int::class, Color.parseColor("#039BE5"))),
     UseSourceTheme(Pref(Location.UI, Boolean::class, false)),
     UseMaterialYou(Pref(Location.UI, Boolean::class, false)),
     Theme(Pref(Location.UI, String::class, "BLUE")),

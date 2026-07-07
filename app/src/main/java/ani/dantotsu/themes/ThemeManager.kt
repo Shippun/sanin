@@ -56,7 +56,11 @@ class ThemeManager(private val context: Activity) {
             val returnedEarly = applyDynamicColors(useMaterial, context, useOLED, useCustom = null)
             if (!returnedEarly) return
         }
-        val theme: String = PrefManager.getVal(PrefName.Theme)
+        val theme: String = if (accentColorIndex > 0 && !useSource && !useCustomTheme) {
+            accentColorToTheme(accentColorIndex)
+        } else {
+            PrefManager.getVal(PrefName.Theme)
+        }
 
         val themeToApply = when (theme) {
             "BLUE" -> if (useOLED) R.style.Theme_Dantotsu_BlueOLED else R.style.Theme_Dantotsu_Blue
@@ -175,6 +179,17 @@ class ThemeManager(private val context: Activity) {
             15 -> Color.parseColor("#FF9800")
             16 -> Color.parseColor("#FF5722")
             else -> Color.parseColor("#03A9F4")
+        }
+
+        fun accentColorToTheme(index: Int): String = when (index) {
+            1, 16 -> "RED"
+            2 -> "PINK"
+            3, 4 -> "LAVENDER"
+            5, 6, 7 -> "BLUE"
+            8, 9 -> "OCEAN"
+            10, 11, 12 -> "GREEN"
+            13, 14, 15 -> "ORIAX"
+            else -> "BLUE"
         }
 
         fun applyUIScale(activity: Activity) {

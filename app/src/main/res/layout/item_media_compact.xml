@@ -4,8 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_marginStart="-16dp"
-    android:layout_marginEnd="-16dp"
+    android:layout_marginStart="-8dp"
+    android:layout_marginEnd="-8dp"
     android:clipToPadding="false"
     android:gravity="center_horizontal"
     android:orientation="vertical">
@@ -13,10 +13,10 @@
     <FrameLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="-16dp"
-        android:layout_marginBottom="-16dp"
+        android:layout_marginTop="-8dp"
+        android:layout_marginBottom="-8dp"
         android:clipToPadding="false"
-        android:padding="22dp">
+        android:padding="18dp">
 
         <androidx.cardview.widget.CardView
             android:id="@+id/itemCompactCard"
@@ -96,6 +96,7 @@
         android:ellipsize="end"
         android:maxLines="2"
         android:textAlignment="center"
+        android:textColor="?attr/colorOnSurface"
         android:textSize="12sp"
         android:transitionName="mediaTitle"
         tools:ignore="SpUsage"
