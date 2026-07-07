@@ -96,6 +96,20 @@ class SettingsAppearanceActivity : AppCompatActivity() {
             }
         }
 
+        binding.appearanceStandardCardRoundness.value =
+            PrefManager.getVal<Int>(PrefName.StandardCardRoundness).toFloat()
+        binding.appearanceStandardCardRoundness.addOnChangeListener { _, value, _ ->
+            PrefManager.setVal(PrefName.StandardCardRoundness, value.toInt())
+            restartApp()
+        }
+
+        binding.appearanceContinueWatchingCardRoundness.value =
+            PrefManager.getVal<Int>(PrefName.ContinueWatchingCardRoundness).toFloat()
+        binding.appearanceContinueWatchingCardRoundness.addOnChangeListener { _, value, _ ->
+            PrefManager.setVal(PrefName.ContinueWatchingCardRoundness, value.toInt())
+            restartApp()
+        }
+
         binding.appearanceHideRedDot.isChecked =
             !PrefManager.getVal<Boolean>(PrefName.ShowNotificationRedDot)
         binding.appearanceHideRedDot.setOnCheckedChangeListener { _, isChecked ->

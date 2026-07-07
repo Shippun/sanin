@@ -31,6 +31,9 @@ class ContinueWatchingLandscapeAdapter(
         val media = items[position]
         val ctx = holder.itemView.context
 
+        holder.card.radius =
+            PrefManager.getVal<Int>(PrefName.ContinueWatchingCardRoundness).toFloat()
+
         val imageUrl = media.cover
         if (!imageUrl.isNullOrBlank()) {
             holder.image.loadImage(imageUrl)

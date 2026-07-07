@@ -142,7 +142,7 @@ class MediaAdaptor(
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        val cardRoundness = PrefManager.getVal<Int>(PrefName.CardRoundness).toFloat()
+        val cardRoundness = PrefManager.getVal<Int>(PrefName.StandardCardRoundness).toFloat()
 
         if (holder is MediaLandscapeViewHolder) {
             bindLandscape(holder, position, cardRoundness)
