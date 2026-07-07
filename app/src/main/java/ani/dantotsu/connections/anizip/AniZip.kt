@@ -1,5 +1,6 @@
 package ani.dantotsu.connections.anizip
 
+import ani.dantotsu.Mapper
 import ani.dantotsu.client
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
@@ -26,7 +27,7 @@ object AniZip {
     suspend fun getBackdropUrl(anilistId: Int): String? {
         return try {
             val response = client.get("$BASE_URL/v2/images/tmdb?anilist_id=$anilistId")
-            val body = response.body?.string()?.let { json.decodeFromString<TmdbImagesResponse>(it) } ?: return null
+            val body = Mapper.json.decodeFromString<TmdbImagesResponse>(response.text) ?: return null
             body.backdrops
                 ?.filter { it.iso_639_1 == null && it.aspect_ratio != null && it.aspect_ratio > 1.2 }
                 ?.maxByOrNull { it.vote_average ?: 0.0 }
