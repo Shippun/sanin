@@ -98,7 +98,6 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="bottom"
                         android:ellipsize="end"
-                        android:gravity="center"
                         android:maxLines="2"
                         android:paddingBottom="6dp"
                         android:paddingStart="8dp"
