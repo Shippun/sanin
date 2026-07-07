@@ -42,6 +42,7 @@ class SettingsAppearanceActivity : AppCompatActivity() {
             binding.appearanceBlurBanners,
             binding.appearancePersistSideRail,
             binding.appearanceBannerBrightness,
+            binding.appearanceCardGradientIntensity,
         )
 
         binding.appearanceCardSize.isFocusable = true
@@ -99,6 +100,13 @@ class SettingsAppearanceActivity : AppCompatActivity() {
                 }
                 show()
             }
+        }
+
+        binding.appearanceCardGradientIntensity.isFocusable = true
+        binding.appearanceCardGradientIntensity.value = PrefManager.getVal(PrefName.CardGradientIntensity)
+        binding.appearanceCardGradientIntensity.addOnChangeListener { _, value, _ ->
+            PrefManager.setVal(PrefName.CardGradientIntensity, value)
+            restartApp()
         }
 
         binding.appearanceStandardCardRoundness.value =

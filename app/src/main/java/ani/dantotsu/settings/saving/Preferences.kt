@@ -144,6 +144,7 @@ enum class PrefName(val data: Pref) {
     BannerBrightness(Pref(Location.UI, Float::class, 1.0f)),
     ShowNewEpisodeBadge(Pref(Location.UI, Boolean::class, true)),
     ShowReleasingIndicator(Pref(Location.UI, Boolean::class, true)),
+    CardGradientIntensity(Pref(Location.UI, Float::class, 0.7f)),
 
     //Home
     HomeBannerMode(Pref(Location.UI, Int::class, 2)),

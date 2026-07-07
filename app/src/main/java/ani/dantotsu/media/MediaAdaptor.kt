@@ -563,6 +563,7 @@ class MediaAdaptor(
             b.itemCompactBanner.visibility = View.GONE
             val titlePos = PrefManager.getVal<Int>(PrefName.CardTitlePosition)
             b.itemCompactOverlay.visibility = View.VISIBLE
+            loadGradientOverlay(b.itemCompactOverlay, media, position, GradientDrawable.Orientation.RIGHT_LEFT)
             b.itemCompactCoverLeft.visibility = View.GONE
             b.itemCompactRightContent.visibility = if (titlePos != 2) View.VISIBLE else View.GONE
             b.itemCompactScoreBG.visibility = View.VISIBLE
@@ -588,11 +589,11 @@ class MediaAdaptor(
         }
     }
 
-    private fun loadGradientOverlay(view: View, media: Media, position: Int) {
+    private fun loadGradientOverlay(view: View, media: Media, position: Int, orientation: GradientDrawable.Orientation = GradientDrawable.Orientation.TOP_BOTTOM) {
         gradientJobs[position]?.cancel()
         val cached = coverGradientCache[media.id]
         if (cached != null) {
-            setGradient(view, cached)
+            setGradient(view, cached, orientation)
             return
         }
         gradientJobs[position] = CoroutineScope(Dispatchers.IO).launch {
@@ -600,16 +601,23 @@ class MediaAdaptor(
             val color = averageColor(bitmap)
             coverGradientCache[media.id] = color
             withContext(Dispatchers.Main) {
-                setGradient(view, color)
+                setGradient(view, color, orientation)
             }
         }
     }
 
-    private fun setGradient(view: View, color: Int) {
-        val startColor = Color.argb(180, Color.red(color), Color.green(color), Color.blue(color))
-        val endColor = Color.argb(200, 0, 0, 0)
+    private fun setGradient(view: View, color: Int, orientation: GradientDrawable.Orientation = GradientDrawable.Orientation.TOP_BOTTOM) {
+        val intensity = PrefManager.getVal<Float>(PrefName.CardGradientIntensity)
+        if (intensity <= 0f) {
+            view.background = null
+            return
+        }
+        val baseAlpha = 180
+        val endAlpha = 200
+        val startColor = Color.argb((baseAlpha * intensity).toInt().coerceIn(0, 255), Color.red(color), Color.green(color), Color.blue(color))
+        val endColor = Color.argb((endAlpha * intensity).toInt().coerceIn(0, 255), 0, 0, 0)
         val gradient = GradientDrawable(
-            GradientDrawable.Orientation.TOP_BOTTOM,
+            orientation,
             intArrayOf(startColor, endColor)
         )
         view.background = gradient
