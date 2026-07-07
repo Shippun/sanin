@@ -162,7 +162,7 @@ private class LocalMappingResultAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val media = results[position]
         holder.binding.itemCompactImage.loadImage(media.cover)
-        holder.binding.itemCompactOverlayTitle.text = media.userPreferredName
+        holder.binding.itemCompactTitle.text = media.userPreferredName
         holder.binding.itemCompactScore.text = media.meanScore?.let { "$it%" } ?: ""
         holder.binding.root.setOnClickListener {
             onItemClick(media)
