@@ -565,7 +565,6 @@ class MediaAdaptor(
                 0 -> {
                     b.itemCompactOverlay.visibility = View.VISIBLE
                     loadGradientOverlay(b.itemCompactOverlay, media, position, GradientDrawable.Orientation.TOP_BOTTOM)
-                    b.itemCompactOverlayContent.visibility = View.VISIBLE
                     b.itemCompactTitleBelow.visibility = View.GONE
                     logoJobs[position]?.cancel()
                     logoJobs[position] = CoroutineScope(Dispatchers.Main).launch {
@@ -583,7 +582,6 @@ class MediaAdaptor(
                 }
                 1 -> {
                     b.itemCompactOverlay.visibility = View.GONE
-                    b.itemCompactOverlayContent.visibility = View.GONE
                     b.itemCompactClearlogo.visibility = View.GONE
                     b.itemCompactOverlayTitle.visibility = View.GONE
                     b.itemCompactTitleBelow.visibility = View.VISIBLE
@@ -591,7 +589,6 @@ class MediaAdaptor(
                 }
                 else -> {
                     b.itemCompactOverlay.visibility = View.GONE
-                    b.itemCompactOverlayContent.visibility = View.GONE
                     b.itemCompactClearlogo.visibility = View.GONE
                     b.itemCompactOverlayTitle.visibility = View.GONE
                     b.itemCompactTitleBelow.visibility = View.GONE
