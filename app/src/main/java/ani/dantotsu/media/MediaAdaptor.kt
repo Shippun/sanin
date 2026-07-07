@@ -193,7 +193,6 @@ class MediaAdaptor(
                 if (media != null) {
                     b.itemCompactImage.loadImage(media.cover)
                     blurImage(b.itemCompactBanner, media.banner ?: media.cover)
-                    loadGradientOverlay(b.imageView, media, position)
                     b.itemCompactOngoing.isVisible =
                         media.status == currActivity()!!.getString(R.string.status_releasing)
                     b.itemCompactTitle.text = media.userPreferredName
@@ -204,27 +203,6 @@ class MediaAdaptor(
                         b.root.context,
                         (if (media.userScore != 0) R.drawable.item_user_score else R.drawable.item_score)
                     )
-                    val titlePos = PrefManager.getVal<Int>(PrefName.CardTitlePosition)
-                    when (titlePos) {
-                        0 -> {
-                            b.itemCompactImageOverlay.visibility = View.VISIBLE
-                            b.itemCompactTitle.visibility = View.GONE
-                            bindLogo(b.itemCompactClearlogo, b.itemCompactOverlayTitle, media, position)
-                            loadGradientOverlay(b.itemCompactImageOverlay, media, position)
-                        }
-                        1 -> {
-                            b.itemCompactImageOverlay.visibility = View.GONE
-                            b.itemCompactClearlogo.visibility = View.GONE
-                            b.itemCompactOverlayTitle.visibility = View.GONE
-                            b.itemCompactTitle.visibility = View.VISIBLE
-                        }
-                        else -> {
-                            b.itemCompactImageOverlay.visibility = View.GONE
-                            b.itemCompactClearlogo.visibility = View.GONE
-                            b.itemCompactOverlayTitle.visibility = View.GONE
-                            b.itemCompactTitle.visibility = View.GONE
-                        }
-                    }
                     if (media.anime != null) {
                         val itemTotal = " " + if ((media.anime.totalEpisodes
                                 ?: 0) != 1
@@ -253,7 +231,6 @@ class MediaAdaptor(
 
                     val bannerAnimations: Boolean = PrefManager.getVal(PrefName.BannerAnimations)
                     b.itemCompactImage.loadImage(media.cover)
-                    loadGradientOverlay(b.itemCompactGradientOverlay, media, position)
                     if (bannerAnimations)
                         b.itemCompactBanner.setTransitionGenerator(
                             RandomTransitionGenerator(
@@ -275,26 +252,6 @@ class MediaAdaptor(
                         b.root.context,
                         (if (media.userScore != 0) R.drawable.item_user_score else R.drawable.item_score)
                     )
-                    val titlePos = PrefManager.getVal<Int>(PrefName.CardTitlePosition)
-                    when (titlePos) {
-                        0 -> {
-                            b.itemCompactImageOverlay.visibility = View.VISIBLE
-                            b.itemCompactTitleContainer.visibility = View.GONE
-                            bindLogo(b.itemCompactClearlogo, b.itemCompactOverlayTitle, media, position)
-                        }
-                        1 -> {
-                            b.itemCompactImageOverlay.visibility = View.GONE
-                            b.itemCompactClearlogo.visibility = View.GONE
-                            b.itemCompactOverlayTitle.visibility = View.GONE
-                            b.itemCompactTitleContainer.visibility = View.VISIBLE
-                        }
-                        else -> {
-                            b.itemCompactImageOverlay.visibility = View.GONE
-                            b.itemCompactClearlogo.visibility = View.GONE
-                            b.itemCompactOverlayTitle.visibility = View.GONE
-                            b.itemCompactTitleContainer.visibility = View.GONE
-                        }
-                    }
                     if (media.anime != null) {
                         b.itemTotal.text = " " + if ((media.anime.totalEpisodes
                                 ?: 0) != 1
@@ -320,7 +277,6 @@ class MediaAdaptor(
                 if (media != null) {
                     val bannerAnimations: Boolean = PrefManager.getVal(PrefName.BannerAnimations)
                     b.itemCompactImage.loadImage(media.cover)
-                    loadGradientOverlay(b.itemCompactGradientOverlay, media, position)
                     if (bannerAnimations)
                         b.itemCompactBanner.setTransitionGenerator(
                             RandomTransitionGenerator(
@@ -342,26 +298,6 @@ class MediaAdaptor(
                         b.root.context,
                         (if (media.userScore != 0) R.drawable.item_user_score else R.drawable.item_score)
                     )
-                    val titlePos = PrefManager.getVal<Int>(PrefName.CardTitlePosition)
-                    when (titlePos) {
-                        0 -> {
-                            b.itemCompactImageOverlay.visibility = View.VISIBLE
-                            b.itemCompactTitleContainer.visibility = View.GONE
-                            bindLogo(b.itemCompactClearlogo, b.itemCompactOverlayTitle, media, position)
-                        }
-                        1 -> {
-                            b.itemCompactImageOverlay.visibility = View.GONE
-                            b.itemCompactClearlogo.visibility = View.GONE
-                            b.itemCompactOverlayTitle.visibility = View.GONE
-                            b.itemCompactTitleContainer.visibility = View.VISIBLE
-                        }
-                        else -> {
-                            b.itemCompactImageOverlay.visibility = View.GONE
-                            b.itemCompactClearlogo.visibility = View.GONE
-                            b.itemCompactOverlayTitle.visibility = View.GONE
-                            b.itemCompactTitleContainer.visibility = View.GONE
-                        }
-                    }
                     media.genres.apply {
                         if (isNotEmpty()) {
                             var genres = ""
