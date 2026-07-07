@@ -95,11 +95,7 @@ class AddRepositoryBottomSheet : DialogFragment() {
         )
         adapter.addAll(repositories.map { RepoItem(it, mediaType, ::onRepositoryRemoved) })
 
-        binding.repositoryInput.hint = when (mediaType) {
-            MediaType.ANIME -> getString(R.string.anime_add_repository)
-            MediaType.MANGA -> getString(R.string.manga_add_repository)
-            MediaType.NOVEL -> getString(R.string.novel_add_repository)
-        }
+        binding.repositoryInput.hint = getString(R.string.anime_add_repository)
 
         binding.addButton.setOnClickListener {
             val input = binding.repositoryInput.text.toString()
@@ -146,14 +142,8 @@ class AddRepositoryBottomSheet : DialogFragment() {
 
     private fun isValidUrl(input: String): String? {
         if (input.startsWith("http://") || input.startsWith("https://")) {
-            if (mediaType == MediaType.NOVEL) {
-                if (!input.removeSuffix("/").endsWith(".json")) {
-                    return "URL must end with a .json file"
-                }
-            } else {
-                if (!input.removeSuffix("/").endsWith("index.min.json")) {
-                    return "URL must end with index.min.json"
-                }
+            if (!input.removeSuffix("/").endsWith("index.min.json")) {
+                return "URL must end with index.min.json"
             }
             return null
         }

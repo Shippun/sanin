@@ -88,12 +88,6 @@ class ExtensionsActivity : AppCompatActivity() {
                     if (tab.text?.contains("Anime") == true) {
                         generateRepositoryButton(MediaType.ANIME)
                     }
-                    if (tab.text?.contains("Manga") == true) {
-                        generateRepositoryButton(MediaType.MANGA)
-                    }
-                    if (tab.text?.contains("Novels") == true) {
-                        generateRepositoryButton(MediaType.NOVEL)
-                    }
                 }
 
                 override fun onTabUnselected(tab: TabLayout.Tab) {
@@ -175,19 +169,7 @@ class ExtensionsActivity : AppCompatActivity() {
 
     private fun generateRepositoryButton(type: MediaType) {
         binding.openSettingsButton.setOnClickListener {
-            val repos: Set<String> = when (type) {
-                MediaType.ANIME -> {
-                    PrefManager.getVal(PrefName.AnimeExtensionRepos)
-                }
-
-                MediaType.MANGA -> {
-                    PrefManager.getVal(PrefName.MangaExtensionRepos)
-                }
-
-                MediaType.NOVEL -> {
-                    PrefManager.getVal(PrefName.NovelExtensionRepos)
-                }
-            }
+            val repos = PrefManager.getVal(PrefName.AnimeExtensionRepos)
             AddRepositoryBottomSheet.newInstance(
                 type,
                 repos.toList(),

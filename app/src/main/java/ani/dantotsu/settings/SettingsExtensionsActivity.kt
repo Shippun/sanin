@@ -47,19 +47,7 @@ class SettingsExtensionsActivity : AppCompatActivity() {
             }
             fun setExtensionOutput(repoInventory: ViewGroup, type: MediaType) {
                 repoInventory.removeAllViews()
-                val prefName: PrefName = when (type) {
-                    MediaType.ANIME -> {
-                        PrefName.AnimeExtensionRepos
-                    }
-
-                    MediaType.MANGA -> {
-                        PrefName.MangaExtensionRepos
-                    }
-
-                    MediaType.NOVEL -> {
-                        PrefName.NovelExtensionRepos
-                    }
-                }
+                val prefName = PrefName.AnimeExtensionRepos
                 PrefManager.getVal<Set<String>>(prefName).forEach { item ->
                     val view = ItemRepositoryBinding.inflate(
                         LayoutInflater.from(repoInventory.context), repoInventory, true
@@ -101,56 +89,6 @@ class SettingsExtensionsActivity : AppCompatActivity() {
                         },
                         attach = {
                             setExtensionOutput(it.attachView, MediaType.ANIME)
-                        }
-                    ),
-                    Settings(
-                        type = 1,
-                        name = getString(R.string.manga_add_repository),
-                        desc = getString(R.string.manga_add_repository_desc),
-                        icon = R.drawable.ic_github,
-                        onClick = {
-                            val mangaRepos =
-                                PrefManager.getVal<Set<String>>(PrefName.MangaExtensionRepos)
-                            AddRepositoryBottomSheet.newInstance(
-                                MediaType.MANGA,
-                                mangaRepos.toList(),
-                                onRepositoryAdded = { input, mediaType ->
-                                    AddRepositoryBottomSheet.addRepo(input, mediaType)
-                                    setExtensionOutput(it.attachView, mediaType)
-                                },
-                                onRepositoryRemoved = { item, mediaType ->
-                                    AddRepositoryBottomSheet.removeRepo(item, mediaType)
-                                    setExtensionOutput(it.attachView, mediaType)
-                                }
-                            ).show(supportFragmentManager, "add_repo")
-                        },
-                        attach = {
-                            setExtensionOutput(it.attachView, MediaType.MANGA)
-                        }
-                    ),
-                    Settings(
-                        type = 1,
-                        name = getString(R.string.novel_add_repository),
-                        desc = getString(R.string.novel_add_repository_desc),
-                        icon = R.drawable.ic_github,
-                        onClick = {
-                            val novelRepos =
-                                PrefManager.getVal<Set<String>>(PrefName.NovelExtensionRepos)
-                            AddRepositoryBottomSheet.newInstance(
-                                MediaType.NOVEL,
-                                novelRepos.toList(),
-                                onRepositoryAdded = { input, mediaType ->
-                                    AddRepositoryBottomSheet.addRepo(input, mediaType)
-                                    setExtensionOutput(it.attachView, mediaType)
-                                },
-                                onRepositoryRemoved = { item, mediaType ->
-                                    AddRepositoryBottomSheet.removeRepo(item, mediaType)
-                                    setExtensionOutput(it.attachView, mediaType)
-                                }
-                            ).show(supportFragmentManager, "add_repo")
-                        },
-                        attach = {
-                            setExtensionOutput(it.attachView, MediaType.NOVEL)
                         }
                     ),
                     Settings(

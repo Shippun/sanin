@@ -29,12 +29,8 @@ class DownloadsManager(private val context: Context) {
     private val gson = Gson()
     private val downloadsList = loadDownloads().toMutableList()
 
-    val mangaDownloadedTypes: List<DownloadedType>
-        get() = downloadsList.filter { it.type == MediaType.MANGA }
     val animeDownloadedTypes: List<DownloadedType>
         get() = downloadsList.filter { it.type == MediaType.ANIME }
-    val novelDownloadedTypes: List<DownloadedType>
-        get() = downloadsList.filter { it.type == MediaType.NOVEL }
 
     private fun saveDownloads() {
         val jsonString = gson.toJson(downloadsList)
@@ -107,36 +103,18 @@ class DownloadsManager(private val context: Context) {
             snackString("Directory does not exist")
             cleanDownloads()
         }
-        when (type) {
-            MediaType.MANGA -> {
-                downloadsList.removeAll { it.titleName == title && it.type == MediaType.MANGA }
-            }
-
-            MediaType.ANIME -> {
-                downloadsList.removeAll { it.titleName == title && it.type == MediaType.ANIME }
-            }
-
-            MediaType.NOVEL -> {
-                downloadsList.removeAll { it.titleName == title && it.type == MediaType.NOVEL }
-            }
-        }
+        downloadsList.removeAll { it.titleName == title && it.type == MediaType.ANIME }
         saveDownloads()
     }
 
     private fun cleanDownloads() {
-        cleanDownload(MediaType.MANGA)
         cleanDownload(MediaType.ANIME)
-        cleanDownload(MediaType.NOVEL)
     }
 
     private fun cleanDownload(type: MediaType) {
         // remove all folders that are not in the downloads list
         val directory = getBaseDirectory(context, type)
-        val downloadsSubLists = when (type) {
-            MediaType.MANGA -> mangaDownloadedTypes
-            MediaType.ANIME -> animeDownloadedTypes
-            else -> novelDownloadedTypes
-        }
+        val downloadsSubLists = animeDownloadedTypes
         if (directory?.exists() == true && directory.isDirectory) {
             val files = directory.listFiles()
             for (file in files) {
@@ -289,9 +267,7 @@ class DownloadsManager(private val context: Context) {
 
     companion object {
         private const val BASE_LOCATION = "Dantotsu"
-        private const val MANGA_SUB_LOCATION = "Manga"
         private const val ANIME_SUB_LOCATION = "Anime"
-        private const val NOVEL_SUB_LOCATION = "Novel"
 
 
         /**
@@ -307,18 +283,7 @@ class DownloadsManager(private val context: Context) {
             var base = DocumentFile.fromTreeUri(context, baseDirectory) ?: return null
             base = base.findOrCreateFolder(BASE_LOCATION, false) ?: return null
             return when (type) {
-                MediaType.MANGA -> {
-                    base.findOrCreateFolder(MANGA_SUB_LOCATION, false)
-                }
-
-                MediaType.ANIME -> {
-                    base.findOrCreateFolder(ANIME_SUB_LOCATION, false)
-                }
-
-                else -> {
-                    base.findOrCreateFolder(NOVEL_SUB_LOCATION, false)
-                }
-            }
+                return base.findOrCreateFolder(ANIME_SUB_LOCATION, false)
         }
 
         /**

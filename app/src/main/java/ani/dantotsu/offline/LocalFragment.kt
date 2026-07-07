@@ -24,7 +24,6 @@ import androidx.core.view.marginBottom
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import eu.kanade.tachiyomi.animesource.model.SAnime
-import eu.kanade.tachiyomi.source.model.SManga
 import ani.dantotsu.R
 import ani.dantotsu.download.anime.OfflineAnimeAdapter
 import ani.dantotsu.download.anime.OfflineAnimeModel
@@ -34,6 +33,7 @@ import ani.dantotsu.initActivity
 import ani.dantotsu.media.Media
 import ani.dantotsu.media.MediaDetailsActivity
 import ani.dantotsu.media.Selected
+import ani.dantotsu.media.anime.Anime
 import ani.dantotsu.navBarHeight
 import ani.dantotsu.parsers.AnimeSources
 import ani.dantotsu.parsers.MangaParser
@@ -545,8 +545,8 @@ class LocalFragment : Fragment(), OfflineAnimeSearchListener {
             description = item.description,
             status = item.status ?: "UNKNOWN",
             genres = item.genres?.split(",")?.map { it.trim() } as? ArrayList<String> ?: arrayListOf(),
-            manga = ani.dantotsu.media.manga.Manga(
-                totalChapters = item.totalEpisode.toIntOrNull()
+            anime = Anime(
+                totalEpisodes = item.totalEpisode.toIntOrNull()
             ),
         ).also {
             it.format = "LOCAL"
@@ -601,12 +601,11 @@ class LocalFragment : Fragment(), OfflineAnimeSearchListener {
             description = item.description,
             status = item.status ?: "UNKNOWN",
             genres = item.genres?.split(",")?.map { it.trim() } as? ArrayList<String> ?: arrayListOf(),
-            anime = null,
-            manga = ani.dantotsu.media.manga.Manga(
-                totalChapters = item.totalEpisode.toIntOrNull()
-            )
+            anime = Anime(
+                totalEpisodes = item.totalEpisode.toIntOrNull()
+            ),
         ).also {
-            it.format = "LOCAL_NOVEL" 
+            it.format = "LOCAL_NOVEL"
             it.folderName = item.folderName
             it.cover = ani.dantotsu.settings.saving.PrefManager.getCustomVal<String>("local_cover_${item.title}", "")
                 .takeIf { s -> s.isNotEmpty() && s != "null" } ?: item.image?.toString()

@@ -32,11 +32,7 @@ class DownloadCompat {
     companion object {
         @Deprecated("external storage is deprecated, use SAF instead")
         fun loadMediaCompat(downloadedType: DownloadedType): Media? {
-            val type = when (downloadedType.type) {
-                MediaType.MANGA -> "Manga"
-                MediaType.ANIME -> "Anime"
-                else -> "Novel"
-            }
+            val type = "Anime"
             val directory = File(
                 currContext()?.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS),
                 "Dantotsu/$type/${downloadedType.titleName}"
@@ -64,11 +60,7 @@ class DownloadCompat {
 
         @Deprecated("external storage is deprecated, use SAF instead")
         fun loadOfflineAnimeModelCompat(downloadedType: DownloadedType): OfflineAnimeModel {
-            val type = when (downloadedType.type) {
-                MediaType.MANGA -> "Manga"
-                MediaType.ANIME -> "Anime"
-                else -> "Novel"
-            }
+            val type = "Anime"
             val directory = File(
                 currContext()?.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS),
                 "Dantotsu/$type/${downloadedType.titleName}"
@@ -200,13 +192,7 @@ class DownloadCompat {
 
         @Deprecated("external storage is deprecated, use SAF instead")
         fun removeMediaCompat(context: Context, title: String, type: MediaType) {
-            val subDirectory = if (type == MediaType.MANGA) {
-                "Manga"
-            } else if (type == MediaType.ANIME) {
-                "Anime"
-            } else {
-                "Novel"
-            }
+            val subDirectory = "Anime"
             val directory = File(
                 context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS),
                 "Dantotsu/$subDirectory/$title"
@@ -218,22 +204,10 @@ class DownloadCompat {
 
         @Deprecated("external storage is deprecated, use SAF instead")
         fun removeDownloadCompat(context: Context, downloadedType: DownloadedType, toast: Boolean) {
-            val directory = if (downloadedType.type == MediaType.MANGA) {
-                File(
-                    context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS),
-                    "Dantotsu/Manga/${downloadedType.titleName}/${downloadedType.chapterName}"
-                )
-            } else if (downloadedType.type == MediaType.ANIME) {
-                File(
-                    context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS),
-                    "Dantotsu/Anime/${downloadedType.titleName}/${downloadedType.chapterName}"
-                )
-            } else {
-                File(
-                    context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS),
-                    "Dantotsu/Novel/${downloadedType.titleName}/${downloadedType.chapterName}"
-                )
-            }
+            val directory = File(
+                context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS),
+                "Dantotsu/Anime/${downloadedType.titleName}/${downloadedType.chapterName}"
+            )
 
             // Check if the directory exists and delete it recursively
             if (directory.exists()) {

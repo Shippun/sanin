@@ -134,9 +134,6 @@ class MediaListDialogFragment : BottomSheetDialogFragment() {
 
                 fun onComplete() {
                     if (total != null) binding.mediaListProgress.setText(total.toString())
-                    if (volumeTotal != null) {
-                        binding.mediaListVolumeProgress.setText(volumeTotal.toString())
-                    }
                     if (start.date.year == null) {
                         start.date = FuzzyDate().getToday()
                         binding.mediaListStart.setText(start.date.toString())
