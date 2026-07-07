@@ -25,6 +25,7 @@ import androidx.viewpager2.widget.ViewPager2
 import ani.dantotsu.R
 import ani.dantotsu.blurImage
 import ani.dantotsu.connections.LogoApi
+import ani.dantotsu.connections.anizip.AniZip
 import ani.dantotsu.currActivity
 import ani.dantotsu.databinding.ItemMediaCompactBinding
 import ani.dantotsu.databinding.ItemMediaCompactLandBinding
@@ -546,7 +547,11 @@ class MediaAdaptor(
             )
 
             b.itemCompactImage.scaleType = ImageView.ScaleType.CENTER_CROP
-            b.itemCompactImage.loadImage(media.cover)
+            logoJobs[position]?.cancel()
+            logoJobs[position] = CoroutineScope(Dispatchers.Main).launch {
+                val posterUrl = AniZip.getPosterUrl(media.id)
+                b.itemCompactImage.loadImage(posterUrl ?: media.cover)
+            }
             b.itemCompactBanner.visibility = View.GONE
             val titlePos = PrefManager.getVal<Int>(PrefName.CardTitlePosition)
             b.itemCompactOverlay.visibility = View.VISIBLE
