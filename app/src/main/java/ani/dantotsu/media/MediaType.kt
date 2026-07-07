@@ -5,15 +5,11 @@ interface Type {
 }
 
 enum class MediaType : Type {
-    ANIME,
-    MANGA,
-    NOVEL;
+    ANIME;
 
     override fun asText(): String {
         return when (this) {
             ANIME -> "Anime"
-            MANGA -> "Manga"
-            NOVEL -> "Novel"
         }
     }
 
@@ -21,8 +17,6 @@ enum class MediaType : Type {
         fun fromText(string: String): MediaType? {
             return when (string) {
                 "Anime" -> ANIME
-                "Manga" -> MANGA
-                "Novel" -> NOVEL
                 else -> {
                     null
                 }

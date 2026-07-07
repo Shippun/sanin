@@ -17,7 +17,6 @@ import ani.dantotsu.connections.mal.JikanMediaData
 import ani.dantotsu.connections.mal.JikanBroadcast
 import ani.dantotsu.connections.mal.JikanRelationEntry
 import ani.dantotsu.media.anime.Anime
-import ani.dantotsu.media.manga.Manga
 import ani.dantotsu.profile.User
 import ani.dantotsu.settings.saving.PrefManager
 import ani.dantotsu.settings.saving.PrefName
@@ -31,7 +30,6 @@ import ani.dantotsu.connections.anilist.api.Media as ApiMedia
 
 data class Media(
     val anime: Anime? = null,
-    val manga: Manga? = null,
     val id: Int,
 
     var idMAL: Int? = null,
@@ -125,13 +123,10 @@ data class Media(
         endDate = apiMedia.endDate,
         favourites = apiMedia.favourites,
         timeUntilAiring = apiMedia.nextAiringEpisode?.timeUntilAiring?.let { it.toLong() * 1000 },
-        anime = if (apiMedia.type == MediaType.ANIME) Anime(
+        anime = Anime(
             totalEpisodes = apiMedia.episodes,
             nextAiringEpisode = apiMedia.nextAiringEpisode?.episode?.minus(1)
-        ) else null,
-        manga = if (apiMedia.type == MediaType.MANGA) Manga(
-            totalChapters = apiMedia.chapters,
-        ) else null,
+        ),
         format = apiMedia.format?.toString(),
     )
 
@@ -177,19 +172,14 @@ data class Media(
         description = node.synopsis,
         startDate = parseIsoDate(node.startDate),
         endDate = parseIsoDate(node.endDate),
-        countryOfOrigin = when (node.mediaType?.lowercase()) {
-            "manhwa" -> "KR"
-            "manhua" -> "CN"
-            else -> "JP"
-        },
-        userStatus = if (isAnime && node.myListStatus?.isRewatching == true ||
-                         !isAnime && node.myListStatus?.isRereading == true)
+        countryOfOrigin = "JP",
+        userStatus = if (node.myListStatus?.isRewatching == true)
             "REPEATING"
         else
-            convertMalStatusToAnilist(node.myListStatus?.status, isAnime),
-        userProgress = if (isAnime) node.myListStatus?.numEpisodesWatched else node.myListStatus?.numChaptersRead,
+            convertMalStatusToAnilist(node.myListStatus?.status, true),
+        userProgress = node.myListStatus?.numEpisodesWatched,
         userScore = node.myListStatus?.score?.times(10) ?: 0,
-        anime = if (isAnime) Anime(
+        anime = Anime(
             totalEpisodes = if (node.numEpisodes == 0) null else node.numEpisodes,
             season = node.startSeason?.season,
             seasonYear = node.startSeason?.year,
@@ -222,10 +212,7 @@ data class Media(
                     null
                 }
             } else null
-        ) else null,
-        manga = if (!isAnime) Manga(
-            totalChapters = if (node.numChapters == 0) null else node.numChapters,
-        ) else null,
+        ),
         userStartedAt = parseIsoDate(node.myListStatus?.startDate) ?: FuzzyDate(),
         userCompletedAt = parseIsoDate(node.myListStatus?.finishDate) ?: FuzzyDate(),
     ) {
@@ -239,11 +226,20 @@ data class Media(
             this.synonyms = ArrayList(allSynonyms)
         }
 
-        val malType = if (isAnime) "anime" else "manga"
-        this.shareLink = "https://myanimelist.net/$malType/${node.id}"
+        this.shareLink = "https://myanimelist.net/anime/${node.id}"
 
-        if (isAnime) {
-            this.anime?.mainStudio = node.studios?.firstOrNull()?.let {
+        this.anime?.mainStudio = node.studios?.firstOrNull()?.let {
+            Studio(
+                id = it.id.toString(),
+                name = it.name,
+                isFavourite = false,
+                favourites = null,
+                imageUrl = null
+            )
+        }
+        this.anime?.producers = node.studios
+            ?.drop(1)
+            ?.map {
                 Studio(
                     id = it.id.toString(),
                     name = it.name,
@@ -252,38 +248,7 @@ data class Media(
                     imageUrl = null
                 )
             }
-            this.anime?.producers = node.studios
-                ?.drop(1)
-                ?.map {
-                    Studio(
-                        id = it.id.toString(),
-                        name = it.name,
-                        isFavourite = false,
-                        favourites = null,
-                        imageUrl = null
-                    )
-                }
-                ?.let { ArrayList(it) }
-        } else {
-            this.manga?.author = node.authors?.firstOrNull()?.let {
-                Author(
-                    id = it.id,
-                    name = it.name,
-                    image = null,
-                    role = "Author"
-                )
-            }
-            this.staff = node.authors
-                ?.map {
-                    Author(
-                        id = it.id,
-                        name = it.name,
-                        image = null,
-                        role = "Author"
-                    )
-                }
-                ?.let { ArrayList(it) }
-        }
+            ?.let { ArrayList(it) }
 
         this.recommendations = node.recommendations
             ?.mapNotNull { it.node }
@@ -302,7 +267,6 @@ data class Media(
                     popularity = it.popularity,
                     format = it.mediaType?.uppercase(),
                     anime = if (isAnime) Anime(totalEpisodes = it.numEpisodes) else null,
-                    manga = if (!isAnime) Manga(totalChapters = it.numChapters) else null
                 )
             }
             ?.let { ArrayList(it.distinctBy { media -> media.id }) }
@@ -310,9 +274,6 @@ data class Media(
         val relatedNodes = mutableListOf<Triple<MalAnimeNode, String, Boolean>>()
         node.relatedAnime?.forEach { rel ->
             rel.node?.let { relatedNodes.add(Triple(it, rel.relationTypeFormatted ?: rel.relationType ?: "", true)) }
-        }
-        node.relatedManga?.forEach { rel ->
-            rel.node?.let { relatedNodes.add(Triple(it, rel.relationTypeFormatted ?: rel.relationType ?: "", false)) }
         }
         val mappedRelations = relatedNodes
             .map { (relatedNode, relation, isRelAnime) ->
@@ -331,10 +292,7 @@ data class Media(
                     format = relatedNode.mediaType?.uppercase(),
                     anime = if (isRelAnime) {
                         Anime(totalEpisodes = relatedNode.numEpisodes)
-                    } else null,
-                    manga = if (!isRelAnime) {
-                        Manga(totalChapters = relatedNode.numChapters)
-                    } else null
+                    } else Anime()
                 ).apply {
                     val relText = relation.uppercase(Locale.US).replace(" ", "_")
                     val fmt = relatedNode.mediaType?.uppercase()
@@ -351,13 +309,12 @@ data class Media(
 
     constructor(entry: MalListEntry, isAnime: Boolean) : this(entry.node, isAnime) {
         val ls = entry.listStatus
-        this.userProgress = if (isAnime) ls?.numEpisodesWatched else ls?.numChaptersRead
+        this.userProgress = ls?.numEpisodesWatched
         this.userScore = ls?.score?.times(10) ?: 0
-        this.userStatus = if (isAnime && ls?.isRewatching == true ||
-                              !isAnime && ls?.isRereading == true)
+        this.userStatus = if (ls?.isRewatching == true)
             "REPEATING"
         else
-            convertMalStatusToAnilist(ls?.status, isAnime)
+            convertMalStatusToAnilist(ls?.status, true)
         this.cameFromContinue = true
         ls?.startDate?.let { dateStr ->
             parseIsoDate(dateStr)?.let { this.userStartedAt = it }
@@ -398,15 +355,12 @@ data class Media(
             "manhua" -> "CN"
             else -> "JP"
         },
-        anime = if (isAnime) Anime(
+        anime = Anime(
             totalEpisodes = if (jikan.episodes == 0) null else jikan.episodes,
             season = jikan.season,
             seasonYear = jikan.year,
             episodeDuration = parseJikanDuration(jikan.duration),
-        ) else null,
-        manga = if (!isAnime) Manga(
-            totalChapters = if (jikan.chapters == 0) null else jikan.chapters,
-        ) else null,
+        ),
     ) {
         this.shareLink = jikan.url
         this.synonyms = ArrayList(
@@ -496,8 +450,7 @@ data class Media(
                 meanScore = null,
                 popularity = null,
                 format = entry.type?.uppercase(Locale.US),
-                anime = if (isRelAnime) Anime(null, null, null) else null,
-                manga = if (!isRelAnime) Manga(null) else null,
+                anime = if (isRelAnime) Anime(null, null, null) else Anime(),
             ).apply {
                 val relText = relation?.uppercase(Locale.US)?.replace(" ", "_")
                 val fmt = entry.type?.uppercase(Locale.US)
@@ -516,119 +469,95 @@ data class Media(
             this.sequel = mappedRelations.firstOrNull { it.relation != null && (it.relation == "SEQUEL" || it.relation!!.startsWith("SEQUEL\n")) }
         }
 
-        if (isAnime) {
-            this.anime?.season = jikan.season?.uppercase(Locale.US)
-            this.anime?.seasonYear = jikan.year
-            this.anime?.op = ArrayList(jikan.theme?.openings ?: emptyList())
-            this.anime?.ed = ArrayList(jikan.theme?.endings ?: emptyList())
-            this.anime?.mainStudio = jikan.studios?.firstOrNull()?.let {
-                Studio(
-                    id = it.malId.toString(),
-                    name = it.name,
-                    isFavourite = false,
-                    favourites = null,
-                    imageUrl = null
+        this.anime?.season = jikan.season?.uppercase(Locale.US)
+        this.anime?.seasonYear = jikan.year
+        this.anime?.op = ArrayList(jikan.theme?.openings ?: emptyList())
+        this.anime?.ed = ArrayList(jikan.theme?.endings ?: emptyList())
+        this.anime?.mainStudio = jikan.studios?.firstOrNull()?.let {
+            Studio(
+                id = it.malId.toString(),
+                name = it.name,
+                isFavourite = false,
+                favourites = null,
+                imageUrl = null
+            )
+        }
+        val producerStudios = buildList {
+            jikan.producers?.forEach {
+                add(
+                    Studio(
+                        id = it.malId.toString(),
+                        name = it.name,
+                        isFavourite = false,
+                        favourites = null,
+                        imageUrl = null
+                    )
                 )
             }
-            val producerStudios = buildList {
-                jikan.producers?.forEach {
-                    add(
-                        Studio(
-                            id = it.malId.toString(),
-                            name = it.name,
-                            isFavourite = false,
-                            favourites = null,
-                            imageUrl = null
-                        )
+            jikan.licensors?.forEach {
+                add(
+                    Studio(
+                        id = it.malId.toString(),
+                        name = it.name,
+                        isFavourite = false,
+                        favourites = null,
+                        imageUrl = null
                     )
-                }
-                jikan.licensors?.forEach {
-                    add(
-                        Studio(
-                            id = it.malId.toString(),
-                            name = it.name,
-                            isFavourite = false,
-                            favourites = null,
-                            imageUrl = null
-                        )
-                    )
-                }
-            }.distinctBy { it.id }
-            if (producerStudios.isNotEmpty()) {
-                this.anime?.producers = ArrayList(producerStudios)
+                )
             }
-            this.trailer = jikan.trailer?.effectiveYoutubeId()
+        }.distinctBy { it.id }
+        if (producerStudios.isNotEmpty()) {
+            this.anime?.producers = ArrayList(producerStudios)
+        }
+        this.trailer = jikan.trailer?.effectiveYoutubeId()
 
-            if (jikan.status?.equals("Currently Airing", true) == true) {
-                var nextAiringTime: Long? = null
-                if (jikan.broadcast != null) {
-                    computeNextAiringFromBroadcast(jikan.broadcast)?.let { (episodeTime) ->
-                        this.anime?.nextAiringEpisodeTime = episodeTime
-                        nextAiringTime = episodeTime
-                    }
+        if (jikan.status?.equals("Currently Airing", true) == true) {
+            var nextAiringTime: Long? = null
+            if (jikan.broadcast != null) {
+                computeNextAiringFromBroadcast(jikan.broadcast)?.let { (episodeTime) ->
+                    this.anime?.nextAiringEpisodeTime = episodeTime
+                    nextAiringTime = episodeTime
                 }
-                try {
-                    val fromDateStr = jikan.aired?.from
-                    if (fromDateStr != null) {
-                        val datePart = fromDateStr.substringBefore('T')
-                        val parts = datePart.split("-")
-                        val year = parts.getOrNull(0)?.toIntOrNull()
-                        val month = parts.getOrNull(1)?.toIntOrNull()
-                        val day = parts.getOrNull(2)?.toIntOrNull()
-                        if (year != null && month != null && day != null) {
-                            val parsedStart = java.time.LocalDate.of(year, month, day)
-                            val targetDate = if (nextAiringTime != null) {
-                                java.time.Instant.ofEpochSecond(nextAiringTime).atZone(java.time.ZoneId.systemDefault()).toLocalDate()
-                            } else {
-                                java.time.LocalDate.now()
+            }
+            try {
+                val fromDateStr = jikan.aired?.from
+                if (fromDateStr != null) {
+                    val datePart = fromDateStr.substringBefore('T')
+                    val parts = datePart.split("-")
+                    val year = parts.getOrNull(0)?.toIntOrNull()
+                    val month = parts.getOrNull(1)?.toIntOrNull()
+                    val day = parts.getOrNull(2)?.toIntOrNull()
+                    if (year != null && month != null && day != null) {
+                        val parsedStart = java.time.LocalDate.of(year, month, day)
+                        val targetDate = if (nextAiringTime != null) {
+                            java.time.Instant.ofEpochSecond(nextAiringTime).atZone(java.time.ZoneId.systemDefault()).toLocalDate()
+                        } else {
+                            java.time.LocalDate.now()
+                        }
+                        if (targetDate.isAfter(parsedStart)) {
+                            val weeks = java.time.temporal.ChronoUnit.WEEKS.between(parsedStart, targetDate)
+                            var estimatedEp = (weeks + 1).toInt()
+                            val totalEpisodes = jikan.episodes ?: 0
+                            if (totalEpisodes > 0 && estimatedEp > totalEpisodes) {
+                                estimatedEp = totalEpisodes
                             }
-                            if (targetDate.isAfter(parsedStart)) {
-                                val weeks = java.time.temporal.ChronoUnit.WEEKS.between(parsedStart, targetDate)
-                                var estimatedEp = (weeks + 1).toInt()
-                                val totalEpisodes = jikan.episodes ?: 0
-                                if (totalEpisodes > 0 && estimatedEp > totalEpisodes) {
-                                    estimatedEp = totalEpisodes
-                                }
-                                this.anime?.nextAiringEpisode = estimatedEp - 1
-                            } else {
-                                this.anime?.nextAiringEpisode = 0
-                            }
+                            this.anime?.nextAiringEpisode = estimatedEp - 1
                         } else {
                             this.anime?.nextAiringEpisode = 0
                         }
                     } else {
                         this.anime?.nextAiringEpisode = 0
                     }
-                } catch (_: Exception) {
+                } else {
                     this.anime?.nextAiringEpisode = 0
                 }
+            } catch (_: Exception) {
+                this.anime?.nextAiringEpisode = 0
             }
-        } else {
-            this.manga?.author = jikan.authors?.firstOrNull()?.person?.let {
-                Author(
-                    id = it.malId,
-                    name = it.name,
-                    image = it.images?.jpg?.imageUrl,
-                    role = jikan.authors?.firstOrNull()?.position ?: "Author"
-                )
-            }
-            this.staff = jikan.authors
-                ?.mapNotNull { author ->
-                    author.person?.let {
-                        Author(
-                            id = it.malId,
-                            name = it.name,
-                            image = it.images?.jpg?.imageUrl,
-                            role = author.position ?: "Author"
-                        )
-                    }
-                }
-                ?.let { ArrayList(it.distinctBy { author -> author.id }) }
         }
     }
 
     fun mainName() = name ?: nameMAL ?: nameRomaji
-    fun mangaName() = if (countryOfOrigin != "JP") mainName() else nameRomaji
 }
 
 
