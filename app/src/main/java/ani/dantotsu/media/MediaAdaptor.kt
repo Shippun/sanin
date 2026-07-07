@@ -23,6 +23,7 @@ import androidx.viewpager2.widget.ViewPager2
 import ani.dantotsu.R
 import ani.dantotsu.blurImage
 import ani.dantotsu.connections.LogoApi
+import ani.dantotsu.connections.anizip.AniZip
 import ani.dantotsu.currActivity
 import ani.dantotsu.databinding.ItemMediaCompactBinding
 import ani.dantotsu.databinding.ItemMediaCompactLandBinding
@@ -66,6 +67,7 @@ class MediaAdaptor(
                 else -> 0
             }
         }
+        isLandscape = if (type == 0) PrefManager.getVal<Int>(PrefName.CardOrientation) == 0 else false
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -455,7 +457,15 @@ class MediaAdaptor(
             )
 
             b.itemCompactImage.scaleType = ImageView.ScaleType.CENTER_CROP
-            b.itemCompactImage.loadImage(media.banner ?: media.cover)
+            if (isLandscape) {
+                logoJobs[position]?.cancel()
+                logoJobs[position] = CoroutineScope(Dispatchers.Main).launch {
+                    val posterUrl = AniZip.getPosterUrl(media.id)
+                    b.itemCompactImage.loadImage(posterUrl ?: media.cover)
+                }
+            } else {
+                b.itemCompactImage.loadImage(media.cover)
+            }
             b.itemCompactBanner.visibility = View.GONE
             b.itemCompactOverlay.visibility = View.VISIBLE
             b.itemCompactCoverLeft.visibility = View.GONE

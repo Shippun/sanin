@@ -32,4 +32,16 @@ object AniZip {
             null
         }
     }
+
+    suspend fun getPosterUrl(anilistId: Int): String? {
+        return try {
+            val response = client.get("$BASE_URL/mappings?anilist_id=$anilistId")
+            val mappings = Mapper.json.decodeFromString<AniZipMappings>(response.text)
+            mappings.images
+                ?.firstOrNull { it.coverType == "Poster" }
+                ?.url
+        } catch (_: Exception) {
+            null
+        }
+    }
 }
