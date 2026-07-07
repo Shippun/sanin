@@ -204,7 +204,7 @@ class AnimeFragment : Fragment() {
         })
         // Scroll to top when focus moves to the header (banner) section
         view.viewTreeObserver.addOnGlobalFocusChangeListener { _, newFocus ->
-            if (newFocus != null && this::binding.isInitialized) {
+            if (newFocus != null && _binding != null) {
                 val headerView = binding.animePageRecyclerView.findViewHolderForAdapterPosition(0)?.itemView
                 if (headerView != null) {
                     var v: View? = newFocus
