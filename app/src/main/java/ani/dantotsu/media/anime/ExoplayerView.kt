@@ -730,7 +730,21 @@ class ExoplayerView :
             playerView.findViewById<View>(id)?.apply {
                 isFocusable = true
                 isFocusableInTouchMode = false
-                FocusEffectUtil.applyFocusListener(this)
+            }
+        }
+        listOf(
+            androidx.media3.ui.R.id.exo_play, R.id.exo_source, R.id.exo_settings, R.id.exo_sub,
+            R.id.exo_audio, R.id.exo_dub_sub, R.id.exo_screen, R.id.exo_pip,
+            R.id.exo_skip_op_ed, R.id.exo_back, R.id.exo_skip, R.id.exo_next_ep,
+            R.id.exo_prev_ep,
+            androidx.media3.ui.R.id.exo_playback_speed,
+            R.id.exo_fast_forward_button, R.id.exo_fast_rewind_button,
+            R.id.exo_fast_forward_button_cont, R.id.exo_fast_rewind_button_cont,
+            R.id.exo_unlock, R.id.exo_lock, R.id.exo_skip_timestamp,
+            R.id.exo_ep_sel,
+        ).forEach { id ->
+            playerView.findViewById<View>(id)?.let {
+                FocusEffectUtil.applyFocusListener(it, it, isCircular = it is ImageButton)
             }
         }
         playerView.post { exoPlay.requestFocus() }
@@ -3393,6 +3407,9 @@ class ExoplayerView :
     private fun ensureControllerVisible() {
         if (!playerView.isControllerFullyVisible) playerView.showController()
         playerView.controllerShowTimeoutMs = PrefManager.getVal<Int>(PrefName.AutoHideTimeout) * 1000
+        playerView.post {
+            if (currentFocus == null) exoPlay.requestFocus()
+        }
     }
 
     override fun dispatchKeyEvent(event: KeyEvent): Boolean {

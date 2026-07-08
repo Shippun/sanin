@@ -3,6 +3,7 @@ package ani.dantotsu.util
 import android.animation.ObjectAnimator
 import android.content.res.TypedArray
 import android.graphics.Color
+import android.widget.ImageButton
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.GradientDrawable
 import android.graphics.drawable.InsetDrawable
@@ -31,7 +32,7 @@ object FocusEffectUtil {
                         resetView(lastFocusedView)
                         lastFocusedView = v
                     }
-                    applyBorder(v)
+                    applyBorder(v, v is ImageButton)
                     applyFocusGain(v)
                 } else {
                     removeBorder(v)
@@ -41,7 +42,7 @@ object FocusEffectUtil {
         }
     }
 
-    fun applyFocusListener(focusView: View, borderTarget: View) {
+    fun applyFocusListener(focusView: View, borderTarget: View, isCircular: Boolean = false) {
         focusView.onFocusChangeListener = null
         focusView.setOnFocusChangeListener { v, hasFocus ->
             if (hasFocus) {
@@ -49,7 +50,7 @@ object FocusEffectUtil {
                     resetView(lastFocusedView)
                     lastFocusedView = v
                 }
-                applyBorder(borderTarget)
+                applyBorder(borderTarget, isCircular)
                 applyFocusGain(borderTarget)
             } else {
                 removeBorder(borderTarget)
@@ -76,7 +77,7 @@ object FocusEffectUtil {
         return color
     }
 
-    private fun applyBorder(v: View) {
+    private fun applyBorder(v: View, isCircular: Boolean = false) {
         val primaryColor = getPrimaryColor(v)
         val borderWidthPx = TypedValue.applyDimension(
             TypedValue.COMPLEX_UNIT_DIP, 3f, v.resources.displayMetrics
@@ -86,10 +87,10 @@ object FocusEffectUtil {
         ).toInt()
 
         val borderDrawable = GradientDrawable().apply {
-            setShape(GradientDrawable.RECTANGLE)
+            setShape(if (isCircular) GradientDrawable.OVAL else GradientDrawable.RECTANGLE)
             setColor(Color.TRANSPARENT)
             setStroke(borderWidthPx, primaryColor)
-            setCornerRadius(cornerRadius.toFloat())
+            if (!isCircular) setCornerRadius(cornerRadius.toFloat())
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
