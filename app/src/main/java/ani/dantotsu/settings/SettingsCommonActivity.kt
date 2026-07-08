@@ -144,7 +144,7 @@ class SettingsCommonActivity : AppCompatActivity() {
                 restartApp()
             }
 
-            val startUpTabs = arrayOf("Home", "Anime")
+            val startUpTabs = arrayOf("Anime", "Home", "Manga")
 
             settingsRecyclerView.adapter =
                 SettingsAdapter(

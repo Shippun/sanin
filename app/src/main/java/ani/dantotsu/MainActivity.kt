@@ -348,11 +348,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             // Load initial tab
-            var startTab = PrefManager.getVal<Int>(PrefName.DefaultStartUpTab)
-            if (startTab > 1) {
-                startTab = 0
-                PrefManager.setVal(PrefName.DefaultStartUpTab, 0)
-            }
+            val startTab = PrefManager.getVal<Int>(PrefName.DefaultStartUpTab)
             navPillsViewModel.setTab(startTab)
             switchTab(startTab)
 

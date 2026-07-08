@@ -4,12 +4,13 @@ import android.os.Bundle
 import android.view.ViewGroup
 import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.updateLayoutParams
 import androidx.recyclerview.widget.LinearLayoutManager
 import ani.dantotsu.R
 import ani.dantotsu.databinding.ActivitySettingsThemeBinding
+import ani.dantotsu.initActivity
 import ani.dantotsu.navBarHeight
+import ani.dantotsu.restartApp
 import ani.dantotsu.settings.saving.PrefManager
 import ani.dantotsu.settings.saving.PrefName
 import ani.dantotsu.statusBarHeight
@@ -40,7 +41,7 @@ class SettingsThemeActivity : AppCompatActivity() {
             }
             FocusEffectUtil.applyFocusListener(themeSettingsBack)
 
-            val themeModes = arrayOf("Light", "Dark")
+            val themeModes = arrayOf("Auto", "Light", "Dark")
             val accentColors = arrayOf(
                 0 to "Default", 1 to "Red", 2 to "Pink", 3 to "Purple",
                 4 to "Deep Purple", 5 to "Indigo", 6 to "Blue", 7 to "Light Blue",
@@ -61,11 +62,7 @@ class SettingsThemeActivity : AppCompatActivity() {
                                 setTitle("Theme Mode")
                                 singleChoiceItems(themeModes, PrefManager.getVal<Int>(PrefName.DarkMode)) { index ->
                                     PrefManager.setVal(PrefName.DarkMode, index)
-                                    AppCompatDelegate.setDefaultNightMode(
-                                        if (index == 1) AppCompatDelegate.MODE_NIGHT_YES
-                                        else AppCompatDelegate.MODE_NIGHT_NO
-                                    )
-                                    recreate()
+                                    restartApp()
                                 }
                                 show()
                             }
