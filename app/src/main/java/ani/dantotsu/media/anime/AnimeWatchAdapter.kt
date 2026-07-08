@@ -400,6 +400,7 @@ class AnimeWatchAdapter(
                         false
                     ).root
                 chip.isCheckable = true
+                chip.isFocusable = true
                 fun selected() {
                     chip.isChecked = true
                     binding.mediaWatchChipScroll.smoothScrollTo(
