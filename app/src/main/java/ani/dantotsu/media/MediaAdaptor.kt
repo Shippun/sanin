@@ -346,6 +346,20 @@ class MediaAdaptor(
         }
     }
 
+    private fun applyFocusWithFade(itemView: View, borderTarget: View) {
+        FocusEffectUtil.applyFocusListener(itemView, borderTarget)
+        val focusListener = itemView.onFocusChangeListener
+        itemView.alpha = 0.85f
+        itemView.setOnFocusChangeListener { v, hasFocus ->
+            focusListener?.onFocusChange(v, hasFocus)
+            if (hasFocus) {
+                v.animate().alpha(1f).setDuration(200).start()
+            } else {
+                v.animate().alpha(0.85f).setDuration(200).start()
+            }
+        }
+    }
+
     inner class MediaViewHolder(val binding: ItemMediaCompactBinding) :
         RecyclerView.ViewHolder(binding.root) {
         init {
@@ -360,7 +374,7 @@ class MediaAdaptor(
                 )
             }
             itemView.setOnLongClickListener { longClicked(bindingAdapterPosition) }
-            FocusEffectUtil.applyFocusListener(itemView, binding.itemCompactCard)
+            applyFocusWithFade(itemView, binding.itemCompactCard)
         }
     }
 
@@ -377,7 +391,7 @@ class MediaAdaptor(
                 )
             }
             itemView.setOnLongClickListener { longClicked(bindingAdapterPosition) }
-            FocusEffectUtil.applyFocusListener(itemView, binding.itemCompactCard)
+            applyFocusWithFade(itemView, binding.itemCompactCard)
         }
     }
 
@@ -394,7 +408,7 @@ class MediaAdaptor(
             }
             itemView.isFocusable = true
             itemView.isFocusableInTouchMode = false
-            FocusEffectUtil.applyFocusListener(itemView, binding.itemCompactCard)
+            applyFocusWithFade(itemView, binding.itemCompactCard)
             itemView.setOnTouchListener { _, _ -> true }
             binding.itemCompactImage.setOnLongClickListener { longClicked(bindingAdapterPosition) }
         }
@@ -420,7 +434,7 @@ class MediaAdaptor(
             }
             itemView.isFocusable = true
             itemView.isFocusableInTouchMode = false
-            FocusEffectUtil.applyFocusListener(itemView, binding.itemCompactCard)
+            applyFocusWithFade(itemView, binding.itemCompactCard)
             itemView.setOnTouchListener { _, _ -> true }
             binding.itemCompactImage.setOnLongClickListener { longClicked(bindingAdapterPosition) }
         }
@@ -440,7 +454,7 @@ class MediaAdaptor(
                 )
             }
             itemView.setOnLongClickListener { longClicked(bindingAdapterPosition) }
-            FocusEffectUtil.applyFocusListener(itemView, binding.itemCompactCard)
+            applyFocusWithFade(itemView, binding.itemCompactCard)
         }
     }
 

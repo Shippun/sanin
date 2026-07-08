@@ -77,6 +77,14 @@ class ContinueWatchingLandscapeAdapter(
         holder.itemView.isFocusable = true
         holder.itemView.isFocusableInTouchMode = false
         FocusEffectUtil.applyFocusListener(holder.itemView)
+        holder.itemView.alpha = 0.85f
+        holder.itemView.setOnFocusChangeListener { v, hasFocus ->
+            if (hasFocus) {
+                v.animate().alpha(1f).setDuration(200).start()
+            } else {
+                v.animate().alpha(0.85f).setDuration(200).start()
+            }
+        }
     }
 
     override fun getItemCount() = items.size
