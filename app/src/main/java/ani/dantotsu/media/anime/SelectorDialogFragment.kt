@@ -350,13 +350,13 @@ class SelectorDialogFragment : BottomSheetDialogFragment() {
 
                     Log.d("AnimeDownloader", "Downloading Episode: ${ep.number}, server: $selectedServerName")
 
-                    if (ep.extractors?.find { it.server.name == selectedServerName } == null)
+                    if (ep.extractors?.find { it?.server?.name == selectedServerName } == null)
                         fail(R.string.auto_select_server_error)
                     else {
                         media!!.anime?.episodes?.set(media!!.anime?.selectedEpisode!!, ep)
                         val selectedExtractor =
-                            ep.extractors?.find { it.server.name == selectedServerName }
-                        if(!downloadUsingSingleServer(selectedExtractor!!))
+                            ep.extractors?.find { it?.server?.name == selectedServerName }
+                        if (selectedExtractor == null || !downloadUsingSingleServer(selectedExtractor))
                             fail(R.string.auto_select_server_error)
                     }
                 }
@@ -396,7 +396,7 @@ class SelectorDialogFragment : BottomSheetDialogFragment() {
                                     if (model.watchSources!!.isDownloadedSource(media!!.selected!!.sourceIndex)) {
                                         ep.extractors?.firstOrNull()?.videos?.size
                                     } else {
-                                        ep.extractors?.find { it.server.name == selected }?.videos?.size
+                                        ep.extractors?.find { it?.server?.name == selected }?.videos?.size
                                     }
 
                                 if (size != null && size >= media!!.selected!!.video) {
@@ -408,7 +408,7 @@ class SelectorDialogFragment : BottomSheetDialogFragment() {
                                 } else failToList()
                             }
 
-                            if (ep.extractors?.filter { it.server.name == selected } == null) {
+                            if (ep.extractors?.filter { it?.server?.name == selected }.isNullOrEmpty()) {
                                 scope.launch{
                                     val success = withContext(Dispatchers.IO){
                                         loadEpisodeSingleServer(ep.number, selected!!)
@@ -507,7 +507,7 @@ class SelectorDialogFragment : BottomSheetDialogFragment() {
 
         episode?.let { ep ->
             val video = ep.extractors?.find {
-                it.server.name == ep.selectedExtractor
+                it?.server?.name == ep.selectedExtractor
             }?.videos?.getOrNull(ep.selectedVideo)
             video?.file?.url?.let { url ->
                 if (url.startsWith("magnet:") || url.endsWith(".torrent")) {
@@ -631,13 +631,13 @@ class SelectorDialogFragment : BottomSheetDialogFragment() {
         }
 
         fun addAll(extractors: List<VideoExtractor>?) {
-            links.addAll(extractors ?: return)
-            notifyItemRangeInserted(0, extractors.size)
+            links.addAll(extractors?.filterNotNull() ?: return)
+            notifyItemRangeInserted(0, links.size)
         }
 
         fun performClick(position: Int) {
             try {
-                val extractor = links[position]
+                val extractor = links[position] ?: return
                 media!!.anime!!.episodes!![media!!.anime!!.selectedEpisode!!]?.selectedExtractor =
                     extractor.server.name
                 media!!.anime!!.episodes!![media!!.anime!!.selectedEpisode!!]?.selectedVideo = 0
