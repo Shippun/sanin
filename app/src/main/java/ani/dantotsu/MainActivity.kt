@@ -525,19 +525,29 @@ class MainActivity : AppCompatActivity() {
                     if (binding.homeNavRail.visibility != View.VISIBLE) {
                         val focus = currentFocus
                         if (focus != null) {
-                            val railWidth = (60f * resources.displayMetrics.density).toInt()
                             var p = focus.parent
-                            var canScrollLeft = false
+                            var inHorizontalRv = false
                             while (p != null) {
-                                if (p is RecyclerView && p.canScrollHorizontally(-1)) {
-                                    canScrollLeft = true
+                                if (p is RecyclerView) {
+                                    val lm = p.layoutManager
+                                    if (lm != null && lm.canScrollHorizontally()) {
+                                        val holder = p.findContainingViewHolder(focus)
+                                        if (holder != null && holder.bindingAdapterPosition > 0) {
+                                            inHorizontalRv = true
+                                        } else if (p.canScrollHorizontally(-1)) {
+                                            inHorizontalRv = true
+                                        }
+                                    }
                                     break
                                 }
                                 p = (p as? View)?.parent
                             }
-                            if (!canScrollLeft && (focus.left <= railWidth || focus.focusSearch(View.FOCUS_LEFT) == null)) {
-                                showHomeNavRail()
-                                return true
+                            if (!inHorizontalRv) {
+                                val railWidth = (60f * resources.displayMetrics.density).toInt()
+                                if (focus.left <= railWidth || focus.focusSearch(View.FOCUS_LEFT) == null) {
+                                    showHomeNavRail()
+                                    return true
+                                }
                             }
                         }
                     }
