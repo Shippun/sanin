@@ -543,6 +543,7 @@ class AnimeWatchFragment : Fragment() {
                                     .replace(R.id.fragmentExtensionsContainer, fragment)
                                     .addToBackStack(null)
                                     .commit()
+                                changeUIVisibility(false)
                             }
                         }
                         onDismiss {
@@ -553,7 +554,6 @@ class AnimeWatchFragment : Fragment() {
                         show()
                     }
             } else {
-                // If there's only one setting, proceed with the fragment transaction
                 requireActivity().runOnUiThread {
                     val fragment =
                         AnimeSourcePreferencesFragment().getInstance(selectedSetting.id) {
@@ -566,10 +566,9 @@ class AnimeWatchFragment : Fragment() {
                         addToBackStack(null)
                         commit()
                     }
+                    changeUIVisibility(false)
                 }
             }
-
-            changeUIVisibility(false)
         } else {
             Toast.makeText(requireContext(), "Source is not configurable", Toast.LENGTH_SHORT)
                 .show()

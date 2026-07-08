@@ -168,8 +168,11 @@ class AnimeWatchAdapter(
 
         // Settings
         binding.mediaSourceSettings.setOnClickListener {
-            (watchSources[source] as? DynamicAnimeParser)?.let { ext ->
-                fragment.openSettings(ext.extension)
+            val parser = watchSources[source]
+            if (parser is DynamicAnimeParser) {
+                fragment.openSettings(parser.extension)
+            } else {
+                currActivity()?.toast("Source not configurable")
             }
         }
 
