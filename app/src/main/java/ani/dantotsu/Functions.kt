@@ -204,7 +204,7 @@ fun initActivity(a: Activity) {
     val immersiveMode: Boolean = PrefManager.getVal(PrefName.ImmersiveMode)
     darkMode.apply {
         AppCompatDelegate.setDefaultNightMode(
-            if (this == 2) AppCompatDelegate.MODE_NIGHT_YES
+            if (this == 1) AppCompatDelegate.MODE_NIGHT_YES
             else AppCompatDelegate.MODE_NIGHT_NO
         )
     }

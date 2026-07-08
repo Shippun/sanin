@@ -130,7 +130,11 @@ class AnimeWatchAdapter(
             )
         )
         binding.mediaSourceTitle.isSelected = true
-        binding.mediaSourceNameContainer.post { binding.mediaSourceNameContainer.requestFocus() }
+        binding.mediaSourceNameContainer.post {
+            if (binding.root.rootView.findFocus() == null) {
+                binding.mediaSourceNameContainer.requestFocus()
+            }
+        }
         binding.mediaSourceNameContainer.setOnClickListener {
             binding.mediaSource.showDropDown()
         }

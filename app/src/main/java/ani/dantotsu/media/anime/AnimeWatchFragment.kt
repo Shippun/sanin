@@ -391,7 +391,7 @@ class AnimeWatchFragment : Fragment() {
         val eps = media.anime?.episodes
         if (eps != null) {
             enrichEpisodes(eps)
-            reload()
+            episodeAdapter.notifyDataSetChanged()
         }
     }
 

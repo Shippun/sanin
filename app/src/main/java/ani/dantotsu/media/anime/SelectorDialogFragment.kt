@@ -650,8 +650,10 @@ class SelectorDialogFragment : BottomSheetDialogFragment() {
         private inner class StreamViewHolder(val binding: ItemStreamBinding) :
             RecyclerView.ViewHolder(binding.root) {
             init {
-                itemView.isFocusable = true
-                FocusEffectUtil.applyFocusListener(itemView)
+                itemView.isFocusable = false
+                itemView.setOnClickListener {
+                    performClick(bindingAdapterPosition)
+                }
             }
         }
     }
