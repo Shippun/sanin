@@ -651,6 +651,7 @@ class SelectorDialogFragment : BottomSheetDialogFragment() {
             RecyclerView.ViewHolder(binding.root) {
             init {
                 itemView.isFocusable = true
+                FocusEffectUtil.applyFocusListener(itemView)
             }
         }
     }
@@ -860,6 +861,7 @@ class SelectorDialogFragment : BottomSheetDialogFragment() {
             RecyclerView.ViewHolder(binding.root) {
             init {
                 itemView.isFocusable = true
+                FocusEffectUtil.applyFocusListener(itemView)
                 itemView.setSafeOnClickListener {
                     if (isDownloadMenu == true) {
                         binding.urlDownload.performClick()
