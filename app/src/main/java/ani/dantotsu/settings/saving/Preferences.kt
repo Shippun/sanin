@@ -82,7 +82,7 @@ enum class PrefName(val data: Pref) {
     UseMaterialYou(Pref(Location.UI, Boolean::class, false)),
     Theme(Pref(Location.UI, String::class, "BLUE")),
     SkipExtensionIcons(Pref(Location.UI, Boolean::class, false)),
-    DarkMode(Pref(Location.UI, Int::class, 0)),
+    DarkMode(Pref(Location.UI, Int::class, 1)),
     AnimeDefaultView(Pref(Location.UI, Int::class, 0)),
     MangaDefaultView(Pref(Location.UI, Int::class, 0)),
     BlurBanners(Pref(Location.UI, Boolean::class, true)),
@@ -90,7 +90,7 @@ enum class PrefName(val data: Pref) {
     BlurSampling(Pref(Location.UI, Float::class, 2f)),
     ImmersiveMode(Pref(Location.UI, Boolean::class, false)),
     SmallView(Pref(Location.UI, Boolean::class, true)),
-    DefaultStartUpTab(Pref(Location.UI, Int::class, 1)),
+    DefaultStartUpTab(Pref(Location.UI, Int::class, 0)),
     HomeLayout(
         Pref(
             Location.UI,

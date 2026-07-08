@@ -68,7 +68,7 @@ class NoInternet : AppCompatActivity() {
 
         binding.root.doOnAttach {
             initActivity(this)
-            selectedOption = PrefManager.getVal(PrefName.DefaultStartUpTab)
+            selectedOption = minOf(PrefManager.getVal<Int>(PrefName.DefaultStartUpTab), 1)
 
             binding.includedNavbar.navbarContainer.updateLayoutParams<ViewGroup.MarginLayoutParams> {
                 bottomMargin = navBarHeight
