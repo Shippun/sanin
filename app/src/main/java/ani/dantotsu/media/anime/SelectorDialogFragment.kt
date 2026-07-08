@@ -170,17 +170,18 @@ class SelectorDialogFragment : BottomSheetDialogFragment() {
                     if (!ep.allStreams) {
                         scope.launch(Dispatchers.IO) {
                             model.loadEpisodeVideos(ep, media!!.selected!!.sourceIndex)
-                            withContext(Dispatchers.Main) {
-                                if (_binding == null || !isAdded) return@withContext
-                                adapter.addAll(ep.extractors)
-                                binding.selectorProgressBar.visibility = View.GONE
-                                if (adapter.itemCount == 0) {
-                                    fail(R.string.stream_selection_empty)
+                                withContext(Dispatchers.Main) {
+                                    if (_binding == null || !isAdded) return@withContext
+                                    adapter.addAll(ep.extractors)
+                                    binding.selectorProgressBar.visibility = View.GONE
+                                    if (adapter.itemCount == 0) {
+                                        fail(R.string.stream_selection_empty)
+                                    }
+                                    if (model.watchSources!!.isDownloadedSource(media?.selected!!.sourceIndex)) {
+                                        adapter.performClick(0)
+                                    }
+                                    binding.selectorMakeDefault.post { binding.selectorMakeDefault.requestFocus() }
                                 }
-                                if (model.watchSources!!.isDownloadedSource(media?.selected!!.sourceIndex)) {
-                                    adapter.performClick(0)
-                                }
-                            }
                         }
                     } else {
                         media!!.anime?.episodes?.set(media!!.anime?.selectedEpisode!!, ep)
@@ -192,6 +193,7 @@ class SelectorDialogFragment : BottomSheetDialogFragment() {
                             adapter.performClick(0)
                         }
                         binding.selectorProgressBar.visibility = View.GONE
+                        binding.selectorMakeDefault.post { binding.selectorMakeDefault.requestFocus() }
                     }
                 }
                 suspend fun loadEpisodeSingleServer(episodeName: String, selectedServerName: String): Boolean{

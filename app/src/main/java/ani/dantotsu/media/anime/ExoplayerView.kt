@@ -280,6 +280,7 @@ class ExoplayerView :
     private var aspectRatio = Rational(16, 9)
 
     private val handler = Handler(Looper.getMainLooper())
+    private var pauseMetadataTimer: Runnable? = null
     val model: MediaDetailsViewModel by viewModels()
     private val getContent = registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri: android.net.Uri? ->
         uri?.let { applyLocalSubtitle(it) }
@@ -2738,6 +2739,18 @@ class ExoplayerView :
                     .into(exoPlay)
             }
             discordRPC()
+            pauseMetadataTimer?.let { handler.removeCallbacks(it) }
+            if (!isPlaying) {
+                val timer = Runnable {
+                    if (!exoPlayer.isPlaying) {
+                        playerView.showController()
+                    }
+                }
+                pauseMetadataTimer = timer
+                handler.postDelayed(timer, 3500L)
+            } else {
+                pauseMetadataTimer = null
+            }
         }
     }
 
