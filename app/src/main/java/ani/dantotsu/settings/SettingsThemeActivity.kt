@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.ViewGroup
 import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.updateLayoutParams
 import androidx.recyclerview.widget.LinearLayoutManager
 import ani.dantotsu.R
@@ -41,7 +42,7 @@ class SettingsThemeActivity : AppCompatActivity() {
             }
             FocusEffectUtil.applyFocusListener(themeSettingsBack)
 
-            val themeModes = arrayOf("Auto", "Light", "Dark")
+            val themeModes = arrayOf("Light", "Dark")
             val accentColors = arrayOf(
                 0 to "Default", 1 to "Red", 2 to "Pink", 3 to "Purple",
                 4 to "Deep Purple", 5 to "Indigo", 6 to "Blue", 7 to "Light Blue",
@@ -55,14 +56,18 @@ class SettingsThemeActivity : AppCompatActivity() {
                     Settings(
                         type = 1,
                         name = "Theme Mode",
-                        desc = "Auto, Light, or Dark mode",
+                        desc = "Light or Dark mode",
                         icon = R.drawable.ic_round_brightness_medium_24,
                         onClick = {
                             customAlertDialog().apply {
                                 setTitle("Theme Mode")
                                 singleChoiceItems(themeModes, PrefManager.getVal<Int>(PrefName.DarkMode)) { index ->
                                     PrefManager.setVal(PrefName.DarkMode, index)
-                                    restartApp()
+                                    AppCompatDelegate.setDefaultNightMode(
+                                        if (index == 1) AppCompatDelegate.MODE_NIGHT_YES
+                                        else AppCompatDelegate.MODE_NIGHT_NO
+                                    )
+                                    recreate()
                                 }
                                 show()
                             }
