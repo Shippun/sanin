@@ -54,6 +54,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="360dp"
                     android:clipToPadding="false"
+                    android:nextFocusUp="@id/mainCalendarContainer"
                     android:visibility="gone"
                     tools:visibility="visible"
                     tools:listitem="@layout/item_banner_carousel"
@@ -73,6 +74,7 @@
                     android:id="@+id/homeNavigatingBannerContainer"
                     android:layout_width="match_parent"
                     android:layout_height="320dp"
+                    android:nextFocusUp="@id/mainCalendarContainer"
                     android:visibility="gone">
 
                     <ImageView
