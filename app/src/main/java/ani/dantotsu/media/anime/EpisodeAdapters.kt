@@ -23,6 +23,7 @@ import ani.dantotsu.util.customAlertDialog
 import ani.dantotsu.util.FocusEffectUtil
 import ani.dantotsu.util.SizeFormatter
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.model.GlideUrl
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -114,7 +115,7 @@ class EpisodeAdapter(
                     } else null
                 }
                 Glide.with(binding.itemMediaImage).load(thumb ?: media.cover).override(400, 0)
-                    .into(binding.itemMediaImage)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL).into(binding.itemMediaImage)
                 binding.itemEpisodeNumber.text = ep.number
                 binding.itemEpisodeTitle.text = if (ep.number == title) "Episode $title" else title
 
@@ -184,7 +185,7 @@ class EpisodeAdapter(
                     } else null
                 }
                 Glide.with(binding.itemMediaImage).load(thumb ?: media.cover).override(400, 0)
-                    .into(binding.itemMediaImage)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL).into(binding.itemMediaImage)
 
                 binding.itemEpisodeNumber.text = ep.number
                 binding.itemEpisodeTitle.text = title

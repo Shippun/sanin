@@ -393,7 +393,7 @@ class AnimeWatchFragment : Fragment() {
         val eps = media.anime?.episodes
         if (eps != null) {
             enrichEpisodes(eps)
-            episodeAdapter.notifyDataSetChanged()
+            episodeAdapter.notifyItemRangeChanged(0, episodeAdapter.arr.size)
         }
     }
 
