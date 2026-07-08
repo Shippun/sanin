@@ -716,6 +716,7 @@ class ExoplayerView :
             androidx.media3.ui.R.id.exo_playback_speed,
             R.id.exo_fast_forward_button, R.id.exo_fast_rewind_button,
             R.id.exo_fast_forward_button_cont, R.id.exo_fast_rewind_button_cont,
+            R.id.exo_unlock, R.id.exo_lock, R.id.exo_skip_timestamp, R.id.exo_ep_sel,
         ).forEach { id ->
             playerView.findViewById<View>(id)?.apply {
                 isFocusable = true
@@ -3363,8 +3364,9 @@ class ExoplayerView :
             }
             KeyEvent.KEYCODE_DPAD_CENTER, KeyEvent.KEYCODE_ENTER -> {
                 if (event.action == KeyEvent.ACTION_UP) {
-                    if (playerView.isControllerFullyVisible) exoPlay.performClick()
-                    else ensureControllerVisible()
+                    if (playerView.isControllerFullyVisible) {
+                        currentFocus?.performClick() ?: exoPlay.performClick()
+                    } else ensureControllerVisible()
                 }
                 return true
             }

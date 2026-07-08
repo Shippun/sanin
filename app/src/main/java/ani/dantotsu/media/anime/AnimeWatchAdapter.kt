@@ -131,6 +131,9 @@ class AnimeWatchAdapter(
         )
         binding.mediaSourceTitle.isSelected = true
         binding.mediaSourceNameContainer.post { binding.mediaSourceNameContainer.requestFocus() }
+        binding.mediaSourceNameContainer.setOnClickListener {
+            binding.mediaSource.showDropDown()
+        }
         binding.mediaSource.setOnItemClickListener { _, _, i, _ ->
             val actualIndex = watchSources.names.indexOf(displayNames[i])
             fragment.onSourceChange(actualIndex).apply {
