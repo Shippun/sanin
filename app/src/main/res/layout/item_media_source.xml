@@ -95,8 +95,10 @@
             <ImageView
                 android:id="@+id/mediaSourceSettings"
                 android:layout_width="48dp"
-                android:layout_height="wrap_content"
+                android:layout_height="48dp"
                 android:layout_gravity="center_vertical"
+                android:focusable="true"
+                android:focusableInTouchMode="false"
                 android:padding="8dp"
                 app:srcCompat="@drawable/ic_round_settings_24"
                 app:tint="?attr/colorOnBackground"
@@ -227,9 +229,11 @@
 
             <ImageView
                 android:id="@+id/mediaSourceSubscribe"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:layout_gravity="center_vertical"
+                android:focusable="true"
+                android:focusableInTouchMode="false"
                 android:alpha="0.33"
                 android:padding="8dp"
                 app:srcCompat="@drawable/ic_round_notifications_none_24"
@@ -238,9 +242,11 @@
 
             <ImageView
                 android:id="@+id/mediaNestedButton"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:layout_gravity="end"
+                android:focusable="true"
+                android:focusableInTouchMode="false"
                 android:alpha="1"
                 android:padding="8dp"
                 app:srcCompat="@drawable/ic_round_filter_24"

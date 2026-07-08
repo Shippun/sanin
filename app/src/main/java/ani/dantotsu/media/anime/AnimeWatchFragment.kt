@@ -62,6 +62,7 @@ import ani.dantotsu.settings.saving.PrefManager
 import ani.dantotsu.settings.saving.PrefName
 import ani.dantotsu.snackString
 import ani.dantotsu.toast
+import ani.dantotsu.util.FocusEffectUtil
 import ani.dantotsu.util.Logger
 import ani.dantotsu.util.StoragePermissions.Companion.accessAlertDialog
 import ani.dantotsu.util.StoragePermissions.Companion.hasDirAccess
@@ -161,6 +162,7 @@ class AnimeWatchFragment : Fragment() {
             binding.mediaSourceRecycler.scrollToPosition(10)
             binding.mediaSourceRecycler.smoothScrollToPosition(0)
         }
+        FocusEffectUtil.applyFocusListener(binding.ScrollTop, binding.ScrollTop)
         binding.mediaSourceRecycler.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)

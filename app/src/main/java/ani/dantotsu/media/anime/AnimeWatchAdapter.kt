@@ -42,6 +42,7 @@ import ani.dantotsu.settings.saving.PrefManager
 import ani.dantotsu.settings.saving.PrefName
 import ani.dantotsu.snackString
 import ani.dantotsu.toast
+import ani.dantotsu.util.FocusEffectUtil
 import ani.dantotsu.util.customAlertDialog
 import com.google.android.material.chip.Chip
 import eu.kanade.tachiyomi.animesource.online.AnimeHttpSource
@@ -184,6 +185,12 @@ class AnimeWatchAdapter(
                 toast("Source not configurable")
             }
         }
+
+        FocusEffectUtil.applyFocusListener(binding.mediaSourceNameContainer, binding.mediaSourceNameContainer)
+        FocusEffectUtil.applyFocusListener(binding.mediaSourceSearch, binding.mediaSourceSearch)
+        FocusEffectUtil.applyFocusListener(binding.mediaSourceSettings, binding.mediaSourceSettings, true)
+        FocusEffectUtil.applyFocusListener(binding.mediaSourceSubscribe, binding.mediaSourceSubscribe, true)
+        FocusEffectUtil.applyFocusListener(binding.mediaNestedButton, binding.mediaNestedButton, true)
 
         // Icons
 

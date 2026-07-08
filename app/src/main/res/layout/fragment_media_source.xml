@@ -77,6 +77,9 @@
         android:layout_height="48dp"
         android:layout_gravity="bottom|center_horizontal"
         android:layout_marginBottom="64dp"
+        android:focusable="true"
+        android:focusableInTouchMode="false"
+        android:nextFocusDown="@id/ScrollTop"
         app:cardBackgroundColor="#FF333333"
         app:cardCornerRadius="24dp"
         app:contentPadding="12dp">
