@@ -7,7 +7,7 @@
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
     android:background="@drawable/card_outline"
-    android:backgroundTint="?attr/colorSurfaceVariant"
+    android:backgroundTint="@color/bg_black"
     android:backgroundTintMode="src_atop"
     android:focusable="true"
     android:longClickable="true"

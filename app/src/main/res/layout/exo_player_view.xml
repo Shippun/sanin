@@ -214,9 +214,10 @@
 
             <TextView
                 android:id="@+id/exo_pause_synopsis"
-                android:layout_width="400dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
+                android:maxWidth="320dp"
                 android:alpha="0.85"
                 android:fontFamily="@font/poppins"
                 android:lineSpacingExtra="4sp"
@@ -231,7 +232,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
-                android:alpha="0.7"
+                android:alpha="0.85"
                 android:fontFamily="@font/poppins"
                 android:textColor="?attr/colorSecondary"
                 android:textSize="13sp"
