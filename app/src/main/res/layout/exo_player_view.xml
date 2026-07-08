@@ -171,14 +171,13 @@
 
     <LinearLayout
         android:id="@+id/exo_pause_overlay"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/pause_overlay_bg"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         android:visibility="gone"
         android:paddingStart="48dp"
-        android:paddingEnd="120dp"
         android:paddingTop="80dp"
         android:paddingBottom="80dp">
 
