@@ -28,6 +28,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import ani.dantotsu.R
+import ani.dantotsu.px
 import ani.dantotsu.addons.download.DownloadAddonManager
 import ani.dantotsu.connections.LogoApi
 import ani.dantotsu.databinding.FragmentMediaSourceBinding

@@ -172,7 +172,7 @@ class AnimeWatchAdapter(
             if (parser is DynamicAnimeParser) {
                 fragment.openSettings(parser.extension)
             } else {
-                currActivity()?.toast("Source not configurable")
+                toast("Source not configurable")
             }
         }
 
