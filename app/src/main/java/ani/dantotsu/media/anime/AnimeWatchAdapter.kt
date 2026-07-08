@@ -137,6 +137,7 @@ class AnimeWatchAdapter(
             }
         }
         binding.mediaSourceNameContainer.nextFocusUpId = R.id.mediaSourceNameContainer
+        binding.mediaSourceNameContainer.nextFocusLeftId = R.id.mediaSourceNameContainer
         binding.mediaSourceNameContainer.setOnClickListener {
             binding.mediaSource.showDropDown()
         }
@@ -191,6 +192,9 @@ class AnimeWatchAdapter(
         FocusEffectUtil.applyFocusListener(binding.mediaSourceSettings, binding.mediaSourceSettings, true)
         FocusEffectUtil.applyFocusListener(binding.mediaSourceSubscribe, binding.mediaSourceSubscribe, true)
         FocusEffectUtil.applyFocusListener(binding.mediaNestedButton, binding.mediaNestedButton, true)
+
+        binding.mediaSourceNameContainer.nextFocusRightId = R.id.mediaSourceSettings
+        binding.mediaSourceSettings.nextFocusLeftId = R.id.mediaSourceNameContainer
 
         // Icons
 
