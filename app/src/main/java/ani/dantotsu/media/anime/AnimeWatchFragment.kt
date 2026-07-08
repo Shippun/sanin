@@ -164,6 +164,16 @@ class AnimeWatchFragment : Fragment() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
 
+                val scrollOffset = recyclerView.computeVerticalScrollOffset().toFloat()
+                val logo = binding.mediaWatchLogo
+                val title = binding.mediaWatchTitle
+                val maxTranslate = 200f.px.toFloat()
+                val translation = -minOf(scrollOffset, maxTranslate)
+                logo.translationY = translation
+                logo.alpha = 1f - (translation / -maxTranslate)
+                title.translationY = translation
+                title.alpha = 1f - (translation / -maxTranslate)
+
                 val position = gridLayoutManager.findFirstVisibleItemPosition()
                 if (position > 2) {
                     binding.ScrollTop.translationY = -(navBarHeight + 12.toPx).toFloat()
