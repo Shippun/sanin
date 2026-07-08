@@ -15,7 +15,6 @@ import ani.dantotsu.connections.anilist.Anilist
 import ani.dantotsu.connections.anizip.AniZip
 import ani.dantotsu.loadImage
 import ani.dantotsu.media.Media
-import ani.dantotsu.util.FocusEffectUtil
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -188,9 +187,6 @@ class BannerCarouselAdapter(
             }
         }
         holder.favBtn.visibility = View.VISIBLE
-
-        // --- Focus effects ---
-        FocusEffectUtil.applyFocusListener(holder.playBtn, holder.favBtn)
 
         // --- Item click ---
         holder.itemView.setOnClickListener { onItemClick(media) }
