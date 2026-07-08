@@ -96,7 +96,7 @@
         android:ellipsize="end"
         android:maxLines="2"
         android:textAlignment="center"
-        android:textColor="@color/bg_white"
+        android:textColor="@android:color/white"
         android:textSize="12sp"
         android:transitionName="mediaTitle"
         tools:ignore="SpUsage"

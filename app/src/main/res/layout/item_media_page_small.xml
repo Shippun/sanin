@@ -177,6 +177,7 @@
                     android:ellipsize="end"
                     android:fontFamily="@font/poppins_bold"
                     android:maxLines="3"
+                    android:textColor="@android:color/white"
                     android:textSize="16dp"
                     android:transitionName="mediaTitle"
                     tools:ignore="SpUsage"
