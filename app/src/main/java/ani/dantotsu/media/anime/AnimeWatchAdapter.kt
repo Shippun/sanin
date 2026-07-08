@@ -135,6 +135,7 @@ class AnimeWatchAdapter(
                 binding.mediaSourceNameContainer.requestFocus()
             }
         }
+        binding.mediaSourceNameContainer.nextFocusUpId = R.id.mediaSourceNameContainer
         binding.mediaSourceNameContainer.setOnClickListener {
             binding.mediaSource.showDropDown()
         }
