@@ -202,17 +202,15 @@ class AnimeFragment : Fragment() {
                 super.onScrolled(v, dx, dy)
             }
         })
-        // Scroll to top when focus moves to the header (banner) section
+        // Scroll to top when focus moves to the header area while page is scrolled down
         view.viewTreeObserver.addOnGlobalFocusChangeListener { _, newFocus ->
             if (newFocus != null && _binding != null) {
-                val headerView = binding.animePageRecyclerView.findViewHolderForAdapterPosition(0)?.itemView
-                if (headerView != null) {
+                val rv = binding.animePageRecyclerView
+                if (rv.canScrollVertically(-1)) {
                     var v: View? = newFocus
-                    while (v != null) {
-                        if (v == headerView) {
-                            binding.animePageRecyclerView.post {
-                                binding.animePageRecyclerView.smoothScrollToPosition(0)
-                            }
+                    while (v != null && v != rv) {
+                        if (v.id == R.id.trendingViewPager || v.id == R.id.trendingContainer || v.id == R.id.animeSeasons) {
+                            rv.post { rv.smoothScrollToPosition(0) }
                             break
                         }
                         v = v.parent as? View
