@@ -144,6 +144,7 @@ import ani.dantotsu.parsers.VideoType
 import ani.dantotsu.settings.PlayerSettingsActivity
 import ani.dantotsu.settings.saving.PrefManager
 import ani.dantotsu.settings.saving.PrefName
+import ani.dantotsu.util.FocusEffectUtil
 import ani.dantotsu.snackString
 import ani.dantotsu.startMainActivity
 import ani.dantotsu.themes.ThemeManager
@@ -729,6 +730,7 @@ class ExoplayerView :
             playerView.findViewById<View>(id)?.apply {
                 isFocusable = true
                 isFocusableInTouchMode = false
+                FocusEffectUtil.applyFocusListener(this)
             }
         }
         playerView.post { exoPlay.requestFocus() }
