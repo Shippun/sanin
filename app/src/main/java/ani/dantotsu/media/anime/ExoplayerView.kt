@@ -281,6 +281,11 @@ class ExoplayerView :
 
     private val handler = Handler(Looper.getMainLooper())
     private var pauseMetadataTimer: Runnable? = null
+    private lateinit var pauseOverlay: View
+    private lateinit var pauseTitle: TextView
+    private lateinit var pauseSynopsis: TextView
+    private lateinit var pauseGenres: TextView
+    private lateinit var pauseRating: TextView
     val model: MediaDetailsViewModel by viewModels()
     private val getContent = registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri: android.net.Uri? ->
         uri?.let { applyLocalSubtitle(it) }
@@ -725,6 +730,12 @@ class ExoplayerView :
         }
         playerView.post { exoPlay.requestFocus() }
 
+        pauseOverlay = playerView.findViewById(R.id.exo_pause_overlay)
+        pauseTitle = playerView.findViewById(R.id.exo_pause_title)
+        pauseSynopsis = playerView.findViewById(R.id.exo_pause_synopsis)
+        pauseGenres = playerView.findViewById(R.id.exo_pause_genres)
+        pauseRating = playerView.findViewById(R.id.exo_pause_rating)
+
         playerView.setControllerVisibilityListener(
             PlayerView.ControllerVisibilityListener { visibility ->
                 if (visibility == View.VISIBLE) {
@@ -1152,6 +1163,13 @@ class ExoplayerView :
 
         // Anime Title
         animeTitle.text = media.userPreferredName
+
+        pauseTitle.text = media.userPreferredName
+        pauseSynopsis.text = media.description?.let {
+            if (it.isBlank()) null else it
+        } ?: ""
+        pauseGenres.text = media.genres?.joinToString(", ")?.ifBlank { null } ?: ""
+        pauseRating.text = media.meanScore?.let { "★ $it%" } ?: ""
 
         episodeArr = episodes.keys.toList()
         currentEpisodeIndex = episodeArr.indexOf(media.anime!!.selectedEpisode!!)
@@ -2744,12 +2762,17 @@ class ExoplayerView :
             if (!isPlaying) {
                 val timer = Runnable {
                     if (!exoPlayer.isPlaying) {
-                        playerView.showController()
+                        pauseOverlay.visibility = View.VISIBLE
+                        pauseOverlay.alpha = 0f
+                        pauseOverlay.animate().alpha(1f).setDuration(300).start()
                     }
                 }
                 pauseMetadataTimer = timer
                 handler.postDelayed(timer, 3500L)
             } else {
+                pauseOverlay.animate().alpha(0f).setDuration(200).withEndAction {
+                    pauseOverlay.visibility = View.GONE
+                }.start()
                 pauseMetadataTimer = null
             }
         }
