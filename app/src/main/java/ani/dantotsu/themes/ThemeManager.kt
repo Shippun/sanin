@@ -48,7 +48,10 @@ class ThemeManager(private val context: Activity) {
                 useCustom = effectiveCustom
             )
             if (!returnedEarly && effectiveCustom == null) return
-        } else if (useCustomTheme || accentColorIndex > 0) {
+        } else if (accentColorIndex > 0 && !useCustomTheme) {
+            // Accent color only — skip DynamicColors (no-op or interfering on TV),
+            // the mapped hardcoded theme is applied below via setTheme()
+        } else if (useCustomTheme) {
             val returnedEarly =
                 applyDynamicColors(useMaterial, context, useOLED, useCustom = effectiveCustom)
             if (!returnedEarly && effectiveCustom == null) return
