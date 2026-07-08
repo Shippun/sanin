@@ -281,12 +281,11 @@ class MainActivity : AppCompatActivity() {
             splash.root.postDelayed({
                 ObjectAnimator.ofFloat(
                     splash.root,
-                    View.TRANSLATION_Y,
-                    0f,
-                    -splash.root.height.toFloat()
+                    View.ALPHA,
+                    1f,
+                    0f
                 ).apply {
-                    interpolator = AnticipateInterpolator()
-                    duration = 200L
+                    duration = 400L
                     doOnEnd { binding.root.removeView(splash.root) }
                     start()
                 }

@@ -124,6 +124,7 @@ object FocusEffectUtil {
 
     private fun applyFocusGain(v: View) {
         cancelAnimators(v)
+        v.animate().alpha(1f).setDuration(200).start()
         val effect = PrefManager.getVal<Int>(PrefName.FocusEffect)
         when (effect) {
             0 -> { // Glow
@@ -184,9 +185,7 @@ object FocusEffectUtil {
     private fun applyFocusLoss(v: View) {
         cancelAnimators(v)
         v.animate().cancel()
-        v.scaleX = 1f
-        v.scaleY = 1f
-        v.translationX = 0f
+        v.animate().alpha(0.85f).scaleX(1f).scaleY(1f).translationX(0f).setDuration(200).start()
         v.elevation = 0f
     }
 }
