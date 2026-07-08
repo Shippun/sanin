@@ -545,7 +545,7 @@ class AnimeWatchFragment : Fragment() {
                             itemSelected = true
                             requireActivity().runOnUiThread {
                                 val fragment =
-                                    AnimeSourcePreferencesFragment().getInstance(selectedSetting.id) {
+                                    AnimeSourcePreferencesFragment().getInstance(selectedSetting) {
                                         changeUIVisibility(true)
                                         loadEpisodes(media.selected!!.sourceIndex, true)
                                     }
@@ -567,7 +567,7 @@ class AnimeWatchFragment : Fragment() {
             } else {
                 requireActivity().runOnUiThread {
                     val fragment =
-                        AnimeSourcePreferencesFragment().getInstance(selectedSetting.id) {
+                        AnimeSourcePreferencesFragment().getInstance(selectedSetting) {
                             changeUIVisibility(true)
                             loadEpisodes(media.selected!!.sourceIndex, true)
                         }

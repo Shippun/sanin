@@ -1,23 +1,29 @@
 package ani.dantotsu.settings.extensionprefs
 
-import ani.dantotsu.util.FocusEffectUtil
-
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import androidx.preference.PreferenceFragmentCompat
+import eu.kanade.tachiyomi.animesource.ConfigurableAnimeSource
 
-class AnimeSourcePreferencesFragment : BottomSheetDialogFragment() {
-    fun getInstance(id: Long, callback: () -> Unit): AnimeSourcePreferencesFragment {
+class AnimeSourcePreferencesFragment : PreferenceFragmentCompat() {
+    private var source: ConfigurableAnimeSource? = null
+    private var onDismiss: (() -> Unit)? = null
+
+    fun getInstance(source: ConfigurableAnimeSource, callback: () -> Unit): AnimeSourcePreferencesFragment {
+        this.source = source
+        this.onDismiss = callback
         return this
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return View(requireContext())
+    override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
+        val screen = preferenceManager.createPreferenceScreen(requireContext())
+        source?.setupPreferenceScreen(screen)
+        preferenceScreen = screen
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        if (isRemoving) {
+            onDismiss?.invoke()
+        }
     }
 }

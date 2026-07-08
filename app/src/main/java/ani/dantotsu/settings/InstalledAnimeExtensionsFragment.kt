@@ -82,7 +82,7 @@ class InstalledAnimeExtensionsFragment : Fragment(), SearchQueryHandler {
                             selectedSetting = allSettings[selectedIndex]
 
                             val fragment =
-                                AnimeSourcePreferencesFragment().getInstance(selectedSetting.id) {
+                                AnimeSourcePreferencesFragment().getInstance(selectedSetting) {
                                     changeUIVisibility(true)
                                 }
                             parentFragmentManager.beginTransaction()
@@ -101,7 +101,7 @@ class InstalledAnimeExtensionsFragment : Fragment(), SearchQueryHandler {
                 } else {
                     // If there's only one setting, proceed with the fragment transaction
                     val fragment =
-                        AnimeSourcePreferencesFragment().getInstance(selectedSetting.id) {
+                        AnimeSourcePreferencesFragment().getInstance(selectedSetting) {
                             changeUIVisibility(true)
                         }
                     parentFragmentManager.beginTransaction()
