@@ -187,17 +187,31 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/exo_pause_title"
+            <FrameLayout
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/poppins_bold"
-                android:textColor="@android:color/white"
-                android:textSize="32sp"
-                android:singleLine="false"
-                android:maxLines="3"
-                android:ellipsize="end"
-                tools:text="Attack on Titan" />
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/exo_pause_logo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="96dp"
+                    android:adjustViewBounds="true"
+                    android:scaleType="fitStart"
+                    android:visibility="gone"
+                    tools:ignore="ContentDescription" />
+
+                <TextView
+                    android:id="@+id/exo_pause_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/poppins_bold"
+                    android:textColor="@android:color/white"
+                    android:textSize="36sp"
+                    android:singleLine="false"
+                    android:maxLines="3"
+                    android:ellipsize="end"
+                    tools:text="Attack on Titan" />
+            </FrameLayout>
 
             <TextView
                 android:id="@+id/exo_pause_synopsis"
@@ -220,7 +234,7 @@
                 android:layout_marginTop="12dp"
                 android:alpha="0.7"
                 android:fontFamily="@font/poppins"
-                android:textColor="@android:color/white"
+                android:textColor="?attr/colorSecondary"
                 android:textSize="13sp"
                 tools:text="Action, Drama, Fantasy, Horror" />
 
@@ -229,11 +243,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:alpha="0.8"
+                android:alpha="0.9"
                 android:fontFamily="@font/poppins_bold"
-                android:textColor="@android:color/white"
+                android:textColor="#FFD700"
                 android:textSize="15sp"
-                tools:text="★ 86%" />
+                tools:text="86% ★" />
 
         </LinearLayout>
     </LinearLayout>

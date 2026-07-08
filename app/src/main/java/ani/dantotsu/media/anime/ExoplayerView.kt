@@ -42,6 +42,7 @@ import android.view.ViewGroup
 import android.view.animation.AnimationUtils
 import android.widget.AdapterView
 import android.widget.ImageButton
+import android.widget.ImageView
 import android.widget.Spinner
 import android.widget.TextView
 import androidx.activity.addCallback
@@ -182,6 +183,7 @@ import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.roundToInt
 import androidx.core.net.toUri
+import ani.dantotsu.connections.LogoApi
 import ani.dantotsu.connections.subtitles.StremioSubtitles
 import ani.dantotsu.connections.subtitles.StremioSub
 import java.net.URI
@@ -286,6 +288,7 @@ class ExoplayerView :
     private lateinit var pauseSynopsis: TextView
     private lateinit var pauseGenres: TextView
     private lateinit var pauseRating: TextView
+    private lateinit var pauseLogo: ImageView
     val model: MediaDetailsViewModel by viewModels()
     private val getContent = registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri: android.net.Uri? ->
         uri?.let { applyLocalSubtitle(it) }
@@ -735,6 +738,7 @@ class ExoplayerView :
         pauseSynopsis = playerView.findViewById(R.id.exo_pause_synopsis)
         pauseGenres = playerView.findViewById(R.id.exo_pause_genres)
         pauseRating = playerView.findViewById(R.id.exo_pause_rating)
+        pauseLogo = playerView.findViewById(R.id.exo_pause_logo)
 
         playerView.setControllerVisibilityListener(
             PlayerView.ControllerVisibilityListener { visibility ->
@@ -1164,12 +1168,23 @@ class ExoplayerView :
         // Anime Title
         animeTitle.text = media.userPreferredName
 
-        pauseTitle.text = media.userPreferredName
+        pauseRating.text = media.meanScore?.let { "$it% ★" } ?: ""
         pauseSynopsis.text = media.description?.let {
             if (it.isBlank()) null else it
         } ?: ""
         pauseGenres.text = media.genres?.joinToString(", ")?.ifBlank { null } ?: ""
-        pauseRating.text = media.meanScore?.let { "★ $it%" } ?: ""
+        lifecycleScope.launch(Dispatchers.Main) {
+            val logoUrl = LogoApi.getLogoUrl(media.id)
+            if (!logoUrl.isNullOrBlank()) {
+                pauseLogo.visibility = View.VISIBLE
+                pauseTitle.visibility = View.GONE
+                Glide.with(this@ExoplayerView).load(logoUrl).into(pauseLogo)
+            } else {
+                pauseLogo.visibility = View.GONE
+                pauseTitle.visibility = View.VISIBLE
+                pauseTitle.text = media.userPreferredName
+            }
+        }
 
         episodeArr = episodes.keys.toList()
         currentEpisodeIndex = episodeArr.indexOf(media.anime!!.selectedEpisode!!)
@@ -2765,6 +2780,7 @@ class ExoplayerView :
                         pauseOverlay.visibility = View.VISIBLE
                         pauseOverlay.alpha = 0f
                         pauseOverlay.animate().alpha(1f).setDuration(300).start()
+                        playerView.findViewById<View>(R.id.exo_controller)?.visibility = View.GONE
                     }
                 }
                 pauseMetadataTimer = timer
