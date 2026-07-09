@@ -1,25 +1,19 @@
 package ani.dantotsu.util
 
-import android.animation.ObjectAnimator
 import android.content.res.TypedArray
 import android.graphics.Color
 import android.widget.ImageButton
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.GradientDrawable
-import android.graphics.drawable.InsetDrawable
 import android.graphics.drawable.LayerDrawable
 import android.os.Build
 import android.util.TypedValue
 import android.view.View
-import android.view.animation.AccelerateDecelerateInterpolator
-import android.view.animation.BounceInterpolator
-import ani.dantotsu.settings.saving.PrefManager
-import ani.dantotsu.settings.saving.PrefName
+import ani.dantotsu.R
 
 object FocusEffectUtil {
 
     private var lastFocusedView: View? = null
-    private val activeAnimators = mutableMapOf<View, List<ObjectAnimator>>()
     private val savedForegrounds = mutableMapOf<View, Drawable?>()
     private val savedBackgrounds = mutableMapOf<View, Drawable?>()
 
@@ -61,7 +55,6 @@ object FocusEffectUtil {
 
     private fun resetView(v: View?) {
         if (v == null) return
-        cancelAnimators(v)
         removeBorder(v)
         v.elevation = 0f
         v.scaleX = 1f
@@ -124,70 +117,21 @@ object FocusEffectUtil {
         }
     }
 
+    private fun shouldSpin(v: View): Boolean {
+        if (v is ImageButton) return true
+        val id = v.id
+        return id == R.id.mainCalendarContainer ||
+                id == R.id.mainUserAvatarContainer
+    }
+
     private fun applyFocusGain(v: View) {
-        cancelAnimators(v)
-        v.animate().rotationYBy(360f).setDuration(400).start()
-        val effect = PrefManager.getVal<Int>(PrefName.FocusEffect)
-        when (effect) {
-            0 -> { // Glow
-                v.elevation = 12f
-                v.animate().scaleX(1.05f).scaleY(1.05f).setDuration(200).start()
-            }
-            1 -> { // Breathing
-                val animX = ObjectAnimator.ofFloat(v, "scaleX", 1.06f, 1.0f).apply {
-                    duration = 800
-                    interpolator = AccelerateDecelerateInterpolator()
-                    repeatCount = ObjectAnimator.INFINITE
-                    repeatMode = ObjectAnimator.REVERSE
-                    start()
-                }
-                val animY = ObjectAnimator.ofFloat(v, "scaleY", 1.06f, 1.0f).apply {
-                    duration = 800
-                    interpolator = AccelerateDecelerateInterpolator()
-                    repeatCount = ObjectAnimator.INFINITE
-                    repeatMode = ObjectAnimator.REVERSE
-                    start()
-                }
-                activeAnimators[v] = listOf(animX, animY)
-            }
-            2 -> { // Pulse
-                val animX = ObjectAnimator.ofFloat(v, "scaleX", 1f, 1.15f).apply {
-                    duration = 400
-                    interpolator = BounceInterpolator()
-                    repeatCount = ObjectAnimator.INFINITE
-                    repeatMode = ObjectAnimator.REVERSE
-                    start()
-                }
-                val animY = ObjectAnimator.ofFloat(v, "scaleY", 1f, 1.15f).apply {
-                    duration = 400
-                    interpolator = BounceInterpolator()
-                    repeatCount = ObjectAnimator.INFINITE
-                    repeatMode = ObjectAnimator.REVERSE
-                    start()
-                }
-                activeAnimators[v] = listOf(animX, animY)
-            }
-            3 -> { // Shaking
-                val shake = ObjectAnimator.ofFloat(v, "translationX", 0f, 8f, -8f, 4f, -4f, 0f).apply {
-                    duration = 400
-                    interpolator = AccelerateDecelerateInterpolator()
-                    repeatCount = ObjectAnimator.INFINITE
-                    start()
-                }
-                activeAnimators[v] = listOf(shake)
-                v.animate().scaleX(1.03f).scaleY(1.03f).setDuration(200).start()
-            }
+        if (shouldSpin(v)) {
+            v.animate().rotationYBy(360f).setDuration(400).start()
         }
     }
 
-    private fun cancelAnimators(v: View) {
-        activeAnimators.remove(v)?.forEach { it.cancel() }
-    }
-
     private fun applyFocusLoss(v: View) {
-        cancelAnimators(v)
         v.animate().cancel()
-        v.animate().rotationY(0f).scaleX(1f).scaleY(1f).translationX(0f).setDuration(200).start()
-        v.elevation = 0f
+        v.animate().rotationY(0f).setDuration(200).start()
     }
 }
