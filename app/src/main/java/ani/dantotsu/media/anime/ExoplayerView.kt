@@ -763,9 +763,7 @@ class ExoplayerView :
         pauseRating = playerView.findViewById(R.id.exo_pause_rating)
         pauseLogo = playerView.findViewById(R.id.exo_pause_logo)
         pauseSynopsis.post {
-            val density = resources.displayMetrics.density
-            val paddingPx = (48 * density).toInt()
-            pauseSynopsis.maxWidth = (resources.displayMetrics.widthPixels / 2) - paddingPx
+            pauseSynopsis.maxWidth = resources.displayMetrics.widthPixels / 2
         }
 
         playerView.setControllerVisibilityListener(
