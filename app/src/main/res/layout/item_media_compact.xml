@@ -94,10 +94,11 @@
         android:layout_width="102dp"
         android:layout_height="wrap_content"
         android:ellipsize="end"
+        android:fontFamily="@font/poppins_semi_bold"
         android:maxLines="2"
         android:textAlignment="center"
         android:textColor="@android:color/white"
-        android:textSize="12sp"
+        android:textSize="13sp"
         android:transitionName="mediaTitle"
         tools:ignore="SpUsage"
         tools:text="@string/slogan" />
