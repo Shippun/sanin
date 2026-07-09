@@ -3410,6 +3410,10 @@ class ExoplayerView :
     private fun ensureControllerVisible() {
         if (pauseOverlay.visibility == View.VISIBLE) {
             pauseOverlay.visibility = View.GONE
+            if (!playerView.isControllerFullyVisible) playerView.showController()
+            playerView.controllerShowTimeoutMs = PrefManager.getVal<Int>(PrefName.AutoHideTimeout) * 1000
+            playerView.post { exoPlay.requestFocus() }
+            return
         }
         if (!playerView.isControllerFullyVisible) playerView.showController()
         playerView.controllerShowTimeoutMs = PrefManager.getVal<Int>(PrefName.AutoHideTimeout) * 1000
@@ -3421,19 +3425,22 @@ class ExoplayerView :
     private fun handleBackPress(): Boolean {
         val now = java.lang.System.currentTimeMillis()
         if (pauseOverlay.visibility == View.VISIBLE) {
-            exoPlayer.play()
-            return true
-        }
-        if (playerView.isControllerFullyVisible) {
-            playerView.hideController()
+            pauseOverlay.visibility = View.GONE
+            if (!playerView.isControllerFullyVisible) playerView.showController()
+            exoPlay.requestFocus()
+            backPressTime = now
             return true
         }
         if (now - backPressTime < 500L) {
             finishAndRemoveTask()
-            return false
+            return true
         }
         backPressTime = now
-        playerView.showController()
+        if (playerView.isControllerFullyVisible) {
+            playerView.hideController()
+        } else {
+            playerView.showController()
+        }
         return true
     }
 
