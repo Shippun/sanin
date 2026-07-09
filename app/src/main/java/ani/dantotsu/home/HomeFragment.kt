@@ -414,35 +414,6 @@ class HomeFragment : Fragment() {
             (requireActivity() as? MainActivity)?.navPillsViewModel?.setTab(2)
         }
 
-        binding.homeUserStatusContainer.visibility = View.VISIBLE
-        binding.homeUserStatusProgressBar.visibility = View.VISIBLE
-        binding.homeUserStatusRecyclerView.visibility = View.GONE
-        model.getUserStatus().observe(viewLifecycleOwner) {
-            binding.homeUserStatusRecyclerView.visibility = View.GONE
-            if (it != null) {
-                if (it.isNotEmpty()) {
-                    PrefManager.getLiveVal(PrefName.RefreshStatus, false).apply {
-                        asLiveBool()
-                        observe(viewLifecycleOwner) { _ ->
-                            binding.homeUserStatusRecyclerView.adapter = UserStatusAdapter(it)
-                        }
-                    }
-                    binding.homeUserStatusRecyclerView.layoutManager = LinearLayoutManager(
-                        requireContext(),
-                        LinearLayoutManager.HORIZONTAL,
-                        false
-                    )
-                    binding.homeUserStatusRecyclerView.visibility = View.VISIBLE
-                    binding.homeUserStatusRecyclerView.layoutAnimation =
-                        LayoutAnimationController(setSlideIn(), 0.25f)
-
-                } else {
-                    binding.homeUserStatusContainer.visibility = View.GONE
-                }
-                binding.homeUserStatusProgressBar.visibility = View.GONE
-            }
-
-        }
         binding.homeHiddenItemsContainer.visibility = View.GONE
         model.getHidden().observe(viewLifecycleOwner) {
             if (it != null) {
@@ -502,14 +473,12 @@ class HomeFragment : Fragment() {
             "AnimeContinue",
             "AnimeFav",
             "AnimePlanned",
-            "UserStatus",
         )
 
         val containers = arrayOf(
             binding.homeContinueWatchingContainer,
             binding.homeFavAnimeContainer,
             binding.homePlannedAnimeContainer,
-            binding.homeUserStatusContainer,
         )
 
         var running = false
@@ -520,7 +489,6 @@ class HomeFragment : Fragment() {
 
                 val alOnlySections = listOf(
                     binding.homeFavAnimeContainer,
-                    binding.homeUserStatusContainer,
                 )
                 binding.homeRescueModeBanner.visibility =
                     if (inRescueMode) View.VISIBLE else View.GONE
@@ -531,7 +499,7 @@ class HomeFragment : Fragment() {
                     binding.homePlannedAnimeContainer.visibility = View.VISIBLE
                 } else {
                     val homeLayoutShow: List<Boolean> = PrefManager.getVal(PrefName.HomeLayout)
-                    val alOnlyIndices = listOf(1, 3)
+                    val alOnlyIndices = listOf(1)
                     alOnlySections.forEachIndexed { idx, view ->
                         if (homeLayoutShow.getOrElse(alOnlyIndices[idx]) { true }) {
                             view.visibility = View.VISIBLE
@@ -639,8 +607,7 @@ class HomeFragment : Fragment() {
                     val initHomePage = async(Dispatchers.IO) { model.initHomePage() }
                     val setListImages = async(Dispatchers.IO) { model.setListImages() }
                     if (!rescueMode) {
-                        val initUserStatus = async(Dispatchers.IO) { model.initUserStatus() }
-                        awaitAll(initHomePage, initUserStatus, setListImages)
+                        awaitAll(initHomePage, setListImages)
                     } else {
                         awaitAll(initHomePage, setListImages)
                     }
