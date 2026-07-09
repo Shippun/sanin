@@ -235,6 +235,8 @@ class ExoplayerView :
     private lateinit var animeTitle: TextView
     private lateinit var videoInfo: TextView
     private lateinit var episodeTitle: Spinner
+    private lateinit var episodeTitleText: TextView
+    private lateinit var episodeTitleBtn: ImageButton
     private lateinit var customSubtitleView: Xubtitle
     private var assHandler: AssHandler? = null
     private var assSubtitleView: io.github.peerless2012.ass.media.widget.AssSubtitleView? = null
@@ -515,6 +517,9 @@ class ExoplayerView :
 
         animeTitle = playerView.findViewById(R.id.exo_anime_title)
         episodeTitle = playerView.findViewById(R.id.exo_ep_sel)
+        episodeTitleText = playerView.findViewById(R.id.exo_ep_sel_text)
+        episodeTitleBtn = playerView.findViewById(R.id.exo_ep_sel_btn)
+        episodeTitleBtn.setOnClickListener { episodeTitle.performClick() }
 
         playerView.controllerShowTimeoutMs = PrefManager.getVal<Int>(PrefName.AutoHideTimeout) * 1000
 
@@ -726,6 +731,7 @@ class ExoplayerView :
             R.id.exo_fast_forward_button, R.id.exo_fast_rewind_button,
             R.id.exo_fast_forward_button_cont, R.id.exo_fast_rewind_button_cont,
             R.id.exo_unlock, R.id.exo_lock, R.id.exo_skip_timestamp,
+            R.id.exo_ep_sel_btn,
         ).forEach { id ->
             playerView.findViewById<View>(id)?.apply {
                 isFocusable = true
@@ -742,6 +748,7 @@ class ExoplayerView :
             R.id.exo_fast_forward_button, R.id.exo_fast_rewind_button,
             R.id.exo_fast_forward_button_cont, R.id.exo_fast_rewind_button_cont,
             R.id.exo_unlock, R.id.exo_lock, R.id.exo_skip_timestamp,
+            R.id.exo_ep_sel_btn,
         ).forEach { id ->
             playerView.findViewById<View>(id)?.let {
                 FocusEffectUtil.applyFocusListener(it, it, isCircular = it is ImageButton)
@@ -1250,6 +1257,7 @@ class ExoplayerView :
         // EpisodeSelector
         episodeTitle.adapter = NoPaddingArrayAdapter(this, R.layout.item_dropdown, episodeTitleArr)
         episodeTitle.setSelection(currentEpisodeIndex)
+        episodeTitleText.text = episodeTitleArr.getOrElse(currentEpisodeIndex) { "" }
         episodeTitle.onItemSelectedListener =
             object : AdapterView.OnItemSelectedListener {
                 override fun onItemSelected(
@@ -1258,6 +1266,7 @@ class ExoplayerView :
                     position: Int,
                     p3: Long,
                 ) {
+                    episodeTitleText.text = episodeTitleArr.getOrElse(position) { "" }
                     if (position != currentEpisodeIndex) {
                         disappeared = false
                         functionstarted = false
@@ -1299,6 +1308,7 @@ class ExoplayerView :
                 model.setMedia(media)
                 currentEpisodeIndex = episodeArr.indexOf(ep.number)
                 episodeTitle.setSelection(currentEpisodeIndex)
+                episodeTitleText.text = episodeTitleArr.getOrElse(currentEpisodeIndex) { "" }
                 if (isInitialized) releasePlayer()
                 playbackPosition =
                     PrefManager.getCustomVal(
