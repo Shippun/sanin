@@ -83,7 +83,6 @@ class SettingsAnimationActivity : AppCompatActivity() {
             mapReverse[PrefManager.getVal(PrefName.AnimationSpeed)] ?: 1f
         binding.animationSpeed.addOnChangeListener { _, value, _ ->
             PrefManager.setVal(PrefName.AnimationSpeed, map[value] ?: 1f)
-            restartApp()
         }
     }
 }

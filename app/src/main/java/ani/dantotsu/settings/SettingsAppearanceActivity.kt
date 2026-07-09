@@ -106,21 +106,18 @@ class SettingsAppearanceActivity : AppCompatActivity() {
         binding.appearanceCardGradientIntensity.value = PrefManager.getVal(PrefName.CardGradientIntensity)
         binding.appearanceCardGradientIntensity.addOnChangeListener { _, value, _ ->
             PrefManager.setVal(PrefName.CardGradientIntensity, value)
-            restartApp()
         }
 
         binding.appearanceStandardCardRoundness.value =
             PrefManager.getVal<Int>(PrefName.StandardCardRoundness).toFloat()
         binding.appearanceStandardCardRoundness.addOnChangeListener { _, value, _ ->
             PrefManager.setVal(PrefName.StandardCardRoundness, value.toInt())
-            restartApp()
         }
 
         binding.appearanceContinueWatchingCardRoundness.value =
             PrefManager.getVal<Int>(PrefName.ContinueWatchingCardRoundness).toFloat()
         binding.appearanceContinueWatchingCardRoundness.addOnChangeListener { _, value, _ ->
             PrefManager.setVal(PrefName.ContinueWatchingCardRoundness, value.toInt())
-            restartApp()
         }
 
         binding.appearanceHideRedDot.isChecked =
@@ -132,23 +129,19 @@ class SettingsAppearanceActivity : AppCompatActivity() {
         binding.appearanceBlurBanners.isChecked = PrefManager.getVal(PrefName.BlurBanners)
         binding.appearanceBlurBanners.setOnCheckedChangeListener { _, isChecked ->
             PrefManager.setVal(PrefName.BlurBanners, isChecked)
-            restartApp()
         }
         binding.appearanceBlurRadius.value = PrefManager.getVal(PrefName.BlurRadius) as Float
         binding.appearanceBlurRadius.addOnChangeListener { _, value, _ ->
             PrefManager.setVal(PrefName.BlurRadius, value)
-            restartApp()
         }
         binding.appearanceBlurSampling.value = PrefManager.getVal(PrefName.BlurSampling) as Float
         binding.appearanceBlurSampling.addOnChangeListener { _, value, _ ->
             PrefManager.setVal(PrefName.BlurSampling, value)
-            restartApp()
         }
 
         binding.appearanceUiScale.value = PrefManager.getVal(PrefName.UIScale)
         binding.appearanceUiScale.addOnChangeListener { _, value, _ ->
             PrefManager.setVal(PrefName.UIScale, value)
-            restartApp()
         }
 
         binding.appearanceBannerBrightness.value = PrefManager.getVal(PrefName.BannerBrightness)
