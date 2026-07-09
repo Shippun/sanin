@@ -403,17 +403,6 @@ class HomeFragment : Fragment() {
             (requireActivity() as? MainActivity)?.navPillsViewModel?.setTab(1)
         }
 
-        initRecyclerView(
-            model.getMissingSequels(),
-            binding.homeMissingSequelsContainer,
-            binding.homeMissingSequelsRecyclerView,
-            binding.homeMissingSequelsProgressBar,
-            binding.homeMissingSequelsEmpty,
-            binding.homeMissingSequels,
-            binding.homeMissingSequelsMore,
-            getString(R.string.missing_sequels)
-        )
-
         model.getAnimeContinue().observe(viewLifecycleOwner) { list ->
             if (_binding != null && list != null && list.isNotEmpty() && PrefManager.getVal<Int>(PrefName.HomeBannerMode) == 2
                 && navBannerCurrentMediaId == -1) {
@@ -425,16 +414,6 @@ class HomeFragment : Fragment() {
             (requireActivity() as? MainActivity)?.navPillsViewModel?.setTab(2)
         }
 
-        initRecyclerView(
-            model.getRecommendation(),
-            binding.homeRecommendedContainer,
-            binding.homeRecommendedRecyclerView,
-            binding.homeRecommendedProgressBar,
-            binding.homeRecommendedEmpty,
-            binding.homeRecommended,
-            binding.homeRecommendedMore,
-            getString(R.string.recommended)
-        )
         binding.homeUserStatusContainer.visibility = View.VISIBLE
         binding.homeUserStatusProgressBar.visibility = View.VISIBLE
         binding.homeUserStatusRecyclerView.visibility = View.GONE
@@ -523,18 +502,14 @@ class HomeFragment : Fragment() {
             "AnimeContinue",
             "AnimeFav",
             "AnimePlanned",
-            "Recommendation",
             "UserStatus",
-            "MissingSequels",
         )
 
         val containers = arrayOf(
             binding.homeContinueWatchingContainer,
             binding.homeFavAnimeContainer,
             binding.homePlannedAnimeContainer,
-            binding.homeRecommendedContainer,
             binding.homeUserStatusContainer,
-            binding.homeMissingSequelsContainer,
         )
 
         var running = false
@@ -546,7 +521,6 @@ class HomeFragment : Fragment() {
                 val alOnlySections = listOf(
                     binding.homeFavAnimeContainer,
                     binding.homeUserStatusContainer,
-                    binding.homeMissingSequelsContainer,
                 )
                 binding.homeRescueModeBanner.visibility =
                     if (inRescueMode) View.VISIBLE else View.GONE
@@ -557,7 +531,7 @@ class HomeFragment : Fragment() {
                     binding.homePlannedAnimeContainer.visibility = View.VISIBLE
                 } else {
                     val homeLayoutShow: List<Boolean> = PrefManager.getVal(PrefName.HomeLayout)
-                    val alOnlyIndices = listOf(1, 4, 5)
+                    val alOnlyIndices = listOf(1, 3)
                     alOnlySections.forEachIndexed { idx, view ->
                         if (homeLayoutShow.getOrElse(alOnlyIndices[idx]) { true }) {
                             view.visibility = View.VISIBLE
@@ -625,21 +599,16 @@ class HomeFragment : Fragment() {
                     val homeLayoutShow: List<Boolean> = PrefManager.getVal(PrefName.HomeLayout)
                     var homeLayoutOrder: List<Int> = PrefManager.getVal(PrefName.HomeLayoutOrder)
                     if (homeLayoutOrder.isEmpty()) {
-                        homeLayoutOrder = (0..7).toList()
+                        homeLayoutOrder = containers.indices.toList()
                     }
 
                     val sectionVisibilityOverrides = listOf<Boolean>(
                         PrefManager.getVal(PrefName.ShowContinueWatching),
                         PrefManager.getVal(PrefName.ShowPlanned),
-                        PrefManager.getVal(PrefName.ShowRecommendations),
-                        PrefManager.getVal(PrefName.ShowTrending),
-                        PrefManager.getVal(PrefName.ShowPopular),
-                        PrefManager.getVal(PrefName.ShowRecent),
                     )
                     val sectionVisibilityMap = mapOf(
                         0 to 0, // ContinueWatching -> ShowContinueWatching
                         2 to 1, // PlannedAnime -> ShowPlanned
-                        3 to 2, // Recommendation -> ShowRecommendations
                     )
 
                     withContext(Dispatchers.Main) {
@@ -698,8 +667,6 @@ class HomeFragment : Fragment() {
             binding.homeContinueWatchingContainer to binding.homeWatchingRecyclerView,
             binding.homeFavAnimeContainer to binding.homeFavAnimeRecyclerView,
             binding.homePlannedAnimeContainer to binding.homePlannedAnimeRecyclerView,
-            binding.homeMissingSequelsContainer to binding.homeMissingSequelsRecyclerView,
-            binding.homeRecommendedContainer to binding.homeRecommendedRecyclerView,
         )
         var prevRecycler: View? = null
         var prevTitleRow: View? = null
