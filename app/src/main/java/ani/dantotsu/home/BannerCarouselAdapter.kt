@@ -41,9 +41,10 @@ class BannerCarouselAdapter(
             val anizipUrl = AniZip.getBackdropUrl(media.id)
             withContext(Dispatchers.Main) {
                 if (!anizipUrl.isNullOrBlank()) {
-                    holder.bannerBg.loadImage(anizipUrl)
+                    holder.bannerBg.visibility = View.GONE
                     holder.bannerImage.loadImage(anizipUrl)
                 } else {
+                    holder.bannerBg.visibility = View.VISIBLE
                     val fallback = media.banner ?: media.cover
                     if (!fallback.isNullOrBlank()) {
                         holder.bannerBg.loadImage(fallback)
