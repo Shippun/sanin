@@ -1185,7 +1185,7 @@ class ExoplayerView :
 
         pauseRating.text = media.meanScore?.let { "$it% ★" } ?: ""
         pauseSynopsis.text = media.description?.let {
-            if (it.isBlank()) null else it
+            if (it.isBlank()) null else android.text.Html.fromHtml(it, android.text.Html.FROM_HTML_MODE_LEGACY).toString()
         } ?: ""
         pauseGenres.text = media.genres?.joinToString(", ")?.ifBlank { null } ?: ""
         lifecycleScope.launch(Dispatchers.Main) {
