@@ -93,6 +93,22 @@ class EpisodeAdapter(
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        bindViewHolder(holder, position, false)
+    }
+
+    override fun onBindViewHolder(
+        holder: RecyclerView.ViewHolder,
+        position: Int,
+        payloads: MutableList<Any>
+    ) {
+        if (payloads.isEmpty()) {
+            bindViewHolder(holder, position, false)
+        } else {
+            bindViewHolder(holder, position, payloads.contains("metadata"))
+        }
+    }
+
+    private fun bindViewHolder(holder: RecyclerView.ViewHolder, position: Int, metadataOnly: Boolean) {
         val ep = arr[position]
         val title = if (!ep.title.isNullOrEmpty() && ep.title != "null") {
             ep.title?.let { MediaNameAdapter.removeEpisodeNumber(it) }
@@ -110,19 +126,24 @@ class EpisodeAdapter(
         when (holder) {
             is EpisodeListViewHolder -> {
                 val binding = holder.binding
-                setAnimation(fragment.requireContext(), holder.binding.root)
+                if (!metadataOnly) {
+                    setAnimation(fragment.requireContext(), holder.binding.root)
 
-                val thumb = ep.thumb?.let {
-                    if (it.url.isNotEmpty()) {
-                        if (it.url.startsWith("content://") || it.url.startsWith("file://")) {
-                            it.url
-                        } else {
-                            GlideUrl(it.url) { it.headers }
-                        }
-                    } else null
+                    val thumb = ep.thumb?.let {
+                        if (it.url.isNotEmpty()) {
+                            if (it.url.startsWith("content://") || it.url.startsWith("file://")) {
+                                it.url
+                            } else {
+                                GlideUrl(it.url) { it.headers }
+                            }
+                        } else null
+                    }
+                    Glide.with(binding.itemMediaImage).load(thumb ?: media.cover).override(400, 0)
+                        .diskCacheStrategy(DiskCacheStrategy.ALL).into(binding.itemMediaImage)
                 }
-                Glide.with(binding.itemMediaImage).load(thumb ?: media.cover).override(400, 0)
-                    .diskCacheStrategy(DiskCacheStrategy.ALL).into(binding.itemMediaImage)
+                binding.itemEpisodeDesc.isVisible = !ep.desc.isNullOrBlank()
+                binding.itemEpisodeDesc.text = ep.desc ?: ""
+                holder.bind(ep.number, ep.downloadProgress, ep.desc)
                 binding.itemEpisodeNumber.text = ep.number
                 binding.itemEpisodeTitle.text = if (ep.number == title) "Episode $title" else title
 
@@ -147,10 +168,6 @@ class EpisodeAdapter(
                 } else {
                     binding.itemEpisodeDate.visibility = View.GONE
                 }
-
-                binding.itemEpisodeDesc.isVisible = !ep.desc.isNullOrBlank()
-                binding.itemEpisodeDesc.text = ep.desc ?: ""
-                holder.bind(ep.number, ep.downloadProgress, ep.desc)
 
                 if (media.userProgress != null) {
                     if ((ep.number.toFloatOrNull() ?: 9999f) <= media.userProgress!!.toFloat()) {
@@ -180,19 +197,21 @@ class EpisodeAdapter(
 
             is EpisodeGridViewHolder -> {
                 val binding = holder.binding
-                setAnimation(fragment.requireContext(), holder.binding.root)
+                if (!metadataOnly) {
+                    setAnimation(fragment.requireContext(), holder.binding.root)
 
-                val thumb = ep.thumb?.let {
-                    if (it.url.isNotEmpty()) {
-                        if (it.url.startsWith("content://") || it.url.startsWith("file://")) {
-                            it.url
-                        } else {
-                            GlideUrl(it.url) { it.headers }
-                        }
-                    } else null
+                    val thumb = ep.thumb?.let {
+                        if (it.url.isNotEmpty()) {
+                            if (it.url.startsWith("content://") || it.url.startsWith("file://")) {
+                                it.url
+                            } else {
+                                GlideUrl(it.url) { it.headers }
+                            }
+                        } else null
+                    }
+                    Glide.with(binding.itemMediaImage).load(thumb ?: media.cover).override(400, 0)
+                        .diskCacheStrategy(DiskCacheStrategy.ALL).into(binding.itemMediaImage)
                 }
-                Glide.with(binding.itemMediaImage).load(thumb ?: media.cover).override(400, 0)
-                    .diskCacheStrategy(DiskCacheStrategy.ALL).into(binding.itemMediaImage)
 
                 binding.itemEpisodeNumber.text = ep.number
                 binding.itemEpisodeTitle.text = title
@@ -245,7 +264,9 @@ class EpisodeAdapter(
 
             is EpisodeCompactViewHolder -> {
                 val binding = holder.binding
-                setAnimation(fragment.requireContext(), holder.binding.root)
+                if (!metadataOnly) {
+                    setAnimation(fragment.requireContext(), holder.binding.root)
+                }
                 binding.itemEpisodeNumber.text = ep.number
                 binding.itemEpisodeFillerView.isVisible = ep.filler
                 if (media.userProgress != null) {

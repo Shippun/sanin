@@ -393,7 +393,9 @@ class AnimeWatchFragment : Fragment() {
         val eps = media.anime?.episodes
         if (eps != null) {
             enrichEpisodes(eps)
-            episodeAdapter.notifyItemRangeChanged(0, episodeAdapter.arr.size)
+            episodeAdapter.notifyItemRangeChanged(
+                0, episodeAdapter.arr.size, "metadata"
+            )
         }
     }
 
@@ -453,7 +455,6 @@ class AnimeWatchFragment : Fragment() {
 
     fun onSourceChange(i: Int): AnimeParser {
         media.anime?.episodes = null
-        reload()
         val selected = model.loadSelected(media)
         model.watchSources?.get(selected.sourceIndex)?.showUserTextListener = null
         selected.sourceIndex = i
@@ -799,7 +800,6 @@ class AnimeWatchFragment : Fragment() {
         headerAdapter.handleEpisodes()
         val isDownloaded = model.watchSources!!.isDownloadedSource(media.selected!!.sourceIndex)
         episodeAdapter.offlineMode = isDownloaded
-        episodeAdapter.notifyItemRangeRemoved(0, episodeAdapter.arr.size)
         var arr: ArrayList<Episode> = arrayListOf()
         if (media.anime!!.episodes != null) {
             val end = if (end != null && end!! < media.anime!!.episodes!!.size) end else null
@@ -812,7 +812,7 @@ class AnimeWatchFragment : Fragment() {
         }
         episodeAdapter.arr = arr
         episodeAdapter.updateType(style ?: PrefManager.getVal(PrefName.AnimeDefaultView))
-        episodeAdapter.notifyItemRangeInserted(0, arr.size)
+        episodeAdapter.notifyDataSetChanged()
         for (download in downloadManager.animeDownloadedTypes) {
             if (media.compareName(download.titleName)) {
                 episodeAdapter.addToDownloadedEpisodes(download.chapterName, downloadManager.getSize(download))
