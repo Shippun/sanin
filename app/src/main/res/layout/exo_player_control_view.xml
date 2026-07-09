@@ -142,17 +142,6 @@
                         tools:ignore="ContentDescription,SpeakableTextPresentCheck" />
 
                     <ImageButton
-                        android:id="@+id/exo_dub_sub"
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
-                        android:focusable="true"
-                        android:backgroundTint="#00FFFFFF"
-                        android:src="@drawable/ic_round_music_note_24"
-                        android:visibility="visible"
-                        app:tint="#fff"
-                        tools:ignore="ContentDescription,SpeakableTextPresentCheck" />
-
-                    <ImageButton
                         android:id="@+id/exo_audio"
                         android:layout_width="48dp"
                         android:layout_height="48dp"

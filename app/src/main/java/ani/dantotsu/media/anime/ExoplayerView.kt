@@ -217,7 +217,6 @@ class ExoplayerView :
     private lateinit var exoSubtitle: ImageButton
     private lateinit var exoSubtitleView: SubtitleView
     private lateinit var exoAudioTrack: ImageButton
-    private lateinit var exoDubSub: ImageButton
     private lateinit var exoSpeed: ImageButton
     private lateinit var exoScreen: ImageButton
     private lateinit var exoNext: ImageButton
@@ -486,21 +485,6 @@ class ExoplayerView :
         exoSettings = playerView.findViewById(R.id.exo_settings)
         exoSubtitle = playerView.findViewById(R.id.exo_sub)
         exoAudioTrack = playerView.findViewById(R.id.exo_audio)
-        exoDubSub = playerView.findViewById(R.id.exo_dub_sub)
-        exoDubSub.setOnClickListener {
-            val selected = media.selected ?: return@setOnClickListener
-            selected.preferDub = !selected.preferDub
-            model.saveSelected(media.id, selected)
-            model.watchSources?.get(selected.sourceIndex)?.selectDub = selected.preferDub
-            lifecycleScope.launch(Dispatchers.IO) {
-                if (::episode.isInitialized) {
-                    episode.allStreams = false
-                    episode.extractors = null
-                    model.loadEpisodeVideos(episode, selected.sourceIndex, true)
-                }
-            }
-            snackString(if (selected.preferDub) "Dub" else "Sub")
-        }
         exoSubtitleView = playerView.findViewById(androidx.media3.ui.R.id.exo_subtitles)
         // Adjust bottom padding to absolute edge
         // 0.0f (0%) pushes subtitles to the very bottom
@@ -729,7 +713,7 @@ class ExoplayerView :
             }
         listOf(
             androidx.media3.ui.R.id.exo_play, R.id.exo_source, R.id.exo_settings, R.id.exo_sub,
-            R.id.exo_audio, R.id.exo_dub_sub, R.id.exo_screen, R.id.exo_pip,
+            R.id.exo_audio, R.id.exo_screen, R.id.exo_pip,
             R.id.exo_skip_op_ed, R.id.exo_back, R.id.exo_skip, R.id.exo_next_ep,
             R.id.exo_prev_ep,
             androidx.media3.ui.R.id.exo_playback_speed,
@@ -746,7 +730,7 @@ class ExoplayerView :
         animeTitle.isFocusable = false
         listOf(
             androidx.media3.ui.R.id.exo_play, R.id.exo_source, R.id.exo_settings, R.id.exo_sub,
-            R.id.exo_audio, R.id.exo_dub_sub, R.id.exo_screen, R.id.exo_pip,
+            R.id.exo_audio, R.id.exo_screen, R.id.exo_pip,
             R.id.exo_skip_op_ed, R.id.exo_back, R.id.exo_skip, R.id.exo_next_ep,
             R.id.exo_prev_ep,
             androidx.media3.ui.R.id.exo_playback_speed,
@@ -3117,14 +3101,12 @@ class ExoplayerView :
         }
         audioTrackGroups.clear()
         audioTrackGroups.addAll(audioTracks)
-        exoDubSub.isVisible = true
         if (audioTracks.size > 1) {
             val currentParams = exoPlayer.trackSelectionParameters
             val currentOverride = currentParams.overrides.values.firstOrNull()
             val currentIdx = audioTrackGroups.indexOfFirst { group ->
                 currentOverride != null && group.mediaTrackGroup.id == currentOverride.mediaTrackGroup.id
             }
-            updateDubSubTint(if (currentIdx < 0) 0 else currentIdx)
         }
         if (!hasExtSubtitles) {
             exoSubtitle.isVisible = subTracks.size > 1
@@ -3412,14 +3394,6 @@ class ExoplayerView :
     ) {
         onPiPChanged(isInPictureInPictureMode)
         super.onPictureInPictureModeChanged(isInPictureInPictureMode, newConfig)
-    }
-
-    private fun updateDubSubTint(activeIndex: Int) {
-        val total = audioTrackGroups.size
-        if (total < 2) return
-        val fraction = if (total > 1) activeIndex.toFloat() / (total - 1).toFloat() else 0f
-        val alpha = (0.5f + fraction * 0.5f).coerceIn(0.5f, 1f)
-        exoDubSub.imageAlpha = (alpha * 255).toInt()
     }
 
     private fun ensureControllerVisible() {
