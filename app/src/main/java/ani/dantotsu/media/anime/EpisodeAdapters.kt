@@ -100,6 +100,13 @@ class EpisodeAdapter(
             ep.number
         } ?: ""
 
+        if (position == 0) {
+            holder.itemView.nextFocusUpId = R.id.mediaSourceNameContainer
+        }
+        if (position == arr.size - 1) {
+            holder.itemView.nextFocusDownId = R.id.ScrollTop
+        }
+
         when (holder) {
             is EpisodeListViewHolder -> {
                 val binding = holder.binding
