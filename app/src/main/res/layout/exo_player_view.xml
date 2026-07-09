@@ -205,7 +205,7 @@
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/poppins_bold"
                     android:textColor="@android:color/white"
-                    android:textSize="36sp"
+                    android:textSize="42sp"
                     android:singleLine="false"
                     android:maxLines="3"
                     android:ellipsize="end"
@@ -221,10 +221,10 @@
                 android:fontFamily="@font/poppins"
                 android:lineSpacingExtra="4sp"
                 android:textColor="@android:color/white"
-                android:textSize="14sp"
-                android:maxLines="6"
-                android:ellipsize="end"
-                tools:text="Centuries ago, mankind was slaughtered to near extinction by monstrous humanoid giants called Titans..." />
+                    android:textSize="17sp"
+                    android:maxLines="6"
+                    android:ellipsize="end"
+                    tools:text="Centuries ago, mankind was slaughtered to near extinction by monstrous humanoid giants called Titans..." />
 
             <TextView
                 android:id="@+id/exo_pause_genres"
@@ -234,7 +234,7 @@
                 android:alpha="0.85"
                 android:fontFamily="@font/poppins"
                 android:textColor="?attr/colorSecondary"
-                android:textSize="13sp"
+                android:textSize="16sp"
                 tools:text="Action, Drama, Fantasy, Horror" />
 
             <TextView
