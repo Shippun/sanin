@@ -702,6 +702,7 @@ class HomeFragment : Fragment() {
             binding.homeRecommendedContainer to binding.homeRecommendedRecyclerView,
         )
         var prevRecycler: View? = null
+        var prevTitleRow: View? = null
         for ((container, recycler) in sections) {
             recycler.isFocusable = true
             val titleRow = if (container.childCount > 0) container.getChildAt(0) else null
@@ -710,11 +711,13 @@ class HomeFragment : Fragment() {
                 titleRow.nextFocusDownId = recycler.id
                 if (prevRecycler != null) {
                     titleRow.nextFocusUpId = prevRecycler.id
+                    prevRecycler.nextFocusDownId = titleRow.id
                 } else {
                     titleRow.nextFocusUpId = binding.homeBannerCarousel.id
                 }
                 recycler.nextFocusUpId = titleRow.id
                 prevRecycler = recycler
+                prevTitleRow = titleRow
             }
         }
     }

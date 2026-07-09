@@ -282,6 +282,7 @@ class ExoplayerView :
 
     private var pipEnabled = false
     private var aspectRatio = Rational(16, 9)
+    private var backPressTime = 0L
 
     private val handler = Handler(Looper.getMainLooper())
     private var pauseMetadataTimer: Runnable? = null
@@ -475,10 +476,6 @@ class ExoplayerView :
         // Initialize
         hideSystemBarsExtendView()
 
-        onBackPressedDispatcher.addCallback(this) {
-            finishAndRemoveTask()
-        }
-
         playerView = findViewById(R.id.player_view)
         exoPlay = playerView.findViewById(androidx.media3.ui.R.id.exo_play)
         exoSource = playerView.findViewById(R.id.exo_source)
@@ -530,8 +527,12 @@ class ExoplayerView :
         }
 
         // BackButton
-        playerView.findViewById<ImageButton>(R.id.exo_back).setOnClickListener {
-            onBackPressedDispatcher.onBackPressed()
+        val exoBack = playerView.findViewById<ImageButton>(R.id.exo_back)
+        exoBack.setOnClickListener { handleBackPress() }
+        onBackPressedDispatcher.addCallback(this) {
+            if (!handleBackPress()) {
+                finishAndRemoveTask()
+            }
         }
 
         // TimeStamps
@@ -744,6 +745,18 @@ class ExoplayerView :
             }
         }
         playerView.post { exoPlay.requestFocus() }
+
+        // Focus chain: ep_sel_btn ← back ← prev ← play → next
+        val exoPrev = playerView.findViewById<View>(R.id.exo_prev_ep)
+        val exoNext = playerView.findViewById<View>(R.id.exo_next_ep)
+        episodeTitleBtn.nextFocusRightId = R.id.exo_back
+        exoBack.nextFocusLeftId = R.id.exo_ep_sel_btn
+        exoBack.nextFocusRightId = R.id.exo_prev_ep
+        exoPrev.nextFocusLeftId = R.id.exo_back
+        exoPrev.nextFocusRightId = androidx.media3.ui.R.id.exo_play
+        exoPlay.nextFocusLeftId = R.id.exo_prev_ep
+        exoPlay.nextFocusRightId = R.id.exo_next_ep
+        exoNext.nextFocusLeftId = androidx.media3.ui.R.id.exo_play
 
         pauseOverlay = playerView.findViewById(R.id.exo_pause_overlay)
         pauseTitle = playerView.findViewById(R.id.exo_pause_title)
@@ -3397,11 +3410,33 @@ class ExoplayerView :
     }
 
     private fun ensureControllerVisible() {
+        if (pauseOverlay.visibility == View.VISIBLE) {
+            pauseOverlay.visibility = View.GONE
+        }
         if (!playerView.isControllerFullyVisible) playerView.showController()
         playerView.controllerShowTimeoutMs = PrefManager.getVal<Int>(PrefName.AutoHideTimeout) * 1000
         playerView.post {
             if (currentFocus == null) exoPlay.requestFocus()
         }
+    }
+
+    private fun handleBackPress(): Boolean {
+        val now = System.currentTimeMillis()
+        if (pauseOverlay.visibility == View.VISIBLE) {
+            exoPlayer.play()
+            return true
+        }
+        if (playerView.isControllerFullyVisible) {
+            playerView.hideController()
+            return true
+        }
+        if (now - backPressTime < 500) {
+            finishAndRemoveTask()
+            return false
+        }
+        backPressTime = now
+        playerView.showController()
+        return true
     }
 
     override fun dispatchKeyEvent(event: KeyEvent): Boolean {
