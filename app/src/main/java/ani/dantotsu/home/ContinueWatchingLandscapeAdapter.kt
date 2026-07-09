@@ -113,6 +113,21 @@ class ContinueWatchingLandscapeAdapter(
         }
         holder.subtitle.text = subtitle
 
+        if (progress > 0) {
+            val position = PrefManager.getCustomVal("${media.id}_$progress", 0L)
+            val duration = PrefManager.getCustomVal("${media.id}_${progress}_max", 0L)
+            if (position > 0 && duration > 0) {
+                holder.timeWatched.visibility = View.VISIBLE
+                val posStr = String.format("%02d:%02d", position / 60000, (position % 60000) / 1000)
+                val durStr = String.format("%02d:%02d", duration / 60000, (duration % 60000) / 1000)
+                holder.timeWatched.text = "$posStr/$durStr"
+            } else {
+                holder.timeWatched.visibility = View.GONE
+            }
+        } else {
+            holder.timeWatched.visibility = View.GONE
+        }
+
         if (episodes != null && episodes > 0) {
             holder.progress.max = episodes
             holder.progress.progress = progress
@@ -203,6 +218,7 @@ class ContinueWatchingLandscapeAdapter(
         val title: TextView = view.findViewById(R.id.cwTitle)
         val subtitle: TextView = view.findViewById(R.id.cwSubtitle)
         val episodeNo: TextView = view.findViewById(R.id.cwEpisodeNo)
+        val timeWatched: TextView = view.findViewById(R.id.cwTimeWatched)
         val progress: ProgressBar = view.findViewById(R.id.cwProgress)
         val ongoing: View = view.findViewById(R.id.cwOngoing)
     }

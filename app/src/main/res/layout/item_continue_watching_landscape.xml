@@ -114,6 +114,19 @@
                 android:progressTint="?attr/colorPrimary"
                 android:progressBackgroundTint="#40FFFFFF" />
 
+            <TextView
+                android:id="@+id/cwTimeWatched"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:alpha="0.7"
+                android:fontFamily="@font/poppins"
+                android:textColor="@color/bg_white"
+                android:textSize="9sp"
+                android:visibility="gone"
+                tools:text="09:10/24:00"
+                tools:visibility="visible" />
+
         </LinearLayout>
 
     </com.google.android.material.card.MaterialCardView>
