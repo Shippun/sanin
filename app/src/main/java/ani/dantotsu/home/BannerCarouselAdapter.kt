@@ -38,16 +38,12 @@ class BannerCarouselAdapter(
 
         // --- Banner images from pre-fetched backdrop map (AniZip, fallback AniList) ---
         val anizipUrl = backdropUrls[media.id]
-        if (!anizipUrl.isNullOrBlank()) {
-            holder.bannerBg.visibility = View.GONE
-            holder.bannerImage.loadImage(anizipUrl)
-        } else {
+        val imageUrl = if (!anizipUrl.isNullOrBlank()) anizipUrl
+                       else media.banner ?: media.cover
+        if (!imageUrl.isNullOrBlank()) {
             holder.bannerBg.visibility = View.VISIBLE
-            val fallback = media.banner ?: media.cover
-            if (!fallback.isNullOrBlank()) {
-                holder.bannerBg.loadImage(fallback)
-                holder.bannerImage.loadImage(fallback)
-            }
+            holder.bannerBg.loadImage(imageUrl)
+            holder.bannerImage.loadImage(imageUrl)
         }
 
         // --- Clearlogo (from LogoApi) / Title fallback ---
