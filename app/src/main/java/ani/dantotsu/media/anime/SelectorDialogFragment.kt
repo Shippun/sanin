@@ -714,7 +714,9 @@ class SelectorDialogFragment : DialogFragment() {
         }
 
         fun addAll(extractors: List<VideoExtractor>?) {
-            links.addAll(extractors?.filterNotNull() ?: return)
+            val valid = extractors.orEmpty().toList().filterNotNull()
+            if (valid.isEmpty()) return
+            links.addAll(valid)
             notifyItemRangeInserted(0, links.size)
         }
 

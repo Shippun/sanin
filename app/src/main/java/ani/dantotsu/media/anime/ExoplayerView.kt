@@ -1580,7 +1580,7 @@ class ExoplayerView :
             extractor?.onVideoStopped(video)
         }
 
-        val ext = episode.extractors?.find { it.server.name == episode.selectedExtractor } ?: return
+        val ext = episode.extractors?.filterNotNull()?.find { it.server.name == episode.selectedExtractor } ?: return
         extractor = ext
         video = ext.videos.getOrNull(episode.selectedVideo) ?: return
         val subLanguages =
