@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView
 import ani.dantotsu.home.BannerCarouselAdapter
 import ani.dantotsu.R
 import ani.dantotsu.connections.anilist.Anilist
+import ani.dantotsu.connections.anizip.AniZip
 import ani.dantotsu.connections.mal.MAL
 import ani.dantotsu.databinding.ItemAnimePageBinding
 import ani.dantotsu.databinding.LayoutTrendingBinding
@@ -43,6 +44,7 @@ import com.google.android.material.card.MaterialCardView
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class AnimePageAdapter : RecyclerView.Adapter<AnimePageAdapter.AnimePageViewHolder>() {
     val ready = MutableLiveData(false)
@@ -114,34 +116,40 @@ class AnimePageAdapter : RecyclerView.Adapter<AnimePageAdapter.AnimePageViewHold
         rv.overScrollMode = RecyclerView.OVER_SCROLL_NEVER
         rv.isFocusable = false
         rv.descendantFocusability = android.view.ViewGroup.FOCUS_AFTER_DESCENDANTS
-        bannerAdapter = BannerCarouselAdapter(media, CoroutineScope(Dispatchers.Main)) { item ->
-            val context = binding.root.context
-            ContextCompat.startActivity(
-                context,
-                Intent(context, ani.dantotsu.media.MediaDetailsActivity::class.java)
-                    .putExtra("media", item)
-                    .putExtra("anime", true),
-                null
-            )
-        }
-        rv.adapter = bannerAdapter
-        setupTrendingDots(rv, media.size)
-        rv.layoutAnimation = LayoutAnimationController(setSlideIn(), 0.25f)
-        trendingBinding.titleContainer.startAnimation(setSlideUp())
-        binding.animeSeasonsCont.layoutAnimation =
-            LayoutAnimationController(setSlideIn(), 0.25f)
-        trendingAutoScrollHandler?.removeCallbacksAndMessages(null)
-        trendingAutoScrollHandler = android.os.Handler(android.os.Looper.getMainLooper())
-        trendingAutoScrollRunnable = object : Runnable {
-            private var currentIndex = 0
-            override fun run() {
-                if (media.isEmpty()) return
-                currentIndex = (currentIndex + 1) % media.size
-                rv.smoothScrollToPosition(currentIndex)
-                trendingAutoScrollHandler?.postDelayed(this, 5000L)
+        val scope = CoroutineScope(Dispatchers.Main)
+        scope.launch(Dispatchers.IO) {
+            val urls = media.associate { it.id to AniZip.getBackdropUrl(it.id) }
+            withContext(Dispatchers.Main) {
+                bannerAdapter = BannerCarouselAdapter(media, scope, { item ->
+                    val context = binding.root.context
+                    ContextCompat.startActivity(
+                        context,
+                        Intent(context, ani.dantotsu.media.MediaDetailsActivity::class.java)
+                            .putExtra("media", item)
+                            .putExtra("anime", true),
+                        null
+                    )
+                }, urls)
+                rv.adapter = bannerAdapter
+                setupTrendingDots(rv, media.size)
+                rv.layoutAnimation = LayoutAnimationController(setSlideIn(), 0.25f)
+                trendingBinding.titleContainer.startAnimation(setSlideUp())
+                binding.animeSeasonsCont.layoutAnimation =
+                    LayoutAnimationController(setSlideIn(), 0.25f)
+                trendingAutoScrollHandler?.removeCallbacksAndMessages(null)
+                trendingAutoScrollHandler = android.os.Handler(android.os.Looper.getMainLooper())
+                trendingAutoScrollRunnable = object : Runnable {
+                    private var currentIndex = 0
+                    override fun run() {
+                        if (media.isEmpty()) return
+                        currentIndex = (currentIndex + 1) % media.size
+                        rv.smoothScrollToPosition(currentIndex)
+                        trendingAutoScrollHandler?.postDelayed(this, 5000L)
+                    }
+                }
+                trendingAutoScrollHandler?.postDelayed(trendingAutoScrollRunnable!!, 5000L)
             }
         }
-        trendingAutoScrollHandler?.postDelayed(trendingAutoScrollRunnable!!, 5000L)
     }
 
     private fun setupTrendingDots(rv: RecyclerView, itemCount: Int) {

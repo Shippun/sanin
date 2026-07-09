@@ -12,7 +12,6 @@ import androidx.recyclerview.widget.RecyclerView
 import ani.dantotsu.R
 import ani.dantotsu.connections.LogoApi
 import ani.dantotsu.connections.anilist.Anilist
-import ani.dantotsu.connections.anizip.AniZip
 import ani.dantotsu.loadImage
 import ani.dantotsu.media.Media
 import kotlinx.coroutines.CoroutineScope
@@ -23,7 +22,8 @@ import kotlinx.coroutines.withContext
 class BannerCarouselAdapter(
     private val items: List<Media>,
     private val scope: CoroutineScope,
-    private val onItemClick: (Media) -> Unit
+    private val onItemClick: (Media) -> Unit,
+    private val backdropUrls: Map<Int, String?> = emptyMap(),
 ) : RecyclerView.Adapter<BannerCarouselAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -36,21 +36,17 @@ class BannerCarouselAdapter(
         val media = items[position]
         val ctx = holder.itemView.context
 
-        // --- Banner images from AniZip (fallback to AniList with double-layer) ---
-        scope.launch(Dispatchers.IO) {
-            val anizipUrl = AniZip.getBackdropUrl(media.id)
-            withContext(Dispatchers.Main) {
-                if (!anizipUrl.isNullOrBlank()) {
-                    holder.bannerBg.visibility = View.GONE
-                    holder.bannerImage.loadImage(anizipUrl)
-                } else {
-                    holder.bannerBg.visibility = View.VISIBLE
-                    val fallback = media.banner ?: media.cover
-                    if (!fallback.isNullOrBlank()) {
-                        holder.bannerBg.loadImage(fallback)
-                        holder.bannerImage.loadImage(fallback)
-                    }
-                }
+        // --- Banner images from pre-fetched backdrop map (AniZip, fallback AniList) ---
+        val anizipUrl = backdropUrls[media.id]
+        if (!anizipUrl.isNullOrBlank()) {
+            holder.bannerBg.visibility = View.GONE
+            holder.bannerImage.loadImage(anizipUrl)
+        } else {
+            holder.bannerBg.visibility = View.VISIBLE
+            val fallback = media.banner ?: media.cover
+            if (!fallback.isNullOrBlank()) {
+                holder.bannerBg.loadImage(fallback)
+                holder.bannerImage.loadImage(fallback)
             }
         }
 

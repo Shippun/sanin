@@ -734,15 +734,20 @@ class HomeFragment : Fragment() {
 
         model.getTrendingBanner().observe(viewLifecycleOwner) { items ->
             if (items != null && items.isNotEmpty()) {
-                bannerCarouselAdapter = BannerCarouselAdapter(items, lifecycleScope) { media ->
-                    val intent = Intent(requireContext(), ani.dantotsu.media.MediaDetailsActivity::class.java)
-                    intent.putExtra("media", media)
-                    intent.putExtra("anime", true)
-                    startActivity(intent)
+                lifecycleScope.launch(Dispatchers.IO) {
+                    val urls = items.associate { it.id to ani.dantotsu.connections.anizip.AniZip.getBackdropUrl(it.id) }
+                    withContext(Dispatchers.Main) {
+                        bannerCarouselAdapter = BannerCarouselAdapter(items, lifecycleScope, { media ->
+                            val intent = Intent(requireContext(), ani.dantotsu.media.MediaDetailsActivity::class.java)
+                            intent.putExtra("media", media)
+                            intent.putExtra("anime", true)
+                            startActivity(intent)
+                        }, urls)
+                        rv.adapter = bannerCarouselAdapter
+                        setupBannerDots(rv, items.size)
+                        startBannerAutoScroll(rv, items.size)
+                    }
                 }
-                rv.adapter = bannerCarouselAdapter
-                setupBannerDots(rv, items.size)
-                startBannerAutoScroll(rv, items.size)
             }
         }
         lifecycleScope.launch(Dispatchers.IO) { model.loadTrendingBanner() }
