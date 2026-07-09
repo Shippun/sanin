@@ -48,10 +48,21 @@ class ContinueWatchingLandscapeAdapter(
             PrefManager.getVal<Int>(PrefName.ContinueWatchingCardRoundness).toFloat()
 
         CoroutineScope(Dispatchers.IO).launch {
-            val anizipUrl = AniZip.getBackdropUrl(media.id) ?: media.cover
-            withContext(Dispatchers.Main) {
-                if (!anizipUrl.isNullOrBlank()) {
-                    holder.image.loadImage(anizipUrl)
+            val useScreenshot = PrefManager.getVal<Boolean>(PrefName.ContinueWatchingShowScreenshot)
+            val imageUrl = if (useScreenshot) {
+                val ep = media.userProgress?.toString()
+                ep?.let { media.anime?.episodes?.get(it)?.thumb?.url }
+            } else null
+            if (imageUrl.isNullOrBlank()) {
+                val anizipUrl = AniZip.getBackdropUrl(media.id) ?: media.cover
+                withContext(Dispatchers.Main) {
+                    if (!anizipUrl.isNullOrBlank()) {
+                        holder.image.loadImage(anizipUrl)
+                    }
+                }
+            } else {
+                withContext(Dispatchers.Main) {
+                    holder.image.loadImage(imageUrl)
                 }
             }
         }
