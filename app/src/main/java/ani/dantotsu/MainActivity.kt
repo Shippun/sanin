@@ -29,6 +29,7 @@ import androidx.core.animation.doOnEnd
 import androidx.core.content.ContextCompat
 import androidx.core.view.doOnAttach
 import androidx.core.view.isVisible
+import com.bumptech.glide.Glide
 import androidx.core.view.updateLayoutParams
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.documentfile.provider.DocumentFile
@@ -799,6 +800,15 @@ class MainActivity : AppCompatActivity() {
                     ani.dantotsu.connections.syncPendingDeletions()
                 }
                 snackString("Sync triggered")
+            },
+            R.id.rightRailClearCache to {
+                try {
+                    cacheDir.deleteRecursively()
+                    Glide.get(this).clearMemory()
+                    snackString("Cache cleared")
+                } catch (e: Exception) {
+                    snackString("Failed to clear cache: ${e.message}")
+                }
             },
             R.id.rightRailLogout to {
                 customAlertDialog().apply {

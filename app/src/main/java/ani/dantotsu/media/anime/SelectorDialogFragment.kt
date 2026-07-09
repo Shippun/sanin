@@ -1,5 +1,7 @@
 package ani.dantotsu.media.anime
 
+import android.animation.AnimatorSet
+import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.ActivityNotFoundException
@@ -10,9 +12,13 @@ import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
+import android.view.animation.DecelerateInterpolator
+import android.view.animation.OvershootInterpolator
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 //import androidx.compose.ui.test.performClick
@@ -21,6 +27,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 //import androidx.glance.visibility
 //import androidx.glance.visibility
@@ -28,7 +35,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.withCreated
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import ani.dantotsu.BottomSheetDialogFragment
 import ani.dantotsu.R
 import ani.dantotsu.addons.download.DownloadAddonManager
 import ani.dantotsu.addons.torrent.TorrentAddonManager
@@ -63,7 +69,6 @@ import ani.dantotsu.tryWith
 import ani.dantotsu.util.Logger
 import ani.dantotsu.util.customAlertDialog
 import ani.dantotsu.util.FocusEffectUtil
-import com.google.android.material.bottomsheet.BottomSheetDialog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.DelicateCoroutinesApi
@@ -79,7 +84,7 @@ import uy.kohesive.injekt.api.get
 import java.text.DecimalFormat
 
 
-class SelectorDialogFragment : BottomSheetDialogFragment() {
+class SelectorDialogFragment : DialogFragment() {
     private var _binding: BottomSheetSelectorBinding? = null
     private val binding get() = _binding!!
     val model: MediaDetailsViewModel by activityViewModels()
@@ -104,6 +109,54 @@ class SelectorDialogFragment : BottomSheetDialogFragment() {
         }
     }
 
+    override fun onStart() {
+        super.onStart()
+        dialog?.window?.let { w ->
+            w.setBackgroundDrawableResource(android.R.color.transparent)
+            val widthPx = (resources.displayMetrics.widthPixels * 0.92f).toInt()
+            w.setLayout(widthPx, WindowManager.LayoutParams.WRAP_CONTENT)
+            w.setGravity(Gravity.CENTER)
+            w.setDimAmount(0.5f)
+            w.statusBarColor = Color.TRANSPARENT
+            w.navigationBarColor =
+                requireContext().getThemeColor(com.google.android.material.R.attr.colorSurface)
+        }
+        animateEntry()
+    }
+
+    private fun animateEntry() {
+        val density = resources.displayMetrics.density
+        binding.root.apply {
+            pivotY = 0f
+            pivotX = width / 2f
+            rotationX = 10f
+            translationY = 40f * density
+            scaleY = 0.96f
+            alpha = 0.8f
+        }
+        binding.root.post {
+            val lift = ObjectAnimator.ofFloat(binding.root, View.TRANSLATION_Y, 0f).apply {
+                duration = 180
+                interpolator = DecelerateInterpolator()
+            }
+            val tilt = ObjectAnimator.ofFloat(binding.root, View.ROTATION_X, 0f).apply {
+                duration = 220
+                interpolator = DecelerateInterpolator()
+            }
+            val scale = ObjectAnimator.ofFloat(binding.root, View.SCALE_Y, 1f).apply {
+                duration = 280
+                interpolator = OvershootInterpolator(1.5f)
+            }
+            val fade = ObjectAnimator.ofFloat(binding.root, View.ALPHA, 1f).apply {
+                duration = 200
+            }
+            AnimatorSet().apply {
+                playTogether(lift, tilt, scale, fade)
+                start()
+            }
+        }
+    }
+
     @Suppress("DEPRECATION")
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -112,11 +165,41 @@ class SelectorDialogFragment : BottomSheetDialogFragment() {
     ): View {
         _binding = BottomSheetSelectorBinding.inflate(inflater, container, false)
         FocusEffectUtil.applyFocusListener(binding.root)
-        val window = dialog?.window
-        window?.statusBarColor = Color.TRANSPARENT
-        window?.navigationBarColor =
-            requireContext().getThemeColor(com.google.android.material.R.attr.colorSurface)
         return binding.root
+    }
+
+    override fun onResume() {
+        super.onResume()
+        val density = resources.displayMetrics.density
+        binding.root.apply {
+            pivotY = 0f
+            pivotX = width / 2f
+            rotationX = 10f
+            translationY = 40f * density
+            scaleY = 0.96f
+            alpha = 0.8f
+        }
+        binding.root.post {
+            val lift = ObjectAnimator.ofFloat(binding.root, View.TRANSLATION_Y, 0f).apply {
+                duration = 180
+                interpolator = DecelerateInterpolator()
+            }
+            val tilt = ObjectAnimator.ofFloat(binding.root, View.ROTATION_X, 0f).apply {
+                duration = 220
+                interpolator = DecelerateInterpolator()
+            }
+            val scale = ObjectAnimator.ofFloat(binding.root, View.SCALE_Y, 1f).apply {
+                duration = 280
+                interpolator = OvershootInterpolator(1.5f)
+            }
+            val fade = ObjectAnimator.ofFloat(binding.root, View.ALPHA, 1f).apply {
+                duration = 200
+            }
+            AnimatorSet().apply {
+                playTogether(lift, tilt, scale, fade)
+                start()
+            }
+        }
     }
 
     interface EpisodeDownloadListener {

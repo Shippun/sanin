@@ -246,7 +246,7 @@
             android:fontFamily="@font/poppins_bold"
             android:focusable="true"
             android:gravity="center_vertical"
-            android:nextFocusDown="@+id/rightRailLogout"
+            android:nextFocusDown="@+id/rightRailClearCache"
             android:nextFocusUp="@+id/rightRailSync"
             android:paddingStart="24dp"
             android:paddingEnd="24dp"
@@ -264,7 +264,7 @@
         android:layout_weight="1" />
 
     <TextView
-        android:id="@+id/rightRailLogout"
+        android:id="@+id/rightRailClearCache"
         android:layout_width="match_parent"
         android:layout_height="56dp"
         android:background="?attr/selectableItemBackground"
@@ -273,6 +273,25 @@
         android:focusable="true"
         android:gravity="center_vertical"
         android:nextFocusUp="@+id/rightRailAccount"
+        android:nextFocusDown="@+id/rightRailLogout"
+        android:paddingStart="24dp"
+        android:paddingEnd="24dp"
+        android:text="Clear Cache"
+        android:textColor="#FFB74D"
+        android:textSize="15sp"
+        app:drawableStartCompat="@drawable/ic_round_delete_24"
+        app:drawableTint="#FFB74D" />
+
+    <TextView
+        android:id="@+id/rightRailLogout"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:background="?attr/selectableItemBackground"
+        android:drawablePadding="16dp"
+        android:fontFamily="@font/poppins_bold"
+        android:focusable="true"
+        android:gravity="center_vertical"
+        android:nextFocusUp="@+id/rightRailClearCache"
         android:paddingStart="24dp"
         android:paddingEnd="24dp"
         android:text="Log Out"
