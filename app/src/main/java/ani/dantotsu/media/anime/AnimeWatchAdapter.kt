@@ -16,6 +16,7 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import ani.dantotsu.FileUrl
+import ani.dantotsu.FocusableDropdownAdapter
 import ani.dantotsu.R
 import ani.dantotsu.currActivity
 import ani.dantotsu.currContext
@@ -124,7 +125,7 @@ class AnimeWatchAdapter(
 
         val displayNames = watchSources.names.filter { it != "Local" }
         binding.mediaSource.setAdapter(
-            ArrayAdapter(
+            FocusableDropdownAdapter(
                 fragment.requireContext(),
                 R.layout.item_dropdown,
                 displayNames
@@ -601,7 +602,7 @@ class AnimeWatchAdapter(
                         parser.extension.sources.firstOrNull()?.lang ?: "Unknown"
                     )
                 }
-                val adapter = ArrayAdapter(
+                val adapter = FocusableDropdownAdapter(
                     fragment.requireContext(),
                     R.layout.item_dropdown,
                     parser.extension.sources.map { LanguageMapper.getLanguageName(it.lang) }

@@ -1269,6 +1269,15 @@ open class NoPaddingArrayAdapter<T>(context: Context, layoutId: Int, items: List
     }
 }
 
+open class FocusableDropdownAdapter<T>(context: Context, layoutId: Int, items: List<T>) :
+    NoPaddingArrayAdapter<T>(context, layoutId, items) {
+    override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
+        val view = super.getView(position, convertView, parent)
+        ani.dantotsu.util.FocusEffectUtil.applyFocusListener(view)
+        return view
+    }
+}
+
 @SuppressLint("ClickableViewAccessibility")
 class SpinnerNoSwipe : androidx.appcompat.widget.AppCompatSpinner {
     private var mGestureDetector: GestureDetector? = null
