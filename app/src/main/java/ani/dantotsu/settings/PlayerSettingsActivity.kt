@@ -28,6 +28,7 @@ import ani.dantotsu.snackString
 import ani.dantotsu.statusBarHeight
 import ani.dantotsu.themes.ThemeManager
 import ani.dantotsu.toast
+import ani.dantotsu.util.FocusEffectUtil
 import ani.dantotsu.util.customAlertDialog
 import com.google.android.material.slider.Slider.OnChangeListener
 import eltos.simpledialogfragment.SimpleDialog
@@ -87,6 +88,56 @@ class PlayerSettingsActivity :
         binding.playerSettingsBack.setOnClickListener {
             onBackPressedDispatcher.onBackPressed()
         }
+
+        // Apply focus borders to all interactive views
+        fun applyFocus(vararg views: View) {
+            views.forEach { v ->
+                v.isFocusable = true
+                FocusEffectUtil.applyFocusListener(v)
+            }
+        }
+
+        applyFocus(
+            binding.playerSettingsBack,
+            binding.playerSettingsSpeed,
+            binding.playerSettingsCursedSpeeds,
+            binding.playerResizeMode,
+            binding.playerSettingsOnlineSubtitles,
+            binding.playerSettingsOnlineProviders,
+            binding.playerSettingsOnlineLanguages,
+            binding.subSwitch,
+            binding.videoSubColorPrimary,
+            binding.videoSubColorSecondary,
+            binding.videoSubOutline,
+            binding.videoSubColorBackground,
+            binding.videoSubColorWindow,
+            binding.videoSubAlphaButton,
+            binding.subTextSwitch,
+            binding.videoSubStrokeButton,
+            binding.videoSubBottomMarginButton,
+            binding.videoSubFont,
+            binding.videoSubLanguage,
+            binding.playerSettingsTimeStamps,
+            binding.playerSettingsTimeStampsProxy,
+            binding.playerSettingsShowTimeStamp,
+            binding.playerSettingsTimeStampsAutoHide,
+            binding.playerSettingsAutoSkipOpEd,
+            binding.playerSettingsAutoSkipRecap,
+            binding.playerSettingsAutoPlay,
+            binding.playerSettingsAutoSkip,
+            binding.playerSettingsAskUpdateProgress,
+            binding.playerSettingsAskChapterZero,
+            binding.playerSettingsAskUpdateHentai,
+            binding.playerSettingsAlwaysContinue,
+            binding.playerSettingsPauseVideo,
+            binding.playerSettingsVerticalGestures,
+            binding.playerSettingsDoubleTap,
+            binding.playerSettingsFastForward,
+            binding.playerSettingsPiP,
+            binding.playerSettingsAdditionalCodec,
+            binding.exoSkip,
+            binding.subtitleFontSizeCard,
+        )
 
         // Video
 
@@ -247,20 +298,25 @@ class PlayerSettingsActivity :
             PrefManager.setVal(PrefName.SeekTime, value.toInt())
         }
 
-        binding.exoSkipTime.setText(PrefManager.getVal<Int>(PrefName.SkipTime).toString())
-        binding.exoSkipTime.setOnEditorActionListener { _, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
-                binding.exoSkipTime.clearFocus()
-            }
-            false
-        }
-        binding.exoSkipTime.addTextChangedListener {
-            val time =
-                binding.exoSkipTime.text
-                    .toString()
-                    .toIntOrNull()
-            if (time != null) {
-                PrefManager.setVal(PrefName.SkipTime, time)
+        binding.exoSkip.text = PrefManager.getVal<Int>(PrefName.SkipTime).toString()
+        binding.exoSkip.setOnClickListener {
+            customAlertDialog().apply {
+                setTitle("Skip Time (seconds)")
+                val input = android.widget.EditText(this@PlayerSettingsActivity).apply {
+                    setText(PrefManager.getVal<Int>(PrefName.SkipTime).toString())
+                    inputType = android.text.InputType.TYPE_CLASS_NUMBER
+                    selectAll()
+                }
+                setCustomView(input)
+                setPosButton(R.string.ok) {
+                    val time = input.text.toString().toIntOrNull()
+                    if (time != null) {
+                        PrefManager.setVal(PrefName.SkipTime, time)
+                        binding.exoSkip.text = time.toString()
+                    }
+                }
+                setNegButton(R.string.cancel)
+                show()
             }
         }
 
@@ -599,21 +655,26 @@ class PlayerSettingsActivity :
                 show()
             }
         }
-        binding.subtitleFontSize.setText(PrefManager.getVal<Int>(PrefName.FontSize).toString())
-        binding.subtitleFontSize.setOnEditorActionListener { _, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
-                binding.subtitleFontSize.clearFocus()
-            }
-            false
-        }
-        binding.subtitleFontSize.addTextChangedListener {
-            val size =
-                binding.subtitleFontSize.text
-                    .toString()
-                    .toIntOrNull()
-            if (size != null) {
-                PrefManager.setVal(PrefName.FontSize, size)
-                updateSubPreview()
+        binding.subtitleFontSize.text = PrefManager.getVal<Int>(PrefName.FontSize).toString()
+        binding.subtitleFontSizeCard.setOnClickListener {
+            customAlertDialog().apply {
+                setTitle(getString(R.string.subtitle_font_size))
+                val input = android.widget.EditText(this@PlayerSettingsActivity).apply {
+                    setText(PrefManager.getVal<Int>(PrefName.FontSize).toString())
+                    inputType = android.text.InputType.TYPE_CLASS_NUMBER
+                    selectAll()
+                }
+                setCustomView(input)
+                setPosButton(R.string.ok) {
+                    val size = input.text.toString().toIntOrNull()
+                    if (size != null) {
+                        PrefManager.setVal(PrefName.FontSize, size)
+                        binding.subtitleFontSize.text = size.toString()
+                        updateSubPreview()
+                    }
+                }
+                setNegButton(R.string.cancel)
+                show()
             }
         }
         binding.subtitleTest.addOnChangeListener(
