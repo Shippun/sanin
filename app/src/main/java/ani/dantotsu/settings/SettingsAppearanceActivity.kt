@@ -43,6 +43,11 @@ class SettingsAppearanceActivity : AppCompatActivity() {
             binding.appearancePersistSideRail,
             binding.appearanceBannerBrightness,
             binding.appearanceCardGradientIntensity,
+            binding.appearanceStandardCardRoundness,
+            binding.appearanceContinueWatchingCardRoundness,
+            binding.appearanceBlurRadius,
+            binding.appearanceBlurSampling,
+            binding.appearanceUiScale,
         )
 
         binding.appearanceCardSize.isFocusable = true
@@ -108,12 +113,14 @@ class SettingsAppearanceActivity : AppCompatActivity() {
             PrefManager.setVal(PrefName.CardGradientIntensity, value)
         }
 
+        binding.appearanceStandardCardRoundness.isFocusable = true
         binding.appearanceStandardCardRoundness.value =
             PrefManager.getVal<Int>(PrefName.StandardCardRoundness).toFloat()
         binding.appearanceStandardCardRoundness.addOnChangeListener { _, value, _ ->
             PrefManager.setVal(PrefName.StandardCardRoundness, value.toInt())
         }
 
+        binding.appearanceContinueWatchingCardRoundness.isFocusable = true
         binding.appearanceContinueWatchingCardRoundness.value =
             PrefManager.getVal<Int>(PrefName.ContinueWatchingCardRoundness).toFloat()
         binding.appearanceContinueWatchingCardRoundness.addOnChangeListener { _, value, _ ->
@@ -130,20 +137,24 @@ class SettingsAppearanceActivity : AppCompatActivity() {
         binding.appearanceBlurBanners.setOnCheckedChangeListener { _, isChecked ->
             PrefManager.setVal(PrefName.BlurBanners, isChecked)
         }
+        binding.appearanceBlurRadius.isFocusable = true
         binding.appearanceBlurRadius.value = PrefManager.getVal(PrefName.BlurRadius) as Float
         binding.appearanceBlurRadius.addOnChangeListener { _, value, _ ->
             PrefManager.setVal(PrefName.BlurRadius, value)
         }
+        binding.appearanceBlurSampling.isFocusable = true
         binding.appearanceBlurSampling.value = PrefManager.getVal(PrefName.BlurSampling) as Float
         binding.appearanceBlurSampling.addOnChangeListener { _, value, _ ->
             PrefManager.setVal(PrefName.BlurSampling, value)
         }
 
+        binding.appearanceUiScale.isFocusable = true
         binding.appearanceUiScale.value = PrefManager.getVal(PrefName.UIScale)
         binding.appearanceUiScale.addOnChangeListener { _, value, _ ->
             PrefManager.setVal(PrefName.UIScale, value)
         }
 
+        binding.appearanceBannerBrightness.isFocusable = true
         binding.appearanceBannerBrightness.value = PrefManager.getVal(PrefName.BannerBrightness)
         binding.appearanceBannerBrightness.addOnChangeListener { _, value, _ ->
             PrefManager.setVal(PrefName.BannerBrightness, value)
