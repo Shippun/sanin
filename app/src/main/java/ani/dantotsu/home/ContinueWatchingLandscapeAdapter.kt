@@ -88,6 +88,13 @@ class ContinueWatchingLandscapeAdapter(
         val progress = media.userProgress ?: 0
         val isReleasing = media.status == ctx.getString(R.string.status_releasing)
 
+        if (progress > 0) {
+            holder.episodeNo.visibility = View.VISIBLE
+            holder.episodeNo.text = "E$progress"
+        } else {
+            holder.episodeNo.visibility = View.GONE
+        }
+
         val subtitle = buildString {
             if (episodes != null) {
                 append("S1 ")
@@ -195,6 +202,7 @@ class ContinueWatchingLandscapeAdapter(
         val overlayTitle: TextView = view.findViewById(R.id.cwOverlayTitle)
         val title: TextView = view.findViewById(R.id.cwTitle)
         val subtitle: TextView = view.findViewById(R.id.cwSubtitle)
+        val episodeNo: TextView = view.findViewById(R.id.cwEpisodeNo)
         val progress: ProgressBar = view.findViewById(R.id.cwProgress)
         val ongoing: View = view.findViewById(R.id.cwOngoing)
     }
