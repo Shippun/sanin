@@ -47,9 +47,13 @@ class ContinueWatchingLandscapeAdapter(
         holder.card.radius =
             PrefManager.getVal<Int>(PrefName.ContinueWatchingCardRoundness).toFloat()
 
-        val imageUrl = media.cover
-        if (!imageUrl.isNullOrBlank()) {
-            holder.image.loadImage(imageUrl)
+        CoroutineScope(Dispatchers.IO).launch {
+            val anizipUrl = AniZip.getBackdropUrl(media.id) ?: media.cover
+            withContext(Dispatchers.Main) {
+                if (!anizipUrl.isNullOrBlank()) {
+                    holder.image.loadImage(anizipUrl)
+                }
+            }
         }
 
         loadGradientOverlay(holder.gradientOverlay, media, position)

@@ -62,9 +62,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
             android:orientation="vertical"
-            android:padding="10dp"
-            android:visibility="gone"
-            tools:visibility="visible">
+            android:padding="10dp">
 
             <TextView
                 android:id="@+id/cwTitle"
