@@ -187,7 +187,7 @@ class AnimeWatchAdapter(
             }
         }
 
-        FocusEffectUtil.applyFocusListener(binding.mediaSourceNameContainer, binding.mediaSourceNameContainer)
+        FocusEffectUtil.applyFocusListener(binding.mediaSourceNameContainer, binding.mediaSource)
         FocusEffectUtil.applyFocusListener(binding.mediaSourceSearch, binding.mediaSourceSearch)
         FocusEffectUtil.applyFocusListener(binding.mediaSourceSettings, binding.mediaSourceSettings, true)
         FocusEffectUtil.applyFocusListener(binding.mediaSourceSubscribe, binding.mediaSourceSubscribe, true)
