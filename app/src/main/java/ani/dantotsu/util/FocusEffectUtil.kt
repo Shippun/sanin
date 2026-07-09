@@ -17,7 +17,7 @@ object FocusEffectUtil {
     private val savedForegrounds = mutableMapOf<View, Drawable?>()
     private val savedBackgrounds = mutableMapOf<View, Drawable?>()
 
-    fun applyFocusListener(vararg views: View) {
+    fun applyFocusListener(vararg views: View, fade: Boolean = false) {
         for (view in views) {
             view.onFocusChangeListener = null
             view.setOnFocusChangeListener { v, hasFocus ->
@@ -28,9 +28,14 @@ object FocusEffectUtil {
                     }
                     applyBorder(v, v is ImageButton)
                     applyFocusGain(v)
+                    if (fade) v.animate().alpha(1f).setDuration(200).start()
                 } else {
                     removeBorder(v)
-                    applyFocusLoss(v)
+                    if (fade) {
+                        v.animate().alpha(0.85f).rotationY(0f).setDuration(200).start()
+                    } else {
+                        applyFocusLoss(v)
+                    }
                 }
             }
         }
