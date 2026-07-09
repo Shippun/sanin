@@ -747,16 +747,14 @@ class ExoplayerView :
         playerView.post { exoPlay.requestFocus() }
 
         // Focus chain: ep_sel_btn ← back ← prev ← play → next
-        val exoPrev = playerView.findViewById<View>(R.id.exo_prev_ep)
-        val exoNext = playerView.findViewById<View>(R.id.exo_next_ep)
         episodeTitleBtn.nextFocusRightId = R.id.exo_back
         exoBack.nextFocusLeftId = R.id.exo_ep_sel_btn
         exoBack.nextFocusRightId = R.id.exo_prev_ep
-        exoPrev.nextFocusLeftId = R.id.exo_back
-        exoPrev.nextFocusRightId = androidx.media3.ui.R.id.exo_play
+        playerView.findViewById<View>(R.id.exo_prev_ep).nextFocusLeftId = R.id.exo_back
+        playerView.findViewById<View>(R.id.exo_prev_ep).nextFocusRightId = androidx.media3.ui.R.id.exo_play
         exoPlay.nextFocusLeftId = R.id.exo_prev_ep
         exoPlay.nextFocusRightId = R.id.exo_next_ep
-        exoNext.nextFocusLeftId = androidx.media3.ui.R.id.exo_play
+        playerView.findViewById<View>(R.id.exo_next_ep).nextFocusLeftId = androidx.media3.ui.R.id.exo_play
 
         pauseOverlay = playerView.findViewById(R.id.exo_pause_overlay)
         pauseTitle = playerView.findViewById(R.id.exo_pause_title)
@@ -3421,7 +3419,7 @@ class ExoplayerView :
     }
 
     private fun handleBackPress(): Boolean {
-        val now = System.currentTimeMillis()
+        val now = java.lang.System.currentTimeMillis()
         if (pauseOverlay.visibility == View.VISIBLE) {
             exoPlayer.play()
             return true
@@ -3430,7 +3428,7 @@ class ExoplayerView :
             playerView.hideController()
             return true
         }
-        if (now - backPressTime < 500) {
+        if (now - backPressTime < 500L) {
             finishAndRemoveTask()
             return false
         }
