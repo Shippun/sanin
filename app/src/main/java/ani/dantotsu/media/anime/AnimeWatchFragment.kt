@@ -477,10 +477,7 @@ class AnimeWatchFragment : Fragment() {
         model.saveSelected(media.id, selected)
         media.selected = selected
         lifecycleScope.launch(Dispatchers.IO) {
-            model.forceLoadEpisode(
-                media,
-                selected.sourceIndex
-            )
+            model.forceLoadEpisode(media, selected.sourceIndex)
         }
     }
 

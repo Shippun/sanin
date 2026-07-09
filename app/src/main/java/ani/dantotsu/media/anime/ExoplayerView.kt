@@ -491,8 +491,13 @@ class ExoplayerView :
             val selected = media.selected ?: return@setOnClickListener
             selected.preferDub = !selected.preferDub
             model.saveSelected(media.id, selected)
+            model.watchSources?.get(selected.sourceIndex)?.selectDub = selected.preferDub
             lifecycleScope.launch(Dispatchers.IO) {
-                model.forceLoadEpisode(media, selected.sourceIndex)
+                if (::episode.isInitialized) {
+                    episode.allStreams = false
+                    episode.extractors = null
+                    model.loadEpisodeVideos(episode, selected.sourceIndex, true)
+                }
             }
             snackString(if (selected.preferDub) "Dub" else "Sub")
         }
