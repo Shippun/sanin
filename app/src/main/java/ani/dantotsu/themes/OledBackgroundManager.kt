@@ -90,7 +90,6 @@ object OledBackgroundManager {
         )
 
         override fun draw(canvas: Canvas) {
-            canvas.drawColor(Color.BLACK)
             val w = bounds.width().toFloat()
             val h = bounds.height().toFloat()
             if (w <= 0 || h <= 0) return
@@ -127,7 +126,6 @@ object OledBackgroundManager {
         private val paint = Paint(Paint.ANTI_ALIAS_FLAG)
 
         override fun draw(canvas: Canvas) {
-            canvas.drawColor(Color.BLACK)
             val w = bounds.width().toFloat()
             val h = bounds.height().toFloat()
             if (w <= 0 || h <= 0) return
@@ -165,7 +163,6 @@ object OledBackgroundManager {
         private val paint = Paint(Paint.ANTI_ALIAS_FLAG)
 
         override fun draw(canvas: Canvas) {
-            canvas.drawColor(Color.BLACK)
             val w = bounds.width().toFloat()
             val h = bounds.height().toFloat()
             if (w <= 0 || h <= 0) return
