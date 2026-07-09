@@ -96,13 +96,13 @@ class ContinueWatchingLandscapeAdapter(
         }
 
         val subtitle = buildString {
+            val nextAiring = media.anime?.nextAiringEpisodeTime
             if (episodes != null) {
-                append("S1 ")
+                append("S1")
             }
             if (progress > 0) {
-                append("E$progress")
+                append(" · $progress")
             }
-            val nextAiring = media.anime?.nextAiringEpisodeTime
             if (nextAiring != null && isReleasing) {
                 val timeUntilAiring = nextAiring - System.currentTimeMillis() / 1000
                 if (timeUntilAiring > 0 && timeUntilAiring < 86400) {
