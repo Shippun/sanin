@@ -28,7 +28,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.animation.doOnEnd
 import androidx.core.content.ContextCompat
 import androidx.core.view.doOnAttach
-import androidx.core.view.doOnLayout
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.drawerlayout.widget.DrawerLayout
@@ -738,7 +737,7 @@ class MainActivity : AppCompatActivity() {
             scaleY = 0.3f
             alpha = 0f
         }
-        binding.homeNavRailBg.doOnLayout {
+        binding.homeNavRail.post {
             ObjectAnimator.ofFloat(binding.homeNavRail, View.SCALE_Y, 1f).apply {
                 interpolator = SpringInterpolator()
                 duration = 700
