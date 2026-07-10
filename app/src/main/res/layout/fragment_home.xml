@@ -311,7 +311,6 @@
         app:lottie_rawRes="@raw/tomoe"
         app:lottie_autoPlay="true"
         app:lottie_loop="true"
-        app:lottie_scale="0.7"
         tools:ignore="ContentDescription" 
         app:lottie_colorFilter="?attr/colorSecondary" />
 
@@ -496,7 +495,6 @@
         app:lottie_rawRes="@raw/tomoe"
         app:lottie_autoPlay="true"
         app:lottie_loop="true"
-        app:lottie_scale="0.7"
         tools:ignore="ContentDescription" 
         app:lottie_colorFilter="?attr/colorSecondary" />
 
@@ -645,7 +643,6 @@
         app:lottie_rawRes="@raw/tomoe"
         app:lottie_autoPlay="true"
         app:lottie_loop="true"
-        app:lottie_scale="0.7"
         tools:ignore="ContentDescription" 
         app:lottie_colorFilter="?attr/colorSecondary" />
 
@@ -743,7 +740,6 @@
         app:lottie_rawRes="@raw/tomoe"
         app:lottie_autoPlay="true"
         app:lottie_loop="true"
-        app:lottie_scale="0.7"
         tools:ignore="ContentDescription" 
         app:lottie_colorFilter="?attr/colorSecondary" />
 
@@ -844,7 +840,6 @@
         app:lottie_rawRes="@raw/tomoe"
         app:lottie_autoPlay="true"
         app:lottie_loop="true"
-        app:lottie_scale="0.7"
         tools:ignore="ContentDescription" 
         app:lottie_colorFilter="?attr/colorSecondary" />
 
@@ -945,7 +940,6 @@
         app:lottie_rawRes="@raw/tomoe"
         app:lottie_autoPlay="true"
         app:lottie_loop="true"
-        app:lottie_scale="0.7"
         tools:ignore="ContentDescription" 
         app:lottie_colorFilter="?attr/colorSecondary" />
 
@@ -1042,7 +1036,6 @@
         app:lottie_rawRes="@raw/tomoe"
         app:lottie_autoPlay="true"
         app:lottie_loop="true"
-        app:lottie_scale="0.7"
         tools:ignore="ContentDescription" 
         app:lottie_colorFilter="?attr/colorSecondary" />
 
@@ -1144,7 +1137,6 @@
         app:lottie_rawRes="@raw/tomoe"
         app:lottie_autoPlay="true"
         app:lottie_loop="true"
-        app:lottie_scale="0.7"
         tools:ignore="ContentDescription" 
         app:lottie_colorFilter="?attr/colorSecondary" />
 
@@ -1239,7 +1231,6 @@
         app:lottie_rawRes="@raw/tomoe"
         app:lottie_autoPlay="true"
         app:lottie_loop="true"
-        app:lottie_scale="0.7"
         tools:ignore="ContentDescription" 
         app:lottie_colorFilter="?attr/colorSecondary" />
 
@@ -1335,7 +1326,6 @@
         app:lottie_rawRes="@raw/tomoe"
         app:lottie_autoPlay="true"
         app:lottie_loop="true"
-        app:lottie_scale="0.7"
         tools:ignore="ContentDescription" 
         app:lottie_colorFilter="?attr/colorSecondary" />
 
