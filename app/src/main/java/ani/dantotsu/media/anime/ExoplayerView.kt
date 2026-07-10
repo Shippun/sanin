@@ -752,12 +752,13 @@ class ExoplayerView :
         playerView.setControllerVisibilityListener(
             PlayerView.ControllerVisibilityListener { visibility ->
                 if (visibility == View.VISIBLE) {
-                    exoPlay.post { exoPlay.requestFocus() }
+                    exoPlay.requestFocus()
                 }
                 if (visibility == View.GONE) {
                     hideSystemBars()
                     brightnessRunnable.run()
                     volumeRunnable.run()
+                    playerView.requestFocus()
                 }
             },
         )
