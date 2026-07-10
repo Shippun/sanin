@@ -31,7 +31,7 @@ jobs:
         run: chmod +x gradlew
 
       - name: Build ${{ matrix.flavor }} debug
-        run: ./gradlew assemble${{ matrix.flavor }}Debug
+        run: ./gradlew assemble${{ matrix.flavor }}Debug --build-cache --parallel
 
       - name: Collect APKs
         run: |
