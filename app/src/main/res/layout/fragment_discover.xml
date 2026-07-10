@@ -131,18 +131,48 @@
                 android:clipToPadding="false"
                 android:padding="8dp" />
 
-            <com.airbnb.lottie.LottieAnimationView
+            <FrameLayout
                 android:id="@+id/discoverProgressBar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginTop="48dp"
-                android:visibility="gone" 
-        app:lottie_rawRes="@raw/tomoe"
-        app:lottie_autoPlay="true"
-        app:lottie_loop="true"
-        tools:ignore="ContentDescription" 
-        app:lottie_colorFilter="?attr/colorSecondary" />
+                android:visibility="gone"
+            >
+
+                <com.airbnb.lottie.LottieAnimationView
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:layout_gravity="center_horizontal|top"
+                android:layout_marginTop="4dp"
+                app:lottie_rawRes="@raw/tomoe"
+                app:lottie_autoPlay="true"
+                app:lottie_loop="true"
+                app:lottie_colorFilter="?attr/colorSecondary" />
+
+                <com.airbnb.lottie.LottieAnimationView
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:layout_gravity="bottom|start"
+                android:layout_marginStart="8dp"
+                android:layout_marginBottom="8dp"
+                app:lottie_rawRes="@raw/tomoe"
+                app:lottie_autoPlay="true"
+                app:lottie_loop="true"
+                app:lottie_colorFilter="?attr/colorSecondary" />
+
+                <com.airbnb.lottie.LottieAnimationView
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:layout_gravity="bottom|end"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="8dp"
+                app:lottie_rawRes="@raw/tomoe"
+                app:lottie_autoPlay="true"
+                app:lottie_loop="true"
+                app:lottie_colorFilter="?attr/colorSecondary" />
+
+            </FrameLayout>
 
             <TextView
                 android:id="@+id/discoverEmptyText"

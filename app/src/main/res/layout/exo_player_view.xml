@@ -418,16 +418,46 @@
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 
-    <com.airbnb.lottie.LottieAnimationView
+    <FrameLayout
         android:id="@id/exo_buffering"
         android:layout_width="72dp"
         android:layout_height="72dp"
-        android:layout_gravity="center" 
+        android:layout_gravity="center"
+    >
+
+        <com.airbnb.lottie.LottieAnimationView
+        android:layout_width="18dp"
+        android:layout_height="18dp"
+        android:layout_gravity="center_horizontal|top"
+        android:layout_marginTop="4dp"
         app:lottie_rawRes="@raw/tomoe"
         app:lottie_autoPlay="true"
         app:lottie_loop="true"
-        tools:ignore="ContentDescription" 
         app:lottie_colorFilter="?attr/colorSecondary" />
+
+        <com.airbnb.lottie.LottieAnimationView
+        android:layout_width="18dp"
+        android:layout_height="18dp"
+        android:layout_gravity="bottom|start"
+        android:layout_marginStart="8dp"
+        android:layout_marginBottom="8dp"
+        app:lottie_rawRes="@raw/tomoe"
+        app:lottie_autoPlay="true"
+        app:lottie_loop="true"
+        app:lottie_colorFilter="?attr/colorSecondary" />
+
+        <com.airbnb.lottie.LottieAnimationView
+        android:layout_width="18dp"
+        android:layout_height="18dp"
+        android:layout_gravity="bottom|end"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        app:lottie_rawRes="@raw/tomoe"
+        app:lottie_autoPlay="true"
+        app:lottie_loop="true"
+        app:lottie_colorFilter="?attr/colorSecondary" />
+
+    </FrameLayout>
 
     <View
         android:id="@+id/exo_touch_view"

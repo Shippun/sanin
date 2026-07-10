@@ -95,17 +95,47 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <com.airbnb.lottie.LottieAnimationView
+    <FrameLayout
         android:id="@+id/characterProgress"
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:layout_margin="24dp"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior" 
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    >
+
+        <com.airbnb.lottie.LottieAnimationView
+        android:layout_width="18dp"
+        android:layout_height="18dp"
+        android:layout_gravity="center_horizontal|top"
+        android:layout_marginTop="4dp"
         app:lottie_rawRes="@raw/tomoe"
         app:lottie_autoPlay="true"
         app:lottie_loop="true"
-        tools:ignore="ContentDescription" 
         app:lottie_colorFilter="?attr/colorSecondary" />
+
+        <com.airbnb.lottie.LottieAnimationView
+        android:layout_width="18dp"
+        android:layout_height="18dp"
+        android:layout_gravity="bottom|start"
+        android:layout_marginStart="8dp"
+        android:layout_marginBottom="8dp"
+        app:lottie_rawRes="@raw/tomoe"
+        app:lottie_autoPlay="true"
+        app:lottie_loop="true"
+        app:lottie_colorFilter="?attr/colorSecondary" />
+
+        <com.airbnb.lottie.LottieAnimationView
+        android:layout_width="18dp"
+        android:layout_height="18dp"
+        android:layout_gravity="bottom|end"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        app:lottie_rawRes="@raw/tomoe"
+        app:lottie_autoPlay="true"
+        app:lottie_loop="true"
+        app:lottie_colorFilter="?attr/colorSecondary" />
+
+    </FrameLayout>
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
