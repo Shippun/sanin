@@ -41,7 +41,7 @@ object FocusEffectUtil {
         }
     }
 
-    fun applyFocusListener(focusView: View, borderTarget: View, isCircular: Boolean = false) {
+    fun applyFocusListener(focusView: View, borderTarget: View, isCircular: Boolean = false, fade: Boolean = false) {
         focusView.onFocusChangeListener = null
         focusView.setOnFocusChangeListener { v, hasFocus ->
             if (hasFocus) {
@@ -51,9 +51,14 @@ object FocusEffectUtil {
                 }
                 applyBorder(borderTarget, isCircular)
                 applyFocusGain(borderTarget)
+                if (fade) v.animate().alpha(1f).setDuration(200).start()
             } else {
                 removeBorder(borderTarget)
-                applyFocusLoss(borderTarget)
+                if (fade) {
+                    v.animate().alpha(0.85f).rotationY(0f).setDuration(200).start()
+                } else {
+                    applyFocusLoss(borderTarget)
+                }
             }
         }
     }
@@ -82,9 +87,11 @@ object FocusEffectUtil {
         val borderWidthPx = TypedValue.applyDimension(
             TypedValue.COMPLEX_UNIT_DIP, 3f, v.resources.displayMetrics
         ).toInt()
-        val cornerRadius = TypedValue.applyDimension(
+        val cardRadius = if (v is androidx.cardview.widget.CardView) v.radius else 0f
+        val defaultRadius = TypedValue.applyDimension(
             TypedValue.COMPLEX_UNIT_DIP, 8f, v.resources.displayMetrics
         ).toInt()
+        val cornerRadius = if (cardRadius > 0f) cardRadius.toInt() else defaultRadius
 
         val borderDrawable = GradientDrawable().apply {
             setShape(if (isCircular) GradientDrawable.OVAL else GradientDrawable.RECTANGLE)
