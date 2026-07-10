@@ -161,7 +161,8 @@ class ContinueWatchingLandscapeAdapter(
             return
         }
         gradientJobs[position] = CoroutineScope(Dispatchers.IO).launch {
-            val bitmap = BitmapUtil.downloadImageAsBitmap(media.cover ?: return@launch) ?: return@launch
+            val imageUrl = AniZip.getBackdropUrl(media.id) ?: media.cover ?: return@launch
+            val bitmap = BitmapUtil.downloadImageAsBitmap(imageUrl) ?: return@launch
             val color = averageColor(bitmap)
             coverGradientCache[media.id] = color
             withContext(Dispatchers.Main) {
@@ -176,10 +177,12 @@ class ContinueWatchingLandscapeAdapter(
             view.background = null
             return
         }
-        val baseAlpha = 180
         val endAlpha = 200
-        val startColor = Color.argb((baseAlpha * intensity).toInt().coerceIn(0, 255), Color.red(color), Color.green(color), Color.blue(color))
-        val endColor = Color.argb((endAlpha * intensity).toInt().coerceIn(0, 255), 0, 0, 0)
+        val startColor = Color.argb(0, 0, 0, 0)
+        val endColor = Color.argb(
+            (endAlpha * intensity).toInt().coerceIn(0, 255),
+            Color.red(color), Color.green(color), Color.blue(color)
+        )
         val gradient = GradientDrawable(
             GradientDrawable.Orientation.BOTTOM_TOP,
             intArrayOf(endColor, startColor)

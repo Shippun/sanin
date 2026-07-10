@@ -481,10 +481,10 @@ class MediaAdaptor(
             b.itemCompactImage.loadImage(media.cover)
             logoJobs[position]?.cancel()
             logoJobs[position] = CoroutineScope(Dispatchers.IO).launch {
-                val posterUrl = AniZip.getPosterUrl(media.id)
-                if (posterUrl != null) {
+                val backdropUrl = AniZip.getBackdropUrl(media.id)
+                if (backdropUrl != null) {
                     withContext(Dispatchers.Main) {
-                        b.itemCompactImage.loadImage(posterUrl)
+                        b.itemCompactImage.loadImage(backdropUrl)
                     }
                 }
             }
@@ -534,7 +534,8 @@ class MediaAdaptor(
             return
         }
         gradientJobs[position] = CoroutineScope(Dispatchers.IO).launch {
-            val bitmap = BitmapUtil.downloadImageAsBitmap(media.cover ?: return@launch) ?: return@launch
+            val imageUrl = AniZip.getBackdropUrl(media.id) ?: media.cover ?: return@launch
+            val bitmap = BitmapUtil.downloadImageAsBitmap(imageUrl) ?: return@launch
             val color = averageColor(bitmap)
             coverGradientCache[media.id] = color
             withContext(Dispatchers.Main) {
@@ -549,10 +550,12 @@ class MediaAdaptor(
             view.background = null
             return
         }
-        val baseAlpha = 180
         val endAlpha = 200
-        val startColor = Color.argb((baseAlpha * intensity).toInt().coerceIn(0, 255), Color.red(color), Color.green(color), Color.blue(color))
-        val endColor = Color.argb((endAlpha * intensity).toInt().coerceIn(0, 255), 0, 0, 0)
+        val startColor = Color.argb(0, 0, 0, 0)
+        val endColor = Color.argb(
+            (endAlpha * intensity).toInt().coerceIn(0, 255),
+            Color.red(color), Color.green(color), Color.blue(color)
+        )
         val gradient = GradientDrawable(
             orientation,
             intArrayOf(startColor, endColor)
