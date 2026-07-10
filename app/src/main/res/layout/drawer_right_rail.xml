@@ -149,6 +149,25 @@
             android:paddingTop="8dp">
 
             <TextView
+                android:id="@+id/rightRailNotifications"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:background="?attr/selectableItemBackground"
+                android:drawablePadding="16dp"
+                android:fontFamily="@font/poppins_bold"
+                android:focusable="true"
+                android:gravity="center_vertical"
+            android:nextFocusDown="@+id/rightRailNotifications"
+                android:nextFocusUp="@+id/rightRailAvatar"
+                android:paddingStart="24dp"
+                android:paddingEnd="24dp"
+                android:text="Notifications"
+                android:textColor="?attr/colorOnSurface"
+                android:textSize="15sp"
+                app:drawableStartCompat="@drawable/ic_round_notifications_none_24"
+                app:drawableTint="?attr/colorOnSurface" />
+
+            <TextView
                 android:id="@+id/rightRailExtensions"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
@@ -158,7 +177,7 @@
                 android:focusable="true"
                 android:gravity="center_vertical"
                 android:nextFocusDown="@+id/rightRailProfile"
-                android:nextFocusUp="@+id/rightRailAvatar"
+                android:nextFocusUp="@+id/rightRailNotifications"
                 android:paddingStart="24dp"
                 android:paddingEnd="24dp"
                 android:text="Extensions"
