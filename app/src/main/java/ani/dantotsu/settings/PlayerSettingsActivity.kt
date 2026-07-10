@@ -655,7 +655,7 @@ class PlayerSettingsActivity :
                 show()
             }
         }
-        binding.subtitleFontSize.text = PrefManager.getVal<Int>(PrefName.FontSize).toString()
+        binding.subtitleFontSize.setText(PrefManager.getVal<Int>(PrefName.FontSize).toString())
         binding.subtitleFontSizeCard.setOnClickListener {
             customAlertDialog().apply {
                 setTitle(getString(R.string.subtitle_font_size))
@@ -669,7 +669,7 @@ class PlayerSettingsActivity :
                     val size = input.text.toString().toIntOrNull()
                     if (size != null) {
                         PrefManager.setVal(PrefName.FontSize, size)
-                        binding.subtitleFontSize.text = size.toString()
+                        binding.subtitleFontSize.setText(size.toString())
                         updateSubPreview()
                     }
                 }
