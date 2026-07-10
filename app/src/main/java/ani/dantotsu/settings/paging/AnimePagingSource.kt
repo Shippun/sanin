@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.view.animation.LinearInterpolator
 import android.widget.ImageView
+import ani.dantotsu.util.FocusEffectUtil
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -167,6 +168,8 @@ class AnimeExtensionAdapter(private val clickListener: OnAnimeInstallClickListen
                     .into(holder.extensionIconImageView)
             }
             holder.bind(extension)
+            FocusEffectUtil.applyFocusListener(holder.itemView)
+            FocusEffectUtil.applyFocusListener(holder.itemView.findViewById(R.id.closeTextView))
         }
     }
 

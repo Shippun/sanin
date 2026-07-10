@@ -7,17 +7,38 @@
     android:layout_height="wrap_content"
     android:orientation="horizontal"
     android:paddingTop="10dp"
-    android:paddingBottom="10dp">
+    android:paddingBottom="10dp"
+    android:focusable="true"
+    android:nextFocusRight="@+id/dragHandle">
 
-    <ImageView
-        android:id="@+id/extensionPinImageView"
-        android:layout_width="40dp"
-        android:layout_height="24dp"
+    <LinearLayout
+        android:id="@+id/dragHandle"
+        android:layout_width="36dp"
+        android:layout_height="40dp"
         android:layout_gravity="center_vertical"
         android:layout_marginStart="-10dp"
         android:layout_marginEnd="3dp"
-        android:src="@drawable/ic_round_equal_24"
-        tools:ignore="ContentDescription" />
+        android:orientation="vertical"
+        android:gravity="center"
+        android:focusable="true"
+        android:nextFocusRight="@+id/updateTextView">
+
+        <ImageView
+            android:id="@+id/dragUpArrow"
+            android:layout_width="16dp"
+            android:layout_height="14dp"
+            android:src="@drawable/ic_round_keyboard_arrow_up_24"
+            android:scaleType="fitCenter"
+            android:importantForAccessibility="no" />
+
+        <ImageView
+            android:id="@+id/dragDownArrow"
+            android:layout_width="16dp"
+            android:layout_height="14dp"
+            android:src="@drawable/ic_round_keyboard_arrow_down_24"
+            android:scaleType="fitCenter"
+            android:importantForAccessibility="no" />
+    </LinearLayout>
 
     <ImageView
         android:id="@+id/extensionIconImageView"
@@ -80,6 +101,9 @@
         android:layout_weight="0"
         android:layout_marginEnd="10dp"
         android:src="@drawable/ic_round_sync_24"
+        android:focusable="true"
+        android:nextFocusRight="@+id/deleteTextView"
+        android:nextFocusLeft="@id/dragHandle"
         app:tint="?attr/colorOnBackground"
         tools:ignore="ContentDescription" />
 
@@ -91,6 +115,9 @@
         android:layout_weight="0"
         android:layout_marginEnd="10dp"
         android:src="@drawable/ic_round_delete_24"
+        android:focusable="true"
+        android:nextFocusRight="@+id/settingsImageView"
+        android:nextFocusLeft="@id/updateTextView"
         app:tint="?attr/colorOnBackground"
         tools:ignore="ContentDescription" />
 
@@ -102,6 +129,9 @@
         android:layout_marginEnd="10dp"
         android:layout_weight="0"
         android:src="@drawable/ic_round_dots_vertical_24"
+        android:focusable="true"
+        android:nextFocusLeft="@id/deleteTextView"
+        android:nextFocusRight="@id/extensionCardView"
         app:tint="?attr/colorOnBackground"
         tools:ignore="ContentDescription" />
 

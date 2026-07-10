@@ -97,6 +97,9 @@
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         android:transitionName="@string/search"
+        android:focusable="false"
+        android:nextFocusUp="@+id/viewPager"
+        android:nextFocusDown="@+id/viewPager"
         app:boxBackgroundColor="@color/bg"
         app:boxBackgroundMode="outline"
         app:boxCornerRadiusBottomEnd="28dp"
@@ -119,6 +122,8 @@
             android:inputType="textPersonName"
             android:padding="8dp"
             android:paddingBottom="4dp"
+            android:nextFocusUp="@+id/viewPager"
+            android:nextFocusDown="@+id/viewPager"
             android:selectAllOnFocus="true"
             android:textSize="14sp"
             tools:ignore="LabelFor,TextContrastCheck" />

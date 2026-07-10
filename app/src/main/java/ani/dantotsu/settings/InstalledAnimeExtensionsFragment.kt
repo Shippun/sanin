@@ -2,15 +2,19 @@ package ani.dantotsu.settings
 
 import android.app.NotificationManager
 import android.content.Context
+import android.graphics.Color
 import android.os.Bundle
+import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
+import androidx.core.content.ContextCompat
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -195,6 +199,8 @@ class InstalledAnimeExtensionsFragment : Fragment(), SearchQueryHandler {
         val itemTouchHelperCallback = object : ItemTouchHelper.SimpleCallback(
             ItemTouchHelper.UP or ItemTouchHelper.DOWN, 0
         ) {
+            override fun isLongPressDragEnabled() = false
+
             override fun onMove(
                 recyclerView: RecyclerView,
                 viewHolder: RecyclerView.ViewHolder,
@@ -229,7 +235,10 @@ class InstalledAnimeExtensionsFragment : Fragment(), SearchQueryHandler {
                 viewHolder.itemView.translationZ = 0f
             }
         }
-        ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(extensionsRecyclerView)
+        val touchHelper = ItemTouchHelper(itemTouchHelperCallback)
+        touchHelper.attachToRecyclerView(extensionsRecyclerView)
+        extensionsAdapter.itemTouchHelper = touchHelper
+        extensionsAdapter.reorderMessage = binding.reorderMessage
 
 
         lifecycleScope.launch {
@@ -271,6 +280,9 @@ class InstalledAnimeExtensionsFragment : Fragment(), SearchQueryHandler {
     ) : ListAdapter<AnimeExtension.Installed, AnimeExtensionsAdapter.ViewHolder>(
         DIFF_CALLBACK_INSTALLED
     ) {
+        var dragActivePosition: Int? = null
+        var reorderMessage: TextView? = null
+        var itemTouchHelper: ItemTouchHelper? = null
 
         fun updateData(newExtensions: List<AnimeExtension.Installed>) {
             submitList(newExtensions)
@@ -313,6 +325,77 @@ class InstalledAnimeExtensionsFragment : Fragment(), SearchQueryHandler {
             holder.settingsImageView.setOnClickListener {
                 onSettingsClicked(extension)
             }
+
+            val isDragging = dragActivePosition == position
+            val ctx = holder.itemView.context
+            val tintColor = if (isDragging) {
+                ContextCompat.getColor(ctx, R.color.primary)
+            } else {
+                Color.WHITE
+            }
+            holder.dragUpArrow.setColorFilter(tintColor)
+            holder.dragDownArrow.setColorFilter(tintColor)
+
+            holder.dragHandle.setOnClickListener {
+                val currentPos = bindingAdapterPosition
+                if (currentPos == RecyclerView.NO_POSITION) return@setOnClickListener
+                if (dragActivePosition == currentPos) {
+                    dragActivePosition = null
+                    reorderMessage?.visibility = View.GONE
+                    val currentDragPos = currentPos
+                    notifyItemChanged(currentDragPos)
+                    updatePref()
+                } else {
+                    dragActivePosition = currentPos
+                    reorderMessage?.visibility = View.VISIBLE
+                    notifyDataSetChanged()
+                }
+            }
+
+            holder.dragHandle.setOnLongClickListener {
+                val currentPos = bindingAdapterPosition
+                if (currentPos == RecyclerView.NO_POSITION) return@setOnLongClickListener false
+                itemTouchHelper?.startDrag(holder)
+                true
+            }
+
+            holder.dragHandle.setOnKeyListener { v, keyCode, event ->
+                if (event.action != KeyEvent.ACTION_DOWN) return@setOnKeyListener false
+                val currentPos = bindingAdapterPosition
+                if (currentPos == RecyclerView.NO_POSITION) return@setOnKeyListener false
+                if (dragActivePosition != currentPos) return@setOnKeyListener false
+                when (keyCode) {
+                    KeyEvent.KEYCODE_DPAD_UP -> {
+                        if (currentPos > 0) {
+                            val newList = currentList.toMutableList()
+                            val item = newList.removeAt(currentPos)
+                            newList.add(currentPos - 1, item)
+                            dragActivePosition = currentPos - 1
+                            submitList(newList)
+                        }
+                        true
+                    }
+                    KeyEvent.KEYCODE_DPAD_DOWN -> {
+                        if (currentPos < currentList.size - 1) {
+                            val newList = currentList.toMutableList()
+                            val item = newList.removeAt(currentPos)
+                            newList.add(currentPos + 1, item)
+                            dragActivePosition = currentPos + 1
+                            submitList(newList)
+                        }
+                        true
+                    }
+                    else -> false
+                }
+            }
+
+            FocusEffectUtil.applyFocusListener(holder.itemView)
+            FocusEffectUtil.applyFocusListener(holder.dragHandle)
+            FocusEffectUtil.applyFocusListener(holder.settingsImageView)
+            FocusEffectUtil.applyFocusListener(holder.deleteView)
+            if (extension.hasUpdate) {
+                FocusEffectUtil.applyFocusListener(holder.updateView)
+            }
         }
 
         fun filter(query: String, currentList: List<AnimeExtension.Installed>) {
@@ -334,6 +417,9 @@ class InstalledAnimeExtensionsFragment : Fragment(), SearchQueryHandler {
             val extensionIconImageView: ImageView = view.findViewById(R.id.extensionIconImageView)
             val deleteView: ImageView = view.findViewById(R.id.deleteTextView)
             val updateView: ImageView = view.findViewById(R.id.updateTextView)
+            val dragHandle: LinearLayout = view.findViewById(R.id.dragHandle)
+            val dragUpArrow: ImageView = view.findViewById(R.id.dragUpArrow)
+            val dragDownArrow: ImageView = view.findViewById(R.id.dragDownArrow)
         }
 
         companion object {

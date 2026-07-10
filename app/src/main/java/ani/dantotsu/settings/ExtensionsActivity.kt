@@ -14,6 +14,7 @@ import androidx.viewpager2.widget.ViewPager2
 import ani.dantotsu.R
 import ani.dantotsu.databinding.ActivityExtensionsBinding
 import ani.dantotsu.initActivity
+import ani.dantotsu.util.FocusEffectUtil
 import ani.dantotsu.media.MediaType
 import ani.dantotsu.navBarHeight
 import ani.dantotsu.others.AndroidBug5497Workaround
@@ -134,6 +135,8 @@ class ExtensionsActivity : AppCompatActivity() {
                 }
             }
         })
+
+        FocusEffectUtil.applyFocusListener(binding.searchViewText)
 
         initActivity(this)
         binding.languageselect.setOnClickListener {
