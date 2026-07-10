@@ -14,6 +14,8 @@ class SnakeNavRailView @JvmOverloads constructor(
 ) : View(context, attrs, defStyleAttr) {
 
     private val bgPaint = Paint(Paint.ANTI_ALIAS_FLAG)
+    private var cachedWidth = -1f
+    private var cachedHeight = -1f
 
     init {
         setWillNotDraw(false)
@@ -49,16 +51,16 @@ class SnakeNavRailView @JvmOverloads constructor(
         val h = height.toFloat().coerceAtLeast(1f)
         val split = h * 0.33f
 
-        bgPaint.shader = LinearGradient(
-            0f, 0f, 0f, split,
-            Color.BLACK, Color.WHITE,
-            Shader.TileMode.CLAMP
-        )
+        if (w != cachedWidth || h != cachedHeight) {
+            cachedWidth = w
+            cachedHeight = h
+            bgPaint.shader = LinearGradient(
+                0f, 0f, 0f, split,
+                Color.BLACK, Color.WHITE,
+                Shader.TileMode.CLAMP
+            )
+        }
         canvas.drawRect(0f, 0f, w, split, bgPaint)
-
-        bgPaint.shader = null
-        bgPaint.color = Color.WHITE
-        canvas.drawRect(0f, split, w, h, bgPaint)
     }
 
     private fun lerpColor(c1: Int, c2: Int, t: Float): Int {

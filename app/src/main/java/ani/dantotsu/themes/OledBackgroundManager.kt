@@ -82,6 +82,8 @@ object OledBackgroundManager {
 
     private class GlowSpotsDrawable(private val primaryColor: Int) : Drawable() {
         private val paint = Paint(Paint.ANTI_ALIAS_FLAG)
+        private var cachedBounds: android.graphics.Rect? = null
+        private val cachedShaders = arrayOfNulls<Shader>(3)
 
         private val spots = listOf(
             floatArrayOf(0.50f, 0.10f, 0.45f),
@@ -90,27 +92,35 @@ object OledBackgroundManager {
         )
 
         override fun draw(canvas: Canvas) {
-            val w = bounds.width().toFloat()
-            val h = bounds.height().toFloat()
+            val b = bounds
+            val w = b.width().toFloat()
+            val h = b.height().toFloat()
             if (w <= 0 || h <= 0) return
-            val r = Color.red(primaryColor)
-            val g = Color.green(primaryColor)
-            val b = Color.blue(primaryColor)
-            for (spot in spots) {
-                val cx = spot[0] * w
-                val cy = spot[1] * h
-                val radius = spot[2] * minOf(w, h)
-                paint.shader = RadialGradient(
-                    cx, cy, radius,
-                    intArrayOf(
-                        Color.argb(90, r, g, b),
-                        Color.argb(40, r, g, b),
-                        Color.TRANSPARENT
-                    ),
-                    floatArrayOf(0f, 0.40f, 1f),
-                    Shader.TileMode.CLAMP
-                )
-                canvas.drawCircle(cx, cy, radius, paint)
+            if (cachedBounds != b) {
+                cachedBounds = android.graphics.Rect(b)
+                val r = Color.red(primaryColor)
+                val g = Color.green(primaryColor)
+                val bl = Color.blue(primaryColor)
+                for (i in spots.indices) {
+                    val spot = spots[i]
+                    val cx = spot[0] * w
+                    val cy = spot[1] * h
+                    val radius = spot[2] * minOf(w, h)
+                    cachedShaders[i] = RadialGradient(
+                        cx, cy, radius,
+                        intArrayOf(
+                            Color.argb(90, r, g, bl),
+                            Color.argb(40, r, g, bl),
+                            Color.TRANSPARENT
+                        ),
+                        floatArrayOf(0f, 0.40f, 1f),
+                        Shader.TileMode.CLAMP
+                    )
+                }
+            }
+            for (i in spots.indices) {
+                paint.shader = cachedShaders[i]
+                canvas.drawCircle(spots[i][0] * w, spots[i][1] * h, spots[i][2] * minOf(w, h), paint)
             }
         }
 
@@ -124,33 +134,40 @@ object OledBackgroundManager {
         private val direction: Int
     ) : Drawable() {
         private val paint = Paint(Paint.ANTI_ALIAS_FLAG)
+        private var cachedBounds: android.graphics.Rect? = null
+        private var cachedShader: Shader? = null
 
         override fun draw(canvas: Canvas) {
-            val w = bounds.width().toFloat()
-            val h = bounds.height().toFloat()
+            val b = bounds
+            val w = b.width().toFloat()
+            val h = b.height().toFloat()
             if (w <= 0 || h <= 0) return
-            val r = Color.red(primaryColor)
-            val g = Color.green(primaryColor)
-            val b = Color.blue(primaryColor)
+            if (cachedBounds != b) {
+                cachedBounds = android.graphics.Rect(b)
+                val r = Color.red(primaryColor)
+                val g = Color.green(primaryColor)
+                val bl = Color.blue(primaryColor)
 
-            val x0: Float; val y0: Float; val x1: Float; val y1: Float
-            when (direction) {
-                1 -> { x0 = w / 2f; y0 = h; x1 = w / 2f; y1 = h * 0.30f }
-                2 -> { x0 = 0f; y0 = h / 2f; x1 = w * 0.70f; y1 = h / 2f }
-                3 -> { x0 = w; y0 = h / 2f; x1 = w * 0.30f; y1 = h / 2f }
-                else -> { x0 = w / 2f; y0 = 0f; x1 = w / 2f; y1 = h * 0.70f }
+                val x0: Float; val y0: Float; val x1: Float; val y1: Float
+                when (direction) {
+                    1 -> { x0 = w / 2f; y0 = h; x1 = w / 2f; y1 = h * 0.30f }
+                    2 -> { x0 = 0f; y0 = h / 2f; x1 = w * 0.70f; y1 = h / 2f }
+                    3 -> { x0 = w; y0 = h / 2f; x1 = w * 0.30f; y1 = h / 2f }
+                    else -> { x0 = w / 2f; y0 = 0f; x1 = w / 2f; y1 = h * 0.70f }
+                }
+
+                cachedShader = LinearGradient(
+                    x0, y0, x1, y1,
+                    intArrayOf(
+                        Color.argb(80, r, g, bl),
+                        Color.argb(35, r, g, bl),
+                        Color.TRANSPARENT
+                    ),
+                    floatArrayOf(0f, 0.40f, 1f),
+                    Shader.TileMode.CLAMP
+                )
             }
-
-            paint.shader = LinearGradient(
-                x0, y0, x1, y1,
-                intArrayOf(
-                    Color.argb(80, r, g, b),
-                    Color.argb(35, r, g, b),
-                    Color.TRANSPARENT
-                ),
-                floatArrayOf(0f, 0.40f, 1f),
-                Shader.TileMode.CLAMP
-            )
+            paint.shader = cachedShader
             canvas.drawRect(0f, 0f, w, h, paint)
         }
 
@@ -161,27 +178,34 @@ object OledBackgroundManager {
 
     private class VignetteBgDrawable(private val primaryColor: Int) : Drawable() {
         private val paint = Paint(Paint.ANTI_ALIAS_FLAG)
+        private var cachedBounds: android.graphics.Rect? = null
+        private var cachedShader: Shader? = null
 
         override fun draw(canvas: Canvas) {
-            val w = bounds.width().toFloat()
-            val h = bounds.height().toFloat()
+            val b = bounds
+            val w = b.width().toFloat()
+            val h = b.height().toFloat()
             if (w <= 0 || h <= 0) return
-            val r = Color.red(primaryColor)
-            val g = Color.green(primaryColor)
-            val b = Color.blue(primaryColor)
-            val cx = w / 2f
-            val cy = h / 2f
-            val radius = maxOf(w, h) * 0.80f
-            paint.shader = RadialGradient(
-                cx, cy, radius,
-                intArrayOf(
-                    Color.TRANSPARENT,
-                    Color.argb(45, r, g, b),
-                    Color.argb(110, 0, 0, 0)
-                ),
-                floatArrayOf(0f, 0.55f, 1f),
-                Shader.TileMode.CLAMP
-            )
+            if (cachedBounds != b) {
+                cachedBounds = android.graphics.Rect(b)
+                val r = Color.red(primaryColor)
+                val g = Color.green(primaryColor)
+                val bl = Color.blue(primaryColor)
+                val cx = w / 2f
+                val cy = h / 2f
+                val radius = maxOf(w, h) * 0.80f
+                cachedShader = RadialGradient(
+                    cx, cy, radius,
+                    intArrayOf(
+                        Color.TRANSPARENT,
+                        Color.argb(45, r, g, bl),
+                        Color.argb(110, 0, 0, 0)
+                    ),
+                    floatArrayOf(0f, 0.55f, 1f),
+                    Shader.TileMode.CLAMP
+                )
+            }
+            paint.shader = cachedShader
             canvas.drawRect(0f, 0f, w, h, paint)
         }
 

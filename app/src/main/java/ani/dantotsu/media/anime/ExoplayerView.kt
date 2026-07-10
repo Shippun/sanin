@@ -147,6 +147,7 @@ import ani.dantotsu.settings.saving.PrefName
 import ani.dantotsu.util.FocusEffectUtil
 import ani.dantotsu.snackString
 import ani.dantotsu.startMainActivity
+import ani.dantotsu.themes.OledBackgroundManager
 import ani.dantotsu.themes.ThemeManager
 import ani.dantotsu.toPx
 import ani.dantotsu.toast
@@ -470,6 +471,7 @@ class ExoplayerView :
         super.onCreate(savedInstanceState)
 
         ThemeManager(this).applyTheme()
+        OledBackgroundManager.remove(this)
         binding = ActivityExoplayerBinding.inflate(layoutInflater)
         setContentView(binding.root)
 

@@ -34,17 +34,28 @@ class CurseMarkSpinnerView @JvmOverloads constructor(
     private var animator: ValueAnimator? = null
 
     private var accentColor: Int = Color.MAGENTA
+    private var alphasResolved = false
 
     private val alphas = intArrayOf(255, 120, 55)
 
     val tailPath = Path()
 
+    private fun resolveAccentColor() {
+        accentColor = try {
+            MaterialColors.getColor(this, com.google.android.material.R.attr.colorPrimary)
+        } catch (_: Exception) {
+            Color.MAGENTA
+        }
+    }
+
     init {
+        resolveAccentColor()
         startAnimation()
     }
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
+        resolveAccentColor()
         startAnimation()
     }
 
@@ -69,12 +80,6 @@ class CurseMarkSpinnerView @JvmOverloads constructor(
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-
-        accentColor = try {
-            MaterialColors.getColor(this, com.google.android.material.R.attr.colorPrimary)
-        } catch (_: Exception) {
-            Color.MAGENTA
-        }
 
         val cx = width / 2f
         val cy = height / 2f

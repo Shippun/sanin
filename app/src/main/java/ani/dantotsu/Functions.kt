@@ -578,18 +578,16 @@ fun setAnimation(
     list: FloatArray = floatArrayOf(0.0f, 1.0f, 0.0f, 1.0f),
     pivot: Pair<Float, Float> = 0.5f to 0.5f
 ) {
-    if (PrefManager.getVal(PrefName.AnimationsEnabled) && PrefManager.getVal(PrefName.LayoutAnimations)) {
+    if (viewToAnimate.animation != null && !viewToAnimate.animation.hasEnded()) return
+    val animationsEnabled = PrefManager.getVal<Boolean>(PrefName.AnimationsEnabled)
+    val layoutAnimations = PrefManager.getVal<Boolean>(PrefName.LayoutAnimations)
+    if (animationsEnabled && layoutAnimations) {
         val anim = ScaleAnimation(
-            list[0],
-            list[1],
-            list[2],
-            list[3],
-            Animation.RELATIVE_TO_SELF,
-            pivot.first,
-            Animation.RELATIVE_TO_SELF,
-            pivot.second
+            list[0], list[1], list[2], list[3],
+            Animation.RELATIVE_TO_SELF, pivot.first,
+            Animation.RELATIVE_TO_SELF, pivot.second
         )
-        anim.duration = (duration * (PrefManager.getVal(PrefName.AnimationSpeed) as Float)).toLong()
+        anim.duration = (duration * PrefManager.getVal<Float>(PrefName.AnimationSpeed)).toLong()
         anim.setInterpolator(context, R.anim.over_shoot)
         viewToAnimate.startAnimation(anim)
     }
