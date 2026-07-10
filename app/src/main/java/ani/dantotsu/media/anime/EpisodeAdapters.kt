@@ -155,11 +155,12 @@ class EpisodeAdapter(
                     binding.itemEpisodeFillerView.visibility = View.GONE
                 }
 
-                if (ep.rating != null) {
+                val ratingStr = ep.rating
+                if (ratingStr != null) {
                     binding.itemEpisodeRating.visibility = View.VISIBLE
-                    binding.itemEpisodeRating.text = "★ ${ep.rating}"
-                    val rating = ep.rating.toFloatOrNull()
-                    if (rating != null && rating > 7.9f) {
+                    binding.itemEpisodeRating.text = "★ $ratingStr"
+                    val ratingFloat = ratingStr.toFloatOrNull()
+                    if (ratingFloat != null && ratingFloat > 7.9f) {
                         binding.itemEpisodeSparkle1.visibility = View.VISIBLE
                         binding.itemEpisodeSparkle2.visibility = View.VISIBLE
                     } else {
@@ -226,11 +227,12 @@ class EpisodeAdapter(
                 binding.itemEpisodeNumber.text = ep.number
                 binding.itemEpisodeTitle.text = title
 
-                if (ep.rating != null) {
+                val ratingStr = ep.rating
+                if (ratingStr != null) {
                     binding.itemEpisodeRating.visibility = View.VISIBLE
-                    binding.itemEpisodeRating.text = "★ ${ep.rating}"
-                    val rating = ep.rating.toFloatOrNull()
-                    if (rating != null && rating > 7.9f) {
+                    binding.itemEpisodeRating.text = "★ $ratingStr"
+                    val ratingFloat = ratingStr.toFloatOrNull()
+                    if (ratingFloat != null && ratingFloat > 7.9f) {
                         binding.itemEpisodeSparkle1.visibility = View.VISIBLE
                         binding.itemEpisodeSparkle2.visibility = View.VISIBLE
                     } else {
