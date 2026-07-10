@@ -82,14 +82,14 @@
 
             <ImageView
                 android:id="@+id/activityLike"
-                android:layout_width="18dp"
-                android:layout_height="18dp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:src="@drawable/ic_round_favorite_24"
                 tools:ignore="ContentDescription" />
 
             <TextView
                 android:id="@+id/activityLikeCount"
-                android:layout_width="18dp"
+                android:layout_width="30dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:fontFamily="@font/poppins_semi_bold"

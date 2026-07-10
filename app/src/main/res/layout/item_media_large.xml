@@ -197,8 +197,8 @@
 
                 <ImageView
                     android:id="@+id/itemCompactTypeImage"
-                    android:layout_width="18dp"
-                    android:layout_height="18dp"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
                     android:alpha="0.58"
                     app:srcCompat="@drawable/ic_round_import_contacts_24"
                     tools:ignore="ContentDescription" />

@@ -104,8 +104,8 @@
 
                     <TextView
                         android:id="@+id/settingsNotificationCount"
-                        android:layout_width="18dp"
-                        android:layout_height="18dp"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
                         android:layout_gravity="end|bottom"
                         android:background="@drawable/notification_circle"
                         android:fontFamily="@font/poppins_semi_bold"
