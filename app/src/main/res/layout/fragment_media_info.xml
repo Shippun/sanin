@@ -25,8 +25,8 @@
 
             <FrameLayout
                 android:id="@+id/mediaInfoProgressBar"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_width="76dp"
+                android:layout_height="76dp"
                 android:layout_margin="32dp"
                 android:visibility="gone"
                 tools:visibility="gone"

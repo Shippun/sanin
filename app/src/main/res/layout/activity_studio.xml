@@ -29,8 +29,8 @@
 
     <FrameLayout
         android:id="@+id/studioProgressBar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_width="76dp"
+        android:layout_height="76dp"
         android:layout_margin="32dp"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         tools:visibility="gone"

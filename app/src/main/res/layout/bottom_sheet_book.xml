@@ -39,8 +39,8 @@
                 app:cardCornerRadius="16dp">
 
                 <FrameLayout
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
+                    android:layout_width="76dp"
+                    android:layout_height="76dp"
                     android:layout_gravity="center"
                 >
 

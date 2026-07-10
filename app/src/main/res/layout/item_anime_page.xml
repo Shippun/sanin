@@ -116,8 +116,8 @@
 
             <FrameLayout
                 android:id="@+id/animeUpdatedProgressBar"
-                android:layout_width="wrap_content"
-                android:layout_height="48dp"
+                android:layout_width="76dp"
+                android:layout_height="76dp"
                 android:layout_gravity="center"
             >
 
@@ -213,8 +213,8 @@
 
         <FrameLayout
             android:id="@+id/animeMoviesProgressBar"
-            android:layout_width="wrap_content"
-            android:layout_height="48dp"
+            android:layout_width="76dp"
+            android:layout_height="76dp"
             android:layout_gravity="center"
         >
 
@@ -309,8 +309,8 @@
 
         <FrameLayout
             android:id="@+id/animeTopRatedProgressBar"
-            android:layout_width="wrap_content"
-            android:layout_height="48dp"
+            android:layout_width="76dp"
+            android:layout_height="76dp"
             android:layout_gravity="center"
         >
 
@@ -404,8 +404,8 @@
 
         <FrameLayout
             android:id="@+id/animeMostFavProgressBar"
-            android:layout_width="wrap_content"
-            android:layout_height="48dp"
+            android:layout_width="76dp"
+            android:layout_height="76dp"
             android:layout_gravity="center"
         >
 

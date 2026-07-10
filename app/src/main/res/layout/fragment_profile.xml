@@ -230,8 +230,8 @@
 
                 <FrameLayout
                     android:id="@+id/profileFavAnimeProgressBar"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="76dp"
+                    android:layout_height="76dp"
                     android:layout_gravity="center"
                     android:layout_margin="90dp"
                 >
@@ -308,8 +308,8 @@
 
                 <FrameLayout
                     android:id="@+id/profileFavMangaProgressBar"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="76dp"
+                    android:layout_height="76dp"
                     android:layout_gravity="center"
                     android:layout_margin="90dp"
                 >
