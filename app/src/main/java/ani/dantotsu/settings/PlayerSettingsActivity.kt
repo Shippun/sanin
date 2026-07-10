@@ -666,22 +666,33 @@ class PlayerSettingsActivity :
         binding.subtitleFontSizeCard.setOnClickListener {
             customAlertDialog().apply {
                 setTitle(getString(R.string.subtitle_font_size))
-                val slider = com.google.android.material.slider.Slider(this@PlayerSettingsActivity).apply {
-                    valueFrom = 8f
-                    valueTo = 48f
-                    value = PrefManager.getVal<Int>(PrefName.FontSize).toFloat()
-                    stepSize = 2f
+                val container = android.widget.LinearLayout(this@PlayerSettingsActivity).apply {
+                    orientation = android.widget.LinearLayout.VERTICAL
                     layoutParams = android.view.ViewGroup.LayoutParams(
                         android.view.ViewGroup.LayoutParams.MATCH_PARENT,
                         android.view.ViewGroup.LayoutParams.WRAP_CONTENT
                     )
-                    setPadding(64, 0, 64, 0)
-                    addOnChangeListener { _, value, _ ->
-                        binding.subtitleFontSize.setText(value.toInt().toString())
+                    setPadding(64, 24, 64, 8)
+                    val slider = com.google.android.material.slider.Slider(this@PlayerSettingsActivity).apply {
+                        valueFrom = 8f
+                        valueTo = 48f
+                        value = PrefManager.getVal<Int>(PrefName.FontSize).toFloat()
+                        stepSize = 2f
+                        layoutParams = android.view.ViewGroup.LayoutParams(
+                            android.view.ViewGroup.LayoutParams.MATCH_PARENT,
+                            android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+                        )
+                            isFocusable = true
+                        addOnChangeListener { _, value, _ ->
+                            binding.subtitleFontSize.setText(value.toInt().toString())
+                        }
                     }
+                    FocusEffectUtil.applyFocusListener(slider)
+                    addView(slider)
                 }
-                setCustomView(slider)
+                setCustomView(container)
                 setPosButton(R.string.ok) {
+                    val slider = (container.getChildAt(0) as com.google.android.material.slider.Slider)
                     PrefManager.setVal(PrefName.FontSize, slider.value.toInt())
                     binding.subtitleFontSize.setText(slider.value.toInt().toString())
                     updateSubPreview()
