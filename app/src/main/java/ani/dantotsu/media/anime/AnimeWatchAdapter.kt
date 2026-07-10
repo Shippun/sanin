@@ -202,7 +202,7 @@ class AnimeWatchAdapter(
                     it.isFocusable = true
                     FocusEffectUtil.applyFocusListener(it)
                 }
-            } catch (_: java.lang.Exception) {}
+            } catch (e: java.lang.Exception) {}
         }
         FocusEffectUtil.applyFocusListener(binding.mediaSourceSearch, binding.mediaSourceSearch)
         FocusEffectUtil.applyFocusListener(binding.mediaSourceSettings, binding.mediaSourceSettings, true)
