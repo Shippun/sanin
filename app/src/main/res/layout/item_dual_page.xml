@@ -40,8 +40,8 @@
 
                 <FrameLayout
                     android:id="@+id/imgProgProgress2"
-                    android:layout_width="73dp"
-                    android:layout_height="73dp"
+                    android:layout_width="74dp"
+                    android:layout_height="74dp"
                     android:layout_gravity="center"
                     android:layout_margin="64dp"
                     android:visibility="visible"
@@ -106,8 +106,8 @@
 
                 <FrameLayout
                     android:id="@+id/imgProgProgress1"
-                    android:layout_width="73dp"
-                    android:layout_height="73dp"
+                    android:layout_width="74dp"
+                    android:layout_height="74dp"
                     android:layout_gravity="center"
                     android:layout_margin="64dp"
                     android:visibility="visible"

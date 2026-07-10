@@ -553,70 +553,32 @@
                     app:iconPadding="16dp"
                     app:iconSize="24dp" />
 
-                <LinearLayout
+                <TextView
                     android:layout_width="match_parent"
-                    android:layout_height="64dp"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginHorizontal="32dp"
-                    android:layout_marginBottom="8dp"
-                    android:gravity="center"
-                    android:orientation="horizontal">
+                    android:layout_height="wrap_content"
+                    android:drawablePadding="16dp"
+                    android:fontFamily="@font/poppins_bold"
+                    android:paddingHorizontal="32dp"
+                    android:paddingTop="16dp"
+                    android:text="@string/subtitle_font_size"
+                    app:drawableStartCompat="@drawable/ic_round_font_size_24"
+                    app:drawableTint="?attr/colorPrimary" />
 
-                    <TextView
-                        android:id="@+id/subtitle_font_size_text"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:layout_weight="1"
-                        android:drawablePadding="16dp"
-                        android:fontFamily="@font/poppins_bold"
-                        android:text="@string/subtitle_font_size"
-                        app:drawableStartCompat="@drawable/ic_round_font_size_24"
-                        app:drawableTint="?attr/colorPrimary" />
-
-                    <com.google.android.material.card.MaterialCardView
-                        android:id="@+id/subtitle_font_size_card"
-                        android:layout_width="wrap_content"
-                        android:layout_height="48dp"
-                        android:layout_gravity="center"
-                        android:layout_margin="8dp"
-                        android:focusable="true"
-                        android:clickable="true"
-                        app:cardBackgroundColor="@color/nav_bg_inv"
-                        app:cardCornerRadius="16dp"
-                        app:rippleColor="#54FFFFFF">
-
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:gravity="center"
-                            android:orientation="horizontal"
-                            android:padding="8dp"
-                            tools:ignore="UseCompoundDrawables">
-
-                            <EditText
-                                android:id="@+id/subtitleFontSize"
-                                android:layout_width="wrap_content"
-                                android:layout_height="match_parent"
-                                android:background="@android:color/transparent"
-                                android:focusable="false"
-                                android:fontFamily="@font/poppins_bold"
-                                android:importantForAutofill="no"
-                                android:inputType="number"
-                                android:maxLength="3"
-                                android:minWidth="48dp"
-                                android:padding="4dp"
-                                android:text="20"
-                                android:textAlignment="center"
-                                android:textColor="?attr/colorSecondary"
-                                android:textSize="14sp"
-                                tools:ignore="HardcodedText,LabelFor,TouchTargetSizeCheck" />
-
-                        </LinearLayout>
-
-                    </com.google.android.material.card.MaterialCardView>
-
-                </LinearLayout>
+                <com.google.android.material.slider.Slider
+                    android:id="@+id/subtitleFontSizeSlider"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="32dp"
+                    android:layout_marginEnd="32dp"
+                    android:stepSize="2"
+                    android:value="20"
+                    android:valueFrom="8"
+                    android:valueTo="48"
+                    app:labelBehavior="floating"
+                    app:labelStyle="@style/fontTooltip"
+                    app:thumbColor="?attr/colorSecondary"
+                    app:tickColorInactive="?attr/colorSecondary"
+                    app:trackColorActive="?attr/colorSecondary" />
 
                <Button
                     android:id="@+id/videoSubLanguage"

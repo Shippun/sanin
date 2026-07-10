@@ -14,8 +14,8 @@
 
         <FrameLayout
             android:layout_gravity="center"
-            android:layout_width="73dp"
-            android:layout_height="73dp"
+            android:layout_width="74dp"
+            android:layout_height="74dp"
         >
 
             <com.airbnb.lottie.LottieAnimationView
@@ -131,8 +131,8 @@
 
         <FrameLayout
             android:id="@+id/feedRefresh"
-            android:layout_width="73dp"
-            android:layout_height="73dp"
+            android:layout_width="74dp"
+            android:layout_height="74dp"
             android:layout_gravity="center_horizontal"
             android:layout_marginBottom="32dp"
             android:visibility="gone"
