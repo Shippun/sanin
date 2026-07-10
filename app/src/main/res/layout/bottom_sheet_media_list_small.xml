@@ -9,8 +9,8 @@
 
     <FrameLayout
         android:id="@+id/mediaListProgressBar"
-        android:layout_width="66dp"
-        android:layout_height="66dp"
+        android:layout_width="73dp"
+        android:layout_height="73dp"
         android:layout_gravity="center"
         tools:visibility="invisible"
     >

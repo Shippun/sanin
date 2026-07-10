@@ -86,6 +86,7 @@
                     android:fontFamily="@font/poppins_bold"
                     android:gravity="center_vertical"
                     android:paddingHorizontal="32dp"
+                    android:id="@+id/playerSettingsSectionVideo"
                     android:text="@string/video"
                     android:textColor="?attr/colorSecondary"
                     android:focusable="true"
@@ -166,6 +167,7 @@
                     android:fontFamily="@font/poppins_bold"
                     android:gravity="center_vertical"
                     android:paddingHorizontal="32dp"
+                    android:id="@+id/playerSettingsSectionOnlineSubtitles"
                     android:text="Online Subtitles"
                     android:textColor="?attr/colorSecondary"
                     android:focusable="true"
@@ -186,6 +188,7 @@
                     android:fontFamily="@font/poppins_bold"
                     android:minHeight="64dp"
                     android:paddingHorizontal="32dp"
+                    android:id="@+id/playerSettingsSectionOnlineSubtitles"
                     android:text="Online Subtitles"
                     android:textAlignment="viewStart"
                     android:textColor="@color/bg_opp"
@@ -246,6 +249,7 @@
                     android:fontFamily="@font/poppins_bold"
                     android:gravity="center_vertical"
                     android:paddingHorizontal="32dp"
+                    android:id="@+id/playerSettingsSectionSubtitles"
                     android:text="@string/subtitles"
                     android:textColor="?attr/colorSecondary"
                     android:focusable="true"
@@ -264,6 +268,7 @@
                         android:fontFamily="@font/poppins_bold"
                         android:gravity="center_vertical"
                         android:paddingHorizontal="32dp"
+                        android:id="@+id/playerSettingsSectionSubTextExample"
                         android:text="@string/sub_text_example"
                         android:textColor="?attr/colorSecondary"
                         android:focusable="true"
@@ -283,7 +288,8 @@
                             android:layout_gravity="center"
                             android:gravity="center"
                             android:paddingHorizontal="32dp"
-                            android:text="@string/sub_text_example" />
+                            android:id="@+id/playerSettingsSectionSubTextExample"
+                        android:text="@string/sub_text_example" />
                     </LinearLayout>
 
                     <View
@@ -657,6 +663,7 @@
                     android:fontFamily="@font/poppins_bold"
                     android:gravity="center_vertical"
                     android:paddingHorizontal="32dp"
+                    android:id="@+id/playerSettingsSectionTimestamps"
                     android:text="@string/timestamps"
                     android:textColor="?attr/colorSecondary"
                     android:focusable="true"
@@ -909,6 +916,7 @@
                     android:fontFamily="@font/poppins_bold"
                     android:gravity="center_vertical"
                     android:paddingHorizontal="32dp"
+                    android:id="@+id/playerSettingsSectionUpdateProgress"
                     android:text="@string/update_progress"
                     android:textColor="?attr/colorSecondary"
                     android:focusable="true"
@@ -1053,6 +1061,7 @@
                     android:fontFamily="@font/poppins_bold"
                     android:gravity="center_vertical"
                     android:paddingHorizontal="32dp"
+                    android:id="@+id/playerSettingsSectionBehaviour"
                     android:text="@string/behaviour"
                     android:textColor="?attr/colorSecondary"
                     android:focusable="true"
