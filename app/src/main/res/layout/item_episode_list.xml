@@ -11,7 +11,7 @@
     android:backgroundTintMode="src_atop"
     android:focusable="true"
     android:longClickable="true"
-    app:cardCornerRadius="16dp">
+    app:cardCornerRadius="28dp">
 
     <View
         android:id="@+id/itemEpisodeFillerView"
@@ -38,7 +38,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 app:cardBackgroundColor="#000000"
-                app:cardCornerRadius="16dp">
+                app:cardCornerRadius="24dp">
 
                 <ProgressBar
                     style="?android:attr/progressBarStyle"

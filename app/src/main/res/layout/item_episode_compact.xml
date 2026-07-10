@@ -7,7 +7,7 @@
     android:layout_margin="8dp"
     android:background="@drawable/card_outline"
     android:focusable="true"
-    app:cardCornerRadius="16dp">
+    app:cardCornerRadius="32dp">
 
     <LinearLayout
         android:layout_width="match_parent"
