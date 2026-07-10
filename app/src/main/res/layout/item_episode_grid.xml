@@ -151,9 +151,34 @@
         android:fontFamily="@font/poppins_bold"
         android:paddingHorizontal="4dp"
         android:paddingVertical="2dp"
-        android:textColor="@android:color/white"
+        android:textColor="@color/golden_yellow"
         android:textSize="10sp"
         android:visibility="gone"
         tools:text="★ 6.9"
+        tools:visibility="visible" />
+
+    <ImageView
+        android:id="@+id/itemEpisodeSparkle1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|end"
+        android:layout_marginTop="2dp"
+        android:layout_marginEnd="2dp"
+        android:visibility="gone"
+        app:srcCompat="@drawable/ic_sparkle"
+        tools:ignore="ContentDescription"
+        tools:visibility="visible" />
+
+    <ImageView
+        android:id="@+id/itemEpisodeSparkle2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|end"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="16dp"
+        android:rotation="-30"
+        android:visibility="gone"
+        app:srcCompat="@drawable/ic_sparkle"
+        tools:ignore="ContentDescription"
         tools:visibility="visible" />
 </androidx.cardview.widget.CardView>

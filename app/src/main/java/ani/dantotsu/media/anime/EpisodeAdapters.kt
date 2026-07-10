@@ -158,8 +158,18 @@ class EpisodeAdapter(
                 if (ep.rating != null) {
                     binding.itemEpisodeRating.visibility = View.VISIBLE
                     binding.itemEpisodeRating.text = "★ ${ep.rating}"
+                    val rating = ep.rating.toFloatOrNull()
+                    if (rating != null && rating > 7.9f) {
+                        binding.itemEpisodeSparkle1.visibility = View.VISIBLE
+                        binding.itemEpisodeSparkle2.visibility = View.VISIBLE
+                    } else {
+                        binding.itemEpisodeSparkle1.visibility = View.GONE
+                        binding.itemEpisodeSparkle2.visibility = View.GONE
+                    }
                 } else {
                     binding.itemEpisodeRating.visibility = View.GONE
+                    binding.itemEpisodeSparkle1.visibility = View.GONE
+                    binding.itemEpisodeSparkle2.visibility = View.GONE
                 }
 
                 if (ep.date != null) {
@@ -219,8 +229,18 @@ class EpisodeAdapter(
                 if (ep.rating != null) {
                     binding.itemEpisodeRating.visibility = View.VISIBLE
                     binding.itemEpisodeRating.text = "★ ${ep.rating}"
+                    val rating = ep.rating.toFloatOrNull()
+                    if (rating != null && rating > 7.9f) {
+                        binding.itemEpisodeSparkle1.visibility = View.VISIBLE
+                        binding.itemEpisodeSparkle2.visibility = View.VISIBLE
+                    } else {
+                        binding.itemEpisodeSparkle1.visibility = View.GONE
+                        binding.itemEpisodeSparkle2.visibility = View.GONE
+                    }
                 } else {
                     binding.itemEpisodeRating.visibility = View.GONE
+                    binding.itemEpisodeSparkle1.visibility = View.GONE
+                    binding.itemEpisodeSparkle2.visibility = View.GONE
                 }
 
                 if (ep.date != null) {
