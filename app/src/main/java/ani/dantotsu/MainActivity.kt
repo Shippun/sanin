@@ -329,15 +329,14 @@ class MainActivity : AppCompatActivity() {
                     null
                 )
             }
-            // Focus chain: calendar ↔ avatar (circular)
+            // Focus: each icon gets its own border
+            FocusEffectUtil.applyFocusListener(binding.mainCalendarContainer)
+            FocusEffectUtil.applyFocusListener(binding.mainUserAvatarContainer)
+            // Focus chain: calendar ↔ avatar
             binding.mainCalendarContainer.nextFocusLeftId = R.id.mainUserAvatarContainer
             binding.mainCalendarContainer.nextFocusRightId = R.id.mainUserAvatarContainer
             binding.mainUserAvatarContainer.nextFocusLeftId = R.id.mainCalendarContainer
             binding.mainUserAvatarContainer.nextFocusRightId = R.id.mainCalendarContainer
-            FocusEffectUtil.applyFocusListener(
-                binding.mainCalendarContainer,
-                binding.mainUserAvatarContainer
-            )
 
             // Observe tab changes
             lifecycleScope.launch {
