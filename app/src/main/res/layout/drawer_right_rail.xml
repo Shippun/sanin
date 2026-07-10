@@ -23,7 +23,7 @@
             android:layout_width="80dp"
             android:layout_height="80dp"
             android:focusable="true"
-            android:nextFocusDown="@+id/rightRailExtensions"
+            android:nextFocusDown="@+id/rightRailNotifications"
             app:cardCornerRadius="40dp"
             app:cardElevation="4dp">
 
@@ -157,7 +157,7 @@
                 android:fontFamily="@font/poppins_bold"
                 android:focusable="true"
                 android:gravity="center_vertical"
-            android:nextFocusDown="@+id/rightRailNotifications"
+            android:nextFocusDown="@+id/rightRailExtensions"
                 android:nextFocusUp="@+id/rightRailAvatar"
                 android:paddingStart="24dp"
                 android:paddingEnd="24dp"

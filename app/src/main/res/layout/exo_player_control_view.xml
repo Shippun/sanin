@@ -358,6 +358,7 @@
                             android:layout_height="match_parent"
                             android:layout_alignParentEnd="true"
                             android:focusable="true"
+                            android:nextFocusRight="@id/exo_playback_speed"
                             android:backgroundTint="#00FFFFFF"
                             android:src="@drawable/ic_round_video_library_24"
                             app:tint="@color/bg_white"
@@ -395,23 +396,17 @@
                     android:gravity="center_vertical"
                     android:orientation="vertical">
 
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="-6dp"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal">
-
                     <ImageButton
                         android:id="@id/exo_playback_speed"
                         android:layout_width="48dp"
                         android:layout_height="48dp"
                         android:focusable="true"
+                        android:nextFocusLeft="@id/exo_ep_sel_btn"
+                        android:nextFocusDown="@id/exo_play"
                         android:backgroundTint="#00FFFFFF"
                         android:src="@drawable/ic_round_slow_motion_video_24"
                         app:tint="#fff"
                         tools:ignore="ContentDescription,SpeakableTextPresentCheck" />
-                    </LinearLayout>
 
                     <TextView
                         android:id="@+id/exo_video_info"
