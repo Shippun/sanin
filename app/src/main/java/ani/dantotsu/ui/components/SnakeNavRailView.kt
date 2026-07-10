@@ -60,7 +60,7 @@ class SnakeNavRailView @JvmOverloads constructor(
                 Shader.TileMode.CLAMP
             )
         }
-        canvas.drawRect(0f, 0f, w, split, bgPaint)
+        canvas.drawRect(0f, 0f, w, h, bgPaint)
     }
 
     private fun lerpColor(c1: Int, c2: Int, t: Float): Int {
