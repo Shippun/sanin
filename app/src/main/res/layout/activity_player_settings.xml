@@ -188,7 +188,6 @@
                     android:fontFamily="@font/poppins_bold"
                     android:minHeight="64dp"
                     android:paddingHorizontal="32dp"
-                    android:id="@+id/playerSettingsSectionOnlineSubtitles"
                     android:text="Online Subtitles"
                     android:textAlignment="viewStart"
                     android:textColor="@color/bg_opp"
@@ -288,7 +287,6 @@
                             android:layout_gravity="center"
                             android:gravity="center"
                             android:paddingHorizontal="32dp"
-                            android:id="@+id/playerSettingsSectionSubTextExample"
                         android:text="@string/sub_text_example" />
                     </LinearLayout>
 
