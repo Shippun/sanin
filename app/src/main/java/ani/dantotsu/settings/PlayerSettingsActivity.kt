@@ -298,7 +298,7 @@ class PlayerSettingsActivity :
             PrefManager.setVal(PrefName.SeekTime, value.toInt())
         }
 
-        binding.exoSkip.text = PrefManager.getVal<Int>(PrefName.SkipTime).toString()
+        binding.exoSkipTime.setText(PrefManager.getVal<Int>(PrefName.SkipTime).toString())
         binding.exoSkip.setOnClickListener {
             customAlertDialog().apply {
                 setTitle("Skip Time (seconds)")
@@ -312,7 +312,7 @@ class PlayerSettingsActivity :
                     val time = input.text.toString().toIntOrNull()
                     if (time != null) {
                         PrefManager.setVal(PrefName.SkipTime, time)
-                        binding.exoSkip.text = time.toString()
+                        binding.exoSkipTime.setText(time.toString())
                     }
                 }
                 setNegButton(R.string.cancel)
