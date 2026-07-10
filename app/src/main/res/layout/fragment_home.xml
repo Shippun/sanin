@@ -303,8 +303,8 @@
 
                             <FrameLayout
                                 android:id="@+id/homeUserDataProgressBar"
-                                android:layout_width="74dp"
-                                android:layout_height="74dp"
+                                android:layout_width="75dp"
+                                android:layout_height="75dp"
                                 android:layout_gravity="center"
                                 android:layout_marginEnd="16dp"
                                 tools:visibility="gone"
@@ -525,8 +525,8 @@
                 android:visibility="gone">
                 <FrameLayout
                     android:id="@+id/homeUserStatusProgressBar"
-                    android:layout_width="74dp"
-                    android:layout_height="74dp"
+                    android:layout_width="75dp"
+                    android:layout_height="75dp"
                     android:layout_gravity="center"
                 >
 
@@ -708,8 +708,8 @@
 
                     <FrameLayout
                         android:id="@+id/homeWatchingProgressBar"
-                        android:layout_width="74dp"
-                        android:layout_height="74dp"
+                        android:layout_width="75dp"
+                        android:layout_height="75dp"
                         android:layout_gravity="center"
                         android:layout_margin="90dp"
                     >
@@ -841,8 +841,8 @@
 
                     <FrameLayout
                         android:id="@+id/homeFavAnimeProgressBar"
-                        android:layout_width="74dp"
-                        android:layout_height="74dp"
+                        android:layout_width="75dp"
+                        android:layout_height="75dp"
                         android:layout_gravity="center"
                         android:layout_margin="90dp"
                     >
@@ -977,8 +977,8 @@
 
                     <FrameLayout
                         android:id="@+id/homePlannedAnimeProgressBar"
-                        android:layout_width="74dp"
-                        android:layout_height="74dp"
+                        android:layout_width="75dp"
+                        android:layout_height="75dp"
                         android:layout_gravity="center"
                         android:layout_margin="90dp"
                     >
@@ -1113,8 +1113,8 @@
 
                     <FrameLayout
                         android:id="@+id/homeReadingProgressBar"
-                        android:layout_width="74dp"
-                        android:layout_height="74dp"
+                        android:layout_width="75dp"
+                        android:layout_height="75dp"
                         android:layout_gravity="center"
                         android:layout_margin="90dp"
                     >
@@ -1245,8 +1245,8 @@
 
                     <FrameLayout
                         android:id="@+id/homeFavMangaProgressBar"
-                        android:layout_width="74dp"
-                        android:layout_height="74dp"
+                        android:layout_width="75dp"
+                        android:layout_height="75dp"
                         android:layout_gravity="center"
                         android:layout_margin="90dp"
                     >
@@ -1382,8 +1382,8 @@
 
                     <FrameLayout
                         android:id="@+id/homePlannedMangaProgressBar"
-                        android:layout_width="74dp"
-                        android:layout_height="74dp"
+                        android:layout_width="75dp"
+                        android:layout_height="75dp"
                         android:layout_gravity="center"
                         android:layout_margin="90dp"
                     >
@@ -1512,8 +1512,8 @@
 
                     <FrameLayout
                         android:id="@+id/homeMissingSequelsProgressBar"
-                        android:layout_width="74dp"
-                        android:layout_height="74dp"
+                        android:layout_width="75dp"
+                        android:layout_height="75dp"
                         android:layout_gravity="center"
                         android:layout_margin="90dp"
                     >
@@ -1643,8 +1643,8 @@
 
                     <FrameLayout
                         android:id="@+id/homeRecommendedProgressBar"
-                        android:layout_width="74dp"
-                        android:layout_height="74dp"
+                        android:layout_width="75dp"
+                        android:layout_height="75dp"
                         android:layout_gravity="center"
                         android:layout_margin="90dp"
                     >

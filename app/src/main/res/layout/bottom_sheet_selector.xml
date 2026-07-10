@@ -29,8 +29,8 @@
             android:textSize="20sp" />
 
         <FrameLayout
-            android:layout_width="74dp"
-            android:layout_height="74dp"
+            android:layout_width="75dp"
+            android:layout_height="75dp"
             android:layout_gravity="center"
             android:layout_margin="10dp"
         >
@@ -141,8 +141,8 @@
         <FrameLayout
             android:id="@+id/selectorProgressBar"
             android:layout_gravity="center"
-            android:layout_width="74dp"
-            android:layout_height="74dp"
+            android:layout_width="75dp"
+            android:layout_height="75dp"
             android:layout_margin="10dp"
         >
 
