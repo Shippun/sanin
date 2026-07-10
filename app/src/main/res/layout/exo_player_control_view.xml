@@ -158,16 +158,6 @@
                         android:layout_weight="1" />
 
                     <ImageButton
-                        android:id="@+id/exo_pip"
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
-                        android:focusable="true"
-                        android:backgroundTint="#00FFFFFF"
-                        android:src="@drawable/ic_round_picture_in_picture_alt_24"
-                        app:tint="#fff"
-                        tools:ignore="ContentDescription,SpeakableTextPresentCheck" />
-
-                    <ImageButton
                         android:id="@+id/exo_skip_op_ed"
                         android:layout_width="48dp"
                         android:layout_height="48dp"
@@ -351,7 +341,18 @@
                             android:textSize="14sp"
                             tools:text="Episode 12: The Battle" />
 
-                        <ImageButton
+                    <ImageButton
+                        android:id="@+id/exo_pip"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:focusable="false"
+                        android:visibility="gone"
+                        android:backgroundTint="#00FFFFFF"
+                        android:src="@drawable/ic_round_picture_in_picture_alt_24"
+                        app:tint="#fff"
+                        tools:ignore="ContentDescription,SpeakableTextPresentCheck" />
+
+                    <ImageButton
                             android:id="@+id/exo_ep_sel_btn"
                             android:layout_width="48dp"
                             android:layout_height="match_parent"
@@ -401,25 +402,15 @@
                         android:gravity="center_vertical"
                         android:orientation="horizontal">
 
-                        <ImageButton
-                            android:id="@id/exo_playback_speed"
-                            android:layout_width="48dp"
-                            android:layout_height="48dp"
-                            android:focusable="true"
-                            android:backgroundTint="#00FFFFFF"
-                            android:src="@drawable/ic_round_slow_motion_video_24"
-                            app:tint="#fff"
-                            tools:ignore="ContentDescription,SpeakableTextPresentCheck" />
-
-                        <ImageButton
-                            android:id="@+id/exo_lock"
-                            android:layout_width="48dp"
-                            android:layout_height="48dp"
-                            android:focusable="true"
-                            android:backgroundTint="#00FFFFFF"
-                            app:srcCompat="@drawable/ic_round_lock_open_24"
-                            app:tint="@color/bg_white"
-                            tools:ignore="ContentDescription,SpeakableTextPresentCheck" />
+                    <ImageButton
+                        android:id="@id/exo_playback_speed"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:focusable="true"
+                        android:backgroundTint="#00FFFFFF"
+                        android:src="@drawable/ic_round_slow_motion_video_24"
+                        app:tint="#fff"
+                        tools:ignore="ContentDescription,SpeakableTextPresentCheck" />
                     </LinearLayout>
 
                     <TextView
@@ -523,26 +514,6 @@
                 tools:ignore="SpeakableTextPresentCheck" />
 
         </LinearLayout>
-
-        <androidx.cardview.widget.CardView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            app:cardBackgroundColor="#A8000000"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="0dp">
-
-            <ImageButton
-                android:id="@+id/exo_unlock"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:backgroundTint="#00FFFFFF"
-                android:visibility="gone"
-                app:srcCompat="@drawable/ic_round_lock_24"
-                tools:ignore="ContentDescription,SpeakableTextPresentCheck" />
-        </androidx.cardview.widget.CardView>
 
     </FrameLayout>
 

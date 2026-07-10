@@ -493,8 +493,8 @@ class ExoplayerView :
         exoVolume = playerView.findViewById(R.id.exo_volume)
         exoBrightnessCont = playerView.findViewById(R.id.exo_brightness_cont)
         exoVolumeCont = playerView.findViewById(R.id.exo_volume_cont)
-        exoPip = playerView.findViewById(R.id.exo_pip)
         exoSkipOpEd = playerView.findViewById(R.id.exo_skip_op_ed)
+        exoPip = playerView.findViewById(R.id.exo_pip)
         exoSkip = playerView.findViewById(R.id.exo_skip)
         skipTimeButton = playerView.findViewById(R.id.exo_skip_timestamp)
         skipTimeText = skipTimeButton.findViewById(R.id.exo_skip_timestamp_text)
@@ -587,43 +587,16 @@ class ExoplayerView :
             }
         }
 
-        // Picture-in-picture
+        // PiP (hidden button, system PiP still works)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             pipEnabled =
                 packageManager.hasSystemFeature(PackageManager.FEATURE_PICTURE_IN_PICTURE) &&
-                        PrefManager.getVal(
-                            PrefName.Pip,
-                        )
+                        PrefManager.getVal(PrefName.Pip)
             if (pipEnabled) {
-                exoPip.visibility = View.VISIBLE
                 exoPip.setOnClickListener {
                     enterPipMode()
                 }
-            } else {
-                exoPip.visibility = View.GONE
             }
-        }
-
-        // Lock Button
-        var locked = false
-        val container = playerView.findViewById<View>(R.id.exo_controller_cont)
-        val screen = playerView.findViewById<View>(R.id.exo_black_screen)
-        val lockButton = playerView.findViewById<ImageButton>(R.id.exo_unlock)
-        val timeline =
-            playerView.findViewById<ExtendedTimeBar>(androidx.media3.ui.R.id.exo_progress)
-        playerView.findViewById<ImageButton>(R.id.exo_lock).setOnClickListener {
-            locked = true
-            screen.visibility = View.GONE
-            container.visibility = View.GONE
-            lockButton.visibility = View.VISIBLE
-            timeline.setForceDisabled(true)
-        }
-        lockButton.setOnClickListener {
-            locked = false
-            screen.visibility = View.VISIBLE
-            container.visibility = View.VISIBLE
-            it.visibility = View.GONE
-            timeline.setForceDisabled(false)
         }
 
         // Skip Time Button
@@ -714,13 +687,13 @@ class ExoplayerView :
             }
         listOf(
             androidx.media3.ui.R.id.exo_play, R.id.exo_source, R.id.exo_settings, R.id.exo_sub,
-            R.id.exo_audio, R.id.exo_screen, R.id.exo_pip,
+            R.id.exo_audio, R.id.exo_screen,
             R.id.exo_skip_op_ed, R.id.exo_back, R.id.exo_skip, R.id.exo_next_ep,
             R.id.exo_prev_ep,
             androidx.media3.ui.R.id.exo_playback_speed,
             R.id.exo_fast_forward_button, R.id.exo_fast_rewind_button,
             R.id.exo_fast_forward_button_cont, R.id.exo_fast_rewind_button_cont,
-            R.id.exo_unlock, R.id.exo_lock, R.id.exo_skip_timestamp,
+            R.id.exo_skip_timestamp,
             R.id.exo_ep_sel_btn,
         ).forEach { id ->
             playerView.findViewById<View>(id)?.apply {
@@ -731,13 +704,13 @@ class ExoplayerView :
         animeTitle.isFocusable = false
         listOf(
             androidx.media3.ui.R.id.exo_play, R.id.exo_source, R.id.exo_settings, R.id.exo_sub,
-            R.id.exo_audio, R.id.exo_screen, R.id.exo_pip,
+            R.id.exo_audio, R.id.exo_screen,
             R.id.exo_skip_op_ed, R.id.exo_back, R.id.exo_skip, R.id.exo_next_ep,
             R.id.exo_prev_ep,
             androidx.media3.ui.R.id.exo_playback_speed,
             R.id.exo_fast_forward_button, R.id.exo_fast_rewind_button,
             R.id.exo_fast_forward_button_cont, R.id.exo_fast_rewind_button_cont,
-            R.id.exo_unlock, R.id.exo_lock, R.id.exo_skip_timestamp,
+            R.id.exo_skip_timestamp,
             R.id.exo_ep_sel_btn,
         ).forEach { id ->
             playerView.findViewById<View>(id)?.let {
@@ -747,6 +720,8 @@ class ExoplayerView :
         playerView.post { exoPlay.requestFocus() }
 
         // Focus chain: ep_sel_btn ← back ← prev ← play → next
+        //                    ↑                          ↕
+        //               speed ──────────────────────────┘
         episodeTitleBtn.nextFocusRightId = R.id.exo_back
         exoBack.nextFocusLeftId = R.id.exo_ep_sel_btn
         exoBack.nextFocusRightId = R.id.exo_prev_ep
@@ -755,6 +730,8 @@ class ExoplayerView :
         exoPlay.nextFocusLeftId = R.id.exo_prev_ep
         exoPlay.nextFocusRightId = R.id.exo_next_ep
         playerView.findViewById<View>(R.id.exo_next_ep).nextFocusLeftId = androidx.media3.ui.R.id.exo_play
+        exoPlay.nextFocusUpId = androidx.media3.ui.R.id.exo_playback_speed
+        exoSpeed.nextFocusDownId = androidx.media3.ui.R.id.exo_play
 
         pauseOverlay = playerView.findViewById(R.id.exo_pause_overlay)
         pauseTitle = playerView.findViewById(R.id.exo_pause_title)
@@ -763,7 +740,10 @@ class ExoplayerView :
         pauseRating = playerView.findViewById(R.id.exo_pause_rating)
         pauseLogo = playerView.findViewById(R.id.exo_pause_logo)
         pauseSynopsis.post {
-            pauseSynopsis.maxWidth = resources.displayMetrics.widthPixels / 2
+            pauseSynopsis.maxWidth = TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP, 560f,
+                resources.displayMetrics
+            ).toInt()
         }
 
         playerView.setControllerVisibilityListener(
@@ -987,7 +967,7 @@ class ExoplayerView :
                 forward: Boolean,
                 event: MotionEvent,
             ) {
-                if (!locked && isInitialized && PrefManager.getVal<Boolean>(PrefName.DoubleTap)) {
+                if (isInitialized && PrefManager.getVal<Boolean>(PrefName.DoubleTap)) {
                     seek(forward, event)
                 }
             }
@@ -1108,7 +1088,7 @@ class ExoplayerView :
                         }
 
                         override fun onScrollYClick(y: Float) {
-                            if (!locked && PrefManager.getVal(PrefName.Gestures)) {
+                            if (PrefManager.getVal(PrefName.Gestures)) {
                                 exoBrightness.value = clamp(exoBrightness.value + y / 100, 0f, 10f)
                                 if (PrefManager.getVal(PrefName.GestureSliders)) {
                                     if (exoBrightnessCont.visibility != View.VISIBLE) {
@@ -1149,7 +1129,7 @@ class ExoplayerView :
                         }
 
                         override fun onScrollYClick(y: Float) {
-                            if (!locked && PrefManager.getVal(PrefName.Gestures)) {
+                            if (PrefManager.getVal(PrefName.Gestures)) {
                                 exoVolume.value = clamp(exoVolume.value + y / 100, 0f, 10f)
                                 if (PrefManager.getVal(PrefName.GestureSliders)) {
                                     if (exoVolumeCont.visibility != View.VISIBLE) {
@@ -3335,6 +3315,8 @@ class ExoplayerView :
         super.onDestroy()
         finishAndRemoveTask()
     }
+
+
     // Enter PiP Mode
     @Suppress("DEPRECATION")
     private fun enterPipMode() {
