@@ -263,13 +263,18 @@
         </LinearLayout>
     </LinearLayout>
 
-    <ProgressBar
+    <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/androidStoriesLoadingView"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_gravity="center"
-        android:indeterminate="true"
         android:visibility="gone"
-        tools:visibility="visible" />
+        tools:visibility="visible" 
+        app:lottie_rawRes="@raw/tomoe"
+        app:lottie_autoPlay="true"
+        app:lottie_loop="true"
+        app:lottie_scale="0.7"
+        tools:ignore="ContentDescription" 
+        app:lottie_colorFilter="?attr/colorSecondary" />
 
 </FrameLayout>

@@ -131,13 +131,19 @@
                 android:clipToPadding="false"
                 android:padding="8dp" />
 
-            <ProgressBar
+            <com.airbnb.lottie.LottieAnimationView
                 android:id="@+id/discoverProgressBar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginTop="48dp"
-                android:visibility="gone" />
+                android:visibility="gone" 
+        app:lottie_rawRes="@raw/tomoe"
+        app:lottie_autoPlay="true"
+        app:lottie_loop="true"
+        app:lottie_scale="0.7"
+        tools:ignore="ContentDescription" 
+        app:lottie_colorFilter="?attr/colorSecondary" />
 
             <TextView
                 android:id="@+id/discoverEmptyText"

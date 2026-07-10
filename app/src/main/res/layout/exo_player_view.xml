@@ -418,17 +418,17 @@
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 
-    <com.google.android.material.progressindicator.CircularProgressIndicator
+    <com.airbnb.lottie.LottieAnimationView
         android:id="@id/exo_buffering"
         android:layout_width="72dp"
         android:layout_height="72dp"
-        android:layout_gravity="center"
-        android:indeterminate="true"
-        android:indeterminateBehavior="repeat"
-        app:indicatorColor="?attr/colorSecondary"
-        app:indicatorSize="56dp"
-        app:trackCornerRadius="4dp"
-        app:trackThickness="4dp" />
+        android:layout_gravity="center" 
+        app:lottie_rawRes="@raw/tomoe"
+        app:lottie_autoPlay="true"
+        app:lottie_loop="true"
+        app:lottie_scale="0.7"
+        tools:ignore="ContentDescription" 
+        app:lottie_colorFilter="?attr/colorSecondary" />
 
     <View
         android:id="@+id/exo_touch_view"

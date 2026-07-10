@@ -181,10 +181,7 @@
                                     android:layout_marginHorizontal="8dp"
                                     android:layout_weight="1"
                                     android:progress="30"
-                                    app:indicatorColor="#b9bbbe"
-                                    app:trackColor="#4f545c"
-                                    app:trackCornerRadius="4dp"
-                                    app:trackThickness="4dp" />
+                                    app:trackColor="#4f545c" />
 
                                 <TextView
                                     android:layout_width="wrap_content"

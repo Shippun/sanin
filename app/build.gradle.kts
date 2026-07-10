@@ -171,6 +171,7 @@ dependencies {
     implementation(libs.ebook)
     implementation(libs.dialogs)
     implementation(libs.charts)
+    implementation(libs.lottie)
 
     implementation(libs.bundles.markwon)
     implementation(libs.bundles.groupie)
