@@ -136,132 +136,134 @@
         android:alpha="0.15"
         android:background="?attr/colorOnSurface" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:paddingTop="8dp">
-
-        <TextView
-            android:id="@+id/rightRailExtensions"
-            android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:background="?attr/selectableItemBackground"
-            android:drawablePadding="16dp"
-            android:fontFamily="@font/poppins_bold"
-            android:focusable="true"
-            android:gravity="center_vertical"
-            android:nextFocusDown="@+id/rightRailProfile"
-            android:nextFocusUp="@+id/rightRailAvatar"
-            android:paddingStart="24dp"
-            android:paddingEnd="24dp"
-            android:text="Extensions"
-            android:textColor="?attr/colorOnSurface"
-            android:textSize="15sp"
-            app:drawableStartCompat="@drawable/ic_extension"
-            app:drawableTint="?attr/colorOnSurface" />
-
-        <TextView
-            android:id="@+id/rightRailProfile"
-            android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:background="?attr/selectableItemBackground"
-            android:drawablePadding="16dp"
-            android:fontFamily="@font/poppins_bold"
-            android:focusable="true"
-            android:gravity="center_vertical"
-            android:nextFocusDown="@+id/rightRailAnimeList"
-            android:nextFocusUp="@+id/rightRailExtensions"
-            android:paddingStart="24dp"
-            android:paddingEnd="24dp"
-            android:text="Profile"
-            android:textColor="?attr/colorOnSurface"
-            android:textSize="15sp"
-            app:drawableStartCompat="@drawable/ic_round_person_24"
-            app:drawableTint="?attr/colorOnSurface" />
-
-        <TextView
-            android:id="@+id/rightRailAnimeList"
-            android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:background="?attr/selectableItemBackground"
-            android:drawablePadding="16dp"
-            android:fontFamily="@font/poppins_bold"
-            android:focusable="true"
-            android:gravity="center_vertical"
-            android:nextFocusDown="@+id/rightRailSettings"
-            android:nextFocusUp="@+id/rightRailProfile"
-            android:paddingStart="24dp"
-            android:paddingEnd="24dp"
-            android:text="Anime List"
-            android:textColor="?attr/colorOnSurface"
-            android:textSize="15sp"
-            app:drawableStartCompat="@drawable/ic_round_movie_filter_24"
-            app:drawableTint="?attr/colorOnSurface" />
-
-        <TextView
-            android:id="@+id/rightRailSettings"
-            android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:background="?attr/selectableItemBackground"
-            android:drawablePadding="16dp"
-            android:fontFamily="@font/poppins_bold"
-            android:focusable="true"
-            android:gravity="center_vertical"
-            android:nextFocusDown="@+id/rightRailSync"
-            android:nextFocusUp="@+id/rightRailAnimeList"
-            android:paddingStart="24dp"
-            android:paddingEnd="24dp"
-            android:text="Settings"
-            android:textColor="?attr/colorOnSurface"
-            android:textSize="15sp"
-            app:drawableStartCompat="@drawable/ic_round_settings_24"
-            app:drawableTint="?attr/colorOnSurface" />
-
-        <TextView
-            android:id="@+id/rightRailSync"
-            android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:background="?attr/selectableItemBackground"
-            android:drawablePadding="16dp"
-            android:fontFamily="@font/poppins_bold"
-            android:focusable="true"
-            android:gravity="center_vertical"
-            android:nextFocusDown="@+id/rightRailAccount"
-            android:nextFocusUp="@+id/rightRailSettings"
-            android:paddingStart="24dp"
-            android:paddingEnd="24dp"
-            android:text="Sync Progress"
-            android:textColor="?attr/colorOnSurface"
-            android:textSize="15sp"
-            app:drawableStartCompat="@drawable/ic_round_sync_24"
-            app:drawableTint="?attr/colorOnSurface" />
-
-        <TextView
-            android:id="@+id/rightRailAccount"
-            android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:background="?attr/selectableItemBackground"
-            android:drawablePadding="16dp"
-            android:fontFamily="@font/poppins_bold"
-            android:focusable="true"
-            android:gravity="center_vertical"
-            android:nextFocusDown="@+id/rightRailClearCache"
-            android:nextFocusUp="@+id/rightRailSync"
-            android:paddingStart="24dp"
-            android:paddingEnd="24dp"
-        android:text="Account"
-        android:textColor="?attr/colorOnSurface"
-        android:textSize="15sp"
-        app:drawableStartCompat="@drawable/ic_round_settings_24"
-        app:drawableTint="?attr/colorOnSurface" />
-
-    </LinearLayout>
-
-    <View
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1" />
+        android:layout_weight="1"
+        android:fillViewport="false">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingTop="8dp">
+
+            <TextView
+                android:id="@+id/rightRailExtensions"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:background="?attr/selectableItemBackground"
+                android:drawablePadding="16dp"
+                android:fontFamily="@font/poppins_bold"
+                android:focusable="true"
+                android:gravity="center_vertical"
+                android:nextFocusDown="@+id/rightRailProfile"
+                android:nextFocusUp="@+id/rightRailAvatar"
+                android:paddingStart="24dp"
+                android:paddingEnd="24dp"
+                android:text="Extensions"
+                android:textColor="?attr/colorOnSurface"
+                android:textSize="15sp"
+                app:drawableStartCompat="@drawable/ic_extension"
+                app:drawableTint="?attr/colorOnSurface" />
+
+            <TextView
+                android:id="@+id/rightRailProfile"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:background="?attr/selectableItemBackground"
+                android:drawablePadding="16dp"
+                android:fontFamily="@font/poppins_bold"
+                android:focusable="true"
+                android:gravity="center_vertical"
+                android:nextFocusDown="@+id/rightRailAnimeList"
+                android:nextFocusUp="@+id/rightRailExtensions"
+                android:paddingStart="24dp"
+                android:paddingEnd="24dp"
+                android:text="Profile"
+                android:textColor="?attr/colorOnSurface"
+                android:textSize="15sp"
+                app:drawableStartCompat="@drawable/ic_round_person_24"
+                app:drawableTint="?attr/colorOnSurface" />
+
+            <TextView
+                android:id="@+id/rightRailAnimeList"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:background="?attr/selectableItemBackground"
+                android:drawablePadding="16dp"
+                android:fontFamily="@font/poppins_bold"
+                android:focusable="true"
+                android:gravity="center_vertical"
+                android:nextFocusDown="@+id/rightRailSettings"
+                android:nextFocusUp="@+id/rightRailProfile"
+                android:paddingStart="24dp"
+                android:paddingEnd="24dp"
+                android:text="Anime List"
+                android:textColor="?attr/colorOnSurface"
+                android:textSize="15sp"
+                app:drawableStartCompat="@drawable/ic_round_movie_filter_24"
+                app:drawableTint="?attr/colorOnSurface" />
+
+            <TextView
+                android:id="@+id/rightRailSettings"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:background="?attr/selectableItemBackground"
+                android:drawablePadding="16dp"
+                android:fontFamily="@font/poppins_bold"
+                android:focusable="true"
+                android:gravity="center_vertical"
+                android:nextFocusDown="@+id/rightRailSync"
+                android:nextFocusUp="@+id/rightRailAnimeList"
+                android:paddingStart="24dp"
+                android:paddingEnd="24dp"
+                android:text="Settings"
+                android:textColor="?attr/colorOnSurface"
+                android:textSize="15sp"
+                app:drawableStartCompat="@drawable/ic_round_settings_24"
+                app:drawableTint="?attr/colorOnSurface" />
+
+            <TextView
+                android:id="@+id/rightRailSync"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:background="?attr/selectableItemBackground"
+                android:drawablePadding="16dp"
+                android:fontFamily="@font/poppins_bold"
+                android:focusable="true"
+                android:gravity="center_vertical"
+                android:nextFocusDown="@+id/rightRailAccount"
+                android:nextFocusUp="@+id/rightRailSettings"
+                android:paddingStart="24dp"
+                android:paddingEnd="24dp"
+                android:text="Sync Progress"
+                android:textColor="?attr/colorOnSurface"
+                android:textSize="15sp"
+                app:drawableStartCompat="@drawable/ic_round_sync_24"
+                app:drawableTint="?attr/colorOnSurface" />
+
+            <TextView
+                android:id="@+id/rightRailAccount"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:background="?attr/selectableItemBackground"
+                android:drawablePadding="16dp"
+                android:fontFamily="@font/poppins_bold"
+                android:focusable="true"
+                android:gravity="center_vertical"
+                android:nextFocusDown="@+id/rightRailClearCache"
+                android:nextFocusUp="@+id/rightRailSync"
+                android:paddingStart="24dp"
+                android:paddingEnd="24dp"
+                android:text="Account"
+                android:textColor="?attr/colorOnSurface"
+                android:textSize="15sp"
+                app:drawableStartCompat="@drawable/ic_round_settings_24"
+                app:drawableTint="?attr/colorOnSurface" />
+
+        </LinearLayout>
+    </ScrollView>
 
     <TextView
         android:id="@+id/rightRailClearCache"
