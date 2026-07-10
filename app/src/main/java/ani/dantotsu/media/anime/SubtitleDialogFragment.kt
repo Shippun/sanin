@@ -234,6 +234,7 @@ class SubtitleDialogFragment : BottomSheetDialogFragment() {
         @OptIn(UnstableApi::class)
         override fun onBindViewHolder(holder: StreamViewHolder, position: Int) {
             val binding = holder.binding
+            FocusEffectUtil.applyFocusListener(binding.root)
 
             // Create alpha background color for highlighted item
             val highlightColor = ColorUtils.setAlphaComponent(
