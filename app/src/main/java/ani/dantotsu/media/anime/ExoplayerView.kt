@@ -284,6 +284,7 @@ class ExoplayerView :
     private var pipEnabled = false
     private var aspectRatio = Rational(16, 9)
     private var backPressTime = 0L
+    private var dpadPressTime = 0L
 
     private val handler = Handler(Looper.getMainLooper())
     private var pauseMetadataTimer: Runnable? = null
@@ -3431,9 +3432,34 @@ class ExoplayerView :
     override fun dispatchKeyEvent(event: KeyEvent): Boolean {
         if (!isInitialized) return super.dispatchKeyEvent(event)
         when (event.keyCode) {
-            KeyEvent.KEYCODE_DPAD_UP, KeyEvent.KEYCODE_DPAD_DOWN,
-            KEYCODE_DPAD_LEFT, KEYCODE_DPAD_RIGHT -> {
+            KeyEvent.KEYCODE_DPAD_UP, KeyEvent.KEYCODE_DPAD_DOWN -> {
                 if (event.action == KeyEvent.ACTION_DOWN) ensureControllerVisible()
+                return false
+            }
+            KEYCODE_DPAD_LEFT -> {
+                if (event.action == KeyEvent.ACTION_DOWN) {
+                    ensureControllerVisible()
+                    dpadPressTime = System.currentTimeMillis()
+                } else if (event.action == KeyEvent.ACTION_UP) {
+                    val elapsed = System.currentTimeMillis() - dpadPressTime
+                    if (elapsed >= 3000 && PrefManager.getVal<Boolean>(PrefName.DpadEpisodeSkip)) {
+                        exoPrev.performClick()
+                        return true
+                    }
+                }
+                return false
+            }
+            KEYCODE_DPAD_RIGHT -> {
+                if (event.action == KeyEvent.ACTION_DOWN) {
+                    ensureControllerVisible()
+                    dpadPressTime = System.currentTimeMillis()
+                } else if (event.action == KeyEvent.ACTION_UP) {
+                    val elapsed = System.currentTimeMillis() - dpadPressTime
+                    if (elapsed >= 3000 && PrefManager.getVal<Boolean>(PrefName.DpadEpisodeSkip)) {
+                        exoNext.performClick()
+                        return true
+                    }
+                }
                 return false
             }
             KeyEvent.KEYCODE_DPAD_CENTER, KeyEvent.KEYCODE_ENTER -> {

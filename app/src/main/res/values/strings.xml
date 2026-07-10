@@ -1196,5 +1196,7 @@ Non quae tempore quo provident laudantium qui illo dolor vel quia dolor et exerc
     <string name="data_saver_ignore_gif">Skip GIF images</string>
     <string name="data_saver_image_format_jpeg">Convert to JPEG</string>
     <string name="data_saver_image_format_info">When disabled, images are converted to WebP format. When enabled, images are converted to JPEG</string>
+    <string name="dpad_episode_skip">Long Press DPad to Skip Episode</string>
+    <string name="dpad_episode_skip_info">Hold DPad Right for 3 seconds to go to next episode, Left for previous</string>
 
 </resources>

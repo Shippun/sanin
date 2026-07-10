@@ -218,6 +218,7 @@ enum class PrefName(val data: Pref) {
     UpscalingAlgorithm(Pref(Location.Player, Int::class, 0)),
     RawConfiguration(Pref(Location.Player, String::class, "")),
     GestureSliders(Pref(Location.Player, Boolean::class, true)),
+    DpadEpisodeSkip(Pref(Location.Player, Boolean::class, true)),
 
     //Reader
     ShowSource(Pref(Location.Reader, Boolean::class, true)),

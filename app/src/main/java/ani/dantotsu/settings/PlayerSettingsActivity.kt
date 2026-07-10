@@ -140,6 +140,7 @@ class PlayerSettingsActivity :
             binding.playerSettingsVerticalGestures,
             binding.playerSettingsDoubleTap,
             binding.playerSettingsFastForward,
+            binding.playerSettingsDpadEpisodeSkip,
             binding.playerSettingsPiP,
             binding.playerSettingsAdditionalCodec,
             binding.exoSkip,
@@ -298,6 +299,10 @@ class PlayerSettingsActivity :
         binding.playerSettingsFastForward.isChecked = PrefManager.getVal(PrefName.FastForward)
         binding.playerSettingsFastForward.setOnCheckedChangeListener { _, isChecked ->
             PrefManager.setVal(PrefName.FastForward, isChecked)
+        }
+        binding.playerSettingsDpadEpisodeSkip.isChecked = PrefManager.getVal(PrefName.DpadEpisodeSkip)
+        binding.playerSettingsDpadEpisodeSkip.setOnCheckedChangeListener { _, isChecked ->
+            PrefManager.setVal(PrefName.DpadEpisodeSkip, isChecked)
         }
         binding.playerSettingsSeekTime.value = PrefManager.getVal<Int>(PrefName.SeekTime).toFloat()
         binding.playerSettingsSeekTime.addOnChangeListener { _, value, _ ->
