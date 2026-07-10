@@ -141,11 +141,6 @@ class AnimeWatchAdapter(
         binding.mediaSourceNameContainer.nextFocusLeftId = R.id.mediaSourceNameContainer
         binding.mediaSourceNameContainer.setOnClickListener {
             binding.mediaSource.showDropDown()
-            binding.mediaSource.post {
-                val popup = binding.mediaSource.listView
-                popup?.descendantFocusability = ViewGroup.FOCUS_AFTER_DESCENDANTS
-                popup?.requestFocus()
-            }
         }
         binding.mediaSourceNameContainer.setOnLongClickListener {
             fragment.loadEpisodes(source, true)
