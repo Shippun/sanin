@@ -6,7 +6,7 @@ import android.view.GestureDetector
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.ViewGroup
-import android.widget.ProgressBar
+import com.airbnb.lottie.LottieAnimationView
 import androidx.core.view.updateLayoutParams
 import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.RecyclerView
@@ -19,7 +19,7 @@ import ani.dantotsu.snackString
 class ProgressAdapter(private val horizontal: Boolean = true, searched: Boolean) :
     RecyclerView.Adapter<ProgressAdapter.ProgressViewHolder>() {
     val ready = MutableLiveData(searched)
-    var bar: ProgressBar? = null
+    var bar: LottieAnimationView? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProgressViewHolder {
         val binding =
