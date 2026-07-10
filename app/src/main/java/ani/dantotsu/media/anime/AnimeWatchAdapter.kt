@@ -141,14 +141,6 @@ class AnimeWatchAdapter(
         binding.mediaSourceNameContainer.nextFocusLeftId = R.id.mediaSourceNameContainer
         binding.mediaSourceNameContainer.setOnClickListener {
             binding.mediaSource.showDropDown()
-            binding.mediaSource.post {
-                val root = binding.mediaSource.rootView
-                if (root is android.view.ViewGroup) {
-                    val listView = findDropDownListView(root)
-                    listView?.descendantFocusability = android.view.ViewGroup.FOCUS_AFTER_DESCENDANTS
-                    listView?.requestFocus()
-                }
-            }
         }
         binding.mediaSourceNameContainer.setOnLongClickListener {
             fragment.loadEpisodes(source, true)
@@ -202,10 +194,15 @@ class AnimeWatchAdapter(
 
         FocusEffectUtil.applyFocusListener(binding.mediaSourceNameContainer)
         binding.mediaSourceNameContainer.post {
-            binding.mediaSourceNameContainer.endIconView?.let {
-                it.isFocusable = true
-                FocusEffectUtil.applyFocusListener(it)
-            }
+            try {
+                val endIconField = com.google.android.material.textfield.TextInputLayout::class.java.getDeclaredField("endIconView")
+                endIconField.isAccessible = true
+                val endIcon = endIconField.get(binding.mediaSourceNameContainer) as? android.widget.ImageButton
+                endIcon?.let {
+                    it.isFocusable = true
+                    FocusEffectUtil.applyFocusListener(it)
+                }
+            } catch (_: java.lang.Exception) {}
         }
         FocusEffectUtil.applyFocusListener(binding.mediaSourceSearch, binding.mediaSourceSearch)
         FocusEffectUtil.applyFocusListener(binding.mediaSourceSettings, binding.mediaSourceSettings, true)
@@ -640,18 +637,6 @@ class AnimeWatchAdapter(
     }
 
     override fun getItemCount(): Int = 1
-
-    private fun findDropDownListView(parent: android.view.ViewGroup): android.widget.ListView? {
-        for (i in 0 until parent.childCount) {
-            val child = parent.getChildAt(i)
-            if (child is android.widget.ListView) return child
-            if (child is android.view.ViewGroup) {
-                val found = findDropDownListView(child)
-                if (found != null) return found
-            }
-        }
-        return null
-    }
 
     inner class ViewHolder(val binding: ItemMediaSourceBinding) :
         RecyclerView.ViewHolder(binding.root) {
