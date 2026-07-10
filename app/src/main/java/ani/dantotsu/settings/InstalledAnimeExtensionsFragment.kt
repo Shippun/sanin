@@ -329,7 +329,9 @@ class InstalledAnimeExtensionsFragment : Fragment(), SearchQueryHandler {
             val isDragging = dragActivePosition == position
             val ctx = holder.itemView.context
             val tintColor = if (isDragging) {
-                ContextCompat.getColor(ctx, R.color.primary)
+                val typedValue = android.util.TypedValue()
+                ctx.theme.resolveAttribute(android.R.attr.colorPrimary, typedValue, true)
+                typedValue.data
             } else {
                 Color.WHITE
             }
@@ -337,13 +339,12 @@ class InstalledAnimeExtensionsFragment : Fragment(), SearchQueryHandler {
             holder.dragDownArrow.setColorFilter(tintColor)
 
             holder.dragHandle.setOnClickListener {
-                val currentPos = bindingAdapterPosition
+                val currentPos = holder.absoluteAdapterPosition
                 if (currentPos == RecyclerView.NO_POSITION) return@setOnClickListener
                 if (dragActivePosition == currentPos) {
                     dragActivePosition = null
                     reorderMessage?.visibility = View.GONE
-                    val currentDragPos = currentPos
-                    notifyItemChanged(currentDragPos)
+                    notifyDataSetChanged()
                     updatePref()
                 } else {
                     dragActivePosition = currentPos
@@ -353,7 +354,7 @@ class InstalledAnimeExtensionsFragment : Fragment(), SearchQueryHandler {
             }
 
             holder.dragHandle.setOnLongClickListener {
-                val currentPos = bindingAdapterPosition
+                val currentPos = holder.absoluteAdapterPosition
                 if (currentPos == RecyclerView.NO_POSITION) return@setOnLongClickListener false
                 itemTouchHelper?.startDrag(holder)
                 true
@@ -361,7 +362,7 @@ class InstalledAnimeExtensionsFragment : Fragment(), SearchQueryHandler {
 
             holder.dragHandle.setOnKeyListener { v, keyCode, event ->
                 if (event.action != KeyEvent.ACTION_DOWN) return@setOnKeyListener false
-                val currentPos = bindingAdapterPosition
+                val currentPos = holder.absoluteAdapterPosition
                 if (currentPos == RecyclerView.NO_POSITION) return@setOnKeyListener false
                 if (dragActivePosition != currentPos) return@setOnKeyListener false
                 when (keyCode) {

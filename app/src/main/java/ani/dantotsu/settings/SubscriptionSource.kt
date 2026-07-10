@@ -46,7 +46,7 @@ class SubscriptionSource(
             binding.extensionIconImageView.setImageResource(R.drawable.control_background_40dp)
         }
 
-        binding.extensionPinImageView.visibility = View.GONE
+        binding.dragHandle.visibility = View.GONE
         binding.extensionVersionTextView.visibility = View.GONE
         binding.deleteTextView.visibility = View.VISIBLE
         binding.deleteTextView.setOnClickListener {

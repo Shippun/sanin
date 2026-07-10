@@ -142,6 +142,10 @@ class AnimeWatchAdapter(
         binding.mediaSourceNameContainer.setOnClickListener {
             binding.mediaSource.showDropDown()
         }
+        binding.mediaSourceNameContainer.setOnLongClickListener {
+            fragment.loadEpisodes(source, true)
+            true
+        }
         binding.mediaSource.setOnItemClickListener { _, _, i, _ ->
             val actualIndex = watchSources.names.indexOf(displayNames[i])
             fragment.onSourceChange(actualIndex).apply {
@@ -196,6 +200,10 @@ class AnimeWatchAdapter(
 
         binding.mediaSourceNameContainer.nextFocusRightId = R.id.mediaSourceSettings
         binding.mediaSourceSettings.nextFocusLeftId = R.id.mediaSourceNameContainer
+        binding.mediaNestedButton.nextFocusDownId = R.id.ScrollTop
+        binding.mediaSourceSubscribe.nextFocusDownId = R.id.ScrollTop
+        binding.sourceContinue.nextFocusDownId = R.id.ScrollTop
+        binding.faqbutton.nextFocusDownId = R.id.ScrollTop
 
         // Icons
 
