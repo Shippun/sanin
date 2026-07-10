@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="56dp"
     android:ellipsize="marquee"
+    android:focusable="true"
     android:fontFamily="@font/poppins_bold"
     android:marqueeRepeatLimit="marquee_forever"
     android:padding="16dp"

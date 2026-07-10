@@ -659,19 +659,25 @@ class PlayerSettingsActivity :
         binding.subtitleFontSizeCard.setOnClickListener {
             customAlertDialog().apply {
                 setTitle(getString(R.string.subtitle_font_size))
-                val input = android.widget.EditText(this@PlayerSettingsActivity).apply {
-                    setText(PrefManager.getVal<Int>(PrefName.FontSize).toString())
-                    inputType = android.text.InputType.TYPE_CLASS_NUMBER
-                    selectAll()
-                }
-                setCustomView(input)
-                setPosButton(R.string.ok) {
-                    val size = input.text.toString().toIntOrNull()
-                    if (size != null) {
-                        PrefManager.setVal(PrefName.FontSize, size)
-                        binding.subtitleFontSize.setText(size.toString())
-                        updateSubPreview()
+                val slider = com.google.android.material.slider.Slider(this@PlayerSettingsActivity).apply {
+                    valueFrom = 8f
+                    valueTo = 48f
+                    value = PrefManager.getVal<Int>(PrefName.FontSize).toFloat()
+                    stepSize = 2f
+                    layoutParams = android.view.ViewGroup.LayoutParams(
+                        android.view.ViewGroup.LayoutParams.MATCH_PARENT,
+                        android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+                    )
+                    setPadding(64, 0, 64, 0)
+                    addOnChangeListener { _, value, _ ->
+                        binding.subtitleFontSize.setText(value.toInt().toString())
                     }
+                }
+                setCustomView(slider)
+                setPosButton(R.string.ok) {
+                    PrefManager.setVal(PrefName.FontSize, slider.value.toInt())
+                    binding.subtitleFontSize.setText(slider.value.toInt().toString())
+                    updateSubPreview()
                 }
                 setNegButton(R.string.cancel)
                 show()

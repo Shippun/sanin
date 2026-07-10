@@ -310,6 +310,7 @@
         </activity>
         <activity
             android:name=".MainActivity"
+            android:banner="@mipmap/ic_banner_foreground"
             android:configChanges="orientation|screenSize|layoutDirection"
             android:exported="true">
             <intent-filter>
