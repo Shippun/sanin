@@ -3439,10 +3439,10 @@ class ExoplayerView :
             KEYCODE_DPAD_LEFT -> {
                 if (event.action == KeyEvent.ACTION_DOWN) {
                     ensureControllerVisible()
-                    dpadPressTime = System.currentTimeMillis()
+                    dpadPressTime = java.lang.System.currentTimeMillis()
                 } else if (event.action == KeyEvent.ACTION_UP) {
-                    val elapsed = System.currentTimeMillis() - dpadPressTime
-                    if (elapsed >= 3000 && PrefManager.getVal<Boolean>(PrefName.DpadEpisodeSkip)) {
+                    val elapsed = java.lang.System.currentTimeMillis() - dpadPressTime
+                    if (elapsed >= 3000L && PrefManager.getVal<Boolean>(PrefName.DpadEpisodeSkip)) {
                         exoPrev.performClick()
                         return true
                     }
@@ -3452,10 +3452,10 @@ class ExoplayerView :
             KEYCODE_DPAD_RIGHT -> {
                 if (event.action == KeyEvent.ACTION_DOWN) {
                     ensureControllerVisible()
-                    dpadPressTime = System.currentTimeMillis()
+                    dpadPressTime = java.lang.System.currentTimeMillis()
                 } else if (event.action == KeyEvent.ACTION_UP) {
-                    val elapsed = System.currentTimeMillis() - dpadPressTime
-                    if (elapsed >= 3000 && PrefManager.getVal<Boolean>(PrefName.DpadEpisodeSkip)) {
+                    val elapsed = java.lang.System.currentTimeMillis() - dpadPressTime
+                    if (elapsed >= 3000L && PrefManager.getVal<Boolean>(PrefName.DpadEpisodeSkip)) {
                         exoNext.performClick()
                         return true
                     }
