@@ -3402,9 +3402,7 @@ class ExoplayerView :
         }
         if (!playerView.isControllerFullyVisible) playerView.showController()
         playerView.controllerShowTimeoutMs = PrefManager.getVal<Int>(PrefName.AutoHideTimeout) * 1000
-        playerView.post {
-            if (currentFocus == null) exoPlay.requestFocus()
-        }
+        playerView.post { exoPlay.requestFocus() }
     }
 
     private fun handleBackPress(): Boolean {
