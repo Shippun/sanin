@@ -390,19 +390,7 @@ class AnimeWatchFragment : Fragment() {
 
     //implement Multi download
 
-    fun multiDelete(episodeNumber: String? = null, n: Int){
-        val episodes = media.anime?.episodes?.values?.toList()
-        val progressEpisodeIndex = episodes?.indexOfFirst { it.number == episodeNumber } ?: 0
-
-        if (progressEpisodeIndex < 0 || n < 1 || episodes == null) return
-
-        val endIndex = minOf(progressEpisodeIndex + n, episodes.size)
-
-        val episodesToDelete = episodes.subList(progressEpisodeIndex, endIndex)
-
-        for (episode in episodesToDelete) {
-            onAnimeEpisodeRemoveDownloadClick(episode.number)
-        }
+    fun multiDelete(episodeNumber: String? = null, n: Int) {
     }
 
     fun onSourceChange(i: Int): AnimeParser {
@@ -584,7 +572,6 @@ class AnimeWatchFragment : Fragment() {
         model.watchSources?.flushText()
         super.onDestroy()
         try {
-            requireContext().unregisterReceiver(downloadStatusReceiver)
         } catch (_: IllegalArgumentException) {
         }
     }

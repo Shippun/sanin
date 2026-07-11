@@ -1815,7 +1815,6 @@ class ExoplayerView :
                                         it.name?.endsWith(
                                             ".${
                                                 Injekt
-                                                    null
                                                     .extension
                                                     ?.extension
                                                     ?.getFileExtension()

@@ -551,7 +551,7 @@ class SelectorDialogFragment : DialogFragment() {
                 "startExo no launch"
             )
         }
-    }
+    
 
     private fun stopAddingToList() {
         episode?.extractorCallback = null
@@ -788,4 +788,3 @@ null,
         super.onDestroyView()
         _binding = null
     }
-}
