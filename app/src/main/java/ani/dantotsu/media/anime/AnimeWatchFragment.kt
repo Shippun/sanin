@@ -109,19 +109,7 @@ class AnimeWatchFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val intentFilter = IntentFilter().apply {
-            addAction(ACTION_DOWNLOAD_STARTED)
-            addAction(ACTION_DOWNLOAD_FINISHED)
-            addAction(ACTION_DOWNLOAD_FAILED)
-            addAction(ACTION_DOWNLOAD_PROGRESS)
-        }
-
-        ContextCompat.registerReceiver(
-            requireContext(),
-            downloadStatusReceiver,
-            intentFilter,
-            ContextCompat.RECEIVER_EXPORTED
-        )
+        // download receiver removed
 
 
         binding.mediaSourceRecycler.updatePadding(bottom = binding.mediaSourceRecycler.paddingBottom + navBarHeight)
@@ -143,9 +131,9 @@ class AnimeWatchFragment : Fragment() {
                         1 -> 2
                         2 -> 1
                         else -> maxGridSize
-                    }
-                }
-            }
+        
+    
+
         }
 
         binding.mediaSourceRecycler.layoutManager = gridLayoutManager
@@ -173,10 +161,10 @@ class AnimeWatchFragment : Fragment() {
                 if (position > 2) {
                     binding.ScrollTop.translationY = -(navBarHeight + 12.toPx).toFloat()
                     binding.ScrollTop.visibility = View.VISIBLE
-                } else {
+     else {
                     binding.ScrollTop.visibility = View.GONE
-                }
-            }
+    
+
         })
         model.scrolledToTop.observe(viewLifecycleOwner) {
             if (it) binding.mediaSourceRecycler.scrollToPosition(0)
@@ -188,8 +176,8 @@ class AnimeWatchFragment : Fragment() {
                 if (this::media.isInitialized) {
                     if (it.anime != null && it.anime?.episodes == null) {
                         it.anime?.episodes = media.anime?.episodes
-                    }
-                }
+        
+    
                 media = it
                 media.selected = model.loadSelected(media)
 
@@ -198,22 +186,22 @@ class AnimeWatchFragment : Fragment() {
                     if (!logoUrl.isNullOrBlank()) {
                         binding.mediaWatchLogo.visibility = View.VISIBLE
                         binding.mediaWatchLogo.loadImage(logoUrl)
-                    } else {
+         else {
                         binding.mediaWatchTitle.visibility = View.VISIBLE
                         binding.mediaWatchTitle.text = media.userPreferredName ?: media.name
-                    }
-                }
+        
+    
                 if (!PrefManager.getVal<Boolean>(PrefName.SmartSourcePersistence)) {
                     if (media.selected != null) {
                         media.selected!!.sourceIndex = 0
                         media.selected!!.server = null
-                    }
-                }
+        
+    
                 if (media.format == "LOCAL") {
                     val localSourceIndex = AnimeSources.list.indexOfFirst { parser -> parser.name == "Local" }
                         .takeIf { parserIndex -> parserIndex >= 0 } ?: 0
                     media.selected!!.sourceIndex = localSourceIndex
-                }
+    
 
                 subscribed =
                     SubscriptionHelper.getSubscriptions().containsKey(media.id)
@@ -237,7 +225,7 @@ class AnimeWatchFragment : Fragment() {
                             media,
                             this,
                             offlineMode = offlineMode
-                        )
+        
 
                     binding.mediaSourceRecycler.adapter =
                         ConcatAdapter(headerAdapter, episodeAdapter)
@@ -248,20 +236,20 @@ class AnimeWatchFragment : Fragment() {
                         val isLocal = model.watchSources!!.list.getOrNull(media.selected!!.sourceIndex)?.name == "Local"
                         if (offline && !isLocal) {
                             media.selected!!.sourceIndex = model.watchSources!!.list.lastIndex
-                        }
+            
                         // Load episodes immediately — don't block on metadata APIs
                         model.loadEpisodes(media, media.selected!!.sourceIndex)
                         if (!offline && !isLocal) {
                             launch { model.fetchKitsuEpisodes(media) }
                             launch { model.fetchAnifyEpisodes(media.id) }
                             launch { model.fetchFillerEpisodes(media) }
-                        }
-                    }
+            
+        
                     loaded = true
-                } else {
+     else {
                     reload()
-                }
-            }
+    
+
         }
         model.getEpisodes().observe(viewLifecycleOwner) { loadedEpisodes ->
             if (loadedEpisodes != null) {
@@ -279,7 +267,7 @@ class AnimeWatchFragment : Fragment() {
                         (divisions < 25) -> 25
                         (divisions < 50) -> 50
                         else -> 100
-                    }
+        
                     headerAdapter.clearChips()
                     if (total > limit) {
                         val arr = media.anime!!.episodes!!.keys.toTypedArray()
@@ -293,33 +281,33 @@ class AnimeWatchFragment : Fragment() {
                             arr,
                             (1..stored).toList().toTypedArray(),
                             position
-                        )
-                    }
+        
+        
 
                     headerAdapter.subscribeButton(true)
                     reload()
-                }
-            }
+    
+
         }
 
         model.getKitsuEpisodes().observe(viewLifecycleOwner) { i ->
-            if (i != null) {
+
                 media.anime?.kitsuEpisodes = i
                 refreshEpisodes()
-            }
+
         }
 
         model.getFillerEpisodes().observe(viewLifecycleOwner) { i ->
-            if (i != null) {
+
                 media.anime?.fillerEpisodes = i
                 refreshEpisodes()
-            }
+
         }
         model.getAnifyEpisodes().observe(viewLifecycleOwner) { i ->
-            if (i != null) {
+
                 media.anime?.anifyEpisodes = i
                 refreshEpisodes()
-            }
+
         }
     }
 
@@ -331,8 +319,8 @@ class AnimeWatchFragment : Fragment() {
                     val fillerEp = media.anime!!.fillerEpisodes!![i]
                     episode.filler = fillerEp?.filler ?: false
                     episode.date = fillerEp?.date ?: episode.date
-                }
-            }
+    
+
 
             val applyKitsu = {
                 if (media.anime?.kitsuEpisodes != null) {
@@ -340,9 +328,9 @@ class AnimeWatchFragment : Fragment() {
                         val kitsuEp = media.anime!!.kitsuEpisodes!![i]
                         episode.desc = kitsuEp?.desc ?: episode.desc
                         episode.thumb = kitsuEp?.thumb ?: episode.thumb
-                    }
-                }
-            }
+        
+    
+
 
             val applyAniZip = {
                 if (media.anime?.anifyEpisodes != null) {
@@ -354,25 +342,25 @@ class AnimeWatchFragment : Fragment() {
                         val airDate = anifyEp?.extra?.get("airDate")
                         if (!airDate.isNullOrBlank()) {
                             episode.date = airDate.substringBefore("T")
-                        }
-                    }
-                }
-            }
+            
+        
+    
+
 
             if (metadataPriority == 0) {
                 applyAniZip()
                 applyKitsu()
-            } else {
+ else {
                 applyKitsu()
                 applyAniZip()
-            }
+
 
             val anilistThumb = media.streamingEpisodes?.firstOrNull { se ->
                 se.title?.matches(Regex("""Episode\s*$i[\s:.,]?""", RegexOption.IGNORE_CASE)) == true
-            }?.thumbnail
+?.thumbnail
             if (anilistThumb != null) {
                 episode.thumb = FileUrl(anilistThumb)
-            }
+
 
             val anifyTitle = cleanTitle(media.anime?.anifyEpisodes?.get(i)?.title)
             val kitsuTitle = cleanTitle(media.anime?.kitsuEpisodes?.get(i)?.title)
@@ -399,22 +387,7 @@ class AnimeWatchFragment : Fragment() {
         return "Episode $parsedNumber"
     }
 
-    //implement Multi download
-
-
     fun multiDelete(episodeNumber: String? = null, n: Int){
-        val episodes = media.anime?.episodes?.values?.toList()
-        val progressEpisodeIndex = episodes?.indexOfFirst { it.number == episodeNumber } ?: 0
-
-        if (progressEpisodeIndex < 0 || n < 1 || episodes == null) return
-
-        val endIndex = minOf(progressEpisodeIndex + n, episodes.size)
-
-        val episodesToDelete = episodes.subList(progressEpisodeIndex, endIndex)
-
-        for (episode in episodesToDelete) {
-            onAnimeEpisodeRemoveDownloadClick(episode.number)
-        }
     }
 
     fun onSourceChange(i: Int): AnimeParser {
@@ -491,7 +464,7 @@ class AnimeWatchFragment : Fragment() {
                 activity.findViewById<CardView>(R.id.mediaClose).isVisible = show
                 activity.findViewById<View>(R.id.mediaNavPills)?.isVisible = show
                 activity.findViewById<FrameLayout>(R.id.fragmentExtensionsContainer).isGone = show
-            }
+
         }
         var itemSelected = false
         val allSettings = pkg.sources.filterIsInstance<ConfigurableAnimeSource>()
@@ -512,38 +485,38 @@ class AnimeWatchFragment : Fragment() {
                                     AnimeSourcePreferencesFragment().getInstance(selectedSetting) {
                                         changeUIVisibility(true)
                                         loadEpisodes(media.selected!!.sourceIndex, true)
-                                    }
+                        
                                 parentFragmentManager.beginTransaction()
                                     .setCustomAnimations(R.anim.slide_up, R.anim.slide_down)
                                     .replace(R.id.fragmentExtensionsContainer, fragment)
                                     .addToBackStack(null)
                                     .commit()
                                 changeUIVisibility(false)
-                            }
-                        }
+                
+            
                         onDismiss {
                             if (!itemSelected) {
                                 changeUIVisibility(true)
-                            }
-                        }
+                
+            
                         show()
-                    }
-            } else {
+        
+ else {
                 requireActivity().runOnUiThread {
                     val fragment =
                         AnimeSourcePreferencesFragment().getInstance(selectedSetting) {
                             changeUIVisibility(true)
                             loadEpisodes(media.selected!!.sourceIndex, true)
-                        }
+            
                     parentFragmentManager.beginTransaction().apply {
                         setCustomAnimations(R.anim.slide_up, R.anim.slide_down)
                         replace(R.id.fragmentExtensionsContainer, fragment)
                         addToBackStack(null)
                         commit()
-                    }
+        
                     changeUIVisibility(false)
-                }
-            }
+    
+
         } else {
             Toast.makeText(requireContext(), "Source is not configurable", Toast.LENGTH_SHORT)
                 .show()
@@ -561,206 +534,3 @@ class AnimeWatchFragment : Fragment() {
 
 
     @OptIn(UnstableApi::class)
-    fun onAnimeEpisodeRemoveDownloadClick(i: String) {
-        downloadManager.removeDownload(,
-                i,
-                MediaType.ANIME
-            )
-        ) {
-            PrefManager.getAnimeDownloadPreferences().edit().remove(taskName).apply()
-            episodeAdapter.deleteDownload(i)
-        }
-    }
-
-    @kotlin.OptIn(DelicateCoroutinesApi::class)
-    fun fixDownload(i: String) {
-        toast(R.string.running_fixes)
-        launchIO {
-            try {
-                val context = context ?: throw Exception("Context is null")
-                val directory =
-                    getSubDirectory(context, MediaType.ANIME, false, media.mainName(), i)
-                        ?: throw Exception("Directory is null")
-                val files = directory.listFiles()
-                val videoFiles = files.filter { it.extension == "mp4" || it.extension == "mkv" }
-                if (videoFiles.size != 1) {
-                    val biggest =
-                        videoFiles.filter { it.length() > 1000 }.maxByOrNull { it.length() }
-                            ?: throw Exception("No video files found")
-                    val newName =
-                                    "" + "." + biggest.extension
-                    videoFiles.forEach {
-                        if (it != biggest) {
-                            it.delete()
-                        }
-                    }
-                    if (newName != biggest.name) {
-                        biggest.renameTo(newName)
-                    }
-                    toast(context.getString(R.string.success) + " (1)")
-                } else {
-                    val extension = ffExtension.getFileExtension()
-                    val tempFile =
-                        directory.createFile(extension.second, "temp.${extension.first}")
-                            ?: throw Exception("Temp file is null")
-                    val tempPath = ffExtension.setDownloadPath(
-                        context,
-                        tempFile.uri
-                    )
-                    val videoPath = ffExtension.getReadPath(
-                        context,
-                        videoFiles[0].uri
-                    )
-
-                    val id = ffExtension.customFFMpeg(
-                        "1", listOf(videoPath, tempPath)
-                    ) { log ->
-                        Logger.log(log)
-                    }
-                    val timeOut = System.currentTimeMillis() + 1000 * 60 * 10
-                    while (ffExtension.getState(id) != "COMPLETED") {
-                        if (ffExtension.getState(id) == "FAILED") {
-                            Logger.log("Failed to fix download")
-                            ffExtension.getStackTrace(id)?.let {
-                                Logger.log(it)
-                            }
-                            toast(R.string.failed_to_fix)
-                            return@launchIO
-                        }
-                        if (System.currentTimeMillis() > timeOut) {
-                            Logger.log("Failed to fix download: Timeout")
-                            toast(R.string.failed_to_fix)
-                            return@launchIO
-                        }
-                    }
-                    if (ffExtension.hadError(id)) {
-                        Logger.log("Failed to fix download: ${ffExtension.getStackTrace(id)}")
-                        toast(R.string.failed_to_fix)
-                        return@launchIO
-                    }
-                    val name = videoFiles[0].name
-                    if (videoFiles[0].delete().not()) {
-                        toast(R.string.delete_fail)
-                        return@launchIO
-                    }
-                    tempFile.renameTo(name!!)
-                    toast(context.getString(R.string.success) + " (2)")
-                }
-            } catch (e: Exception) {
-                toast(getString(R.string.error_msg, e.message))
-                Logger.log(e)
-            }
-        }
-    }
-
-    private val downloadStatusReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context, intent: Intent) {
-            if (!this@AnimeWatchFragment::episodeAdapter.isInitialized) return
-            when (intent.action) {
-                ACTION_DOWNLOAD_STARTED -> {
-                    val chapterNumber = intent.getStringExtra(EXTRA_EPISODE_NUMBER)
-                    val mediaId = intent.getIntExtra("mediaId", -1)
-                    if (mediaId != media.id) return
-                    chapterNumber?.let { episodeAdapter.startDownload(it) }
-                }
-
-                ACTION_DOWNLOAD_FINISHED -> {
-                    val chapterNumber = intent.getStringExtra(EXTRA_EPISODE_NUMBER)
-                    val mediaId = intent.getIntExtra("mediaId", -1)
-                    val size = intent.getDoubleExtra("size", 0.0)
-                    if (mediaId != media.id) return
-                    chapterNumber?.let { episodeAdapter.addToDownloadedEpisodes(it, size) }
-                }
-
-                ACTION_DOWNLOAD_FAILED -> {
-                    val chapterNumber = intent.getStringExtra(EXTRA_EPISODE_NUMBER)
-                    val mediaId = intent.getIntExtra("mediaId", -1)
-                    if (mediaId != media.id) return
-                    chapterNumber?.let {
-                        episodeAdapter.purgeDownload(it)
-                    }
-                }
-
-                ACTION_DOWNLOAD_PROGRESS -> {
-                    val chapterNumber = intent.getStringExtra(EXTRA_EPISODE_NUMBER)
-                    val progress = intent.getIntExtra("progress", 0)
-                    val mediaId = intent.getIntExtra("mediaId", -1)
-                    val downloadedBytes = intent.getLongExtra(EXTRA_DOWNLOADED_BYTES, -1L)
-                    val estimatedTotalBytes = intent.getLongExtra(EXTRA_ESTIMATED_TOTAL_BYTES, -1L)
-                    if (mediaId != media.id) return
-                    chapterNumber?.let {
-                        episodeAdapter.updateDownloadProgress(
-                            it,
-                            progress,
-                            downloadedBytes,
-                            estimatedTotalBytes
-                        )
-                    }
-                }
-            }
-        }
-    }
-
-    @SuppressLint("NotifyDataSetChanged")
-    private fun reload() {
-        val selected = model.loadSelected(media)
-
-        // Find latest episode for subscription
-        selected.latest =
-            media.anime?.episodes?.values?.maxOfOrNull { it.number.toFloatOrNull() ?: 0f } ?: 0f
-        selected.latest =
-            media.userProgress?.toFloat()?.takeIf { selected.latest < it } ?: selected.latest
-
-        model.saveSelected(media.id, selected)
-        headerAdapter.handleEpisodes()
-        val isDownloaded = model.watchSources!!.isDownloadedSource(media.selected!!.sourceIndex)
-        episodeAdapter.offlineMode = isDownloaded
-        var arr: ArrayList<Episode> = arrayListOf()
-        if (media.anime!!.episodes != null) {
-            val end = if (end != null && end!! < media.anime!!.episodes!!.size) end else null
-            arr.addAll(
-                media.anime!!.episodes!!.values.toList()
-                    .slice(start..(end ?: (media.anime!!.episodes!!.size - 1)))
-            )
-            if (reverse)
-                arr = (arr.reversed() as? ArrayList<Episode>) ?: arr
-        }
-        episodeAdapter.arr = arr
-        episodeAdapter.updateType(style ?: PrefManager.getVal(PrefName.AnimeDefaultView))
-        episodeAdapter.notifyDataSetChanged()
-    }
-
-    override fun onDestroy() {
-        model.watchSources?.flushText()
-        super.onDestroy()
-        try {
-            requireContext().unregisterReceiver(downloadStatusReceiver)
-        } catch (_: IllegalArgumentException) {
-        }
-    }
-
-    var state: Parcelable? = null
-    override fun onResume() {
-        super.onResume()
-        binding.mediaInfoProgressBar.visibility = progress
-        binding.mediaSourceRecycler.layoutManager?.onRestoreInstanceState(state)
-
-        requireActivity().setNavigationTheme()
-    }
-
-    override fun onPause() {
-        super.onPause()
-        state = binding.mediaSourceRecycler.layoutManager?.onSaveInstanceState()
-    }
-
-    companion object {
-        const val ACTION_DOWNLOAD_STARTED = "ani.dantotsu.ACTION_DOWNLOAD_STARTED"
-        const val ACTION_DOWNLOAD_FINISHED = "ani.dantotsu.ACTION_DOWNLOAD_FINISHED"
-        const val ACTION_DOWNLOAD_FAILED = "ani.dantotsu.ACTION_DOWNLOAD_FAILED"
-        const val ACTION_DOWNLOAD_PROGRESS = "ani.dantotsu.ACTION_DOWNLOAD_PROGRESS"
-        const val EXTRA_EPISODE_NUMBER = "extra_episode_number"
-        const val EXTRA_DOWNLOADED_BYTES = "extra_downloaded_bytes"
-        const val EXTRA_ESTIMATED_TOTAL_BYTES = "extra_estimated_total_bytes"
-    }
-
-}

@@ -21,8 +21,7 @@ object AnimeSources : WatchSources() {
         // Initialize with the first value from StateFlow
         val initialExtensions = fromExtensions.first()
         list = createParsersFromExtensions(initialExtensions) + listOf(
-            Lazier({ LocalAnimeParser() }, "Local"),
-            Lazier({ OfflineAnimeParser() }, "Downloaded")
+            Lazier({ LocalAnimeParser() }, "Local")
         )
         isInitialized = true
 
@@ -31,17 +30,15 @@ object AnimeSources : WatchSources() {
                 createParsersFromExtensions(extensions),
                 pinnedAnimeSources
             ) + listOf(
-                Lazier({ LocalAnimeParser() }, "Local"),
-                Lazier({ OfflineAnimeParser() }, "Downloaded")
+                Lazier({ LocalAnimeParser() }, "Local")
             )
         }
     }
 
     fun performReorderAnimeSources() {
-        list = list.filter { it.name != "Local" && it.name != "Downloaded" }
+        list = list.filter { it.name != "Local" }
         list = sortPinnedAnimeSources(list, pinnedAnimeSources) + listOf(
-            Lazier({ LocalAnimeParser() }, "Local"),
-            Lazier({ OfflineAnimeParser() }, "Downloaded")
+            Lazier({ LocalAnimeParser() }, "Local")
         )
     }
 

@@ -440,13 +440,13 @@ class EpisodeAdapter(
                             setTitle("Delete Episode")
                             setMessage("Are you sure you want to delete Episode $episodeNumber?")
                             setPosButton(R.string.yes) {
-                                fragment.onAnimeEpisodeRemoveDownloadClick(episodeNumber)
+        
                             }
                             setNegButton(R.string.no)
                         }.show()
                         return@setOnClickListener
                     } else {
-                        fragment.onAnimeEpisodesDownload(arrayListOf(episodeNumber))
+
                     }
                 }
             }
@@ -454,7 +454,7 @@ class EpisodeAdapter(
                 if (0 <= bindingAdapterPosition && bindingAdapterPosition < arr.size) {
                     val episodeNumber = arr[bindingAdapterPosition].number
                     if (downloadedEpisodes.contains(episodeNumber)) {
-                        //fragment.fixDownload(episodeNumber)
+
                         fragment.requireContext().customAlertDialog().apply {
                             setTitle("Multi Episode Deleter")
                             setMessage("Enter the number of episodes to delete")
@@ -487,7 +487,7 @@ class EpisodeAdapter(
                             input.value = 1
                             setCustomView(input)
                             setPosButton(R.string.ok) {
-                                fragment.multiDownload(episodeNumber, input.value)
+
                             }
                             setNegButton(R.string.cancel)
                             show()

@@ -35,7 +35,7 @@ import ani.dantotsu.others.LanguageMapper
 import ani.dantotsu.others.webview.CookieCatcher
 import ani.dantotsu.parsers.AnimeSources
 import ani.dantotsu.parsers.DynamicAnimeParser
-import ani.dantotsu.parsers.OfflineAnimeParser
+// OfflineAnimeParser removed
 import ani.dantotsu.parsers.WatchSources
 import ani.dantotsu.px
 import ani.dantotsu.settings.FAQActivity
@@ -409,7 +409,7 @@ class AnimeWatchAdapter(
                     setPosButton("OK") {
                         if (run) fragment.onIconPressed(style, reversed)
                         if (downloadNo.text.toString() != "0") {
-                            fragment.multiDownload(n = downloadNo.text.toString().toInt())
+
                         }
                         if (refresh) fragment.loadEpisodes(source, true)
                     }
@@ -581,7 +581,7 @@ class AnimeWatchAdapter(
 
                 val sourceFound = media.anime.episodes!!.isNotEmpty()
                 val isDownloadedSource =
-                    watchSources[media.selected!!.sourceIndex] is OfflineAnimeParser
+                    false
 
                 if (isDownloadedSource) {
                     binding.sourceNotFound.text = if (sourceFound) {
