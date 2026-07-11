@@ -30,6 +30,7 @@ import kotlinx.coroutines.launch
 import android.widget.NumberPicker
 import ani.dantotsu.currContext
 
+
 fun handleProgress(cont: LinearLayout, bar: View, empty: View, mediaId: Int, ep: String) {
     val curr = PrefManager.getNullableCustomVal("${mediaId}_${ep}", null, Long::class.java)
     val max = PrefManager.getNullableCustomVal("${mediaId}_${ep}_max", null, Long::class.java)
@@ -316,10 +317,8 @@ class EpisodeAdapter(
     private val downloadedEpisodes = mutableSetOf<String>()
 
     fun startDownload(episodeNumber: String) {
-        if (downloadedEpisodes.contains(episodeNumber) ||
-            false)
+        if (downloadedEpisodes.contains(episodeNumber))
                 return
-        // Find the position of the chapter and notify only that item
         val position = arr.indexOfFirst { it.number == episodeNumber }
         if (position != -1) {
             arr[position].downloadProgress = ""
@@ -327,7 +326,6 @@ class EpisodeAdapter(
         }
     }
 
-    @OptIn(UnstableApi::class)
     fun addToDownloadedEpisodes(episodeNumber: String, size: Double) {
         downloadedEpisodes.add(episodeNumber)
         // Find the position of the chapter and notify only that item
@@ -424,8 +422,6 @@ class EpisodeAdapter(
 
     inner class EpisodeListViewHolder(val binding: ItemEpisodeListBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        private val activeCoroutines = mutableSetOf<String>()
-
         init {
             itemView.isFocusable = true
             FocusEffectUtil.applyFocusListener(itemView)
@@ -433,70 +429,9 @@ class EpisodeAdapter(
                 if (bindingAdapterPosition < arr.size && bindingAdapterPosition >= 0)
                     fragment.onEpisodeClick(arr[bindingAdapterPosition].number)
             }
-            binding.itemDownload.setOnClickListener {
-                if (0 <= bindingAdapterPosition && bindingAdapterPosition < arr.size) {
-                    val episodeNumber = arr[bindingAdapterPosition].number else if (downloadedEpisodes.contains(episodeNumber)) {
-                        binding.root.context.customAlertDialog().apply {
-                            setTitle("Delete Episode")
-                            setMessage("Are you sure you want to delete Episode $episodeNumber?")
-                            setPosButton(R.string.yes) {
-        
-                            }
-                            setNegButton(R.string.no)
-                        }.show()
-                        return@setOnClickListener
-                    } else {
-
-                    }
-                }
-            }
-            binding.itemDownload.setOnLongClickListener {
-                if (0 <= bindingAdapterPosition && bindingAdapterPosition < arr.size) {
-                    val episodeNumber = arr[bindingAdapterPosition].number
-                    if (downloadedEpisodes.contains(episodeNumber)) {
-
-                        fragment.requireContext().customAlertDialog().apply {
-                            setTitle("Multi Episode Deleter")
-                            setMessage("Enter the number of episodes to delete")
-                            val input = NumberPicker(currContext())
-                            input.minValue = 1
-                            input.maxValue = itemCount - bindingAdapterPosition
-                            input.value = 1
-                            setCustomView(input)
-                            setPosButton(R.string.ok) {
-                                binding.root.context.customAlertDialog().apply {
-                                    setTitle("Delete Episodes")
-                                    setMessage("Are you sure you want to delete Episodes $episodeNumber -> ${arr[bindingAdapterPosition + input.value - 1].number}?")
-                                    setPosButton(R.string.yes) {
-                                        fragment.multiDelete(episodeNumber, input.value)
-                                    }
-                                    setNegButton(R.string.no)
-                                }.show()
-                            }
-                            setNegButton(R.string.cancel)
-                            show()
-                        }
-                    }
-                    else {
-                        fragment.requireContext().customAlertDialog().apply {
-                            setTitle("Multi Episode Downloader")
-                            setMessage("Enter the number of episodes to download")
-                            val input = NumberPicker(currContext())
-                            input.minValue = 1
-                            input.maxValue = itemCount - bindingAdapterPosition
-                            input.value = 1
-                            setCustomView(input)
-                            setPosButton(R.string.ok) {
-
-                            }
-                            setNegButton(R.string.cancel)
-                            show()
-                        }
-                    }
-                }
-
-                true
-            }
+            binding.itemDownload.visibility = View.GONE
+            binding.itemDownload.setOnClickListener {}
+            binding.itemDownload.setOnLongClickListener { true }
             binding.itemEpisodeDesc.setOnClickListener {
                 if (binding.itemEpisodeDesc.maxLines == 3)
                     binding.itemEpisodeDesc.maxLines = 100
@@ -506,56 +441,10 @@ class EpisodeAdapter(
         }
 
         fun bind(episodeNumber: String, progress: String?, desc: String?) {
-            if (progress != null) {
-                binding.itemEpisodeDesc.visibility = View.GONE
-                if(progress == "")
-                    binding.itemDownloadStatus.visibility = View.GONE
-                else
-                    binding.itemDownloadStatus.visibility = View.VISIBLE
-                binding.itemDownloadStatus.text = progress
-            } else {
-                binding.itemDownloadStatus.visibility = View.GONE
-                binding.itemDownloadStatus.text = ""
-            }
-            if (media.format == "LOCAL") {
-                binding.itemDownload.visibility = View.GONE
-            } else {
-                binding.itemDownload.visibility = View.VISIBLE else if (downloadedEpisodes.contains(episodeNumber)) {
-                    binding.itemEpisodeDesc.visibility = View.GONE
-                    binding.itemDownloadStatus.visibility = View.VISIBLE
-                   
-                    binding.itemDownload.setImageResource(R.drawable.ic_circle_check)
-                    binding.itemDownload.postDelayed({
-                        binding.itemDownload.setImageResource(R.drawable.ic_round_delete_24)
-                        binding.itemDownload.rotation = 0f
-                    }, 1000)
-                } else {
-                    binding.itemDownloadStatus.visibility = View.GONE
-                    binding.itemEpisodeDesc.visibility =
-                        if (desc != null && desc.trim(' ') != "") View.VISIBLE else View.GONE
-                  
-                    binding.itemDownload.setImageResource(R.drawable.ic_download_24)
-                    binding.itemDownload.rotation = 0f
-                }
-            }
-
-        }
-
-        private fun startOrContinueRotation(episodeNumber: String, resetRotation: () -> Unit) {
-            if (!isRotationCoroutineRunningFor(episodeNumber)) {
-                val scope = fragment.lifecycle.coroutineScope
-                scope.launch {
-                    // Add chapter number to active coroutines set
-                    activeCoroutines.add(episodeNumber)
-                    // Remove chapter number from active coroutines set
-                    activeCoroutines.remove(episodeNumber)
-                    resetRotation()
-                }
-            }
-        }
-
-        private fun isRotationCoroutineRunningFor(episodeNumber: String): Boolean {
-            return episodeNumber in activeCoroutines
+            binding.itemDownload.visibility = View.GONE
+            binding.itemDownloadStatus.visibility = View.GONE
+            binding.itemEpisodeDesc.visibility =
+                if (desc != null && desc.trim(' ') != "") View.VISIBLE else View.GONE
         }
     }
 
