@@ -2797,7 +2797,7 @@ class ExoplayerView :
                     }
                 }
                 pauseMetadataTimer = timer
-                handler.postDelayed(timer, 3500L)
+                handler.postDelayed(timer, 4500L)
             } else {
                 pauseOverlay.animate().alpha(0f).setDuration(200).withEndAction {
                     pauseOverlay.visibility = View.GONE
