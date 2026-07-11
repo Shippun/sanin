@@ -487,10 +487,7 @@ class VideoServerPassthrough(private val videoServer: VideoServer) : VideoExtrac
                 format = VideoType.CONTAINER
             }
         } catch (malformed: MalformedURLException) {
-            /* torrent removed */
-                format = VideoType.CONTAINER
-            else
-                throw malformed
+            throw malformed
         }
         val headersMap: Map<String, String> =
             aniVideo.headers?.toMultimap()?.mapValues { it.value.joinToString() } ?: mapOf()
