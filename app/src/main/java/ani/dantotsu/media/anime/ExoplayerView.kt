@@ -1795,59 +1795,6 @@ class ExoplayerView :
             }
 
         val downloadedMediaItem: Any? = null
-                            ?.request
-                            ?.toMediaItem()
-                    } else {
-                        null
-                    }
-                if (exoItem != null) {
-                    exoItem
-                } else {
-                    val directory =
-                        getSubDirectory(this, MediaType.ANIME, false, titleName, episodeName)
-                    if (directory != null) {
-                        val files = directory.listFiles()
-                        println(files)
-                        val docFile =
-                            directory.listFiles().firstOrNull {
-                                it.name?.endsWith(".mp4") == true ||
-                                        it.name?.endsWith(".mkv") == true ||
-                                        it.name?.endsWith(
-                                            ".${
-                                                Injekt
-                                                    .extension
-                                                    ?.extension
-                                                    ?.getFileExtension()
-                                                    ?.first ?: "ts"
-                                            }",
-                                        ) ==
-                                        true
-                            }
-                        if (docFile != null) {
-                            val uri = docFile.uri
-                            val downloadedMimeType =
-                                when (docFile.extension) {
-                                    "mp4" -> MimeTypes.APPLICATION_MP4
-                                    "mkv" -> MimeTypes.APPLICATION_MATROSKA
-                                    else -> MimeTypes.APPLICATION_MP4
-                                }
-                            MediaItem
-                                .Builder()
-                                .setUri(uri)
-                                .setMimeType(downloadedMimeType)
-                                .build()
-                        } else {
-                            snackString("File not found")
-                            null
-                        }
-                    } else {
-                        snackString("Directory not found")
-                        null
-                    }
-                }
-            } else {
-                null
-            }
 
         mediaItem =
             if (downloadedMediaItem == null) {
