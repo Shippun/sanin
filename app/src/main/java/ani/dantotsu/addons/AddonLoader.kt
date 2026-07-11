@@ -29,8 +29,7 @@ class AddonLoader {
         fun loadExtension(
             context: Context,
             packageName: String,
-            className: String,
-            type: String
+            className: String
         ): LoadResult? {
             val pkgManager = context.packageManager
 
@@ -89,9 +88,7 @@ class AddonLoader {
             }
             val instance = loadedClass.getDeclaredConstructor().newInstance()
 
-            return when (type) {
-                else -> null
-            }
+            return null
         }
 
         /**
@@ -101,12 +98,12 @@ class AddonLoader {
          * @param type the type of extension
          * @return the loaded extension
          */
-        fun loadFromPkgName(context: Context, packageName: String, type: String): LoadResult? {
+        fun loadFromPkgName(context: Context, packageName: String): LoadResult? {
             return try {
                 loadExtension(
                     context,
                     packageName,
-                    type
+                    ""
                 )
             } catch (e: Exception) {
                 Logger.log("Error loading extension from package name: $packageName")
