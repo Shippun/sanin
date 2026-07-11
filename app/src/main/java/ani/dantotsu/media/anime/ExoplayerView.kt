@@ -1794,26 +1794,9 @@ class ExoplayerView :
                 else -> MimeTypes.APPLICATION_MP4
             }
 
-        val downloadedMediaItem: Any? = null
-
-        mediaItem =
-            if (downloadedMediaItem == null) {
-                val builder = MediaItem.Builder().setUri(video!!.file.url).setMimeType(mimeType)
-                Logger.log("url: ${video!!.file.url}")
-                Logger.log("mimeType: $mimeType")
-                builder.setSubtitleConfigurations(sub)
-                builder.build()
-            } else {
-                if (sub.isNotEmpty()) {
-                    val addedSubsDownloadedMediaItem = downloadedMediaItem.buildUpon()
-                    val addLanguage = sub[0].buildUpon().setLanguage("en").build()
-                    addedSubsDownloadedMediaItem.setSubtitleConfigurations(listOf(addLanguage))
-                    episode.selectedSubtitle = 0
-                    addedSubsDownloadedMediaItem.build()
-                } else {
-                    downloadedMediaItem
-                }
-            }
+        mediaItem = MediaItem.Builder().setUri(video!!.file.url).setMimeType(mimeType)
+            .setSubtitleConfigurations(sub)
+            .build()
 
         val audioMediaItem = mutableListOf<MediaItem>()
         audioLanguages.clear()

@@ -462,9 +462,10 @@ class SelectorDialogFragment : DialogFragment() {
     @OptIn(DelicateCoroutinesApi::class)
     @SuppressLint("UnsafeOptInUsageError")
     fun startExoplayer(media: Media) {
+    @OptIn(DelicateCoroutinesApi::class)
+    @SuppressLint("UnsafeOptInUsageError")
+    fun startExoplayer(media: Media) {
         if (!isAdded || _binding == null) return
-        prevEpisode = null
-
         episode?.let { ep ->
             val video = ep.extractors?.find {
                 it?.server?.name == ep.selectedExtractor
@@ -474,31 +475,29 @@ class SelectorDialogFragment : DialogFragment() {
                     toast(R.string.torrent_addon_not_available)
                     return
                 }
-                        try {
-                            externalPlayerResult.launch(exportMagnetIntent(ep, video))
-                        } catch (e: ActivityNotFoundException) {
-                            val amnis = "com.amnis"
-                            try {
-                                startActivity(
-                                    Intent(
-                                        Intent.ACTION_VIEW,
-                                        Uri.parse("market://details?id=$amnis")
-                                    )
-                                )
-                                dismissAllowingStateLoss()
-                            } catch (e: ActivityNotFoundException) {
-                                startActivity(
-                                    Intent(
-                                        Intent.ACTION_VIEW,
-                                        Uri.parse("https://play.google.com/store/apps/details?id=$amnis")
-                                    )
-                                )
-                            }
-                        }
+                try {
+                    externalPlayerResult.launch(exportMagnetIntent(ep, video))
+                } catch (e: ActivityNotFoundException) {
+                    val amnis = "com.amnis"
+                    try {
+                        startActivity(
+                            Intent(
+                                Intent.ACTION_VIEW,
+                                Uri.parse("market://details?id=$amnis")
+                            )
+                        )
+                        dismissAllowingStateLoss()
+                    } catch (e: ActivityNotFoundException) {
+                        startActivity(
+                            Intent(
+                                Intent.ACTION_VIEW,
+                                Uri.parse("https://play.google.com/store/apps/details?id=$amnis")
+                            )
+                        )
                     }
-                    return
                 }
             }
+            return
         }
 
         dismissAllowingStateLoss()
@@ -514,7 +513,7 @@ class SelectorDialogFragment : DialogFragment() {
                 "startExo no launch"
             )
         }
-    
+    }
 
     private fun stopAddingToList() {
         episode?.extractorCallback = null
