@@ -147,7 +147,7 @@ class AnimeWatchAdapter(
             android.app.AlertDialog.Builder(fragment.requireContext())
                 .setTitle("Select Source")
                 .setItems(sources) { _, i ->
-                    binding.mediaSource.setOnItemClickListener?.onItemClick(null, null, i, 0)
+                    binding.mediaSource.onItemClickListener?.onItemClick(null, null, i, 0)
                     recycler.descendantFocusability = ViewGroup.FOCUS_AFTER_DESCENDANTS
                     recycler.isFocusable = true
                 }
