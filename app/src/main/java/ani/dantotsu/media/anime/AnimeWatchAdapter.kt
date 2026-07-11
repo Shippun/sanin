@@ -218,7 +218,12 @@ class AnimeWatchAdapter(
                 val endIcon = endIconField.get(binding.mediaSourceNameContainer) as? android.widget.ImageButton
                 endIcon?.let {
                     it.isFocusable = true
+                    it.isClickable = true
                     FocusEffectUtil.applyFocusListener(it)
+                    val iconId = View.generateViewId()
+                    it.id = iconId
+                    binding.mediaSourceNameContainer.nextFocusRightId = iconId
+                    binding.mediaSourceSettings.nextFocusLeftId = iconId
                 }
             } catch (e: java.lang.Exception) {}
         }
@@ -226,8 +231,6 @@ class AnimeWatchAdapter(
         FocusEffectUtil.applyFocusListener(binding.mediaSourceSettings, binding.mediaSourceSettings, true)
         FocusEffectUtil.applyFocusListener(binding.mediaSourceSubscribe, binding.mediaSourceSubscribe, true)
         FocusEffectUtil.applyFocusListener(binding.mediaNestedButton, binding.mediaNestedButton, true)
-
-        binding.mediaSourceNameContainer.nextFocusRightId = R.id.mediaSourceSettings
         binding.mediaSourceSettings.nextFocusLeftId = R.id.mediaSourceNameContainer
         binding.mediaNestedButton.nextFocusDownId = R.id.ScrollTop
         binding.mediaSourceSubscribe.nextFocusDownId = R.id.ScrollTop

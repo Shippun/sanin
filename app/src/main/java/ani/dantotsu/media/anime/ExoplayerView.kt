@@ -3399,7 +3399,7 @@ class ExoplayerView :
             pauseOverlay.visibility = View.GONE
             if (!playerView.isControllerFullyVisible) playerView.showController()
             playerView.controllerShowTimeoutMs = PrefManager.getVal<Int>(PrefName.AutoHideTimeout) * 1000
-            if (currentFocus == null) playerView.post { exoPlay.requestFocus() }
+            playerView.post { exoPlay.requestFocus() }
             return
         }
         if (!playerView.isControllerFullyVisible) playerView.showController()
