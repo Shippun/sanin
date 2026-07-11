@@ -21,7 +21,7 @@ import ani.dantotsu.ZoomOutPageTransformer
 import ani.dantotsu.databinding.ActivityNoInternetBinding
 import ani.dantotsu.initActivity
 import ani.dantotsu.navBarHeight
-import ani.dantotsu.offline.LocalFragment
+// LocalFragment removed
 import ani.dantotsu.offline.OfflineFragment
 import ani.dantotsu.selectedOption
 import ani.dantotsu.settings.saving.PrefManager
@@ -105,7 +105,6 @@ class NoInternet : AppCompatActivity() {
 
         override fun createFragment(position: Int): Fragment {
             return when (position) {
-                1 -> LocalFragment()
                 else -> OfflineFragment()
             }
         }
