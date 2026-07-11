@@ -567,7 +567,7 @@ class VideoServerPassthrough(private val videoServer: VideoServer) : VideoExtrac
     private suspend fun findSubtitleType(url: String): SubtitleType {
         val typeFromUrl = findSubtitleTypeFromUrl(url)
         if (typeFromUrl != SubtitleType.UNKNOWN) return typeFromUrl
-        return null
+        return SubtitleType.UNKNOWN
     }
 
     private fun findSubtitleTypeFromUrl(url: String): SubtitleType {

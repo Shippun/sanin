@@ -55,24 +55,6 @@ class SettingsAnimeActivity : AppCompatActivity() {
                         isActivity = true
                     ),
                     Settings(
-                        type = 1,
-                        name = getString(R.string.purge_anime_downloads),
-                        desc = getString(R.string.purge_anime_downloads_desc),
-                        icon = R.drawable.ic_round_delete_24,
-                        onClick = {
-                            context.customAlertDialog().apply {
-                                setTitle(R.string.purge_anime_downloads)
-                                setMessage(R.string.purge_confirm, getString(R.string.anime))
-                                setPosButton(R.string.yes, onClick = {
-                                    downloadsManager.purgeDownloads(MediaType.ANIME)
-                                })
-                                setNegButton(R.string.no)
-                                show()
-                            }
-                        }
-
-                    ),
-                    Settings(
                         type = 2,
                         name = getString(R.string.prefer_dub),
                         desc = getString(R.string.prefer_dub_desc),

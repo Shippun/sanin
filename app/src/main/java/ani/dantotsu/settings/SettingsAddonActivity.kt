@@ -39,7 +39,7 @@ class SettingsAddonActivity : AppCompatActivity() {
                 )
             )
             settingsRecyclerView.layoutManager =
-                LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+                LinearLayoutManager(this@SettingsAddonActivity, LinearLayoutManager.VERTICAL, false)
 
         }
     }
