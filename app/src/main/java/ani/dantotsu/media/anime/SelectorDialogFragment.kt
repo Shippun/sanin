@@ -565,7 +565,7 @@ class SelectorDialogFragment : DialogFragment() {
                             subtitleToDownload = subtitles[which]
                         }
                         setPosButton(R.string.download) {
-                            snackString(R.string.download_unavailable)
+                            snackString("Download unavailable")
                         }
                         setNegButton(R.string.cancel) {}
                     }.show()
@@ -574,7 +574,7 @@ class SelectorDialogFragment : DialogFragment() {
                 }
             }
             binding.urlDownload.setSafeOnClickListener {
-                snackString(R.string.download_unavailable)
+                snackString("Download unavailable")
             }
             if (video.format == VideoType.CONTAINER) {
                 binding.urlSize.isVisible = video.size != null
