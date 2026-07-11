@@ -481,11 +481,6 @@ class MainActivity : AppCompatActivity() {
             AudioHelper.run(this, R.raw.audio)
             PrefManager.setVal(PrefName.OC, false)
         }
-                }
-            }
-        } else {
-            startTorrent()
-        }
     }
 
     override fun dispatchKeyEvent(event: KeyEvent): Boolean {

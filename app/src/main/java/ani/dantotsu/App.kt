@@ -107,10 +107,6 @@ class App : Application() {
             AnimeSources.init(animeExtensionManager.installedExtensionsFlow)
         }
         GlobalScope.launch {
-            torrentAddonManager = Injekt.get()
-            downloadAddonManager = Injekt.get()
-            torrentAddonManager.init()
-            downloadAddonManager.init()
             if (PrefManager.getVal<Int>(PrefName.CommentsEnabled) == 1) {
                 CommentsAPI.fetchAuthToken(this@App)
             }
