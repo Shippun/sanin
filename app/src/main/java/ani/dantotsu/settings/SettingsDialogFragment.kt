@@ -190,9 +190,7 @@ class SettingsDialogFragment : BottomSheetDialogFragment() {
 
                         PageType.ANIME -> {
                             val intent = Intent(currentActivity, NoInternet::class.java)
-                            intent.putExtra(
-                                "FRAGMENT_CLASS_NAME",
-                            )
+                            intent.putExtra("FRAGMENT_CLASS_NAME", "")
                             startActivity(intent)
                         }
 

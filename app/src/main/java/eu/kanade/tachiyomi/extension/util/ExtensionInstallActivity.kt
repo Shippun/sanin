@@ -88,11 +88,6 @@ class ExtensionInstallActivity : AppCompatActivity() {
         }
         if (mediaType == MediaType.ANIME) {
             Injekt.get<AnimeExtensionManager>().updateInstallStep(downloadId, newStep)
-        } else {
-            when (addonType) {
-
-                null -> {}
-            }
         }
     }
 }

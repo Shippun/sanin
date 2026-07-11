@@ -71,7 +71,9 @@ class ExtensionInstallService : Service() {
                 }
             }
         }
-        installer!!.addToQueue(mediaType ?: addonType!!, id, uri)
+        if (mediaType != null) {
+            installer!!.addToQueue(mediaType, id, uri)
+        }
         return START_NOT_STICKY
     }
 

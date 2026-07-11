@@ -20,6 +20,7 @@ import ani.dantotsu.databinding.ActivitySettingsCommonBinding
 import ani.dantotsu.databinding.DialogUserAgentBinding
 import ani.dantotsu.initActivity
 import ani.dantotsu.navBarHeight
+import ani.dantotsu.savePrefsToDownloads
 import ani.dantotsu.restartApp
 import ani.dantotsu.settings.saving.PrefManager
 import ani.dantotsu.settings.saving.PrefName
@@ -177,13 +178,6 @@ class SettingsCommonActivity : AppCompatActivity() {
                         ),
                         Settings(
                             type = 1,
-                                    show()
-                                }
-                            },
-                        ),
-
-                        Settings(
-                            type = 1,
                             name = getString(R.string.backup_restore),
                             desc = getString(R.string.backup_restore_desc),
                             icon = R.drawable.backup_restore,
@@ -234,23 +228,6 @@ class SettingsCommonActivity : AppCompatActivity() {
                                         }
                                     }
                                     setNeutralButton(R.string.cancel) {}
-                                    show()
-                                }
-                            },
-                        ),
-                        Settings(
-                            type = 1, else {
-                                                            toast(message)
-                                                        }
-                                                    }
-                                                }
-                                            } else {
-                                                toast(getString(R.string.error))
-                                            }
-                                        }
-                                        launcher.launch()
-                                    }
-                                    setNegButton(R.string.cancel)
                                     show()
                                 }
                             },

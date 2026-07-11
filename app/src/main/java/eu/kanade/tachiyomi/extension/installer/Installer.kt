@@ -64,9 +64,6 @@ abstract class Installer(private val service: Service) {
     open fun processEntry(entry: Entry) {
         if (entry.type is MediaType) {
             animeExtensionManager.setInstalling(entry.downloadId)
-        } else {
-            when (entry.type) {
-}
         }
     }
 
@@ -96,17 +93,7 @@ abstract class Installer(private val service: Service) {
                     resultStep
                 )
             } else {
-                when (completedEntry.type) {
-                    /* torrent removed */
-                        completedEntry.downloadId,
-                        resultStep
-                    )
-
-                    /* download removed */
-                        completedEntry.downloadId,
-                        resultStep
-                    )
-                }
+                // addon install step removed
             }
             checkQueue()
         }
@@ -147,17 +134,7 @@ abstract class Installer(private val service: Service) {
                     InstallStep.Error
                 )
             } else {
-                when (it.type) {
-                    /* torrent removed */
-                        it.downloadId,
-                        InstallStep.Error
-                    )
-
-                    /* download removed */
-                        it.downloadId,
-                        InstallStep.Error
-                    )
-                }
+                // addon error step removed
             }
         }
         queue.clear()
@@ -187,17 +164,7 @@ abstract class Installer(private val service: Service) {
                 }
                 manager?.updateInstallStep(downloadId, InstallStep.Idle)
             } else {
-                when (toCancel.type) {
-                    /* torrent removed */
-                        downloadId,
-                        InstallStep.Idle
-                    )
-
-                    /* download removed */
-                        downloadId,
-                        InstallStep.Idle
-                    )
-                }
+                // addon cancel step removed
             }
         }
     }
