@@ -2794,6 +2794,7 @@ class ExoplayerView :
                         pauseOverlay.alpha = 0f
                         pauseOverlay.animate().alpha(1f).setDuration(300).start()
                         playerView.findViewById<View>(R.id.exo_controller)?.visibility = View.GONE
+                        pauseOverlay.requestFocus()
                     }
                 }
                 pauseMetadataTimer = timer

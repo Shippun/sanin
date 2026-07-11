@@ -144,6 +144,16 @@ class AnimeWatchAdapter(
             recycler.descendantFocusability = ViewGroup.FOCUS_BLOCK_DESCENDANTS
             recycler.isFocusable = false
             binding.mediaSource.showDropDown()
+            binding.mediaSource.post {
+                try {
+                    val popupField = binding.mediaSource.javaClass.getDeclaredField("mPopup")
+                    popupField.isAccessible = true
+                    val popup = popupField.get(binding.mediaSource) as? android.widget.ListPopupWindow
+                    val listView = popup?.listView
+                    listView?.isFocusable = true
+                    listView?.requestFocus()
+                } catch (_: Exception) {}
+            }
             binding.mediaSource.setOnDismissListener {
                 recycler.descendantFocusability = ViewGroup.FOCUS_AFTER_DESCENDANTS
                 recycler.isFocusable = true
