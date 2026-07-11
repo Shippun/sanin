@@ -38,8 +38,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.media3.common.util.UnstableApi
 import androidx.recyclerview.widget.RecyclerView
-import ani.dantotsu.addons.torrent.TorrentAddonManager
-import ani.dantotsu.addons.torrent.TorrentServerService
 import ani.dantotsu.blurImage
 import ani.dantotsu.connections.LogoApi
 import ani.dantotsu.connections.anilist.Anilist
@@ -483,20 +481,6 @@ class MainActivity : AppCompatActivity() {
             AudioHelper.run(this, R.raw.audio)
             PrefManager.setVal(PrefName.OC, false)
         }
-        val torrentManager = Injekt.get<TorrentAddonManager>()
-        fun startTorrent() {
-            if (torrentManager.isAvailable() && PrefManager.getVal(PrefName.TorrentEnabled)) {
-                launchIO {
-                    if (!TorrentServerService.isRunning()) {
-                        TorrentServerService.start()
-                    }
-                }
-            }
-        }
-        if (torrentManager.isInitialized.value == false) {
-            torrentManager.isInitialized.observe(this) {
-                if (it) {
-                    startTorrent()
                 }
             }
         } else {

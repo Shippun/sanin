@@ -2,11 +2,6 @@ package ani.dantotsu.parsers
 
 import android.app.Application
 import ani.dantotsu.currContext
-import ani.dantotsu.download.DownloadCompat.Companion.loadEpisodesCompat
-import ani.dantotsu.download.DownloadCompat.Companion.loadSubtitleCompat
-import ani.dantotsu.download.DownloadsManager
-import ani.dantotsu.download.DownloadsManager.Companion.getSubDirectory
-import ani.dantotsu.download.anime.AnimeDownloaderService.AnimeDownloadTask.Companion.getTaskName
 import ani.dantotsu.media.MediaNameAdapter
 import ani.dantotsu.media.MediaType
 import ani.dantotsu.tryWithSuspend

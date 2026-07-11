@@ -4,8 +4,6 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import androidx.core.content.ContextCompat
-import ani.dantotsu.addons.download.DownloadAddonManager
-import ani.dantotsu.addons.torrent.TorrentAddonManager
 import ani.dantotsu.media.AddonType
 import eu.kanade.tachiyomi.extension.util.ExtensionInstallReceiver
 import eu.kanade.tachiyomi.extension.util.ExtensionInstallReceiver.Companion.filter
@@ -45,7 +43,6 @@ internal class AddonInstallReceiver : BroadcastReceiver() {
                     when (type) {
                         AddonType.DOWNLOAD -> {
                             getPackageNameFromIntent(intent)?.let { packageName ->
-                                if (packageName != DownloadAddonManager.DOWNLOAD_PACKAGE) return@launchNow
                                 listener?.onAddonInstalled(
                                     AddonLoader.loadFromPkgName(
                                         context,
@@ -58,7 +55,6 @@ internal class AddonInstallReceiver : BroadcastReceiver() {
 
                         AddonType.TORRENT -> {
                             getPackageNameFromIntent(intent)?.let { packageName ->
-                                if (packageName != TorrentAddonManager.TORRENT_PACKAGE) return@launchNow
                                 listener?.onAddonInstalled(
                                     AddonLoader.loadFromPkgName(
                                         context,
@@ -79,7 +75,6 @@ internal class AddonInstallReceiver : BroadcastReceiver() {
                     when (type) {
                         AddonType.DOWNLOAD -> {
                             getPackageNameFromIntent(intent)?.let { packageName ->
-                                if (packageName != DownloadAddonManager.DOWNLOAD_PACKAGE) return@launchNow
                                 listener?.onAddonUpdated(
                                     AddonLoader.loadFromPkgName(
                                         context,
@@ -92,7 +87,6 @@ internal class AddonInstallReceiver : BroadcastReceiver() {
 
                         AddonType.TORRENT -> {
                             getPackageNameFromIntent(intent)?.let { packageName ->
-                                if (packageName != TorrentAddonManager.TORRENT_PACKAGE) return@launchNow
                                 listener?.onAddonUpdated(
                                     AddonLoader.loadFromPkgName(
                                         context,
@@ -113,12 +107,10 @@ internal class AddonInstallReceiver : BroadcastReceiver() {
                 getPackageNameFromIntent(intent)?.let { packageName ->
                     when (type) {
                         AddonType.DOWNLOAD -> {
-                            if (packageName != DownloadAddonManager.DOWNLOAD_PACKAGE) return
                             listener?.onAddonUninstalled(packageName)
                         }
 
                         AddonType.TORRENT -> {
-                            if (packageName != TorrentAddonManager.TORRENT_PACKAGE) return
                             listener?.onAddonUninstalled(packageName)
                         }
 

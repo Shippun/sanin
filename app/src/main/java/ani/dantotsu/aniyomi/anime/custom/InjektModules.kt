@@ -6,9 +6,6 @@ import androidx.annotation.OptIn
 import androidx.core.content.ContextCompat
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.database.StandaloneDatabaseProvider
-import ani.dantotsu.addons.download.DownloadAddonManager
-import ani.dantotsu.addons.torrent.TorrentAddonManager
-import ani.dantotsu.download.DownloadsManager
 import eu.kanade.domain.base.BasePreferences
 import eu.kanade.domain.source.service.SourcePreferences
 import eu.kanade.tachiyomi.core.preference.AndroidPreferenceStore
@@ -31,14 +28,11 @@ class AppModule(val app: Application) : InjektModule {
     override fun InjektRegistrar.registerInjectables() {
         addSingleton(app)
 
-        addSingletonFactory { DownloadsManager(app) }
 
         addSingletonFactory { NetworkHelper(app) }
         addSingletonFactory { NetworkHelper(app).client }
 
         addSingletonFactory { AnimeExtensionManager(app) }
-        addSingletonFactory { TorrentAddonManager(app) }
-        addSingletonFactory { DownloadAddonManager(app) }
 
         addSingletonFactory<AnimeSourceManager> { AndroidAnimeSourceManager(app, get()) }
 

@@ -19,7 +19,6 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 import ani.dantotsu.R
 import ani.dantotsu.ZoomOutPageTransformer
 import ani.dantotsu.databinding.ActivityNoInternetBinding
-import ani.dantotsu.download.anime.OfflineAnimeFragment
 import ani.dantotsu.initActivity
 import ani.dantotsu.navBarHeight
 import ani.dantotsu.offline.LocalFragment
@@ -106,7 +105,6 @@ class NoInternet : AppCompatActivity() {
 
         override fun createFragment(position: Int): Fragment {
             return when (position) {
-                0 -> OfflineAnimeFragment()
                 1 -> LocalFragment()
                 else -> OfflineFragment()
             }

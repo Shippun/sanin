@@ -6,8 +6,6 @@ import android.app.Application
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
-import ani.dantotsu.addons.download.DownloadAddonManager
-import ani.dantotsu.addons.torrent.TorrentAddonManager
 import ani.dantotsu.aniyomi.anime.custom.AppModule
 import ani.dantotsu.aniyomi.anime.custom.PreferenceModule
 import ani.dantotsu.connections.comments.CommentsAPI
@@ -40,8 +38,6 @@ import uy.kohesive.injekt.api.get
 @SuppressLint("StaticFieldLeak")
 class App : Application() {
     private lateinit var animeExtensionManager: AnimeExtensionManager
-    private lateinit var torrentAddonManager: TorrentAddonManager
-    private lateinit var downloadAddonManager: DownloadAddonManager
 
     init {
         instance = this

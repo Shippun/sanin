@@ -29,7 +29,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import android.widget.NumberPicker
 import ani.dantotsu.currContext
-import ani.dantotsu.download.anime.AnimeDownloader
 
 fun handleProgress(cont: LinearLayout, bar: View, empty: View, mediaId: Int, ep: String) {
     val curr = PrefManager.getNullableCustomVal("${mediaId}_${ep}", null, Long::class.java)
@@ -318,9 +317,8 @@ class EpisodeAdapter(
 
     fun startDownload(episodeNumber: String) {
         if (downloadedEpisodes.contains(episodeNumber) ||
-            AnimeDownloader.isDownloading(media.id, episodeNumber))
+            false)
                 return
-        AnimeDownloader.startDownload(media.id, episodeNumber)
         // Find the position of the chapter and notify only that item
         val position = arr.indexOfFirst { it.number == episodeNumber }
         if (position != -1) {

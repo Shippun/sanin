@@ -10,9 +10,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import ani.dantotsu.R
 import ani.dantotsu.addons.AddonDownloader
-import ani.dantotsu.addons.download.DownloadAddonManager
-import ani.dantotsu.addons.torrent.TorrentAddonManager
-import ani.dantotsu.addons.torrent.TorrentServerService
 import ani.dantotsu.databinding.ActivitySettingsAddonsBinding
 import ani.dantotsu.databinding.ItemSettingsBinding
 import ani.dantotsu.initActivity
@@ -218,8 +215,6 @@ class SettingsAddonActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        torrentAddonManager.removeListenerAction()
-        downloadAddonManager.removeListenerAction()
     }
 
     private fun setStatus(

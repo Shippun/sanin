@@ -29,16 +29,9 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import ani.dantotsu.R
 import ani.dantotsu.px
-import ani.dantotsu.addons.download.DownloadAddonManager
 import ani.dantotsu.connections.LogoApi
 import ani.dantotsu.databinding.FragmentMediaSourceBinding
 import ani.dantotsu.loadImage
-import ani.dantotsu.download.DownloadedType
-import ani.dantotsu.download.DownloadsManager
-import ani.dantotsu.download.DownloadsManager.Companion.compareName
-import ani.dantotsu.download.DownloadsManager.Companion.getSubDirectory
-import ani.dantotsu.download.anime.AnimeDownloaderService
-import ani.dantotsu.download.findValidName
 import ani.dantotsu.dp
 import ani.dantotsu.isOnline
 import ani.dantotsu.media.Media

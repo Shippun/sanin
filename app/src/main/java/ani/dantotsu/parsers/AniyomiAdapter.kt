@@ -4,7 +4,6 @@ import android.content.Context
 import ani.dantotsu.FileUrl
 import ani.dantotsu.currContext
 import ani.dantotsu.media.MediaNameAdapter
-import ani.dantotsu.media.SubtitleDownloader
 import ani.dantotsu.snackString
 import ani.dantotsu.util.Logger
 import eu.kanade.tachiyomi.animesource.AnimeCatalogueSource
@@ -488,7 +487,7 @@ class VideoServerPassthrough(private val videoServer: VideoServer) : VideoExtrac
                 format = VideoType.CONTAINER
             }
         } catch (malformed: MalformedURLException) {
-            if (videoUrl.startsWith("magnet:") || videoUrl.endsWith(".torrent"))
+            /* torrent removed */
                 format = VideoType.CONTAINER
             else
                 throw malformed
@@ -571,7 +570,7 @@ class VideoServerPassthrough(private val videoServer: VideoServer) : VideoExtrac
     private suspend fun findSubtitleType(url: String): SubtitleType {
         val typeFromUrl = findSubtitleTypeFromUrl(url)
         if (typeFromUrl != SubtitleType.UNKNOWN) return typeFromUrl
-        return SubtitleDownloader.loadSubtitleType(url)
+        return null
     }
 
     private fun findSubtitleTypeFromUrl(url: String): SubtitleType {

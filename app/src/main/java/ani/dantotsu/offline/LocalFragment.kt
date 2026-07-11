@@ -25,9 +25,6 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import eu.kanade.tachiyomi.animesource.model.SAnime
 import ani.dantotsu.R
-import ani.dantotsu.download.anime.OfflineAnimeAdapter
-import ani.dantotsu.download.anime.OfflineAnimeModel
-import ani.dantotsu.download.anime.OfflineAnimeSearchListener
 import ani.dantotsu.getThemeColor
 import ani.dantotsu.initActivity
 import ani.dantotsu.media.Media

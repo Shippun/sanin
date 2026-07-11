@@ -99,7 +99,6 @@ import ani.dantotsu.GesturesListener
 import ani.dantotsu.media.EpisodeMapper
 import ani.dantotsu.NoPaddingArrayAdapter
 import ani.dantotsu.R
-import ani.dantotsu.addons.download.DownloadAddonManager
 import ani.dantotsu.brightnessConverter
 import ani.dantotsu.circularReveal
 import ani.dantotsu.connections.anilist.Anilist
@@ -111,8 +110,6 @@ import ani.dantotsu.connections.mal.MAL
 import ani.dantotsu.connections.updateProgress
 import ani.dantotsu.databinding.ActivityExoplayerBinding
 import ani.dantotsu.defaultHeaders
-import ani.dantotsu.download.DownloadsManager.Companion.getSubDirectory
-import ani.dantotsu.download.video.Helper
 import ani.dantotsu.dp
 import ani.dantotsu.getCurrentBrightnessValue
 import ani.dantotsu.getLanguageCode
@@ -124,7 +121,6 @@ import ani.dantotsu.media.Media
 import ani.dantotsu.media.MediaDetailsViewModel
 import ani.dantotsu.media.MediaNameAdapter
 import ani.dantotsu.media.MediaType
-import ani.dantotsu.media.SubtitleDownloader
 import ani.dantotsu.notifications.subscription.SubscriptionHelper
 import ani.dantotsu.okHttpClient
 import ani.dantotsu.others.AniSkip

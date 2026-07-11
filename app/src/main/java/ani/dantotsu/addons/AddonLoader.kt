@@ -5,14 +5,6 @@ import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.os.Build
 import androidx.core.content.pm.PackageInfoCompat
-import ani.dantotsu.addons.download.DownloadAddon
-import ani.dantotsu.addons.download.DownloadAddonApiV2
-import ani.dantotsu.addons.download.DownloadAddonManager
-import ani.dantotsu.addons.download.DownloadLoadResult
-import ani.dantotsu.addons.torrent.TorrentAddon
-import ani.dantotsu.addons.torrent.TorrentAddonApi
-import ani.dantotsu.addons.torrent.TorrentAddonManager
-import ani.dantotsu.addons.torrent.TorrentLoadResult
 import ani.dantotsu.media.AddonType
 import ani.dantotsu.util.Logger
 import dalvik.system.PathClassLoader
@@ -100,17 +92,6 @@ class AddonLoader {
 
             return when (type) {
                 AddonType.TORRENT -> {
-                    val extension = instance as? TorrentAddonApi
-                        ?: throw IllegalStateException("Extension is not a TorrentAddonApi")
-                    TorrentLoadResult.Success(
-                        TorrentAddon.Installed(
-                            name = extName,
-                            pkgName = pkgName,
-                            versionName = versionName,
-                            versionCode = versionCode,
-                            extension = extension,
-                            icon = context.getApplicationIcon(pkgName),
-                        )
                     )
                 }
 
@@ -144,14 +125,12 @@ class AddonLoader {
                     AddonType.TORRENT -> loadExtension(
                         context,
                         packageName,
-                        TorrentAddonManager.TORRENT_CLASS,
                         type
                     )
 
                     AddonType.DOWNLOAD -> loadExtension(
                         context,
                         packageName,
-                        DownloadAddonManager.DOWNLOAD_CLASS,
                         type
                     )
                 }

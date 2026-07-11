@@ -31,16 +31,13 @@ enum class AddonType : Type {
 
     override fun asText(): String {
         return when (this) {
-            TORRENT -> "Torrent"
             DOWNLOAD -> "Download"
         }
     }
 
     companion object {
         fun fromText(string: String): AddonType? {
-            return when (string) {
-                "Torrent" -> TORRENT
-                "Download" -> DOWNLOAD
+            return when (string) {                "Download" -> DOWNLOAD
                 else -> {
                     null
                 }
