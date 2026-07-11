@@ -752,7 +752,7 @@ class ExoplayerView :
         playerView.setControllerVisibilityListener(
             PlayerView.ControllerVisibilityListener { visibility ->
                 if (visibility == View.VISIBLE) {
-                    exoPlay.requestFocus()
+                    if (currentFocus == null) exoPlay.requestFocus()
                 }
                 if (visibility == View.GONE) {
                     hideSystemBars()
@@ -3398,12 +3398,12 @@ class ExoplayerView :
             pauseOverlay.visibility = View.GONE
             if (!playerView.isControllerFullyVisible) playerView.showController()
             playerView.controllerShowTimeoutMs = PrefManager.getVal<Int>(PrefName.AutoHideTimeout) * 1000
-            playerView.post { exoPlay.requestFocus() }
+            if (currentFocus == null) playerView.post { exoPlay.requestFocus() }
             return
         }
         if (!playerView.isControllerFullyVisible) playerView.showController()
         playerView.controllerShowTimeoutMs = PrefManager.getVal<Int>(PrefName.AutoHideTimeout) * 1000
-        playerView.post { exoPlay.requestFocus() }
+        if (currentFocus == null) playerView.post { exoPlay.requestFocus() }
     }
 
     private fun handleBackPress(): Boolean {

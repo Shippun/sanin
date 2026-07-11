@@ -140,7 +140,15 @@ class AnimeWatchAdapter(
         binding.mediaSourceNameContainer.nextFocusUpId = R.id.mediaSourceNameContainer
         binding.mediaSourceNameContainer.nextFocusLeftId = R.id.mediaSourceNameContainer
         binding.mediaSourceNameContainer.setOnClickListener {
+            val recycler = fragment.requireView().findViewById<ViewGroup>(R.id.mediaSourceRecycler)
+            recycler.descendantFocusability = ViewGroup.FOCUS_BLOCK_DESCENDANTS
+            recycler.isFocusable = false
             binding.mediaSource.showDropDown()
+            binding.mediaSource.setOnDismissListener {
+                recycler.descendantFocusability = ViewGroup.FOCUS_AFTER_DESCENDANTS
+                recycler.isFocusable = true
+                binding.mediaSource.post { binding.mediaSourceNameContainer.requestFocus() }
+            }
         }
         binding.mediaSourceNameContainer.setOnLongClickListener {
             fragment.loadEpisodes(source, true)
