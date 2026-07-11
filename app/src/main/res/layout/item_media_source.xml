@@ -362,8 +362,7 @@
         app:lottie_autoPlay="true"
         app:lottie_loop="true"
         app:lottie_colorFilter="?attr/colorSecondary" 
-        app:lottie_speed="1.75"
-        android:rotation="270" />
+        app:lottie_speed="1.75" />
 
         <com.airbnb.lottie.LottieAnimationView
         android:layout_width="45dp"
@@ -375,8 +374,7 @@
         app:lottie_autoPlay="true"
         app:lottie_loop="true"
         app:lottie_colorFilter="?attr/colorSecondary" 
-        app:lottie_speed="1.75"
-        android:rotation="30" />
+        app:lottie_speed="1.75" />
 
         <com.airbnb.lottie.LottieAnimationView
         android:layout_width="45dp"
@@ -388,8 +386,7 @@
         app:lottie_autoPlay="true"
         app:lottie_loop="true"
         app:lottie_colorFilter="?attr/colorSecondary" 
-        app:lottie_speed="1.75"
-        android:rotation="150" />
+        app:lottie_speed="1.75" />
 
     </FrameLayout>
 
