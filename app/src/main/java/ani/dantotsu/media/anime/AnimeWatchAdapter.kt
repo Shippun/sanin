@@ -214,12 +214,13 @@ class AnimeWatchAdapter(
                 val endIconField = com.google.android.material.textfield.TextInputLayout::class.java.getDeclaredField("endIconView")
                 endIconField.isAccessible = true
                 val endIcon = endIconField.get(binding.mediaSourceNameContainer) as? android.widget.ImageButton
-                endIcon?.let {
+                 endIcon?.let {
                     it.isFocusable = true
                     it.isClickable = true
                     FocusEffectUtil.applyFocusListener(it)
                     val iconId = View.generateViewId()
                     it.id = iconId
+                    it.setOnClickListener { binding.mediaSourceNameContainer.performClick() }
                     binding.mediaSourceNameContainer.nextFocusRightId = iconId
                     it.nextFocusLeftId = R.id.mediaSourceNameContainer
                     it.nextFocusRightId = R.id.mediaSourceSettings
