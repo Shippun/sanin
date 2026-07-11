@@ -1272,6 +1272,11 @@ open class FocusableDropdownAdapter<T>(context: Context, layoutId: Int, items: L
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
         val view = super.getView(position, convertView, parent)
         ani.dantotsu.util.FocusEffectUtil.applyFocusListener(view)
+        view.isClickable = true
+        view.setOnClickListener {
+            val listView = parent as? android.widget.ListView
+            listView?.performItemClick(view, position, listView.getItemIdAtPosition(position))
+        }
         return view
     }
 }
