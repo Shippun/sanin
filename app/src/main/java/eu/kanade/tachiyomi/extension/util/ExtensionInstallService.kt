@@ -8,7 +8,6 @@ import android.net.Uri
 import android.os.Build
 import android.os.IBinder
 import ani.dantotsu.R
-import ani.dantotsu.media.AddonType
 import ani.dantotsu.media.MediaType
 import ani.dantotsu.media.Type
 import ani.dantotsu.util.Logger
@@ -49,7 +48,7 @@ class ExtensionInstallService : Service() {
         val uri = intent?.data
         val mediaType = intent?.getSerializableExtraCompat<MediaType>(EXTRA_EXTENSION_TYPE)
         val addonType =
-            intent?.getSerializableExtraCompat<AddonType>(ExtensionInstaller.EXTRA_ADDON_TYPE)
+            intent?.getSerializableExtraCompat<String>(ExtensionInstaller.EXTRA_ADDON_TYPE)
         val id = intent?.getLongExtra(EXTRA_DOWNLOAD_ID, -1)?.takeIf { it != -1L }
         val installerUsed = intent?.getSerializableExtraCompat<BasePreferences.ExtensionInstaller>(
             EXTRA_INSTALLER
@@ -99,7 +98,7 @@ class ExtensionInstallService : Service() {
                 .putExtra(EXTRA_INSTALLER, installer)
             if (type is MediaType) {
                 intent.putExtra(EXTRA_EXTENSION_TYPE, type)
-            } else if (type is AddonType) {
+            } else if (type is String) {
                 intent.putExtra(ExtensionInstaller.EXTRA_ADDON_TYPE, type)
             }
             return intent

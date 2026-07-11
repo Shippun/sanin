@@ -1,7 +1,6 @@
 package ani.dantotsu.addons
 
 import android.content.Context
-import ani.dantotsu.media.AddonType
 import eu.kanade.tachiyomi.extension.InstallStep
 import eu.kanade.tachiyomi.extension.util.ExtensionInstaller
 import rx.Observable
@@ -11,7 +10,7 @@ abstract class AddonManager<T : Addon.Installed>(
 ) {
     abstract var extension: T?
     abstract var name: String
-    abstract var type: AddonType
+    abstract var type: String
     protected val installer by lazy { ExtensionInstaller(context) }
     var hasUpdate: Boolean = false
         protected set

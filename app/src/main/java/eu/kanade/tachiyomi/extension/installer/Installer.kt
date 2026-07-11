@@ -8,7 +8,6 @@ import android.content.IntentFilter
 import android.net.Uri
 import androidx.annotation.CallSuper
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import ani.dantotsu.media.AddonType
 import ani.dantotsu.media.MediaType
 import ani.dantotsu.media.Type
 import ani.dantotsu.parsers.novel.NovelExtensionManager
@@ -25,8 +24,6 @@ import java.util.concurrent.atomic.AtomicReference
 abstract class Installer(private val service: Service) {
 
     private val animeExtensionManager: AnimeExtensionManager by injectLazy()
-    private val torrentAddonManager: TorrentAddonManager by injectLazy()
-    private val downloadAddonManager: DownloadAddonManager by injectLazy()
 
     private var waitingInstall = AtomicReference<Entry>(null)
     private val queue = Collections.synchronizedList(mutableListOf<Entry>())
@@ -69,8 +66,7 @@ abstract class Installer(private val service: Service) {
             animeExtensionManager.setInstalling(entry.downloadId)
         } else {
             when (entry.type) {
-                AddonType.DOWNLOAD -> downloadAddonManager.setInstalling(entry.downloadId)
-            }
+}
         }
     }
 

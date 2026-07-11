@@ -747,7 +747,6 @@ class MediaDetailsViewModel : ViewModel() {
         val link = ep.link ?: return false
 
         if (ep.extractors?.find{ it.server.name == server } == null) {
-            Log.d("AnimeDownloader", "Loading Video Server for episode: ${ep.number}, selected server: $server")
             if(ep.extractors == null){
                 ep.extractors = mutableListOf(watchSources?.get(selected.sourceIndex)?.let {
                     selected.sourceIndex = selected.sourceIndex
@@ -772,7 +771,6 @@ class MediaDetailsViewModel : ViewModel() {
                     }
                 } ?: return false)
             }
-            //ep.extractors?.forEach { Log.d("AnimeDownloader", "Extractor episode ${ep.number}: ${it.server.name}") }
             ep.allStreams = false
         }
         if (post) {

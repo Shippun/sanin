@@ -25,23 +25,4 @@ enum class MediaType : Type {
     }
 }
 
-enum class AddonType : Type {
-    TORRENT,
-    DOWNLOAD;
-
-    override fun asText(): String {
-        return when (this) {
-            DOWNLOAD -> "Download"
-        }
-    }
-
-    companion object {
-        fun fromText(string: String): AddonType? {
-            return when (string) {                "Download" -> DOWNLOAD
-                else -> {
-                    null
-                }
-            }
-        }
-    }
-}
+// AddonType removed (TORRENT and DOWNLOAD removed)

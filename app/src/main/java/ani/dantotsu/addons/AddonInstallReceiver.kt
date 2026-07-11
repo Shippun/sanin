@@ -4,7 +4,6 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import androidx.core.content.ContextCompat
-import ani.dantotsu.media.AddonType
 import eu.kanade.tachiyomi.extension.util.ExtensionInstallReceiver
 import eu.kanade.tachiyomi.extension.util.ExtensionInstallReceiver.Companion.filter
 import eu.kanade.tachiyomi.extension.util.ExtensionInstallReceiver.Companion.getPackageNameFromIntent
@@ -13,7 +12,7 @@ import tachiyomi.core.util.lang.launchNow
 
 internal class AddonInstallReceiver : BroadcastReceiver() {
     private var listener: AddonListener? = null
-    private var type: AddonType? = null
+    private var type: String? = null
 
     /**
      * Registers this broadcast receiver
@@ -22,7 +21,7 @@ internal class AddonInstallReceiver : BroadcastReceiver() {
         ContextCompat.registerReceiver(context, this, filter, ContextCompat.RECEIVER_EXPORTED)
     }
 
-    fun setListener(listener: AddonListener, type: AddonType): AddonInstallReceiver {
+    fun setListener(listener: AddonListener, type: String): AddonInstallReceiver {
         this.listener = listener
         this.type = type
         return this
@@ -41,28 +40,10 @@ internal class AddonInstallReceiver : BroadcastReceiver() {
                 if (ExtensionInstallReceiver.isReplacing(intent)) return
                 launchNow {
                     when (type) {
-                        AddonType.DOWNLOAD -> {
-                            getPackageNameFromIntent(intent)?.let { packageName ->
-                                listener?.onAddonInstalled(
-                                    AddonLoader.loadFromPkgName(
-                                        context,
-                                        packageName,
-                                        AddonType.DOWNLOAD
-                                    )
-                                )
-                            }
+
                         }
 
-                        AddonType.TORRENT -> {
-                            getPackageNameFromIntent(intent)?.let { packageName ->
-                                listener?.onAddonInstalled(
-                                    AddonLoader.loadFromPkgName(
-                                        context,
-                                        packageName,
-                                        AddonType.TORRENT
-                                    )
-                                )
-                            }
+
                         }
 
                         else -> {}
@@ -73,28 +54,10 @@ internal class AddonInstallReceiver : BroadcastReceiver() {
             Intent.ACTION_PACKAGE_REPLACED -> {
                 launchNow {
                     when (type) {
-                        AddonType.DOWNLOAD -> {
-                            getPackageNameFromIntent(intent)?.let { packageName ->
-                                listener?.onAddonUpdated(
-                                    AddonLoader.loadFromPkgName(
-                                        context,
-                                        packageName,
-                                        AddonType.DOWNLOAD
-                                    )
-                                )
-                            }
+
                         }
 
-                        AddonType.TORRENT -> {
-                            getPackageNameFromIntent(intent)?.let { packageName ->
-                                listener?.onAddonUpdated(
-                                    AddonLoader.loadFromPkgName(
-                                        context,
-                                        packageName,
-                                        AddonType.TORRENT
-                                    )
-                                )
-                            }
+
                         }
 
                         else -> {}
@@ -106,13 +69,9 @@ internal class AddonInstallReceiver : BroadcastReceiver() {
                 if (ExtensionInstallReceiver.isReplacing(intent)) return
                 getPackageNameFromIntent(intent)?.let { packageName ->
                     when (type) {
-                        AddonType.DOWNLOAD -> {
-                            listener?.onAddonUninstalled(packageName)
-                        }
 
-                        AddonType.TORRENT -> {
-                            listener?.onAddonUninstalled(packageName)
-                        }
+
+
 
                         else -> {}
                     }

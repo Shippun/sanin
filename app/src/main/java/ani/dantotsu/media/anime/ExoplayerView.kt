@@ -240,7 +240,6 @@ class ExoplayerView :
 
     private var orientationListener: OrientationEventListener? = null
 
-    private var downloadId: String? = null
     private var hasExtSubtitles = false
     private var audioLanguages = mutableListOf<Pair<String, String>>()
 
@@ -1795,28 +1794,7 @@ class ExoplayerView :
                 else -> MimeTypes.APPLICATION_MP4
             }
 
-        val downloadedMediaItem =
-            if (ext.server.offline) {
-                val titleName =
-                    ext.server.name
-                        .split("/")
-                        .first()
-                val episodeName =
-                    ext.server.name
-                        .split("/")
-                        .last()
-                downloadId = PrefManager
-                    .getAnimeDownloadPreferences()
-                    .getString("$titleName - $episodeName", null)
-                    ?: PrefManager
-                        .getAnimeDownloadPreferences()
-                        .getString(ext.server.name, null)
-                val exoItem =
-                    if (downloadId != null) {
-                        Helper
-                            .downloadManager(this)
-                            .downloadIndex
-                            .getDownload(downloadId!!)
+        val downloadedMediaItem: Any? = null
                             ?.request
                             ?.toMediaItem()
                     } else {
@@ -1837,7 +1815,7 @@ class ExoplayerView :
                                         it.name?.endsWith(
                                             ".${
                                                 Injekt
-                                                    .get<DownloadAddonManager>()
+                                                    null
                                                     .extension
                                                     ?.extension
                                                     ?.getFileExtension()

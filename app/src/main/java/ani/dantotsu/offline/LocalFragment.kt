@@ -64,7 +64,6 @@ class LocalFragment : Fragment(), OfflineAnimeSearchListener {
     private var downloads: List<OfflineAnimeModel> = listOf()
     
     private lateinit var gridView: GridView
-    private lateinit var adapter: OfflineAnimeAdapter
     private lateinit var total: TextView
     private lateinit var noAnimeText: TextView
     private var scanJob: Job = Job()
@@ -252,7 +251,6 @@ class LocalFragment : Fragment(), OfflineAnimeSearchListener {
         val fadeIn = AlphaAnimation(0f, 1f)
         fadeIn.duration = 300
         gridView.layoutAnimation = LayoutAnimationController(fadeIn)
-        adapter = OfflineAnimeAdapter(requireContext(), downloads, this)
         scanLocal()
         gridView.adapter = adapter
         gridView.scheduleLayoutAnimation()

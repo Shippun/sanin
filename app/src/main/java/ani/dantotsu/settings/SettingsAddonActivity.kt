@@ -9,7 +9,6 @@ import androidx.core.view.updateLayoutParams
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import ani.dantotsu.R
-import ani.dantotsu.addons.AddonDownloader
 import ani.dantotsu.databinding.ActivitySettingsAddonsBinding
 import ani.dantotsu.databinding.ItemSettingsBinding
 import ani.dantotsu.initActivity
@@ -34,8 +33,6 @@ import uy.kohesive.injekt.api.get
 
 class SettingsAddonActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySettingsAddonsBinding
-    private val downloadAddonManager: DownloadAddonManager = Injekt.get()
-    private val torrentAddonManager: TorrentAddonManager = Injekt.get()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -104,101 +101,15 @@ class SettingsAddonActivity : AppCompatActivity() {
                                     }
                                     snackString(getString(R.string.downloading))
                                     lifecycleScope.launchIO {
-                                        AddonDownloader.update(
-                                            activity = context,
-                                            downloadAddonManager,
-                                            repo = DownloadAddonManager.REPO,
-                                            currentVersion = downloadAddonManager.getVersion() ?: ""
-                                        )
-                                    }
-                                }
-                            }
-                        },
-                    ), Settings(
-                        type = 1,
-                        name = getString(R.string.torrent_addon),
-                        desc = getString(R.string.not_installed),
-                        icon = R.drawable.ic_round_magnet_24,
-                        isActivity = true,
-                        attach = {
-                            setStatus(
-                                view = it,
-                                context = context,
-                                status = torrentAddonManager.hadError(context),
-                                hasUpdate = torrentAddonManager.hasUpdate
-                            )
-                            var job = Job()
-                            torrentAddonManager.addListenerAction { _ ->
-                                job.cancel()
-                                it.settingsIconRight.animate().cancel()
-                                it.settingsIconRight.rotation = 0f
-                                setStatus(
-                                    view = it,
-                                    context = context,
-                                    status = torrentAddonManager.hadError(context),
-                                    hasUpdate = false
-                                )
-                            }
-                            it.settingsIconRight.setOnClickListener { _ ->
-                                if (it.settingsDesc.text == getString(R.string.installed)) {
-                                    TorrentServerService.stop()
-                                    torrentAddonManager.uninstall()
-                                    return@setOnClickListener
-                                } else {
-                                    job = Job()
-                                    val scope = CoroutineScope(Dispatchers.Main + job)
-                                    it.settingsIconRight.setImageResource(R.drawable.ic_sync)
-                                    scope.launch {
-                                        while (isActive) {
-                                            withContext(Dispatchers.Main) {
-                                                it.settingsIconRight.animate()
-                                                    .rotationBy(360f)
-                                                    .setDuration(1000)
-                                                    .setInterpolator(LinearInterpolator())
-                                                    .start()
-                                            }
                                             delay(1000)
                                         }
                                     }
                                     snackString(getString(R.string.downloading))
                                     lifecycleScope.launchIO {
-                                        AddonDownloader.update(
-                                            activity = context,
-                                            torrentAddonManager,
-                                            repo = TorrentAddonManager.REPO,
-                                            currentVersion = torrentAddonManager.getVersion() ?: "",
-                                        )
-                                    }
-                                }
-                            }
-                        },
-                    ),
-                    Settings(
-                        type = 2,
-                        name = getString(R.string.enable_torrent),
-                        desc = getString(R.string.enable_torrent_desc),
-                        icon = R.drawable.ic_round_dns_24,
-                        isChecked = PrefManager.getVal(PrefName.TorrentEnabled),
-                        switch = { isChecked, it ->
-                            if (isChecked && !torrentAddonManager.isAvailable(false)) {
-                                snackString(getString(R.string.install_torrent_addon))
-                                it.settingsButton.isChecked = false
-                                PrefManager.setVal(PrefName.TorrentEnabled, false)
-                                return@Settings
-                            }
-                            PrefManager.setVal(PrefName.TorrentEnabled, isChecked)
-                            Injekt.get<TorrentAddonManager>().extension?.let {
-                                if (isChecked) {
-                                    lifecycleScope.launchIO {
-                                        if (!TorrentServerService.isRunning()) {
-                                            TorrentServerService.start()
-                                        }
                                     }
                                 } else {
                                     lifecycleScope.launchIO {
-                                        if (TorrentServerService.isRunning()) {
-                                            TorrentServerService.stop()
-                                        }
+                                                }
                                     }
                                 }
                             }

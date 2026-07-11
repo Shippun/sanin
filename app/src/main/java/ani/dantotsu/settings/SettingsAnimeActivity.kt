@@ -64,7 +64,6 @@ class SettingsAnimeActivity : AppCompatActivity() {
                                 setTitle(R.string.purge_anime_downloads)
                                 setMessage(R.string.purge_confirm, getString(R.string.anime))
                                 setPosButton(R.string.yes, onClick = {
-                                    val downloadsManager = Injekt.get<DownloadsManager>()
                                     downloadsManager.purgeDownloads(MediaType.ANIME)
                                 })
                                 setNegButton(R.string.no)

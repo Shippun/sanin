@@ -287,8 +287,7 @@ class SelectorDialogFragment : DialogFragment() {
                             selectedServerName = selectedServerName
                         )
                     }.join()
-                    Log.d("AnimeDownloader", "Loading Episode Server State: $success")
-                    return success
+                                        return success
                 }
                 fun startEpisodeDownload(episodeName: String, selectedServerName: String,
                                          selectedSubtitles: MutableList<String>,
@@ -308,46 +307,6 @@ class SelectorDialogFragment : DialogFragment() {
                             )
                         }
                         else {
-                            val downloadAddonManager: DownloadAddonManager = Injekt.get()
-                            if (!downloadAddonManager.isAvailable()) {
-                                val context = currContext() ?: requireContext()
-                                context.customAlertDialog().apply {
-                                    setTitle(R.string.download_addon_not_installed)
-                                    setMessage(R.string.would_you_like_to_install)
-                                    setPosButton(R.string.yes) {
-                                        ContextCompat.startActivity(
-                                            context,
-                                            Intent(
-                                                context,
-                                                SettingsAddonActivity::class.java
-                                            ),
-                                            null
-                                        )
-                                    }
-                                    setNegButton(R.string.no) {
-                                        return@setNegButton
-                                    }
-                                    show()
-                                }
-                                return false
-                            }
-                            val subtitles = extractor.subtitles
-                            val subtitlesToDownload: MutableList<Pair<String, String>> = mutableListOf()
-                            subtitles.forEach {
-                                if(it.language in selectedSubtitles){
-                                    subtitlesToDownload.add(Pair(it.file.url, it.language))
-                                }
-                            }
-
-                            val audioTracks = extractor.audioTracks
-                            val audioTracksToDownload: MutableList<Pair<String, String>> = mutableListOf()
-                            audioTracks.forEach {
-                                if(it.lang in selectedAudioTracks){
-                                    audioTracksToDownload.add(Pair(it.url, it.lang))
-                                }
-                            }
-
-                            val selectedVideo =
                                 if (extractor.videos.size > episode.selectedVideo) extractor.videos[episode.selectedVideo] else null
                             val activity = currActivity() ?: requireActivity()
                             selectedVideo?.file?.url?.let { url ->
@@ -389,8 +348,7 @@ class SelectorDialogFragment : DialogFragment() {
                     val ep = media?.anime?.episodes?.get(episodeName)!!
                     episode = ep
 
-                    Log.d("AnimeDownloader", "Downloading Episode: ${ep.number}, server: $selectedServerName")
-
+                    
                     if (ep.extractors?.find { it?.server?.name == selectedServerName } == null)
                         fail(R.string.auto_select_server_error)
                     else {
@@ -402,8 +360,7 @@ class SelectorDialogFragment : DialogFragment() {
                     }
                 }
 
-                Log.d("AnimeDownloader", "Selected Server for watching: $selected")
-                if(episodes.isNullOrEmpty()){
+                                if(episodes.isNullOrEmpty()){
                     fail(R.string.empty_episodes_list)
                 }
                 if (isDownloadMenu == false) {
@@ -493,8 +450,7 @@ class SelectorDialogFragment : DialogFragment() {
                                     for (episodeName in episodes!!.drop(1)) {
                                         serverSelectionTasks.add(serverSelectionScope.async {
                                             if(!loadEpisodeSingleServer(episodeName, selectedServerName)){
-                                                Log.d("AnimeDownloader", "Error loading server $selectedServerName for episode $episodeName")
-                                                fail(R.string.auto_select_server_error)
+                                                                fail(R.string.auto_select_server_error)
                                             }
                                         })
                                     }
@@ -703,11 +659,9 @@ class SelectorDialogFragment : DialogFragment() {
                         setPosButton(R.string.download) {
                             scope.launch(Dispatchers.IO) {
                                 if (subtitleToDownload != null) {
-                                    SubtitleDownloader.downloadSubtitle(
-                                        requireContext(),
+                                    null,
                                         subtitleToDownload.file.url,
-                                        DownloadedType(
-                                            media!!.mainName(),
+null,
                                             media!!.anime!!.episodes!![media!!.anime!!.selectedEpisode!!]!!.number,
                                             MediaType.ANIME
                                         )
@@ -738,109 +692,7 @@ class SelectorDialogFragment : DialogFragment() {
                         media!!.anime!!.episodes!![media!!.anime!!.selectedEpisode!!]!!
                     val selectedVideo =
                         if (extractor.videos.size > episode.selectedVideo) extractor.videos[episode.selectedVideo] else null
-                    val downloadAddonManager: DownloadAddonManager = Injekt.get()
-                    if (!downloadAddonManager.isAvailable()) {
-                        val context = currContext() ?: requireContext()
-                        context.customAlertDialog().apply {
-                            setTitle(R.string.download_addon_not_installed)
-                            setMessage(R.string.would_you_like_to_install)
-                            setPosButton(R.string.yes) {
-                                ContextCompat.startActivity(
-                                    context,
-                                    Intent(context, SettingsAddonActivity::class.java),
-                                    null
-                                )
-                            }
-                            setNegButton(R.string.no) {
-                                return@setNegButton
-                            }
-                            show()
-                        }
-                        dismissAllowingStateLoss()
-                        return@setSafeOnClickListener
-                    }
-                    selectedVideo?.file?.url?.let { url ->
-                        if (url.startsWith("magnet:") || url.endsWith(".torrent")) {
-                            toast(R.string.torrent_addon_not_available)
-                            return@setSafeOnClickListener
-                        }
-                    }
-
-                    val subtitleNames = subtitles.map { it.language }
-                    var selectedSubtitles: MutableList<String> = mutableListOf()
-                    var selectedAudioTracks: MutableList<String> = mutableListOf()
-
-                    val currContext = currContext() ?: requireContext()
-
-                    fun go(){
-                        onEpisodeDownloadHandler?.onFinishingUserSelection(extractor.server.name, selectedSubtitles, selectedAudioTracks)
-                    }
-
-                    fun checkAudioTracks() {
-                        val audioTracks = extractor.audioTracks.map { it.lang }
-                        if (audioTracks.isNotEmpty()) {
-                            val audioNamesArray = audioTracks.toTypedArray()
-                            val checkedItems = BooleanArray(audioNamesArray.size) { false }
-
-                            currContext.customAlertDialog().apply { // ToTest
-                                setTitle(R.string.download_audio_tracks)
-                                multiChoiceItems(audioNamesArray, checkedItems) {
-                                    it.forEachIndexed { index, isChecked ->
-                                        val audioName = extractor.audioTracks[index].lang
-                                        if (isChecked) {
-                                            selectedAudioTracks.add(audioName)
-                                        } else {
-                                            selectedAudioTracks.remove(audioName)
-                                        }
-                                    }
-                                }
-                                setPosButton(R.string.download) {
-                                    go()
-                                }
-                                setNegButton(R.string.skip) {
-                                    selectedAudioTracks = mutableListOf()
-                                    go()
-                                }
-                                setNeutralButton(R.string.cancel) {
-                                    selectedAudioTracks = mutableListOf()
-                                }
-                                show()
-                            }
-                        } else {
-                            go()
-                        }
-                    }
-                    if (subtitles.isNotEmpty()) { // ToTest
-                        val subtitleNamesArray = subtitleNames.toTypedArray()
-                        val checkedItems = BooleanArray(subtitleNamesArray.size) { false }
-
-                        currContext.customAlertDialog().apply {
-                            setTitle(R.string.download_subtitle)
-                            multiChoiceItems(subtitleNamesArray, checkedItems) {
-                                it.forEachIndexed { index, isChecked ->
-                                    val subtitleName = subtitles[index].language
-                                    if (isChecked) {
-                                        selectedSubtitles.add(subtitleName)
-                                    } else {
-                                        selectedSubtitles.remove(subtitleName)
-                                    }
-                                }
-                            }
-                            setPosButton(R.string.download) {
-                                checkAudioTracks()
-                            }
-                            setNegButton(R.string.skip) {
-                                selectedSubtitles = mutableListOf()
-                                checkAudioTracks()
-                            }
-                            setNeutralButton(R.string.cancel) {
-                                selectedSubtitles = mutableListOf()
-                            }
-                            show()
-                        }
-                    } else {
-                        checkAudioTracks()
-                    }
+                    // download handling removed
                 }
             }
             if (video.format == VideoType.CONTAINER) {
@@ -882,8 +734,7 @@ class SelectorDialogFragment : DialogFragment() {
                             media!!.selected!!.video = bindingAdapterPosition
                             model.saveSelected(media!!.id, media!!.selected!!)
                         }
-                        Log.d("AnimeDownloader", "Should start the player")
-                        startExoplayer(media!!)
+                                                startExoplayer(media!!)
                     }
                 }
                 itemView.setOnLongClickListener {

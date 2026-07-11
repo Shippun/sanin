@@ -15,7 +15,6 @@ import uy.kohesive.injekt.api.get
 import java.util.Locale
 
 class OfflineAnimeParser : AnimeParser() {
-    private val downloadManager = Injekt.get<DownloadsManager>()
     private val context = Injekt.get<Application>()
 
     override val name = "Offline"
@@ -73,7 +72,6 @@ class OfflineAnimeParser : AnimeParser() {
 
 
     override suspend fun search(query: String): List<ShowResponse> {
-        val titles = downloadManager.animeDownloadedTypes.map { it.titleName }.distinct()
         val returnTitlesPair: MutableList<Pair<String, Int>> = mutableListOf()
         for (title in titles) {
             Logger.log("Comparing $title to $query")

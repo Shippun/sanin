@@ -329,7 +329,6 @@ class EpisodeAdapter(
 
     @OptIn(UnstableApi::class)
     fun addToDownloadedEpisodes(episodeNumber: String, size: Double) {
-        AnimeDownloader.stopDownload(media.id, episodeNumber)
         downloadedEpisodes.add(episodeNumber)
         // Find the position of the chapter and notify only that item
         val position = arr.indexOfFirst { it.number == episodeNumber }
@@ -350,7 +349,6 @@ class EpisodeAdapter(
     }
 
     fun purgeDownload(episodeNumber: String) {
-        AnimeDownloader.stopDownload(media.id, episodeNumber)
         downloadedEpisodes.remove(episodeNumber)
         // Find the position of the chapter and notify only that item
         val position = arr.indexOfFirst { it.number == episodeNumber }
@@ -437,11 +435,7 @@ class EpisodeAdapter(
             }
             binding.itemDownload.setOnClickListener {
                 if (0 <= bindingAdapterPosition && bindingAdapterPosition < arr.size) {
-                    val episodeNumber = arr[bindingAdapterPosition].number
-                    if(AnimeDownloader.isDownloading(media.id, episodeNumber)){
-                        fragment.onAnimeEpisodeStopDownloadClick(episodeNumber)
-                        return@setOnClickListener
-                    } else if (downloadedEpisodes.contains(episodeNumber)) {
+                    val episodeNumber = arr[bindingAdapterPosition].number else if (downloadedEpisodes.contains(episodeNumber)) {
                         binding.root.context.customAlertDialog().apply {
                             setTitle("Delete Episode")
                             setMessage("Are you sure you want to delete Episode $episodeNumber?")
@@ -526,14 +520,7 @@ class EpisodeAdapter(
             if (media.format == "LOCAL") {
                 binding.itemDownload.visibility = View.GONE
             } else {
-                binding.itemDownload.visibility = View.VISIBLE
-                if(AnimeDownloader.isDownloading(media.id, episodeNumber)){                
-                    binding.itemDownload.setImageResource(R.drawable.ic_sync)
-                    startOrContinueRotation(episodeNumber) {
-                        binding.itemDownload.rotation = 0f
-                    }
-                    binding.itemEpisodeDesc.visibility = View.GONE
-                } else if (downloadedEpisodes.contains(episodeNumber)) {
+                binding.itemDownload.visibility = View.VISIBLE else if (downloadedEpisodes.contains(episodeNumber)) {
                     binding.itemEpisodeDesc.visibility = View.GONE
                     binding.itemDownloadStatus.visibility = View.VISIBLE
                    
@@ -560,13 +547,6 @@ class EpisodeAdapter(
                 scope.launch {
                     // Add chapter number to active coroutines set
                     activeCoroutines.add(episodeNumber)
-                    while(AnimeDownloader.isDownloading(media.id, episodeNumber)){
-                        binding.itemDownload.animate().rotationBy(360f).setDuration(1000)
-                            .setInterpolator(
-                                LinearInterpolator()
-                            ).start()
-                        delay(1000)
-                    }
                     // Remove chapter number from active coroutines set
                     activeCoroutines.remove(episodeNumber)
                     resetRotation()

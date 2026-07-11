@@ -192,7 +192,6 @@ class SettingsDialogFragment : BottomSheetDialogFragment() {
                             val intent = Intent(currentActivity, NoInternet::class.java)
                             intent.putExtra(
                                 "FRAGMENT_CLASS_NAME",
-                                OfflineAnimeFragment::class.java.name
                             )
                             startActivity(intent)
                         }

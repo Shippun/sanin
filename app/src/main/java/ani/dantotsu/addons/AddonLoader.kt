@@ -5,7 +5,6 @@ import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.os.Build
 import androidx.core.content.pm.PackageInfoCompat
-import ani.dantotsu.media.AddonType
 import ani.dantotsu.util.Logger
 import dalvik.system.PathClassLoader
 import eu.kanade.tachiyomi.extension.util.ExtensionLoader
@@ -31,7 +30,7 @@ class AddonLoader {
             context: Context,
             packageName: String,
             className: String,
-            type: AddonType
+            type: String
         ): LoadResult? {
             val pkgManager = context.packageManager
 
@@ -91,24 +90,7 @@ class AddonLoader {
             val instance = loadedClass.getDeclaredConstructor().newInstance()
 
             return when (type) {
-                AddonType.TORRENT -> {
-                    )
-                }
-
-                AddonType.DOWNLOAD -> {
-                    val extension = instance as? DownloadAddonApiV2
-                        ?: throw IllegalStateException("Extension is not a DownloadAddonApiV2")
-                    DownloadLoadResult.Success(
-                        DownloadAddon.Installed(
-                            name = extName,
-                            pkgName = pkgName,
-                            versionName = versionName,
-                            versionCode = versionCode,
-                            extension = extension,
-                            icon = context.getApplicationIcon(pkgName),
-                        )
-                    )
-                }
+                else -> null
             }
         }
 
@@ -119,21 +101,13 @@ class AddonLoader {
          * @param type the type of extension
          * @return the loaded extension
          */
-        fun loadFromPkgName(context: Context, packageName: String, type: AddonType): LoadResult? {
+        fun loadFromPkgName(context: Context, packageName: String, type: String): LoadResult? {
             return try {
-                when (type) {
-                    AddonType.TORRENT -> loadExtension(
-                        context,
-                        packageName,
-                        type
-                    )
-
-                    AddonType.DOWNLOAD -> loadExtension(
-                        context,
-                        packageName,
-                        type
-                    )
-                }
+                loadExtension(
+                    context,
+                    packageName,
+                    type
+                )
             } catch (e: Exception) {
                 Logger.log("Error loading extension from package name: $packageName")
                 Logger.log(e)

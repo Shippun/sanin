@@ -21,7 +21,6 @@ import ani.dantotsu.databinding.DialogUserAgentBinding
 import ani.dantotsu.initActivity
 import ani.dantotsu.navBarHeight
 import ani.dantotsu.restartApp
-import ani.dantotsu.savePrefsToDownloads
 import ani.dantotsu.settings.saving.PrefManager
 import ani.dantotsu.settings.saving.PrefName
 import ani.dantotsu.settings.saving.internal.Location
@@ -178,19 +177,6 @@ class SettingsCommonActivity : AppCompatActivity() {
                         ),
                         Settings(
                             type = 1,
-                            name = getString(R.string.download_manager_select),
-                            desc = getString(R.string.download_manager_select_desc),
-                            icon = R.drawable.ic_download_24,
-                            onClick = {
-                                val managers = arrayOf("Default", "1DM", "ADM")
-                                customAlertDialog().apply {
-                                    setTitle(getString(R.string.download_manager))
-                                    singleChoiceItems(
-                                        managers,
-                                        PrefManager.getVal(PrefName.DownloadManager),
-                                    ) { count ->
-                                        PrefManager.setVal(PrefName.DownloadManager, count)
-                                    }
                                     show()
                                 }
                             },
@@ -253,30 +239,7 @@ class SettingsCommonActivity : AppCompatActivity() {
                             },
                         ),
                         Settings(
-                            type = 1,
-                            name = getString(R.string.change_download_location),
-                            desc = getString(R.string.change_download_location_desc),
-                            icon = R.drawable.ic_round_source_24,
-                            onClick = {
-                                context.customAlertDialog().apply {
-                                    setTitle(R.string.change_download_location)
-                                    setMessage(R.string.download_location_msg)
-                                    setPosButton(R.string.ok) {
-                                        val oldUri = PrefManager.getVal<String>(PrefName.DownloadsDir)
-                                        launcher.registerForCallback { success ->
-                                            if (success) {
-                                                toast(getString(R.string.please_wait))
-                                                val newUri =
-                                                    PrefManager.getVal<String>(PrefName.DownloadsDir)
-                                                GlobalScope.launch(Dispatchers.IO) {
-                                                    Injekt.get<DownloadsManager>().moveDownloadsDir(
-                                                        context,
-                                                        Uri.parse(oldUri),
-                                                        Uri.parse(newUri),
-                                                    ) { finished, message ->
-                                                        if (finished) {
-                                                            toast(getString(R.string.success))
-                                                        } else {
+                            type = 1, else {
                                                             toast(message)
                                                         }
                                                     }

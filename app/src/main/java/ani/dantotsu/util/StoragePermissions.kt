@@ -108,7 +108,6 @@ class LauncherWrapper(
 
                 if (StoragePermissions.hasDirAccess(activity, uri)) {
                     PrefManager.setVal(PrefName.DownloadsDir, uri.toString())
-                    DownloadsManager.addNoMedia(activity)
                     complete(true)
                 } else {
                     toast(activity.getString(R.string.dir_error))

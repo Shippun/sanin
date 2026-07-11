@@ -13,7 +13,6 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.getSystemService
 import androidx.core.net.toUri
 import ani.dantotsu.R
-import ani.dantotsu.media.AddonType
 import ani.dantotsu.media.MediaType
 import ani.dantotsu.media.Type
 import ani.dantotsu.toast
@@ -153,7 +152,7 @@ class ExtensionInstaller(private val context: Context) {
                     .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_GRANT_READ_URI_PERMISSION)
                 if (type is MediaType) {
                     intent.putExtra(EXTRA_EXTENSION_TYPE, type)
-                } else if (type is AddonType) {
+                } else if (type is String) {
                     intent.putExtra(EXTRA_ADDON_TYPE, type)
                 }
 
@@ -286,7 +285,7 @@ class ExtensionInstaller(private val context: Context) {
                         cursor.getString(
                             cursor.getColumnIndexOrThrow(DownloadManager.COLUMN_DESCRIPTION),
                         )
-                    ) ?: AddonType.fromText(
+                    ) ?: 
                         cursor.getString(
                             cursor.getColumnIndexOrThrow(DownloadManager.COLUMN_DESCRIPTION),
                         )

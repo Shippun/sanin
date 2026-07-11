@@ -91,7 +91,6 @@ class AnimeWatchFragment : Fragment() {
     private lateinit var headerAdapter: AnimeWatchAdapter
     private lateinit var episodeAdapter: EpisodeAdapter
 
-    val downloadManager = Injekt.get<DownloadsManager>()
 
     var screenWidth = 0f
     private var progress = View.VISIBLE
@@ -401,35 +400,7 @@ class AnimeWatchFragment : Fragment() {
     }
 
     //implement Multi download
-    fun multiDownload(episodeNumber: String? = null, n: Int) {
-        val selected = media.userProgress
-        val episodes = media.anime?.episodes?.values?.toList()
 
-        val progressEpisodeIndex =
-            if(episodeNumber == null){
-                (episodes?.indexOfFirst {
-                    MediaNameAdapter.findEpisodeNumber(it.number)?.toInt() == selected
-                } ?: 0) + 1
-            }
-            else{
-                (episodes?.indexOfFirst {
-                    it.number == episodeNumber
-                } ?: 0)
-            }
-
-        if (progressEpisodeIndex < 0 || n < 1 || episodes == null) return
-
-        val endIndex = minOf(progressEpisodeIndex + n, episodes.size)
-
-        val listOfEpisodesToDownload = episodes.subList(progressEpisodeIndex, endIndex)
-
-        val episodesToDownload: ArrayList<String> = arrayListOf()
-        listOfEpisodesToDownload.forEach {
-            episodesToDownload.add(it.number)
-        }
-
-        onAnimeEpisodesDownload(episodesToDownload)
-    }
 
     fun multiDelete(episodeNumber: String? = null, n: Int){
         val episodes = media.anime?.episodes?.values?.toList()
@@ -585,64 +556,17 @@ class AnimeWatchFragment : Fragment() {
         model.onEpisodeClick(media, i, requireActivity().supportFragmentManager)
     }
 
-    fun onAnimeEpisodesDownload(episodesToDownload: ArrayList<String>) {
-        activity?.let {
-            if (!hasDirAccess(it)) {
-                (it as MediaDetailsActivity).accessAlertDialog(it.launcher) { success ->
-                    if (success) {
-                        model.onEpisodeClick(
-                            media =  media,
-                            manager =  requireActivity().supportFragmentManager,
-                            isDownload = true,
-                            episodes = episodesToDownload
-                        )
-                    } else {
-                        snackString(getString(R.string.download_permission_required))
-                    }
-                }
-            } else {
-                model.onEpisodeClick(
-                    media =  media,
-                    manager =  requireActivity().supportFragmentManager,
-                    isDownload = true,
-                    episodes = episodesToDownload
-                )
-            }
-        }
-    }
 
-    fun onAnimeEpisodeStopDownloadClick(i: String) {
-        val cancelIntent = Intent().apply {
-            action = AnimeDownloaderService.ACTION_CANCEL_DOWNLOAD
-            putExtra(
-                AnimeDownloaderService.EXTRA_TASK_NAME,
-                AnimeDownloaderService.AnimeDownloadTask.getTaskName(media.mainName(), i)
-            )
-        }
-        requireContext().sendBroadcast(cancelIntent)
 
-        // Remove the download from the manager and update the UI
-        downloadManager.removeDownload(
-            DownloadedType(
-                media.mainName(),
-                i,
-                MediaType.ANIME
-            )
-        ) {
-            episodeAdapter.purgeDownload(i)
-        }
-    }
+
 
     @OptIn(UnstableApi::class)
     fun onAnimeEpisodeRemoveDownloadClick(i: String) {
-        downloadManager.removeDownload(
-            DownloadedType(
-                media.mainName(),
+        downloadManager.removeDownload(,
                 i,
                 MediaType.ANIME
             )
         ) {
-            val taskName = AnimeDownloaderService.AnimeDownloadTask.getTaskName(media.mainName(), i)
             PrefManager.getAnimeDownloadPreferences().edit().remove(taskName).apply()
             episodeAdapter.deleteDownload(i)
         }
@@ -664,8 +588,7 @@ class AnimeWatchFragment : Fragment() {
                         videoFiles.filter { it.length() > 1000 }.maxByOrNull { it.length() }
                             ?: throw Exception("No video files found")
                     val newName =
-                        AnimeDownloaderService.AnimeDownloadTask.getTaskName(media.mainName(), i)
-                            .findValidName() + "." + biggest.extension
+                                    "" + "." + biggest.extension
                     videoFiles.forEach {
                         if (it != biggest) {
                             it.delete()
@@ -676,7 +599,6 @@ class AnimeWatchFragment : Fragment() {
                     }
                     toast(context.getString(R.string.success) + " (1)")
                 } else {
-                    val ffExtension = Injekt.get<DownloadAddonManager>().extension?.extension!!
                     val extension = ffExtension.getFileExtension()
                     val tempFile =
                         directory.createFile(extension.second, "temp.${extension.first}")
@@ -806,11 +728,6 @@ class AnimeWatchFragment : Fragment() {
         episodeAdapter.arr = arr
         episodeAdapter.updateType(style ?: PrefManager.getVal(PrefName.AnimeDefaultView))
         episodeAdapter.notifyDataSetChanged()
-        for (download in downloadManager.animeDownloadedTypes) {
-            if (media.compareName(download.titleName)) {
-                episodeAdapter.addToDownloadedEpisodes(download.chapterName, downloadManager.getSize(download))
-            }
-        }
     }
 
     override fun onDestroy() {
