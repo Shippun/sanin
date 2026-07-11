@@ -49,7 +49,6 @@ import ani.dantotsu.media.Media
 import ani.dantotsu.media.MediaDetailsViewModel
 import ani.dantotsu.media.MediaType
 import ani.dantotsu.navBarHeight
-import ani.dantotsu.others.Download.download
 import ani.dantotsu.parsers.Subtitle
 import ani.dantotsu.parsers.Video
 import ani.dantotsu.parsers.VideoExtractor
@@ -299,47 +298,11 @@ class SelectorDialogFragment : DialogFragment() {
                             extractor.server.name
                         media!!.anime!!.episodes!![media!!.anime!!.selectedEpisode!!]!!.selectedVideo =
                             episode.selectedVideo
-                        if ((PrefManager.getVal(PrefName.DownloadManager) as Int) != 0) {
-                            download(
-                                requireActivity(),
-                                media!!.anime!!.episodes!![media!!.anime!!.selectedEpisode!!]!!,
-                                media!!.userPreferredName
-                            )
-                        }
-                        else {
+                        {
                                 if (extractor.videos.size > episode.selectedVideo) extractor.videos[episode.selectedVideo] else null
                             val activity = currActivity() ?: requireActivity()
-                            selectedVideo?.file?.url?.let { url ->
-                                if (url.startsWith("magnet:") || url.endsWith(".torrent")) {
-                                    toast(R.string.torrent_addon_not_available)
-                                    return false
-                                }
-                            }
-                            if (selectedVideo != null) {
-                                Helper.startAnimeDownloadService(
-                                    activity,
-                                    media!!.mainName(),
-                                    episode.number,
-                                    selectedVideo,
-                                    subtitlesToDownload,
-                                    audioTracksToDownload,
-                                    media,
-                                    episode.thumb?.url ?: media!!.banner
-                                    ?: media!!.cover
-                                )
-                                val intent =
-                                    Intent(AnimeWatchFragment.ACTION_DOWNLOAD_STARTED).apply {
-                                        putExtra(
-                                            AnimeWatchFragment.EXTRA_EPISODE_NUMBER,
-                                            episode.number,
-                                        )
-                                        putExtra("mediaId", media?.id)
-                                    }
-                                activity.sendBroadcast(intent)
 
-                            } else {
-                                snackString(R.string.no_video_selected)
-                            }
+                            // download removed
                         }
                         return true
                     }
