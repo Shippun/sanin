@@ -319,7 +319,7 @@
                                 app:lottie_autoPlay="true"
                                 app:lottie_loop="true"
                                 app:lottie_colorFilter="?attr/colorSecondary" 
-                                app:lottie_speed="1.75" android:rotation="-45" />
+                                app:lottie_speed="1.75" android:rotation="0" />
 
                                 <com.airbnb.lottie.LottieAnimationView
                                 android:layout_width="45dp"
@@ -331,7 +331,7 @@
                                 app:lottie_autoPlay="true"
                                 app:lottie_loop="true"
                                 app:lottie_colorFilter="?attr/colorSecondary" 
-                                app:lottie_speed="1.75" android:rotation="75" />
+                                app:lottie_speed="1.75" android:rotation="15" />
 
                                 <com.airbnb.lottie.LottieAnimationView
                                 android:layout_width="45dp"
@@ -536,7 +536,7 @@
                     app:lottie_autoPlay="true"
                     app:lottie_loop="true"
                     app:lottie_colorFilter="?attr/colorSecondary" 
-                    app:lottie_speed="1.75" android:rotation="-45" />
+                    app:lottie_speed="1.75" android:rotation="0" />
 
                     <com.airbnb.lottie.LottieAnimationView
                     android:layout_width="45dp"
@@ -548,7 +548,7 @@
                     app:lottie_autoPlay="true"
                     app:lottie_loop="true"
                     app:lottie_colorFilter="?attr/colorSecondary" 
-                    app:lottie_speed="1.75" android:rotation="75" />
+                    app:lottie_speed="1.75" android:rotation="15" />
 
                     <com.airbnb.lottie.LottieAnimationView
                     android:layout_width="45dp"
@@ -717,7 +717,7 @@
                         app:lottie_autoPlay="true"
                         app:lottie_loop="true"
                         app:lottie_colorFilter="?attr/colorSecondary" 
-                        app:lottie_speed="1.75" android:rotation="-45" />
+                        app:lottie_speed="1.75" android:rotation="0" />
 
                         <com.airbnb.lottie.LottieAnimationView
                         android:layout_width="45dp"
@@ -729,7 +729,7 @@
                         app:lottie_autoPlay="true"
                         app:lottie_loop="true"
                         app:lottie_colorFilter="?attr/colorSecondary" 
-                        app:lottie_speed="1.75" android:rotation="75" />
+                        app:lottie_speed="1.75" android:rotation="15" />
 
                         <com.airbnb.lottie.LottieAnimationView
                         android:layout_width="45dp"
@@ -847,7 +847,7 @@
                         app:lottie_autoPlay="true"
                         app:lottie_loop="true"
                         app:lottie_colorFilter="?attr/colorSecondary" 
-                        app:lottie_speed="1.75" android:rotation="-45" />
+                        app:lottie_speed="1.75" android:rotation="0" />
 
                         <com.airbnb.lottie.LottieAnimationView
                         android:layout_width="45dp"
@@ -859,7 +859,7 @@
                         app:lottie_autoPlay="true"
                         app:lottie_loop="true"
                         app:lottie_colorFilter="?attr/colorSecondary" 
-                        app:lottie_speed="1.75" android:rotation="75" />
+                        app:lottie_speed="1.75" android:rotation="15" />
 
                         <com.airbnb.lottie.LottieAnimationView
                         android:layout_width="45dp"
@@ -980,7 +980,7 @@
                         app:lottie_autoPlay="true"
                         app:lottie_loop="true"
                         app:lottie_colorFilter="?attr/colorSecondary" 
-                        app:lottie_speed="1.75" android:rotation="-45" />
+                        app:lottie_speed="1.75" android:rotation="0" />
 
                         <com.airbnb.lottie.LottieAnimationView
                         android:layout_width="45dp"
@@ -992,7 +992,7 @@
                         app:lottie_autoPlay="true"
                         app:lottie_loop="true"
                         app:lottie_colorFilter="?attr/colorSecondary" 
-                        app:lottie_speed="1.75" android:rotation="75" />
+                        app:lottie_speed="1.75" android:rotation="15" />
 
                         <com.airbnb.lottie.LottieAnimationView
                         android:layout_width="45dp"
@@ -1113,7 +1113,7 @@
                         app:lottie_autoPlay="true"
                         app:lottie_loop="true"
                         app:lottie_colorFilter="?attr/colorSecondary" 
-                        app:lottie_speed="1.75" android:rotation="-45" />
+                        app:lottie_speed="1.75" android:rotation="0" />
 
                         <com.airbnb.lottie.LottieAnimationView
                         android:layout_width="45dp"
@@ -1125,7 +1125,7 @@
                         app:lottie_autoPlay="true"
                         app:lottie_loop="true"
                         app:lottie_colorFilter="?attr/colorSecondary" 
-                        app:lottie_speed="1.75" android:rotation="75" />
+                        app:lottie_speed="1.75" android:rotation="15" />
 
                         <com.airbnb.lottie.LottieAnimationView
                         android:layout_width="45dp"
@@ -1242,7 +1242,7 @@
                         app:lottie_autoPlay="true"
                         app:lottie_loop="true"
                         app:lottie_colorFilter="?attr/colorSecondary" 
-                        app:lottie_speed="1.75" android:rotation="-45" />
+                        app:lottie_speed="1.75" android:rotation="0" />
 
                         <com.airbnb.lottie.LottieAnimationView
                         android:layout_width="45dp"
@@ -1254,7 +1254,7 @@
                         app:lottie_autoPlay="true"
                         app:lottie_loop="true"
                         app:lottie_colorFilter="?attr/colorSecondary" 
-                        app:lottie_speed="1.75" android:rotation="75" />
+                        app:lottie_speed="1.75" android:rotation="15" />
 
                         <com.airbnb.lottie.LottieAnimationView
                         android:layout_width="45dp"
@@ -1376,7 +1376,7 @@
                         app:lottie_autoPlay="true"
                         app:lottie_loop="true"
                         app:lottie_colorFilter="?attr/colorSecondary" 
-                        app:lottie_speed="1.75" android:rotation="-45" />
+                        app:lottie_speed="1.75" android:rotation="0" />
 
                         <com.airbnb.lottie.LottieAnimationView
                         android:layout_width="45dp"
@@ -1388,7 +1388,7 @@
                         app:lottie_autoPlay="true"
                         app:lottie_loop="true"
                         app:lottie_colorFilter="?attr/colorSecondary" 
-                        app:lottie_speed="1.75" android:rotation="75" />
+                        app:lottie_speed="1.75" android:rotation="15" />
 
                         <com.airbnb.lottie.LottieAnimationView
                         android:layout_width="45dp"
@@ -1503,7 +1503,7 @@
                         app:lottie_autoPlay="true"
                         app:lottie_loop="true"
                         app:lottie_colorFilter="?attr/colorSecondary" 
-                        app:lottie_speed="1.75" android:rotation="-45" />
+                        app:lottie_speed="1.75" android:rotation="0" />
 
                         <com.airbnb.lottie.LottieAnimationView
                         android:layout_width="45dp"
@@ -1515,7 +1515,7 @@
                         app:lottie_autoPlay="true"
                         app:lottie_loop="true"
                         app:lottie_colorFilter="?attr/colorSecondary" 
-                        app:lottie_speed="1.75" android:rotation="75" />
+                        app:lottie_speed="1.75" android:rotation="15" />
 
                         <com.airbnb.lottie.LottieAnimationView
                         android:layout_width="45dp"
@@ -1631,7 +1631,7 @@
                         app:lottie_autoPlay="true"
                         app:lottie_loop="true"
                         app:lottie_colorFilter="?attr/colorSecondary" 
-                        app:lottie_speed="1.75" android:rotation="-45" />
+                        app:lottie_speed="1.75" android:rotation="0" />
 
                         <com.airbnb.lottie.LottieAnimationView
                         android:layout_width="45dp"
@@ -1643,7 +1643,7 @@
                         app:lottie_autoPlay="true"
                         app:lottie_loop="true"
                         app:lottie_colorFilter="?attr/colorSecondary" 
-                        app:lottie_speed="1.75" android:rotation="75" />
+                        app:lottie_speed="1.75" android:rotation="15" />
 
                         <com.airbnb.lottie.LottieAnimationView
                         android:layout_width="45dp"
