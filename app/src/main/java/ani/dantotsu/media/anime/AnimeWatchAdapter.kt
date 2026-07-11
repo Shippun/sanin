@@ -143,22 +143,20 @@ class AnimeWatchAdapter(
             val recycler = fragment.requireView().findViewById<ViewGroup>(R.id.mediaSourceRecycler)
             recycler.descendantFocusability = ViewGroup.FOCUS_BLOCK_DESCENDANTS
             recycler.isFocusable = false
-            binding.mediaSource.showDropDown()
-            binding.mediaSource.post {
-                try {
-                    val popupField = binding.mediaSource.javaClass.getDeclaredField("mPopup")
-                    popupField.isAccessible = true
-                    val popup = popupField.get(binding.mediaSource) as? android.widget.ListPopupWindow
-                    val listView = popup?.listView
-                    listView?.isFocusable = true
-                    listView?.requestFocus()
-                } catch (_: Exception) {}
-            }
-            binding.mediaSource.setOnDismissListener {
-                recycler.descendantFocusability = ViewGroup.FOCUS_AFTER_DESCENDANTS
-                recycler.isFocusable = true
-                binding.mediaSource.post { binding.mediaSourceNameContainer.requestFocus() }
-            }
+            val sources = displayNames.toTypedArray()
+            android.app.AlertDialog.Builder(fragment.requireContext())
+                .setTitle("Select Source")
+                .setItems(sources) { _, i ->
+                    binding.mediaSource.setOnItemClickListener?.onItemClick(null, null, i, 0)
+                    recycler.descendantFocusability = ViewGroup.FOCUS_AFTER_DESCENDANTS
+                    recycler.isFocusable = true
+                }
+                .setOnDismissListener {
+                    recycler.descendantFocusability = ViewGroup.FOCUS_AFTER_DESCENDANTS
+                    recycler.isFocusable = true
+                    binding.mediaSourceNameContainer.requestFocus()
+                }
+                .show()
         }
         binding.mediaSourceNameContainer.setOnLongClickListener {
             fragment.loadEpisodes(source, true)
