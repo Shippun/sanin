@@ -159,7 +159,7 @@
             android:layout_marginStart="4dp"
             android:alpha="0.6"
             android:padding="2dp"
-            android:rotation="180"
+            android:rotation="270"
             app:layout_constraintStart_toEndOf="@+id/commentTotalVotes"
             app:layout_constraintTop_toBottomOf="@+id/reviewText"
             app:srcCompat="@drawable/ic_round_upvote_inactive_24"
