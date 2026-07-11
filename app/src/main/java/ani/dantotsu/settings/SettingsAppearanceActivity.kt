@@ -70,8 +70,8 @@ class SettingsAppearanceActivity : AppCompatActivity() {
         binding.appearanceCardStyle.setOnClickListener {
             customAlertDialog().apply {
                 setTitle("Card Style")
-                val labels = arrayOf("Rounded", "Minimal", "Classic", "Cover Only", "Liquid Glass", "Neon", "Compact")
-                singleChoiceItems(labels, PrefManager.getVal<Int>(PrefName.CardStyle)) { index ->
+                val labels = arrayOf("Rounded", "Compact")
+                singleChoiceItems(labels, PrefManager.getVal<Int>(PrefName.CardStyle).coerceAtMost(1)) { index ->
                     PrefManager.setVal(PrefName.CardStyle, index)
                     restartApp()
                 }
