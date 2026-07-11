@@ -10,7 +10,6 @@ import android.view.inputmethod.EditorInfo
 import android.widget.ArrayAdapter
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.biometric.BiometricManager
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.documentfile.provider.DocumentFile
@@ -18,12 +17,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import ani.dantotsu.R
 import ani.dantotsu.connections.anilist.Anilist
 import ani.dantotsu.databinding.ActivitySettingsCommonBinding
-import ani.dantotsu.databinding.DialogSetPasswordBinding
 import ani.dantotsu.databinding.DialogUserAgentBinding
 import ani.dantotsu.download.DownloadsManager
 import ani.dantotsu.initActivity
 import ani.dantotsu.navBarHeight
-import ani.dantotsu.others.calc.BiometricPromptUtils
 import ani.dantotsu.restartApp
 import ani.dantotsu.savePrefsToDownloads
 import ani.dantotsu.settings.saving.PrefManager
@@ -44,7 +41,6 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import uy.kohesive.injekt.Injekt
 import uy.kohesive.injekt.api.get
-import java.util.UUID
 
 class SettingsCommonActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySettingsCommonBinding
@@ -200,76 +196,7 @@ class SettingsCommonActivity : AppCompatActivity() {
                                 }
                             },
                         ),
-                        Settings(
-                            type = 1,
-                            name = getString(R.string.app_lock),
-                            desc = getString(R.string.app_lock_desc),
-                            icon = R.drawable.ic_round_lock_open_24,
-                            onClick = {
-                                customAlertDialog().apply {
-                                    val view = DialogSetPasswordBinding.inflate(layoutInflater)
-                                    setTitle(R.string.app_lock)
-                                    setCustomView(view.root)
-                                    setPosButton(R.string.ok) {
-                                        if (view.forgotPasswordCheckbox.isChecked) {
-                                            PrefManager.setVal(PrefName.OverridePassword, true)
-                                        }
-                                        val password = view.passwordInput.text.toString()
-                                        val confirmPassword = view.confirmPasswordInput.text.toString()
-                                        if (password == confirmPassword && password.isNotEmpty()) {
-                                            PrefManager.setVal(PrefName.AppPassword, password)
-                                            if (view.biometricCheckbox.isChecked) {
-                                                val canBiometricPrompt =
-                                                    BiometricManager
-                                                        .from(applicationContext)
-                                                        .canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_WEAK) ==
-                                                        BiometricManager.BIOMETRIC_SUCCESS
 
-                                                if (canBiometricPrompt) {
-                                                    val biometricPrompt =
-                                                        BiometricPromptUtils.createBiometricPrompt(this@SettingsCommonActivity) { _ ->
-                                                            val token = UUID.randomUUID().toString()
-                                                            PrefManager.setVal(
-                                                                PrefName.BiometricToken,
-                                                                token,
-                                                            )
-                                                            toast(R.string.success)
-                                                        }
-                                                    val promptInfo =
-                                                        BiometricPromptUtils.createPromptInfo(this@SettingsCommonActivity)
-                                                    biometricPrompt.authenticate(promptInfo)
-                                                }
-                                            } else {
-                                                PrefManager.setVal(PrefName.BiometricToken, "")
-                                                toast(R.string.success)
-                                            }
-                                        } else {
-                                            toast(R.string.password_mismatch)
-                                        }
-                                    }
-                                    setNegButton(R.string.cancel)
-                                    setNeutralButton(R.string.remove) {
-                                        PrefManager.setVal(PrefName.AppPassword, "")
-                                        PrefManager.setVal(PrefName.BiometricToken, "")
-                                        PrefManager.setVal(PrefName.OverridePassword, false)
-                                        toast(R.string.success)
-                                    }
-                                    setOnShowListener {
-                                        view.passwordInput.requestFocus()
-                                        val canAuthenticate =
-                                            BiometricManager.from(applicationContext).canAuthenticate(
-                                                BiometricManager.Authenticators.BIOMETRIC_WEAK,
-                                            ) == BiometricManager.BIOMETRIC_SUCCESS
-                                        view.biometricCheckbox.isVisible = canAuthenticate
-                                        view.biometricCheckbox.isChecked =
-                                            PrefManager.getVal(PrefName.BiometricToken, "").isNotEmpty()
-                                        view.forgotPasswordCheckbox.isChecked =
-                                            PrefManager.getVal(PrefName.OverridePassword)
-                                    }
-                                    show()
-                                }
-                            },
-                        ),
                         Settings(
                             type = 1,
                             name = getString(R.string.backup_restore),

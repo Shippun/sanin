@@ -17,10 +17,6 @@ class SubscriptionNotificationWorker(appContext: Context, workerParams: WorkerPa
             return Result.success()
         }
         PrefManager.init(applicationContext)
-        if (SubscriptionAppLockHelper.isAppLocked()) {
-            Logger.log("SubscriptionNotificationWorker: doWork skipped (calculator lock enabled)")
-            return Result.success()
-        }
         if (System.currentTimeMillis() - lastCheck < 60000) {
             Logger.log("SubscriptionNotificationWorker: doWork skipped")
             return Result.success()
