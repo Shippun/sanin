@@ -298,11 +298,47 @@ class SelectorDialogFragment : DialogFragment() {
                             extractor.server.name
                         media!!.anime!!.episodes!![media!!.anime!!.selectedEpisode!!]!!.selectedVideo =
                             episode.selectedVideo
-                        {
+                        if ((PrefManager.getVal(PrefName.DownloadManager) as Int) != 0) {
+                            download(
+                                requireActivity(),
+                                media!!.anime!!.episodes!![media!!.anime!!.selectedEpisode!!]!!,
+                                media!!.userPreferredName
+                            )
+                        }
+                        else {
                                 if (extractor.videos.size > episode.selectedVideo) extractor.videos[episode.selectedVideo] else null
                             val activity = currActivity() ?: requireActivity()
+                            selectedVideo?.file?.url?.let { url ->
+                                if (url.startsWith("magnet:") || url.endsWith(".torrent")) {
+                                    toast(R.string.torrent_addon_not_available)
+                                    return false
+                                }
+                            }
+                            if (selectedVideo != null) {
+                                Helper.startAnimeDownloadService(
+                                    activity,
+                                    media!!.mainName(),
+                                    episode.number,
+                                    selectedVideo,
+                                    subtitlesToDownload,
+                                    audioTracksToDownload,
+                                    media,
+                                    episode.thumb?.url ?: media!!.banner
+                                    ?: media!!.cover
+                                )
+                                val intent =
+                                    Intent(AnimeWatchFragment.ACTION_DOWNLOAD_STARTED).apply {
+                                        putExtra(
+                                            AnimeWatchFragment.EXTRA_EPISODE_NUMBER,
+                                            episode.number,
+                                        )
+                                        putExtra("mediaId", media?.id)
+                                    }
+                                activity.sendBroadcast(intent)
 
-                            // download removed
+                            } else {
+                                snackString(R.string.no_video_selected)
+                            }
                         }
                         return true
                     }
@@ -462,10 +498,9 @@ class SelectorDialogFragment : DialogFragment() {
     @OptIn(DelicateCoroutinesApi::class)
     @SuppressLint("UnsafeOptInUsageError")
     fun startExoplayer(media: Media) {
-    @OptIn(DelicateCoroutinesApi::class)
-    @SuppressLint("UnsafeOptInUsageError")
-    fun startExoplayer(media: Media) {
         if (!isAdded || _binding == null) return
+        prevEpisode = null
+
         episode?.let { ep ->
             val video = ep.extractors?.find {
                 it?.server?.name == ep.selectedExtractor
@@ -475,29 +510,31 @@ class SelectorDialogFragment : DialogFragment() {
                     toast(R.string.torrent_addon_not_available)
                     return
                 }
-                try {
-                    externalPlayerResult.launch(exportMagnetIntent(ep, video))
-                } catch (e: ActivityNotFoundException) {
-                    val amnis = "com.amnis"
-                    try {
-                        startActivity(
-                            Intent(
-                                Intent.ACTION_VIEW,
-                                Uri.parse("market://details?id=$amnis")
-                            )
-                        )
-                        dismissAllowingStateLoss()
-                    } catch (e: ActivityNotFoundException) {
-                        startActivity(
-                            Intent(
-                                Intent.ACTION_VIEW,
-                                Uri.parse("https://play.google.com/store/apps/details?id=$amnis")
-                            )
-                        )
+                        try {
+                            externalPlayerResult.launch(exportMagnetIntent(ep, video))
+                        } catch (e: ActivityNotFoundException) {
+                            val amnis = "com.amnis"
+                            try {
+                                startActivity(
+                                    Intent(
+                                        Intent.ACTION_VIEW,
+                                        Uri.parse("market://details?id=$amnis")
+                                    )
+                                )
+                                dismissAllowingStateLoss()
+                            } catch (e: ActivityNotFoundException) {
+                                startActivity(
+                                    Intent(
+                                        Intent.ACTION_VIEW,
+                                        Uri.parse("https://play.google.com/store/apps/details?id=$amnis")
+                                    )
+                                )
+                            }
+                        }
                     }
+                    return
                 }
             }
-            return
         }
 
         dismissAllowingStateLoss()
@@ -750,3 +787,4 @@ null,
         super.onDestroyView()
         _binding = null
     }
+}
