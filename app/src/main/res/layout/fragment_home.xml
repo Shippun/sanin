@@ -303,8 +303,8 @@
 
                             <FrameLayout
                                 android:id="@+id/homeUserDataProgressBar"
-                                android:layout_width="75dp"
-                                android:layout_height="75dp"
+                                android:layout_width="76.5dp"
+                                android:layout_height="76.5dp"
                                 android:layout_gravity="center"
                                 android:layout_marginEnd="16dp"
                                 tools:visibility="gone"
@@ -325,7 +325,7 @@
                                 android:layout_width="45dp"
                                 android:layout_height="45dp"
                                 android:layout_gravity="bottom|start"
-                                android:layout_marginStart="8dp"
+                                android:layout_marginStart="4dp"
                                 android:layout_marginBottom="8dp"
                                 app:lottie_rawRes="@raw/tomoe"
                                 app:lottie_autoPlay="true"
@@ -337,7 +337,7 @@
                                 android:layout_width="45dp"
                                 android:layout_height="45dp"
                                 android:layout_gravity="bottom|end"
-                                android:layout_marginEnd="8dp"
+                                android:layout_marginEnd="4dp"
                                 android:layout_marginBottom="8dp"
                                 app:lottie_rawRes="@raw/tomoe"
                                 app:lottie_autoPlay="true"
@@ -522,8 +522,8 @@
                 android:visibility="gone">
                 <FrameLayout
                     android:id="@+id/homeUserStatusProgressBar"
-                    android:layout_width="75dp"
-                    android:layout_height="75dp"
+                    android:layout_width="76.5dp"
+                    android:layout_height="76.5dp"
                     android:layout_gravity="center"
                 >
 
@@ -542,7 +542,7 @@
                     android:layout_width="45dp"
                     android:layout_height="45dp"
                     android:layout_gravity="bottom|start"
-                    android:layout_marginStart="8dp"
+                    android:layout_marginStart="4dp"
                     android:layout_marginBottom="8dp"
                     app:lottie_rawRes="@raw/tomoe"
                     app:lottie_autoPlay="true"
@@ -554,7 +554,7 @@
                     android:layout_width="45dp"
                     android:layout_height="45dp"
                     android:layout_gravity="bottom|end"
-                    android:layout_marginEnd="8dp"
+                    android:layout_marginEnd="4dp"
                     android:layout_marginBottom="8dp"
                     app:lottie_rawRes="@raw/tomoe"
                     app:lottie_autoPlay="true"
@@ -702,8 +702,8 @@
 
                     <FrameLayout
                         android:id="@+id/homeWatchingProgressBar"
-                        android:layout_width="75dp"
-                        android:layout_height="75dp"
+                        android:layout_width="76.5dp"
+                        android:layout_height="76.5dp"
                         android:layout_gravity="center"
                         android:layout_margin="90dp"
                     >
@@ -723,7 +723,7 @@
                         android:layout_width="45dp"
                         android:layout_height="45dp"
                         android:layout_gravity="bottom|start"
-                        android:layout_marginStart="8dp"
+                        android:layout_marginStart="4dp"
                         android:layout_marginBottom="8dp"
                         app:lottie_rawRes="@raw/tomoe"
                         app:lottie_autoPlay="true"
@@ -735,7 +735,7 @@
                         android:layout_width="45dp"
                         android:layout_height="45dp"
                         android:layout_gravity="bottom|end"
-                        android:layout_marginEnd="8dp"
+                        android:layout_marginEnd="4dp"
                         android:layout_marginBottom="8dp"
                         app:lottie_rawRes="@raw/tomoe"
                         app:lottie_autoPlay="true"
@@ -832,8 +832,8 @@
 
                     <FrameLayout
                         android:id="@+id/homeFavAnimeProgressBar"
-                        android:layout_width="75dp"
-                        android:layout_height="75dp"
+                        android:layout_width="76.5dp"
+                        android:layout_height="76.5dp"
                         android:layout_gravity="center"
                         android:layout_margin="90dp"
                     >
@@ -853,7 +853,7 @@
                         android:layout_width="45dp"
                         android:layout_height="45dp"
                         android:layout_gravity="bottom|start"
-                        android:layout_marginStart="8dp"
+                        android:layout_marginStart="4dp"
                         android:layout_marginBottom="8dp"
                         app:lottie_rawRes="@raw/tomoe"
                         app:lottie_autoPlay="true"
@@ -865,7 +865,7 @@
                         android:layout_width="45dp"
                         android:layout_height="45dp"
                         android:layout_gravity="bottom|end"
-                        android:layout_marginEnd="8dp"
+                        android:layout_marginEnd="4dp"
                         android:layout_marginBottom="8dp"
                         app:lottie_rawRes="@raw/tomoe"
                         app:lottie_autoPlay="true"
@@ -965,8 +965,8 @@
 
                     <FrameLayout
                         android:id="@+id/homePlannedAnimeProgressBar"
-                        android:layout_width="75dp"
-                        android:layout_height="75dp"
+                        android:layout_width="76.5dp"
+                        android:layout_height="76.5dp"
                         android:layout_gravity="center"
                         android:layout_margin="90dp"
                     >
@@ -986,7 +986,7 @@
                         android:layout_width="45dp"
                         android:layout_height="45dp"
                         android:layout_gravity="bottom|start"
-                        android:layout_marginStart="8dp"
+                        android:layout_marginStart="4dp"
                         android:layout_marginBottom="8dp"
                         app:lottie_rawRes="@raw/tomoe"
                         app:lottie_autoPlay="true"
@@ -998,7 +998,7 @@
                         android:layout_width="45dp"
                         android:layout_height="45dp"
                         android:layout_gravity="bottom|end"
-                        android:layout_marginEnd="8dp"
+                        android:layout_marginEnd="4dp"
                         android:layout_marginBottom="8dp"
                         app:lottie_rawRes="@raw/tomoe"
                         app:lottie_autoPlay="true"
@@ -1098,8 +1098,8 @@
 
                     <FrameLayout
                         android:id="@+id/homeReadingProgressBar"
-                        android:layout_width="75dp"
-                        android:layout_height="75dp"
+                        android:layout_width="76.5dp"
+                        android:layout_height="76.5dp"
                         android:layout_gravity="center"
                         android:layout_margin="90dp"
                     >
@@ -1119,7 +1119,7 @@
                         android:layout_width="45dp"
                         android:layout_height="45dp"
                         android:layout_gravity="bottom|start"
-                        android:layout_marginStart="8dp"
+                        android:layout_marginStart="4dp"
                         android:layout_marginBottom="8dp"
                         app:lottie_rawRes="@raw/tomoe"
                         app:lottie_autoPlay="true"
@@ -1131,7 +1131,7 @@
                         android:layout_width="45dp"
                         android:layout_height="45dp"
                         android:layout_gravity="bottom|end"
-                        android:layout_marginEnd="8dp"
+                        android:layout_marginEnd="4dp"
                         android:layout_marginBottom="8dp"
                         app:lottie_rawRes="@raw/tomoe"
                         app:lottie_autoPlay="true"
@@ -1227,8 +1227,8 @@
 
                     <FrameLayout
                         android:id="@+id/homeFavMangaProgressBar"
-                        android:layout_width="75dp"
-                        android:layout_height="75dp"
+                        android:layout_width="76.5dp"
+                        android:layout_height="76.5dp"
                         android:layout_gravity="center"
                         android:layout_margin="90dp"
                     >
@@ -1248,7 +1248,7 @@
                         android:layout_width="45dp"
                         android:layout_height="45dp"
                         android:layout_gravity="bottom|start"
-                        android:layout_marginStart="8dp"
+                        android:layout_marginStart="4dp"
                         android:layout_marginBottom="8dp"
                         app:lottie_rawRes="@raw/tomoe"
                         app:lottie_autoPlay="true"
@@ -1260,7 +1260,7 @@
                         android:layout_width="45dp"
                         android:layout_height="45dp"
                         android:layout_gravity="bottom|end"
-                        android:layout_marginEnd="8dp"
+                        android:layout_marginEnd="4dp"
                         android:layout_marginBottom="8dp"
                         app:lottie_rawRes="@raw/tomoe"
                         app:lottie_autoPlay="true"
@@ -1361,8 +1361,8 @@
 
                     <FrameLayout
                         android:id="@+id/homePlannedMangaProgressBar"
-                        android:layout_width="75dp"
-                        android:layout_height="75dp"
+                        android:layout_width="76.5dp"
+                        android:layout_height="76.5dp"
                         android:layout_gravity="center"
                         android:layout_margin="90dp"
                     >
@@ -1382,7 +1382,7 @@
                         android:layout_width="45dp"
                         android:layout_height="45dp"
                         android:layout_gravity="bottom|start"
-                        android:layout_marginStart="8dp"
+                        android:layout_marginStart="4dp"
                         android:layout_marginBottom="8dp"
                         app:lottie_rawRes="@raw/tomoe"
                         app:lottie_autoPlay="true"
@@ -1394,7 +1394,7 @@
                         android:layout_width="45dp"
                         android:layout_height="45dp"
                         android:layout_gravity="bottom|end"
-                        android:layout_marginEnd="8dp"
+                        android:layout_marginEnd="4dp"
                         android:layout_marginBottom="8dp"
                         app:lottie_rawRes="@raw/tomoe"
                         app:lottie_autoPlay="true"
@@ -1488,8 +1488,8 @@
 
                     <FrameLayout
                         android:id="@+id/homeMissingSequelsProgressBar"
-                        android:layout_width="75dp"
-                        android:layout_height="75dp"
+                        android:layout_width="76.5dp"
+                        android:layout_height="76.5dp"
                         android:layout_gravity="center"
                         android:layout_margin="90dp"
                     >
@@ -1509,7 +1509,7 @@
                         android:layout_width="45dp"
                         android:layout_height="45dp"
                         android:layout_gravity="bottom|start"
-                        android:layout_marginStart="8dp"
+                        android:layout_marginStart="4dp"
                         android:layout_marginBottom="8dp"
                         app:lottie_rawRes="@raw/tomoe"
                         app:lottie_autoPlay="true"
@@ -1521,7 +1521,7 @@
                         android:layout_width="45dp"
                         android:layout_height="45dp"
                         android:layout_gravity="bottom|end"
-                        android:layout_marginEnd="8dp"
+                        android:layout_marginEnd="4dp"
                         android:layout_marginBottom="8dp"
                         app:lottie_rawRes="@raw/tomoe"
                         app:lottie_autoPlay="true"
@@ -1616,8 +1616,8 @@
 
                     <FrameLayout
                         android:id="@+id/homeRecommendedProgressBar"
-                        android:layout_width="75dp"
-                        android:layout_height="75dp"
+                        android:layout_width="76.5dp"
+                        android:layout_height="76.5dp"
                         android:layout_gravity="center"
                         android:layout_margin="90dp"
                     >
@@ -1637,7 +1637,7 @@
                         android:layout_width="45dp"
                         android:layout_height="45dp"
                         android:layout_gravity="bottom|start"
-                        android:layout_marginStart="8dp"
+                        android:layout_marginStart="4dp"
                         android:layout_marginBottom="8dp"
                         app:lottie_rawRes="@raw/tomoe"
                         app:lottie_autoPlay="true"
@@ -1649,7 +1649,7 @@
                         android:layout_width="45dp"
                         android:layout_height="45dp"
                         android:layout_gravity="bottom|end"
-                        android:layout_marginEnd="8dp"
+                        android:layout_marginEnd="4dp"
                         android:layout_marginBottom="8dp"
                         app:lottie_rawRes="@raw/tomoe"
                         app:lottie_autoPlay="true"

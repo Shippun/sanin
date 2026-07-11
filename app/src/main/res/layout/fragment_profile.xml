@@ -230,8 +230,8 @@
 
                 <FrameLayout
                     android:id="@+id/profileFavAnimeProgressBar"
-                    android:layout_width="75dp"
-                    android:layout_height="75dp"
+                    android:layout_width="76.5dp"
+                    android:layout_height="76.5dp"
                     android:layout_gravity="center"
                     android:layout_margin="90dp"
                 >
@@ -251,7 +251,7 @@
                     android:layout_width="45dp"
                     android:layout_height="45dp"
                     android:layout_gravity="bottom|start"
-                    android:layout_marginStart="8dp"
+                    android:layout_marginStart="4dp"
                     android:layout_marginBottom="8dp"
                     app:lottie_rawRes="@raw/tomoe"
                     app:lottie_autoPlay="true"
@@ -263,7 +263,7 @@
                     android:layout_width="45dp"
                     android:layout_height="45dp"
                     android:layout_gravity="bottom|end"
-                    android:layout_marginEnd="8dp"
+                    android:layout_marginEnd="4dp"
                     android:layout_marginBottom="8dp"
                     app:lottie_rawRes="@raw/tomoe"
                     app:lottie_autoPlay="true"
@@ -311,8 +311,8 @@
 
                 <FrameLayout
                     android:id="@+id/profileFavMangaProgressBar"
-                    android:layout_width="75dp"
-                    android:layout_height="75dp"
+                    android:layout_width="76.5dp"
+                    android:layout_height="76.5dp"
                     android:layout_gravity="center"
                     android:layout_margin="90dp"
                 >
@@ -332,7 +332,7 @@
                     android:layout_width="45dp"
                     android:layout_height="45dp"
                     android:layout_gravity="bottom|start"
-                    android:layout_marginStart="8dp"
+                    android:layout_marginStart="4dp"
                     android:layout_marginBottom="8dp"
                     app:lottie_rawRes="@raw/tomoe"
                     app:lottie_autoPlay="true"
@@ -344,7 +344,7 @@
                     android:layout_width="45dp"
                     android:layout_height="45dp"
                     android:layout_gravity="bottom|end"
-                    android:layout_marginEnd="8dp"
+                    android:layout_marginEnd="4dp"
                     android:layout_marginBottom="8dp"
                     app:lottie_rawRes="@raw/tomoe"
                     app:lottie_autoPlay="true"
