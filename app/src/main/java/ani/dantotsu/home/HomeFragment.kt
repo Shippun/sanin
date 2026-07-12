@@ -753,14 +753,16 @@ class HomeFragment : Fragment() {
         val b = _binding ?: return
         navBannerCurrentMediaId = media.id
 
-        val bannerUrl = media.banner ?: media.cover ?: return
         val front = if (navBannerSlotA) b.navBannerBgA else b.navBannerBgB
         val back = if (navBannerSlotA) b.navBannerBgB else b.navBannerBgA
 
-        back.loadImage(bannerUrl)
-        back.alpha = 1f
-        front.alpha = 0f
-        navBannerSlotA = !navBannerSlotA
+        val bannerUrl = media.banner ?: media.cover
+        if (bannerUrl != null) {
+            back.loadImage(bannerUrl)
+            back.alpha = 1f
+            front.alpha = 0f
+            navBannerSlotA = !navBannerSlotA
+        }
 
         b.navBannerTitle.text = media.userPreferredName
         b.navBannerLogo.visibility = View.GONE
