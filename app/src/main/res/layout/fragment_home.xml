@@ -82,7 +82,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:contentDescription="@null"
-                        android:scaleType="fitEnd" />
+                        android:scaleType="centerCrop" />
 
                     <ImageView
                         android:id="@+id/navBannerBgB"
@@ -90,7 +90,7 @@
                         android:layout_height="match_parent"
                         android:alpha="0"
                         android:contentDescription="@null"
-                        android:scaleType="fitEnd" />
+                        android:scaleType="centerCrop" />
 
                     <View
                         android:layout_width="500dp"
