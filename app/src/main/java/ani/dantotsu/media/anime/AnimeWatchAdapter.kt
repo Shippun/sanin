@@ -29,6 +29,7 @@ import ani.dantotsu.loadImage
 import ani.dantotsu.media.Media
 import ani.dantotsu.media.MediaDetailsActivity
 import ani.dantotsu.media.MediaNameAdapter
+import ani.dantotsu.media.SheetSourceSelector
 import ani.dantotsu.media.SourceSearchDialogFragment
 import ani.dantotsu.openSettings
 import ani.dantotsu.others.LanguageMapper
@@ -141,22 +142,20 @@ class AnimeWatchAdapter(
         binding.mediaSourceNameContainer.nextFocusLeftId = R.id.mediaSourceNameContainer
         binding.mediaSourceNameContainer.setOnClickListener {
             val recycler = fragment.requireView().findViewById<ViewGroup>(R.id.mediaSourceRecycler)
+            val sources = displayNames.toTypedArray()
             recycler.descendantFocusability = ViewGroup.FOCUS_BLOCK_DESCENDANTS
             recycler.isFocusable = false
-            val sources = displayNames.toTypedArray()
-            android.app.AlertDialog.Builder(fragment.requireContext())
-                .setTitle("Select Source")
-                .setItems(sources) { _, i ->
+            SheetSourceSelector.newInstance(
+                sources = ArrayList(sources.toList()),
+                onSelect = { i ->
                     binding.mediaSource.onItemClickListener?.onItemClick(null, null, i, 0)
-                    recycler.descendantFocusability = ViewGroup.FOCUS_AFTER_DESCENDANTS
-                    recycler.isFocusable = true
-                }
-                .setOnDismissListener {
+                },
+                onDismiss = {
                     recycler.descendantFocusability = ViewGroup.FOCUS_AFTER_DESCENDANTS
                     recycler.isFocusable = true
                     binding.mediaSourceNameContainer.requestFocus()
                 }
-                .show()
+            ).show(fragment.childFragmentManager, "sourceSelector")
         }
         binding.mediaSourceNameContainer.setOnLongClickListener {
             fragment.loadEpisodes(source, true)
