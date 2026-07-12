@@ -207,6 +207,7 @@ class HomeFragment : Fragment() {
                 if (media != null && media.id != navBannerCurrentMediaId) {
                     updateNavigatingBanner(media)
                 }
+                binding.homeScroll.smoothScrollTo(0, 0)
             }
         }
 
@@ -752,26 +753,14 @@ class HomeFragment : Fragment() {
         val b = _binding ?: return
         navBannerCurrentMediaId = media.id
 
-        lifecycleScope.launch(Dispatchers.IO) {
-            val anizipUrl = AniZip.getBackdropUrl(media.id)
-            val bannerUrl = anizipUrl ?: media.banner ?: media.cover ?: return@launch
-            withContext(Dispatchers.Main) {
-                if (_binding == null || navBannerCurrentMediaId != media.id) return@withContext
-                val front = if (navBannerSlotA) b.navBannerBgA else b.navBannerBgB
-                val back = if (navBannerSlotA) b.navBannerBgB else b.navBannerBgA
+        val bannerUrl = media.banner ?: media.cover ?: return
+        val front = if (navBannerSlotA) b.navBannerBgA else b.navBannerBgB
+        val back = if (navBannerSlotA) b.navBannerBgB else b.navBannerBgA
 
-                back.loadImage(bannerUrl)
-                back.alpha = 0f
-                back.animate()
-                    .alpha(1f)
-                    .setDuration(400)
-                    .withEndAction {
-                        front.alpha = 0f
-                        navBannerSlotA = !navBannerSlotA
-                    }
-                    .start()
-            }
-        }
+        back.loadImage(bannerUrl)
+        back.alpha = 1f
+        front.alpha = 0f
+        navBannerSlotA = !navBannerSlotA
 
         b.navBannerTitle.text = media.userPreferredName
         b.navBannerLogo.visibility = View.GONE
