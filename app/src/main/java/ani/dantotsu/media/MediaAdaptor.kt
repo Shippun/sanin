@@ -4,7 +4,9 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.GradientDrawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -483,7 +485,22 @@ class MediaAdaptor(
             when (titlePos) {
                 0 -> {
                     b.itemCompactOverlay.visibility = View.VISIBLE
-                    b.itemCompactOverlay.setBackgroundResource(R.drawable.gradient_bottom_dark)
+                    val intensity = PrefManager.getVal<Float>(PrefName.CardGradientIntensity)
+                    if (intensity <= 0f) {
+                        b.itemCompactOverlay.background = null
+                    } else {
+                        val endAlpha = 200
+                        val startColor = Color.argb(0, 0, 0, 0)
+                        val endColor = Color.argb(
+                            (endAlpha * intensity).toInt().coerceIn(0, 255),
+                            0, 0, 0
+                        )
+                        val gradient = GradientDrawable(
+                            GradientDrawable.Orientation.BOTTOM_TOP,
+                            intArrayOf(endColor, startColor)
+                        )
+                        b.itemCompactOverlay.background = gradient
+                    }
                     b.itemCompactTitleBelow.visibility = View.GONE
                     logoJobs[position]?.cancel()
                     logoJobs[position] = CoroutineScope(Dispatchers.Main).launch {
