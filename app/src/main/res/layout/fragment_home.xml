@@ -82,7 +82,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:contentDescription="@null"
-                        android:scaleType="fitEnd" />
+                        android:scaleType="fitCenter" />
 
                     <ImageView
                         android:id="@+id/navBannerBgB"
@@ -90,13 +90,20 @@
                         android:layout_height="match_parent"
                         android:alpha="0"
                         android:contentDescription="@null"
-                        android:scaleType="fitEnd" />
+                        android:scaleType="fitCenter" />
 
                     <View
-                        android:layout_width="420dp"
+                        android:layout_width="500dp"
                         android:layout_height="match_parent"
                         android:layout_gravity="start"
                         android:background="@drawable/gradient_blend_left"
+                        android:importantForAccessibility="no" />
+
+                    <View
+                        android:layout_width="500dp"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="end"
+                        android:background="@drawable/gradient_blend_right"
                         android:importantForAccessibility="no" />
 
                     <View
