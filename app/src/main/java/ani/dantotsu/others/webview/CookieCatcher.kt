@@ -32,10 +32,10 @@ class CookieCatcher : AppCompatActivity() {
             val process = Application.getProcessName()
             if (packageName != process) WebView.setDataDirectorySuffix(process)
         }
-        setContentView(R.layout.activity_discord)
+        setContentView(R.layout.activity_cookie_catcher)
         FocusEffectUtil.applyFocusListener(findViewById(android.R.id.content))
 
-        val webView = findViewById<WebView>(R.id.discordWebview)
+        val webView = findViewById<WebView>(R.id.cookieWebview)
 
         val cookies: CookieManager? = Injekt.get<NetworkHelper>().cookieJar.manager
         cookies?.setAcceptThirdPartyCookies(webView, true)
