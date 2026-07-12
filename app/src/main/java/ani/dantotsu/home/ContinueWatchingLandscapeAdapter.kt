@@ -17,13 +17,11 @@ import ani.dantotsu.loadImage
 import ani.dantotsu.media.Media
 import ani.dantotsu.settings.saving.PrefManager
 import ani.dantotsu.settings.saving.PrefName
-import ani.dantotsu.util.BitmapUtil
 import ani.dantotsu.util.FocusEffectUtil
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.imageview.ShapeableImageView
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -31,8 +29,6 @@ class ContinueWatchingLandscapeAdapter(
     private val items: MutableList<Media>,
     private val onItemClick: (Media) -> Unit
 ) : RecyclerView.Adapter<ContinueWatchingLandscapeAdapter.ViewHolder>() {
-    private val gradientJobs = mutableMapOf<Int, Job>()
-    private val coverGradientCache = mutableMapOf<Int, Int>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context)
@@ -66,8 +62,6 @@ class ContinueWatchingLandscapeAdapter(
                 }
             }
         }
-
-        loadGradientOverlay(holder.gradientOverlay, media, position)
 
         holder.clearlogo.visibility = View.GONE
         holder.overlayTitle.visibility = View.GONE
@@ -138,6 +132,7 @@ class ContinueWatchingLandscapeAdapter(
 
         holder.ongoing.isVisible = isReleasing
 
+        setGradient(holder.gradientOverlay)
         holder.itemView.setOnClickListener { onItemClick(media) }
         holder.itemView.isFocusable = true
         holder.itemView.isFocusableInTouchMode = false
@@ -153,25 +148,7 @@ class ContinueWatchingLandscapeAdapter(
         gradientJobs.clear()
     }
 
-    private fun loadGradientOverlay(view: View, media: Media, position: Int) {
-        gradientJobs[position]?.cancel()
-        val cached = coverGradientCache[media.id]
-        if (cached != null) {
-            setGradient(view, cached)
-            return
-        }
-        gradientJobs[position] = CoroutineScope(Dispatchers.IO).launch {
-            val imageUrl = AniZip.getBackdropUrl(media.id) ?: media.cover ?: return@launch
-            val bitmap = BitmapUtil.downloadImageAsBitmap(imageUrl) ?: return@launch
-            val color = averageColor(bitmap)
-            coverGradientCache[media.id] = color
-            withContext(Dispatchers.Main) {
-                setGradient(view, color)
-            }
-        }
-    }
-
-    private fun setGradient(view: View, color: Int) {
+    private fun setGradient(view: View) {
         val intensity = PrefManager.getVal<Float>(PrefName.CardGradientIntensity)
         if (intensity <= 0f) {
             view.background = null
@@ -181,7 +158,7 @@ class ContinueWatchingLandscapeAdapter(
         val startColor = Color.argb(0, 0, 0, 0)
         val endColor = Color.argb(
             (endAlpha * intensity).toInt().coerceIn(0, 255),
-            Color.red(color), Color.green(color), Color.blue(color)
+            0, 0, 0
         )
         val gradient = GradientDrawable(
             GradientDrawable.Orientation.BOTTOM_TOP,
@@ -190,32 +167,4 @@ class ContinueWatchingLandscapeAdapter(
         view.background = gradient
     }
 
-    private fun averageColor(bitmap: android.graphics.Bitmap): Int {
-        val sample = android.graphics.Bitmap.createScaledBitmap(bitmap, 32, 32, true)
-        var r = 0L; var g = 0L; var b = 0L
-        val pixels = IntArray(1024)
-        sample.getPixels(pixels, 0, 32, 0, 0, 32, 32)
-        for (pixel in pixels) {
-            r += Color.red(pixel)
-            g += Color.green(pixel)
-            b += Color.blue(pixel)
-        }
-        sample.recycle()
-        val count = pixels.size
-        return Color.rgb((r / count).toInt(), (g / count).toInt(), (b / count).toInt())
-    }
-
-    class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val card: MaterialCardView = view.findViewById(R.id.cwCard)
-        val image: ShapeableImageView = view.findViewById(R.id.cwImage)
-        val gradientOverlay: View = view.findViewById(R.id.cwGradientOverlay)
-        val clearlogo: ImageView = view.findViewById(R.id.cwClearlogo)
-        val overlayTitle: TextView = view.findViewById(R.id.cwOverlayTitle)
-        val title: TextView = view.findViewById(R.id.cwTitle)
-        val subtitle: TextView = view.findViewById(R.id.cwSubtitle)
-        val episodeNo: TextView = view.findViewById(R.id.cwEpisodeNo)
-        val timeWatched: TextView = view.findViewById(R.id.cwTimeWatched)
-        val progress: ProgressBar = view.findViewById(R.id.cwProgress)
-        val ongoing: View = view.findViewById(R.id.cwOngoing)
-    }
 }
