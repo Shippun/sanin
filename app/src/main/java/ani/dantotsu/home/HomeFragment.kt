@@ -207,7 +207,6 @@ class HomeFragment : Fragment() {
                 if (media != null && media.id != navBannerCurrentMediaId) {
                     updateNavigatingBanner(media)
                 }
-                binding.homeScroll.smoothScrollTo(0, 0)
             }
         }
 

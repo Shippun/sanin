@@ -151,13 +151,13 @@ class SettingsDialogFragment : BottomSheetDialogFragment() {
         }
 
         binding.settingsExtensionSettings.setSafeOnClickListener {
-            startActivity(Intent(activity, ExtensionsActivity::class.java))
             dismiss()
+            startActivity(Intent(activity, ExtensionsActivity::class.java))
         }
 
         binding.settingsSettings.setSafeOnClickListener {
-            startActivity(Intent(activity, SettingsActivity::class.java))
             dismiss()
+            startActivity(Intent(activity, SettingsActivity::class.java))
         }
 
         binding.settingsActivity.setSafeOnClickListener {
@@ -165,8 +165,8 @@ class SettingsDialogFragment : BottomSheetDialogFragment() {
                 snackString(getString(R.string.rescue_mode_active))
                 return@setSafeOnClickListener
             }
-            startActivity(Intent(activity, FeedActivity::class.java))
             dismiss()
+            startActivity(Intent(activity, FeedActivity::class.java))
         }
 
         binding.settingsNotification.setOnClickListener {
@@ -174,8 +174,8 @@ class SettingsDialogFragment : BottomSheetDialogFragment() {
                 snackString(getString(R.string.rescue_mode_active))
                 return@setOnClickListener
             }
-            startActivity(Intent(activity, NotificationActivity::class.java))
             dismiss()
+            startActivity(Intent(activity, NotificationActivity::class.java))
         }
         binding.settingsDownloads.isChecked = PrefManager.getVal(PrefName.OfflineMode)
         binding.settingsDownloads.setOnCheckedChangeListener { _, isChecked ->
