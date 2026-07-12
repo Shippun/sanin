@@ -112,6 +112,7 @@
                     android:paddingBottom="3dp"
                     android:textColor="?attr/colorOnBackground"
                     android:textSize="12sp"
+                    android:nextFocusUp="@+id/commentSourceDantotsu"
                     android:nextFocusDown="@+id/commentsList"
                     android:visibility="gone"
                     tools:text="Ep 12"
@@ -125,6 +126,7 @@
                     android:background="?android:attr/selectableItemBackground"
                     android:contentDescription="@string/open_rules"
                     android:focusable="true"
+                    android:nextFocusUp="@+id/commentSourceDantotsu"
                     android:nextFocusDown="@+id/commentsList"
                     app:srcCompat="@drawable/ic_round_info_24"
                     app:tint="?attr/colorOnBackground" />
@@ -137,6 +139,7 @@
                     android:background="?android:attr/selectableItemBackground"
                     android:contentDescription="@string/sort_by"
                     android:focusable="true"
+                    android:nextFocusUp="@+id/commentSourceDantotsu"
                     android:nextFocusDown="@+id/commentsList"
                     app:srcCompat="@drawable/ic_round_filter_alt_24"
                     app:tint="?attr/colorOnBackground" />
@@ -149,6 +152,7 @@
                     android:background="?android:attr/selectableItemBackground"
                     android:contentDescription="@string/sort_by"
                     android:focusable="true"
+                    android:nextFocusUp="@+id/commentSourceDantotsu"
                     android:nextFocusDown="@+id/commentsList"
                     app:srcCompat="@drawable/ic_round_sort_24"
                     app:tint="?attr/colorOnBackground" />

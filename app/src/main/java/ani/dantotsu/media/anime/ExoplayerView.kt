@@ -764,6 +764,7 @@ class ExoplayerView :
                     exoPlay.requestFocus()
                 }
                 if (visibility == View.GONE) {
+                    playerView.requestFocus()
                     hideSystemBars()
                     brightnessRunnable.run()
                     volumeRunnable.run()
