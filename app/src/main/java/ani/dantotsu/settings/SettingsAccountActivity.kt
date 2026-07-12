@@ -16,6 +16,7 @@ import ani.dantotsu.R
 import ani.dantotsu.connections.anilist.Anilist
 import ani.dantotsu.connections.discord.Discord
 import ani.dantotsu.connections.mal.MAL
+import ani.dantotsu.connections.trakt.TraktAuth
 import ani.dantotsu.databinding.ActivitySettingsAccountsBinding
 import ani.dantotsu.initActivity
 import ani.dantotsu.loadImage
@@ -296,6 +297,22 @@ class SettingsAccountActivity : AppCompatActivity() {
                     isChecked = PrefManager.getVal<Int>(PrefName.TraktCommentsEnabled) == 1,
                     switch = { isChecked, _ ->
                         PrefManager.setVal(PrefName.TraktCommentsEnabled, if (isChecked) 1 else 0)
+                    },
+                    isVisible = true
+                ),
+                Settings(
+                    type = 0,
+                    name = if (TraktAuth.isLoggedIn()) "Trakt: ${TraktAuth.username}" else "Login to Trakt",
+                    desc = if (TraktAuth.isLoggedIn()) "Tap to logout" else "Like, reply & post on Trakt",
+                    icon = R.drawable.vpn_key_24,
+                    onClick = {
+                        if (TraktAuth.isLoggedIn()) {
+                            TraktAuth.logout()
+                            snackString("Logged out of Trakt")
+                            reload()
+                        } else {
+                            TraktAuth.loginIntent(context)
+                        }
                     },
                     isVisible = true
                 ),

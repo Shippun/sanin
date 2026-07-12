@@ -89,7 +89,88 @@ object TraktAPI {
             emptyList()
         }
     }
+
+    private fun authHeaders(): Map<String, String> {
+        val token = TraktAuth.accessToken ?: return headers()
+        return headers() + ("Authorization" to "Bearer $token")
+    }
+
+    suspend fun likeComment(commentId: Int): Boolean = withContext(Dispatchers.IO) {
+        if (!TraktAuth.isLoggedIn()) return@withContext false
+        try {
+            val request = okhttp3.Request.Builder()
+                .url("$BASE_URL/comments/$commentId/like")
+                .apply { authHeaders().forEach { (k, v) -> addHeader(k, v) } }
+                .post(okhttp3.RequestBody.create(null, ""))
+                .build()
+            val response = client.newCall(request).execute()
+            response.code == 204
+        } catch (e: Exception) {
+            Logger.log("Trakt like error: ${e.message}")
+            false
+        }
+    }
+
+    suspend fun unlikeComment(commentId: Int): Boolean = withContext(Dispatchers.IO) {
+        if (!TraktAuth.isLoggedIn()) return@withContext false
+        try {
+            val request = okhttp3.Request.Builder()
+                .url("$BASE_URL/comments/$commentId/like")
+                .apply { authHeaders().forEach { (k, v) -> addHeader(k, v) } }
+                .delete()
+                .build()
+            val response = client.newCall(request).execute()
+            response.code == 204
+        } catch (e: Exception) {
+            Logger.log("Trakt unlike error: ${e.message}")
+            false
+        }
+    }
+
+    suspend fun replyToComment(commentId: Int, text: String): TraktComment? = withContext(Dispatchers.IO) {
+        if (!TraktAuth.isLoggedIn()) return@withContext null
+        try {
+            val body = json.encodeToString(PostCommentBody(comment = text))
+            val request = okhttp3.Request.Builder()
+                .url("$BASE_URL/comments/$commentId/replies")
+                .apply { authHeaders().forEach { (k, v) -> addHeader(k, v) } }
+                .post(okhttp3.RequestBody.create(okhttp3.MediaType.parse("application/json"), body))
+                .build()
+            val response = client.newCall(request).execute()
+            val responseBody = response.body?.string() ?: return@withContext null
+            if (response.code !in 200..299) return@withContext null
+            json.decodeFromString<TraktComment>(responseBody)
+        } catch (e: Exception) {
+            Logger.log("Trakt reply error: ${e.message}")
+            null
+        }
+    }
+
+    suspend fun postComment(type: String, id: Int, text: String, spoiler: Boolean = false): TraktComment? = withContext(Dispatchers.IO) {
+        if (!TraktAuth.isLoggedIn()) return@withContext null
+        try {
+            val body = json.encodeToString(PostCommentBody(comment = text, spoiler = spoiler))
+            val request = okhttp3.Request.Builder()
+                .url("$BASE_URL/$type/$id/comments")
+                .apply { authHeaders().forEach { (k, v) -> addHeader(k, v) } }
+                .post(okhttp3.RequestBody.create(okhttp3.MediaType.parse("application/json"), body))
+                .build()
+            val response = client.newCall(request).execute()
+            val responseBody = response.body?.string() ?: return@withContext null
+            if (response.code !in 200..299) return@withContext null
+            json.decodeFromString<TraktComment>(responseBody)
+        } catch (e: Exception) {
+            Logger.log("Trakt post comment error: ${e.message}")
+            null
+        }
+    }
 }
+
+@Serializable
+data class PostCommentBody(
+    val comment: String,
+    val spoiler: Boolean = false
+)
 
 @Serializable
 data class TraktSearchResult(
@@ -140,7 +221,8 @@ data class TraktComment(
     @SerialName("replies") val replies: Int = 0,
     @SerialName("likes") val likes: Int = 0,
     @SerialName("user_stats") val userStats: TraktUserStats? = null,
-    @SerialName("user") val user: TraktUser
+    @SerialName("user") val user: TraktUser,
+    @SerialName("user_liked") val userLiked: Boolean = false
 )
 
 @Serializable

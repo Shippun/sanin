@@ -26,6 +26,7 @@ import ani.dantotsu.connections.comments.Comment
 import ani.dantotsu.connections.comments.CommentResponse
 import ani.dantotsu.connections.comments.CommentsAPI
 import ani.dantotsu.connections.trakt.TraktAPI
+import ani.dantotsu.connections.trakt.TraktAuth
 import ani.dantotsu.connections.trakt.TraktComment
 import ani.dantotsu.connections.trakt.TraktSearchResult
 import ani.dantotsu.databinding.DialogEdittextBinding
@@ -609,7 +610,9 @@ class CommentsFragment : Fragment() {
         binding.commentSort.visibility = View.VISIBLE
         binding.commentCurrentProgress.visibility = if (isDantotsu && (userProgress ?: 0) > 0) View.VISIBLE else View.GONE
         activity.binding.commentMessageContainer.visibility =
-            if (isDantotsu && CommentsAPI.authToken != null) View.VISIBLE else View.GONE
+            if (isDantotsu && CommentsAPI.authToken != null) View.VISIBLE
+            else if (!isDantotsu && TraktAuth.isLoggedIn()) View.VISIBLE
+            else View.GONE
     }
 
     private fun updateCurrentProgressButton() {
@@ -821,7 +824,7 @@ class CommentsFragment : Fragment() {
             tag = null,
             upvotes = tc.likes,
             downvotes = 0,
-            userVoteType = null,
+            userVoteType = if (tc.userLiked) 1 else 0,
             username = tc.user.name ?: tc.user.username,
             profilePictureUrl = avatarUrl,
             totalVotes = tc.likes,
@@ -1063,6 +1066,10 @@ class CommentsFragment : Fragment() {
     }
 
     private suspend fun handleNewComment(commentText: String) {
+        if (currentSource == CommentSource.TRAKT) {
+            handleTraktNewComment(commentText)
+            return
+        }
         val success = withContext(Dispatchers.IO) {
             CommentsAPI.comment(
                 mediaId,
@@ -1104,6 +1111,51 @@ class CommentsFragment : Fragment() {
                         0
                     )
                 )
+            }
+        }
+    }
+
+    private suspend fun handleTraktNewComment(commentText: String) {
+        if (interactionState == InteractionState.REPLY) {
+            val parentId = commentWithInteraction?.comment?.commentId ?: return
+            val reply = withContext(Dispatchers.IO) {
+                TraktAPI.replyToComment(parentId, commentText)
+            }
+            reply?.let { tc ->
+                val traktComment = traktToComment(tc)
+                val depth = if (commentWithInteraction!!.commentDepth + 1 > commentWithInteraction!!.MAX_DEPTH)
+                    commentWithInteraction!!.commentDepth else commentWithInteraction!!.commentDepth + 1
+                val sec = if (commentWithInteraction!!.commentDepth + 1 > commentWithInteraction!!.MAX_DEPTH)
+                    commentWithInteraction?.parentSection else commentWithInteraction?.repliesSection
+                sec?.add(
+                    CommentItem(
+                        traktComment,
+                        buildMarkwon(activity, fragment = this@CommentsFragment),
+                        sec,
+                        this@CommentsFragment,
+                        backgroundColor,
+                        depth
+                    )
+                )
+                snackString("Replied on Trakt")
+            }
+        } else {
+            val type = traktResult?.mediaType ?: return
+            val id = traktResult?.traktId ?: return
+            val posted = withContext(Dispatchers.IO) {
+                TraktAPI.postComment(type, id, commentText, isSpoilerMode)
+            }
+            posted?.let { tc ->
+                val traktComment = traktToComment(tc)
+                section.add(0, CommentItem(
+                    traktComment,
+                    buildMarkwon(activity, fragment = this@CommentsFragment),
+                    section,
+                    this@CommentsFragment,
+                    backgroundColor,
+                    0
+                ))
+                snackString("Comment posted on Trakt")
             }
         }
     }

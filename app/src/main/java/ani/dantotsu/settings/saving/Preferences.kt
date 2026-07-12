@@ -74,6 +74,8 @@ enum class PrefName(val data: Pref) {
     AutoUpdateExtensions(Pref(Location.General, Boolean::class, true)),
     TraktClientId(Pref(Location.General, String::class, "")),
     TraktCommentsEnabled(Pref(Location.General, Int::class, 0)),
+    TraktAccessToken(Pref(Location.Protected, String::class, "")),
+    TraktUsername(Pref(Location.Protected, String::class, "")),
 
     //User Interface
     EpisodeMetadataSource(Pref(Location.UI, Int::class, 0)),

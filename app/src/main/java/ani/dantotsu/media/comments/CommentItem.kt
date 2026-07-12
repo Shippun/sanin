@@ -10,6 +10,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import ani.dantotsu.R
 import ani.dantotsu.connections.comments.Comment
 import ani.dantotsu.connections.comments.CommentsAPI
+import ani.dantotsu.connections.trakt.TraktAPI
+import ani.dantotsu.connections.trakt.TraktAuth
 import ani.dantotsu.copyToClipboard
 import ani.dantotsu.databinding.ItemCommentsBinding
 import ani.dantotsu.getAppString
@@ -98,7 +100,8 @@ class CommentItem(
                 commentTotalReplies.visibility = View.GONE
                 commentRepliesDivider.visibility = View.GONE
             }
-            commentReply.visibility = if (isTrakt) View.GONE else View.VISIBLE
+            val isTraktLoggedIn = isTrakt && TraktAuth.isLoggedIn()
+            commentReply.visibility = if (isTrakt && !TraktAuth.isLoggedIn()) View.GONE else View.VISIBLE
             commentTotalReplies.setOnClickListener {
                 if (repliesVisible) {
                     repliesSection.clear()
@@ -151,10 +154,31 @@ class CommentItem(
             modBadge.visibility = if (comment.isMod == true) View.VISIBLE else View.GONE
             adminBadge.visibility =
                 if (comment.isAdmin == true) View.VISIBLE else View.GONE
-            if (isTrakt) {
+            if (isTrakt && !TraktAuth.isLoggedIn()) {
                 commentInfo.visibility = View.GONE
                 commentUpVote.visibility = View.GONE
                 commentDownVote.visibility = View.GONE
+            } else if (isTrakt) {
+                commentInfo.visibility = View.GONE
+                commentUpVote.visibility = View.VISIBLE
+                commentDownVote.visibility = View.GONE
+                setVoteButtons(viewBinding)
+                commentUpVote.setOnClickListener {
+                    val wasLiked = comment.userVoteType == 1
+                    val scope = CoroutineScope(Dispatchers.Main + SupervisorJob())
+                    scope.launch {
+                        val success = if (wasLiked) {
+                            TraktAPI.unlikeComment(comment.commentId)
+                        } else {
+                            TraktAPI.likeComment(comment.commentId)
+                        }
+                        if (success) {
+                            comment.userVoteType = if (wasLiked) 0 else 1
+                            comment.upvotes += if (wasLiked) -1 else 1
+                            notifyChanged()
+                        }
+                    }
+                }
             } else {
                 commentInfo.visibility = View.VISIBLE
                 commentUpVote.visibility = View.VISIBLE

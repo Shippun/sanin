@@ -9,6 +9,7 @@ import android.util.Log
 import ani.dantotsu.aniyomi.anime.custom.AppModule
 import ani.dantotsu.aniyomi.anime.custom.PreferenceModule
 import ani.dantotsu.connections.comments.CommentsAPI
+import ani.dantotsu.connections.trakt.TraktAuth
 import ani.dantotsu.connections.crashlytics.CrashlyticsInterface
 import ani.dantotsu.notifications.TaskScheduler
 import ani.dantotsu.others.DisabledReports
@@ -110,6 +111,7 @@ class App : Application() {
             if (PrefManager.getVal<Int>(PrefName.CommentsEnabled) == 1) {
                 CommentsAPI.fetchAuthToken(this@App)
             }
+            TraktAuth.loadSavedToken()
 
             val useAlarmManager = PrefManager.getVal<Boolean>(PrefName.UseAlarmManager)
             val scheduler = TaskScheduler.create(this@App, useAlarmManager)
