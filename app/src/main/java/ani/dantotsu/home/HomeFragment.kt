@@ -756,12 +756,16 @@ class HomeFragment : Fragment() {
         val front = if (navBannerSlotA) b.navBannerBgA else b.navBannerBgB
         val back = if (navBannerSlotA) b.navBannerBgB else b.navBannerBgA
 
-        val bannerUrl = media.banner ?: media.cover
-        if (bannerUrl != null) {
-            back.loadImage(bannerUrl)
-            back.alpha = 1f
-            front.alpha = 0f
-            navBannerSlotA = !navBannerSlotA
+        lifecycleScope.launch(Dispatchers.IO) {
+            val anizipUrl = AniZip.getBackdropUrl(media.id)
+            val bannerUrl = anizipUrl ?: media.banner ?: media.cover ?: return@launch
+            withContext(Dispatchers.Main) {
+                if (_binding == null || navBannerCurrentMediaId != media.id) return@withContext
+                back.loadImage(bannerUrl)
+                back.alpha = 1f
+                front.alpha = 0f
+                navBannerSlotA = !navBannerSlotA
+            }
         }
 
         b.navBannerTitle.text = media.userPreferredName
