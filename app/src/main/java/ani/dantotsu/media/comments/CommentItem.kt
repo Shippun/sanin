@@ -20,6 +20,7 @@ import ani.dantotsu.openImage
 import ani.dantotsu.profile.ProfileActivity
 import ani.dantotsu.setAnimation
 import ani.dantotsu.snackString
+import ani.dantotsu.util.FocusEffectUtil
 import ani.dantotsu.util.ColorEditor.Companion.adjustColorForContrast
 import ani.dantotsu.util.ColorEditor.Companion.getContrastRatio
 import ani.dantotsu.util.customAlertDialog
@@ -64,6 +65,7 @@ class CommentItem(
     override fun bind(viewBinding: ItemCommentsBinding, position: Int) {
         binding = viewBinding
         setAnimation(binding.root.context, binding.root)
+        FocusEffectUtil.applyFocusListener(binding.root)
         val item = this
         binding.root.setOnClickListener {
             if (zoomDialog?.isAdded != true) {

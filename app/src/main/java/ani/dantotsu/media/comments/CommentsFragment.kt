@@ -40,6 +40,7 @@ import ani.dantotsu.setBaseline
 import ani.dantotsu.settings.saving.PrefManager
 import ani.dantotsu.settings.saving.PrefName
 import ani.dantotsu.snackString
+import ani.dantotsu.util.FocusEffectUtil
 import ani.dantotsu.util.Logger
 import ani.dantotsu.util.customAlertDialog
 import com.xwray.groupie.GroupieAdapter
@@ -331,6 +332,9 @@ class CommentsFragment : Fragment() {
                 lifecycleScope.launch { loadAndDisplayComments() }
             }
         }
+
+        FocusEffectUtil.applyFocusListener(binding.commentSourceDantotsu, binding.commentSourceTrakt)
+        FocusEffectUtil.applyFocusListener(binding.openRules, binding.commentFilter, binding.commentSort)
 
         var isFetching = false
         binding.commentsList.setOnTouchListener(
