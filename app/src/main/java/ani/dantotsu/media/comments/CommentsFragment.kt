@@ -25,12 +25,16 @@ import ani.dantotsu.connections.anilist.Anilist
 import ani.dantotsu.connections.comments.Comment
 import ani.dantotsu.connections.comments.CommentResponse
 import ani.dantotsu.connections.comments.CommentsAPI
+import ani.dantotsu.connections.trakt.TraktAPI
+import ani.dantotsu.connections.trakt.TraktComment
+import ani.dantotsu.connections.trakt.TraktSearchResult
 import ani.dantotsu.databinding.DialogEdittextBinding
 import ani.dantotsu.databinding.FragmentCommentsBinding
 import ani.dantotsu.loadImage
 import ani.dantotsu.media.MediaNameAdapter
 import ani.dantotsu.media.MediaDetailsActivity
 import ani.dantotsu.media.MediaDetailsViewModel
+import ani.dantotsu.others.IdMappers
 import ani.dantotsu.setBaseline
 import ani.dantotsu.settings.saving.PrefManager
 import ani.dantotsu.settings.saving.PrefName
@@ -70,6 +74,11 @@ class CommentsFragment : Fragment() {
     private var isAutoFilterOn = false
     private var isSpoilerMode = false
 
+    private var currentSource = CommentSource.DANOTSU
+    private var traktResult: TraktSearchResult? = null
+
+    enum class CommentSource { DANOTSU, TRAKT }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -87,7 +96,6 @@ class CommentsFragment : Fragment() {
         activity.binding.commentMessageContainer?.let {
             binding.commentsLayout.setBaseline(it, includeSystemNavBar = true)
         }
-        //get the media id from the intent
         val mediaId = arguments?.getInt("mediaId") ?: -1
         mediaName = arguments?.getString("mediaName") ?: "unknown"
         if (mediaId == -1) {
@@ -102,9 +110,7 @@ class CommentsFragment : Fragment() {
         activity.binding.commentUserAvatar.loadImage(Anilist.avatar)
         val markwonEditor = MarkwonEditor.create(markwon)
         activity.binding.commentInput.addTextChangedListener(
-            MarkwonEditorTextWatcher.withProcess(
-                markwonEditor
-            )
+            MarkwonEditorTextWatcher.withProcess(markwonEditor)
         )
 
         val isOfflineOrLocal = !ani.dantotsu.isOnline(activity)
@@ -117,11 +123,9 @@ class CommentsFragment : Fragment() {
             }
             binding.commentsOfflineText.visibility = View.GONE
             binding.commentsListContainer.visibility = View.VISIBLE
-            binding.openRules.visibility = View.VISIBLE
-            binding.commentFilter.visibility = View.VISIBLE
-            binding.commentSort.visibility = View.VISIBLE
+            updateUiForSource()
             activity.binding.commentMessageContainer.visibility =
-                if (CommentsAPI.authToken != null) View.VISIBLE else View.GONE
+                if (CommentsAPI.authToken != null && currentSource == CommentSource.DANOTSU) View.VISIBLE else View.GONE
 
             lifecycleScope.launch {
                 loadAndDisplayComments()
@@ -155,10 +159,18 @@ class CommentsFragment : Fragment() {
                 if (!commentsLoaded || newMedia.id != this.mediaId) {
                     this.mediaId = newMedia.id
                     commentsLoaded = true
+                    traktResult = null
+                    currentSource = CommentSource.DANOTSU
+
+                    lifecycleScope.launch {
+                        traktResult = lookupTraktIds()
+                        updateSourceBarVisibility()
+                    }
 
                     if (isOfflineOrLocal) {
                         binding.commentsOfflineText.visibility = View.VISIBLE
                         binding.commentsListContainer.visibility = View.GONE
+                        binding.commentSourceBar.visibility = View.GONE
                         binding.openRules.visibility = View.GONE
                         binding.commentFilter.visibility = View.GONE
                         binding.commentSort.visibility = View.GONE
@@ -217,6 +229,7 @@ class CommentsFragment : Fragment() {
             popup.inflate(R.menu.comments_sort_menu)
             popup.show()
         }
+
         binding.openRules.setOnClickListener {
             activity.customAlertDialog().apply {
                 setTitle("Commenting Rules")
@@ -302,6 +315,22 @@ class CommentsFragment : Fragment() {
             true
         }
 
+        binding.commentSourceDantotsu.setOnClickListener {
+            if (currentSource != CommentSource.DANOTSU) {
+                currentSource = CommentSource.DANOTSU
+                highlightSource()
+                lifecycleScope.launch { loadAndDisplayComments() }
+            }
+        }
+
+        binding.commentSourceTrakt.setOnClickListener {
+            if (currentSource != CommentSource.TRAKT) {
+                currentSource = CommentSource.TRAKT
+                highlightSource()
+                lifecycleScope.launch { loadAndDisplayComments() }
+            }
+        }
+
         var isFetching = false
         binding.commentsList.setOnTouchListener(
             object : View.OnTouchListener {
@@ -320,7 +349,6 @@ class CommentsFragment : Fragment() {
                                     }
                                 }
                             } else {
-                                //snackString("No more comments") fix spam?
                                 Logger.log("No more comments")
                             }
                         }
@@ -331,50 +359,60 @@ class CommentsFragment : Fragment() {
                 private fun loadMoreComments() {
                     isFetching = true
                     lifecycleScope.launch {
-                        val comments = fetchComments()
-                        comments?.comments?.forEach { comment ->
-                            updateUIWithComment(comment)
+                        if (currentSource == CommentSource.DANOTSU) {
+                            val comments = withContext(Dispatchers.IO) {
+                                CommentsAPI.getCommentsForId(
+                                    mediaId,
+                                    pagesLoaded + 1,
+                                    getEffectiveFilter(),
+                                    PrefManager.getVal(PrefName.CommentSortOrder, "newest")
+                                )
+                            }
+                            comments?.comments?.forEach { comment ->
+                                withContext(Dispatchers.Main) {
+                                    section.add(
+                                        CommentItem(
+                                            comment,
+                                            buildMarkwon(activity, fragment = this@CommentsFragment),
+                                            section,
+                                            this@CommentsFragment,
+                                            backgroundColor,
+                                            0
+                                        )
+                                    )
+                                }
+                            }
+                            totalPages = comments?.totalPages ?: 1
+                        } else {
+                            val type = traktResult?.mediaType ?: return@launch
+                            val id = traktResult?.traktId ?: return@launch
+                            val traktComments = TraktAPI.getComments(type, id, pagesLoaded + 1)
+                            traktComments.forEach { tc ->
+                                val comment = traktToComment(tc)
+                                withContext(Dispatchers.Main) {
+                                    section.add(
+                                        CommentItem(
+                                            comment,
+                                            buildMarkwon(activity, fragment = this@CommentsFragment),
+                                            section,
+                                            this@CommentsFragment,
+                                            backgroundColor,
+                                            0
+                                        )
+                                    )
+                                }
+                            }
+                            totalPages = if (traktComments.size < 25) pagesLoaded else pagesLoaded + 1
                         }
-                        totalPages = comments?.totalPages ?: 1
                         pagesLoaded++
                         isFetching = false
-                    }
-                }
-
-                private suspend fun fetchComments(): CommentResponse? {
-                    return withContext(Dispatchers.IO) {
-                        CommentsAPI.getCommentsForId(
-                            mediaId,
-                            pagesLoaded + 1,
-                            getEffectiveFilter(),
-                            PrefManager.getVal(PrefName.CommentSortOrder, "newest")
-                        )
-                    }
-                }
-                //adds additional comments to the section
-                private suspend fun updateUIWithComment(comment: Comment) {
-                    withContext(Dispatchers.Main) {
-                        section.add(
-                            CommentItem(
-                                comment,
-                                buildMarkwon(activity, fragment = this@CommentsFragment),
-                                section,
-                                this@CommentsFragment,
-                                backgroundColor,
-                                0
-                            )
-                        )
                     }
                 }
             })
 
         activity.binding.commentInput.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-            }
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-            }
-
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
             override fun afterTextChanged(s: android.text.Editable?) {
                 if ((activity.binding.commentInput.text.length) > 300) {
                     activity.binding.commentInput.text.delete(
@@ -406,14 +444,12 @@ class CommentsFragment : Fragment() {
                     activity.binding.commentSend.visibility = View.VISIBLE
                     activity.binding.commentSpoiler.visibility = View.VISIBLE
                     activity.binding.commentGif.visibility = View.VISIBLE
-                    activity.binding.commentLabel.animate().translationX(0f).setDuration(300)
-                        .start()
+                    activity.binding.commentLabel.animate().translationX(0f).setDuration(300).start()
                     activity.binding.commentSend.animate().translationX(0f).setDuration(300).start()
                 }
             }
 
             activity.binding.commentLabel.setOnClickListener {
-                //alert dialog to enter a number, with a cancel and ok button
                 activity.customAlertDialog().apply {
                     val customView = DialogEdittextBinding.inflate(layoutInflater)
                     setTitle("Enter a chapter/episode number tag")
@@ -456,7 +492,6 @@ class CommentsFragment : Fragment() {
             }
         }
 
-        // Spoiler toggle button
         activity.binding.commentSpoiler.setOnClickListener {
             isSpoilerMode = !isSpoilerMode
             activity.binding.commentSpoiler.alpha = if (isSpoilerMode) 1f else 0.5f
@@ -466,7 +501,6 @@ class CommentsFragment : Fragment() {
             )
         }
 
-        // GIF picker button
         activity.binding.commentGif.setOnClickListener {
             val gifPicker = GifPickerBottomDialog.newInstance()
             gifPicker.setOnGifSelectedListener { gifUrl ->
@@ -524,21 +558,58 @@ class CommentsFragment : Fragment() {
 
     private fun chapterMatchesTag(chapterNumber: String, tag: String): Boolean {
         if (chapterNumber == tag) return true
-
         val chapterValue = MediaNameAdapter.findChapterNumber(chapterNumber)
         val tagValue = MediaNameAdapter.findChapterNumber(tag)
         return chapterValue != null && tagValue != null && chapterValue == tagValue
     }
 
-    /**
-     * Loads and displays the comments
-     * Called when the activity is created
-     * Or when the user refreshes the comments
-     */
     private fun getEffectiveFilter(): Int? = when {
         filterTag != null -> filterTag
         isAutoFilterOn && userProgress != null && userProgress!! > 0 -> userProgress
         else -> null
+    }
+
+    private suspend fun lookupTraktIds(): TraktSearchResult? {
+        val imdbId = IdMappers.getImdbId(mediaId) ?: return null
+        return TraktAPI.searchByImdb(imdbId)
+    }
+
+    private fun updateSourceBarVisibility() {
+        val hasTrakt = traktResult != null && PrefManager.getVal<Int>(PrefName.TraktCommentsEnabled) == 1
+        binding.commentSourceBar.visibility = if (hasTrakt) View.VISIBLE else View.GONE
+        if (hasTrakt) highlightSource()
+    }
+
+    private fun highlightSource() {
+        val primary = resolveColorAttr(com.google.android.material.R.attr.colorPrimary)
+        val onPrimary = resolveColorAttr(com.google.android.material.R.attr.colorOnPrimary)
+        val onBg = resolveColorAttr(android.R.attr.textColorPrimary)
+
+        when (currentSource) {
+            CommentSource.DANOTSU -> {
+                binding.commentSourceDantotsu.setTextColor(onPrimary)
+                binding.commentSourceDantotsu.setBackgroundColor(primary)
+                binding.commentSourceTrakt.setTextColor(onBg)
+                binding.commentSourceTrakt.background = null
+            }
+            CommentSource.TRAKT -> {
+                binding.commentSourceTrakt.setTextColor(onPrimary)
+                binding.commentSourceTrakt.setBackgroundColor(primary)
+                binding.commentSourceDantotsu.setTextColor(onBg)
+                binding.commentSourceDantotsu.background = null
+            }
+        }
+        updateUiForSource()
+    }
+
+    private fun updateUiForSource() {
+        val isDantotsu = currentSource == CommentSource.DANOTSU
+        binding.openRules.visibility = if (isDantotsu) View.VISIBLE else View.GONE
+        binding.commentFilter.visibility = if (isDantotsu) View.VISIBLE else View.GONE
+        binding.commentSort.visibility = View.VISIBLE
+        binding.commentCurrentProgress.visibility = if (isDantotsu && (userProgress ?: 0) > 0) View.VISIBLE else View.GONE
+        activity.binding.commentMessageContainer.visibility =
+            if (isDantotsu && CommentsAPI.authToken != null) View.VISIBLE else View.GONE
     }
 
     private fun updateCurrentProgressButton() {
@@ -569,9 +640,7 @@ class CommentsFragment : Fragment() {
             isAutoFilterOn -> {
                 badge.text = "$label $progress"
                 badge.alpha = 1f
-                badge.setTextColor(
-                    resolveColorAttr(android.R.attr.textColorPrimary)
-                )
+                badge.setTextColor(resolveColorAttr(android.R.attr.textColorPrimary))
                 badge.background = android.graphics.drawable.GradientDrawable().apply {
                     shape = android.graphics.drawable.GradientDrawable.RECTANGLE
                     cornerRadius = 16f * resources.displayMetrics.density
@@ -585,9 +654,7 @@ class CommentsFragment : Fragment() {
             else -> {
                 badge.text = "$label $progress"
                 badge.alpha = 0.33f
-                badge.setTextColor(
-                    resolveColorAttr(android.R.attr.textColorPrimary)
-                )
+                badge.setTextColor(resolveColorAttr(android.R.attr.textColorPrimary))
                 badge.background = android.graphics.drawable.GradientDrawable().apply {
                     shape = android.graphics.drawable.GradientDrawable.RECTANGLE
                     cornerRadius = 16f * resources.displayMetrics.density
@@ -666,10 +733,19 @@ class CommentsFragment : Fragment() {
         binding.commentsList.visibility = View.GONE
         section.clear()
         pagesLoaded = 1
+        updateUiForSource()
 
-        val sortOrder = PrefManager.getVal(PrefName.CommentSortOrder, "newest")
+        when (currentSource) {
+            CommentSource.DANOTSU -> loadDantotsuComments()
+            CommentSource.TRAKT -> loadTraktComments()
+        }
+
+        binding.commentsProgressBar.visibility = View.GONE
+        binding.commentsList.visibility = View.VISIBLE
+    }
+
+    private suspend fun loadDantotsuComments() {
         val effectiveFilter = getEffectiveFilter()
-        
         val comments = withContext(Dispatchers.IO) {
             CommentsAPI.getCommentsForId(
                 mediaId,
@@ -678,7 +754,6 @@ class CommentsFragment : Fragment() {
                 sort = null
             )
         }
-
         comments?.comments?.forEach { comment ->
             withContext(Dispatchers.Main) {
                 section.add(
@@ -693,10 +768,65 @@ class CommentsFragment : Fragment() {
                 )
             }
         }
-
         totalPages = comments?.totalPages ?: 1
-        binding.commentsProgressBar.visibility = View.GONE
-        binding.commentsList.visibility = View.VISIBLE
+    }
+
+    private suspend fun loadTraktComments() {
+        val type = traktResult?.mediaType ?: run {
+            withContext(Dispatchers.Main) { snackString("Trakt: media not found") }
+            totalPages = 1
+            return
+        }
+        val id = traktResult?.traktId ?: run {
+            withContext(Dispatchers.Main) { snackString("Trakt: media not found") }
+            totalPages = 1
+            return
+        }
+        val sort = when (PrefManager.getVal(PrefName.CommentSortOrder, "newest")) {
+            "newest" -> "newest"
+            "oldest" -> "oldest"
+            else -> "likes"
+        }
+        val traktComments = withContext(Dispatchers.IO) {
+            TraktAPI.getComments(type, id, page = 1, sort = sort)
+        }
+        traktComments.forEach { tc ->
+            val comment = traktToComment(tc)
+            withContext(Dispatchers.Main) {
+                section.add(
+                    CommentItem(
+                        comment,
+                        buildMarkwon(activity, fragment = this@CommentsFragment),
+                        section,
+                        this@CommentsFragment,
+                        backgroundColor,
+                        0
+                    )
+                )
+            }
+        }
+        totalPages = if (traktComments.size < 25) 1 else 2
+    }
+
+    private fun traktToComment(tc: TraktComment): Comment {
+        val avatarUrl = tc.user.images?.avatar?.full
+        return Comment(
+            commentId = tc.id,
+            userId = tc.user.username,
+            mediaId = mediaId,
+            parentCommentId = if (tc.parentId > 0) tc.parentId else null,
+            content = tc.comment,
+            timestamp = tc.createdAt,
+            deleted = false,
+            tag = null,
+            upvotes = tc.likes,
+            downvotes = 0,
+            userVoteType = null,
+            username = tc.user.name ?: tc.user.username,
+            profilePictureUrl = avatarUrl,
+            totalVotes = tc.likes,
+            isTrakt = true
+        )
     }
 
     private suspend fun loadSingleComment(commentId: Int) {
@@ -737,10 +867,6 @@ class CommentsFragment : Fragment() {
         }
     }
 
-    /**
-     * Resets the old state of the comment input
-     * @return the old state
-     */
     private fun resetOldState(): InteractionState {
         val oldState = interactionState
         interactionState = InteractionState.NONE
@@ -753,7 +879,6 @@ class CommentsFragment : Fragment() {
                 commentWithInteraction?.editing(false)
                 InteractionState.EDIT
             }
-
             InteractionState.REPLY -> {
                 activity.binding.commentReplyToContainer.visibility = View.GONE
                 activity.binding.commentInput.setText("")
@@ -762,18 +887,10 @@ class CommentsFragment : Fragment() {
                 commentWithInteraction?.replying(false)
                 InteractionState.REPLY
             }
-
-            else -> {
-                InteractionState.NONE
-            }
+            else -> InteractionState.NONE
         }
     }
 
-    /**
-     * Callback from the comment item to edit the comment
-     * Called every time the edit button is clicked
-     * @param comment the comment to edit
-     */
     fun editCallback(comment: CommentItem) {
         if (resetOldState() == InteractionState.EDIT) return
         commentWithInteraction = comment
@@ -785,11 +902,6 @@ class CommentsFragment : Fragment() {
         interactionState = InteractionState.EDIT
     }
 
-    /**
-     * Callback from the comment item to reply to the comment
-     * Called every time the reply button is clicked
-     * @param comment the comment to reply to
-     */
     fun replyCallback(comment: CommentItem) {
         if (resetOldState() == InteractionState.REPLY) return
         commentWithInteraction = comment
@@ -799,7 +911,6 @@ class CommentsFragment : Fragment() {
         val imm = activity.getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
         imm.showSoftInput(activity.binding.commentInput, InputMethodManager.SHOW_IMPLICIT)
         interactionState = InteractionState.REPLY
-
     }
 
     fun replyTo(comment: CommentItem, username: String) {
@@ -816,40 +927,55 @@ class CommentsFragment : Fragment() {
         }
     }
 
-    /**
-     * Callback from the comment item to view the replies to the comment
-     * @param comment the comment to view the replies of
-     */
     fun viewReplyCallback(comment: CommentItem) {
-        lifecycleScope.launch {
-            val replies = withContext(Dispatchers.IO) {
-                CommentsAPI.getRepliesFromId(comment.comment.commentId)
+        if (currentSource == CommentSource.DANOTSU) {
+            lifecycleScope.launch {
+                val replies = withContext(Dispatchers.IO) {
+                    CommentsAPI.getRepliesFromId(comment.comment.commentId)
+                }
+                replies?.comments?.forEach {
+                    val depth =
+                        if (comment.commentDepth + 1 > comment.MAX_DEPTH) comment.commentDepth else comment.commentDepth + 1
+                    val section =
+                        if (comment.commentDepth + 1 > comment.MAX_DEPTH) comment.parentSection else comment.repliesSection
+                    if (depth >= comment.MAX_DEPTH) comment.registerSubComment(it.commentId)
+                    val newCommentItem = CommentItem(
+                        it,
+                        buildMarkwon(activity, fragment = this@CommentsFragment),
+                        section,
+                        this@CommentsFragment,
+                        backgroundColor,
+                        depth
+                    )
+                    section.add(newCommentItem)
+                }
             }
-
-            replies?.comments?.forEach {
-                val depth =
-                    if (comment.commentDepth + 1 > comment.MAX_DEPTH) comment.commentDepth else comment.commentDepth + 1
-                val section =
-                    if (comment.commentDepth + 1 > comment.MAX_DEPTH) comment.parentSection else comment.repliesSection
-                if (depth >= comment.MAX_DEPTH) comment.registerSubComment(it.commentId)
-                val newCommentItem = CommentItem(
-                    it,
-                    buildMarkwon(activity, fragment = this@CommentsFragment),
-                    section,
-                    this@CommentsFragment,
-                    backgroundColor,
-                    depth
-                )
-
-                section.add(newCommentItem)
+        } else {
+            lifecycleScope.launch {
+                val replies = withContext(Dispatchers.IO) {
+                    TraktAPI.getReplies(comment.comment.commentId)
+                }
+                replies.forEach { tc ->
+                    val traktComment = traktToComment(tc)
+                    val depth =
+                        if (comment.commentDepth + 1 > comment.MAX_DEPTH) comment.commentDepth else comment.commentDepth + 1
+                    val section =
+                        if (comment.commentDepth + 1 > comment.MAX_DEPTH) comment.parentSection else comment.repliesSection
+                    if (depth >= comment.MAX_DEPTH) comment.registerSubComment(traktComment.commentId)
+                    val newCommentItem = CommentItem(
+                        traktComment,
+                        buildMarkwon(activity, fragment = this@CommentsFragment),
+                        section,
+                        this@CommentsFragment,
+                        backgroundColor,
+                        depth
+                    )
+                    section.add(newCommentItem)
+                }
             }
         }
     }
 
-    /**
-     * Shows the comment rules dialog
-     * Called when the user tries to comment for the first time
-     */
     private fun showCommentRulesDialog() {
         activity.customAlertDialog().apply {
             setTitle("Commenting Rules")
@@ -882,10 +1008,8 @@ class CommentsFragment : Fragment() {
             return
         }
 
-        // Wrap in spoiler tags if spoiler mode is active
         if (isSpoilerMode) {
             commentText = "||$commentText||"
-            // Reset spoiler mode after sending
             isSpoilerMode = false
             activity.binding.commentSpoiler.alpha = 0.5f
             activity.binding.commentSpoiler.setImageResource(R.drawable.ic_round_remove_red_eye_24)
@@ -938,10 +1062,6 @@ class CommentsFragment : Fragment() {
         item.notifyChanged()
     }
 
-    /**
-     * Handles the new user-added comment
-     * @param commentText the text of the comment
-     */
     private suspend fun handleNewComment(commentText: String) {
         val success = withContext(Dispatchers.IO) {
             CommentsAPI.comment(

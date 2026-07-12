@@ -72,6 +72,8 @@ enum class PrefName(val data: Pref) {
     CustomDnsIP(Pref(Location.General, String::class, "")),
     DataSaverEnabled(Pref(Location.General, Boolean::class, false)),
     AutoUpdateExtensions(Pref(Location.General, Boolean::class, true)),
+    TraktClientId(Pref(Location.General, String::class, "")),
+    TraktCommentsEnabled(Pref(Location.General, Int::class, 0)),
 
     //User Interface
     EpisodeMetadataSource(Pref(Location.UI, Int::class, 0)),

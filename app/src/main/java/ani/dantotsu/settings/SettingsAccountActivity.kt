@@ -288,6 +288,45 @@ class SettingsAccountActivity : AppCompatActivity() {
                     },
                     isVisible = Anilist.token != null
                 ),
+                Settings(
+                    type = 2,
+                    name = "Trakt Comments",
+                    desc = "Show reviews from Trakt in the comments tab",
+                    icon = R.drawable.ic_round_comment_24,
+                    isChecked = PrefManager.getVal<Int>(PrefName.TraktCommentsEnabled) == 1,
+                    switch = { isChecked, _ ->
+                        PrefManager.setVal(PrefName.TraktCommentsEnabled, if (isChecked) 1 else 0)
+                    },
+                    isVisible = true
+                ),
+                Settings(
+                    type = 0,
+                    name = "Trakt Client ID",
+                    desc = if (PrefManager.getNullableVal(PrefName.TraktClientId, null).isNullOrBlank())
+                        "Set your Trakt API Client ID (required for Trakt comments)"
+                    else
+                        "Trakt Client ID is set",
+                    icon = R.drawable.vpn_key_24,
+                    onClick = {
+                        val input = android.widget.EditText(context).apply {
+                            setText(PrefManager.getNullableVal(PrefName.TraktClientId, ""))
+                            hint = "Enter your Trakt Client ID"
+                        }
+                        customAlertDialog().apply {
+                            setTitle("Trakt Client ID")
+                            setView(input)
+                            setPosButton("Save") {
+                                val id = input.text.toString().trim()
+                                PrefManager.setVal(PrefName.TraktClientId, id)
+                                snackString("Trakt Client ID saved")
+                                reload()
+                            }
+                            setNegButton("Cancel", null)
+                            show()
+                        }
+                    },
+                    isVisible = true
+                ),
             )
         )
         binding.settingsRecyclerView.layoutManager =

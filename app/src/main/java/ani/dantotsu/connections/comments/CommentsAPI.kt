@@ -14,6 +14,7 @@ import eu.kanade.tachiyomi.network.NetworkHelper
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.descriptors.SerialDescriptor
@@ -555,7 +556,9 @@ data class Comment(
     @SerialName("reply_count")
     val replyCount: Int? = null,
     @SerialName("total_votes")
-    val totalVotes: Int
+    val totalVotes: Int,
+    @Transient
+    val isTrakt: Boolean = false
 )
 
 @Serializable
