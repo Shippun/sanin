@@ -2712,6 +2712,23 @@ class ExoplayerView :
         super.onWindowFocusChanged(hasFocus)
     }
 
+    private fun schedulePauseOverlayTimer() {
+        pauseMetadataTimer?.let { handler.removeCallbacks(it) }
+        if (!isPlayerPlaying) {
+            val timer = Runnable {
+                if (!exoPlayer.isPlaying) {
+                    pauseOverlay.visibility = View.VISIBLE
+                    pauseOverlay.alpha = 0f
+                    pauseOverlay.animate().alpha(1f).setDuration(300).start()
+                    playerView.findViewById<View>(R.id.exo_controller)?.visibility = View.GONE
+                    pauseOverlay.requestFocus()
+                }
+            }
+            pauseMetadataTimer = timer
+            handler.postDelayed(timer, 4500L)
+        }
+    }
+
     override fun onIsPlayingChanged(isPlaying: Boolean) {
         if (!isBuffering) {
             isPlayerPlaying = isPlaying
@@ -2724,24 +2741,14 @@ class ExoplayerView :
                     .into(exoPlay)
             }
             discordRPC()
-            pauseMetadataTimer?.let { handler.removeCallbacks(it) }
             if (!isPlaying) {
-                val timer = Runnable {
-                    if (!exoPlayer.isPlaying) {
-                        pauseOverlay.visibility = View.VISIBLE
-                        pauseOverlay.alpha = 0f
-                        pauseOverlay.animate().alpha(1f).setDuration(300).start()
-                        playerView.findViewById<View>(R.id.exo_controller)?.visibility = View.GONE
-                        pauseOverlay.requestFocus()
-                    }
-                }
-                pauseMetadataTimer = timer
-                handler.postDelayed(timer, 4500L)
+                schedulePauseOverlayTimer()
             } else {
+                pauseMetadataTimer?.let { handler.removeCallbacks(it) }
+                pauseMetadataTimer = null
                 pauseOverlay.animate().alpha(0f).setDuration(200).withEndAction {
                     pauseOverlay.visibility = View.GONE
                 }.start()
-                pauseMetadataTimer = null
             }
         }
     }
@@ -3402,6 +3409,9 @@ class ExoplayerView :
 
     override fun dispatchKeyEvent(event: KeyEvent): Boolean {
         if (!isInitialized) return super.dispatchKeyEvent(event)
+        if (event.action == KeyEvent.ACTION_DOWN) {
+            schedulePauseOverlayTimer()
+        }
         val progressFocused = currentFocus?.id == androidx.media3.ui.R.id.exo_progress
         when (event.keyCode) {
             KeyEvent.KEYCODE_DPAD_UP, KeyEvent.KEYCODE_DPAD_DOWN -> {
