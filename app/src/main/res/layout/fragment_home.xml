@@ -92,27 +92,6 @@
                         android:contentDescription="@null"
                         android:scaleType="centerCrop" />
 
-                    <View
-                        android:layout_width="500dp"
-                        android:layout_height="match_parent"
-                        android:layout_gravity="start"
-                        android:background="@drawable/gradient_blend_left"
-                        android:importantForAccessibility="no" />
-
-                    <View
-                        android:layout_width="500dp"
-                        android:layout_height="match_parent"
-                        android:layout_gravity="end"
-                        android:background="@drawable/gradient_blend_right"
-                        android:importantForAccessibility="no" />
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="80dp"
-                        android:layout_gravity="top"
-                        android:background="@drawable/gradient_top_banner"
-                        android:importantForAccessibility="no" />
-
                     <ImageView
                         android:layout_width="match_parent"
                         android:layout_height="120dp"
