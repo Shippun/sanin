@@ -9,6 +9,7 @@ import ani.dantotsu.util.Logger
 import com.lagradost.nicehttp.Requests
 import eu.kanade.tachiyomi.network.interceptor.CloudflareInterceptor
 import eu.kanade.tachiyomi.network.interceptor.IgnoreGzipInterceptor
+import eu.kanade.tachiyomi.network.interceptor.RetryInterceptor
 import eu.kanade.tachiyomi.network.interceptor.UncaughtExceptionInterceptor
 import eu.kanade.tachiyomi.network.interceptor.UserAgentInterceptor
 import okhttp3.Cache
@@ -96,6 +97,8 @@ private fun setupSocks5Proxy() {
         builder.addInterceptor(
             CloudflareInterceptor(context, cookieJar, ::defaultUserAgentProvider),
         )
+
+        builder.addInterceptor(RetryInterceptor())
 
         when (PrefManager.getVal<Int>(PrefName.DohProvider)) {
             PREF_DOH_CLOUDFLARE -> builder.dohCloudflare()

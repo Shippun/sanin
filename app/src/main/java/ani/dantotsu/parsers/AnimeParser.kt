@@ -3,7 +3,7 @@ package ani.dantotsu.parsers
 import android.net.Uri
 import ani.dantotsu.FileUrl
 import ani.dantotsu.R
-import ani.dantotsu.asyncMap
+import ani.dantotsu.limitedAsyncMap
 import ani.dantotsu.currContext
 import ani.dantotsu.others.MalSyncBackup
 import ani.dantotsu.settings.saving.PrefManager
@@ -116,7 +116,7 @@ abstract class AnimeParser : BaseParser() {
         callback: (VideoExtractor) -> Unit
     ) {
         tryWithSuspend(true) {
-            loadVideoServers(episodeUrl, extra, sEpisode).asyncMap {
+            loadVideoServers(episodeUrl, extra, sEpisode).limitedAsyncMap(concurrency = 2) {
                 getVideoExtractor(it)?.apply {
                     tryWithSuspend(true) {
                         load()

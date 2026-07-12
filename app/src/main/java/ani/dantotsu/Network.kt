@@ -30,6 +30,7 @@ import java.io.PrintWriter
 import java.io.Serializable
 import java.io.StringWriter
 import java.util.concurrent.CountDownLatch
+import java.util.concurrent.Semaphore
 import java.util.concurrent.TimeUnit
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
@@ -125,6 +126,24 @@ suspend fun <A, B> Collection<A>.asyncMapNotNull(
             f(item)
         }
     }.mapNotNull { it.await() }
+}
+
+suspend fun <A, B> Collection<A>.limitedAsyncMap(
+    concurrency: Int = 2,
+    dispatcher: CoroutineDispatcher = Dispatchers.IO,
+    f: suspend (A) -> B
+): List<B> = coroutineScope {
+    val semaphore = Semaphore(concurrency)
+    map { item ->
+        async(dispatcher) {
+            semaphore.acquire()
+            try {
+                f(item)
+            } finally {
+                semaphore.release()
+            }
+        }
+    }.map { it.await() }
 }
 
 fun logError(e: Throwable, post: Boolean = true, snackbar: Boolean = true) {
