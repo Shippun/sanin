@@ -7,8 +7,8 @@
     android:layout_height="match_parent"
     android:background="@android:color/transparent"
     android:clipToPadding="false"
+    android:descendantFocusability="afterDescendants"
     android:fillViewport="true"
-    android:focusable="true"
     android:nextFocusUp="@+id/mediaNavPills">
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout

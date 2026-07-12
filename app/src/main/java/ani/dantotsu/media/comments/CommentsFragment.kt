@@ -360,7 +360,6 @@ class CommentsFragment : Fragment() {
                 private fun loadMoreComments() {
                     isFetching = true
                     lifecycleScope.launch {
-                        val markwon = buildMarkwon(activity, fragment = this@CommentsFragment)
                         if (currentSource == CommentSource.DANOTSU) {
                             val comments = withContext(Dispatchers.IO) {
                                 CommentsAPI.getCommentsForId(
@@ -370,24 +369,39 @@ class CommentsFragment : Fragment() {
                                     PrefManager.getVal(PrefName.CommentSortOrder, "newest")
                                 )
                             }
-                            val items = comments?.comments?.map { comment ->
-                                CommentItem(comment, markwon, section, this@CommentsFragment, backgroundColor, 0)
-                            } ?: emptyList()
-                            withContext(Dispatchers.Main) {
-                                items.forEach { section.add(it) }
+                            comments?.comments?.forEach { comment ->
+                                withContext(Dispatchers.Main) {
+                                    section.add(
+                                        CommentItem(
+                                            comment,
+                                            buildMarkwon(activity, fragment = this@CommentsFragment),
+                                            section,
+                                            this@CommentsFragment,
+                                            backgroundColor,
+                                            0
+                                        )
+                                    )
+                                }
                             }
                             totalPages = comments?.totalPages ?: 1
                         } else {
                             val type = traktResult?.mediaType ?: return@launch
                             val id = traktResult?.traktId ?: return@launch
-                            val traktComments = withContext(Dispatchers.IO) {
-                                TraktAPI.getComments(type, id, pagesLoaded + 1)
-                            }
-                            val items = traktComments.map { tc ->
-                                CommentItem(traktToComment(tc), markwon, section, this@CommentsFragment, backgroundColor, 0)
-                            }
-                            withContext(Dispatchers.Main) {
-                                items.forEach { section.add(it) }
+                            val traktComments = TraktAPI.getComments(type, id, pagesLoaded + 1)
+                            traktComments.forEach { tc ->
+                                val comment = traktToComment(tc)
+                                withContext(Dispatchers.Main) {
+                                    section.add(
+                                        CommentItem(
+                                            comment,
+                                            buildMarkwon(activity, fragment = this@CommentsFragment),
+                                            section,
+                                            this@CommentsFragment,
+                                            backgroundColor,
+                                            0
+                                        )
+                                    )
+                                }
                             }
                             totalPages = if (traktComments.size < 25) pagesLoaded else pagesLoaded + 1
                         }
@@ -743,18 +757,19 @@ class CommentsFragment : Fragment() {
                 sort = null
             )
         }
-        val items = comments?.comments?.map { comment ->
-            CommentItem(
-                comment,
-                buildMarkwon(activity, fragment = this@CommentsFragment),
-                section,
-                this@CommentsFragment,
-                backgroundColor,
-                0
-            )
-        } ?: emptyList()
-        withContext(Dispatchers.Main) {
-            items.forEach { section.add(it) }
+        comments?.comments?.forEach { comment ->
+            withContext(Dispatchers.Main) {
+                section.add(
+                    CommentItem(
+                        comment,
+                        buildMarkwon(activity, fragment = this@CommentsFragment),
+                        section,
+                        this@CommentsFragment,
+                        backgroundColor,
+                        0
+                    )
+                )
+            }
         }
         totalPages = comments?.totalPages ?: 1
     }
@@ -778,19 +793,20 @@ class CommentsFragment : Fragment() {
         val traktComments = withContext(Dispatchers.IO) {
             TraktAPI.getComments(type, id, page = 1, sort = sort)
         }
-        val items = traktComments.map { tc ->
+        traktComments.forEach { tc ->
             val comment = traktToComment(tc)
-            CommentItem(
-                comment,
-                buildMarkwon(activity, fragment = this@CommentsFragment),
-                section,
-                this@CommentsFragment,
-                backgroundColor,
-                0
-            )
-        }
-        withContext(Dispatchers.Main) {
-            items.forEach { section.add(it) }
+            withContext(Dispatchers.Main) {
+                section.add(
+                    CommentItem(
+                        comment,
+                        buildMarkwon(activity, fragment = this@CommentsFragment),
+                        section,
+                        this@CommentsFragment,
+                        backgroundColor,
+                        0
+                    )
+                )
+            }
         }
         totalPages = if (traktComments.size < 25) 1 else 2
     }
@@ -915,31 +931,50 @@ class CommentsFragment : Fragment() {
     }
 
     fun viewReplyCallback(comment: CommentItem) {
-        lifecycleScope.launch {
-            val markwon = buildMarkwon(activity, fragment = this@CommentsFragment)
-            if (currentSource == CommentSource.DANOTSU) {
+        if (currentSource == CommentSource.DANOTSU) {
+            lifecycleScope.launch {
                 val replies = withContext(Dispatchers.IO) {
                     CommentsAPI.getRepliesFromId(comment.comment.commentId)
                 }
-                val items = replies?.comments?.map {
-                    val depth = if (comment.commentDepth + 1 > comment.MAX_DEPTH) comment.commentDepth else comment.commentDepth + 1
-                    val sec = if (comment.commentDepth + 1 > comment.MAX_DEPTH) comment.parentSection else comment.repliesSection
+                replies?.comments?.forEach {
+                    val depth =
+                        if (comment.commentDepth + 1 > comment.MAX_DEPTH) comment.commentDepth else comment.commentDepth + 1
+                    val section =
+                        if (comment.commentDepth + 1 > comment.MAX_DEPTH) comment.parentSection else comment.repliesSection
                     if (depth >= comment.MAX_DEPTH) comment.registerSubComment(it.commentId)
-                    CommentItem(it, markwon, sec, this@CommentsFragment, backgroundColor, depth)
-                } ?: emptyList()
-                items.forEach { it.parentSection.add(it) }
-            } else {
+                    val newCommentItem = CommentItem(
+                        it,
+                        buildMarkwon(activity, fragment = this@CommentsFragment),
+                        section,
+                        this@CommentsFragment,
+                        backgroundColor,
+                        depth
+                    )
+                    section.add(newCommentItem)
+                }
+            }
+        } else {
+            lifecycleScope.launch {
                 val replies = withContext(Dispatchers.IO) {
                     TraktAPI.getReplies(comment.comment.commentId)
                 }
-                val items = replies.map { tc ->
+                replies.forEach { tc ->
                     val traktComment = traktToComment(tc)
-                    val depth = if (comment.commentDepth + 1 > comment.MAX_DEPTH) comment.commentDepth else comment.commentDepth + 1
-                    val sec = if (comment.commentDepth + 1 > comment.MAX_DEPTH) comment.parentSection else comment.repliesSection
+                    val depth =
+                        if (comment.commentDepth + 1 > comment.MAX_DEPTH) comment.commentDepth else comment.commentDepth + 1
+                    val section =
+                        if (comment.commentDepth + 1 > comment.MAX_DEPTH) comment.parentSection else comment.repliesSection
                     if (depth >= comment.MAX_DEPTH) comment.registerSubComment(traktComment.commentId)
-                    CommentItem(traktComment, markwon, sec, this@CommentsFragment, backgroundColor, depth)
+                    val newCommentItem = CommentItem(
+                        traktComment,
+                        buildMarkwon(activity, fragment = this@CommentsFragment),
+                        section,
+                        this@CommentsFragment,
+                        backgroundColor,
+                        depth
+                    )
+                    section.add(newCommentItem)
                 }
-                items.forEach { it.parentSection.add(it) }
             }
         }
     }
