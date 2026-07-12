@@ -14,24 +14,24 @@ import uy.kohesive.injekt.api.get
 
 object TraktAPI {
     private const val BASE_URL = "https://api.trakt.tv"
+    private const val HARDCODED_CLIENT_ID = "w5-QcQAhtlujinZFPFddAnY5B_huGoWModzSoMM6VjM"
     private val json = Json { ignoreUnknownKeys = true }
 
-    private val clientId: String?
+    private val clientId: String
         get() = PrefManager.getNullableVal(PrefName.TraktClientId, null)
+            ?.takeIf { it.isNotBlank() }
+            ?: HARDCODED_CLIENT_ID
 
     private val client get() = Injekt.get<NetworkHelper>().client
 
-    private fun headers(): Map<String, String> {
-        val id = clientId ?: return emptyMap()
-        return mapOf(
-            "trakt-api-key" to id,
-            "trakt-api-version" to "2",
-            "Content-Type" to "application/json"
-        )
-    }
+    private fun headers(): Map<String, String> = mapOf(
+        "trakt-api-key" to clientId,
+        "trakt-api-version" to "2",
+        "Content-Type" to "application/json"
+    )
 
     private fun isEnabled(): Boolean =
-        PrefManager.getVal<Int>(PrefName.TraktCommentsEnabled) == 1 && !clientId.isNullOrBlank()
+        PrefManager.getVal<Int>(PrefName.TraktCommentsEnabled) == 1
 
     suspend fun searchByImdb(imdbId: String): TraktSearchResult? = withContext(Dispatchers.IO) {
         if (!isEnabled()) return@withContext null
