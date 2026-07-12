@@ -308,6 +308,10 @@ class PlayerSettingsActivity :
         binding.playerSettingsSeekTime.addOnChangeListener { _, value, _ ->
             PrefManager.setVal(PrefName.SeekTime, value.toInt())
         }
+        binding.playerSettingsSeekSensitivity.value = PrefManager.getVal<Int>(PrefName.SeekSensitivity).toFloat()
+        binding.playerSettingsSeekSensitivity.addOnChangeListener { _, value, _ ->
+            PrefManager.setVal(PrefName.SeekSensitivity, value.toInt())
+        }
 
         binding.exoSkipTime.setText(PrefManager.getVal<Int>(PrefName.SkipTime).toString())
         binding.exoSkip.setOnClickListener {

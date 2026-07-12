@@ -731,6 +731,22 @@ class ExoplayerView :
         exoPlay.nextFocusUpId = androidx.media3.ui.R.id.exo_playback_speed
         exoSpeed.nextFocusDownId = androidx.media3.ui.R.id.exo_play
 
+        val progressBar = playerView.findViewById<DefaultTimeBar>(androidx.media3.ui.R.id.exo_progress)
+        progressBar.isFocusable = true
+        progressBar.nextFocusUpId = R.id.exo_next_ep
+        exoPlay.nextFocusDownId = androidx.media3.ui.R.id.exo_progress
+        playerView.findViewById<View>(R.id.exo_prev_ep).nextFocusDownId = androidx.media3.ui.R.id.exo_progress
+        playerView.findViewById<View>(R.id.exo_next_ep).nextFocusDownId = androidx.media3.ui.R.id.exo_progress
+        val bottomIds = listOf(R.id.exo_settings, R.id.exo_source, R.id.exo_sub, R.id.exo_audio, R.id.exo_screen)
+        for (id in bottomIds) {
+            playerView.findViewById<View>(id)?.nextFocusUpId = androidx.media3.ui.R.id.exo_progress
+        }
+        progressBar.setOnFocusChangeListener { _, hasFocus ->
+            val barHeight = if (hasFocus) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8f, resources.displayMetrics).toInt()
+                else TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 2f, resources.displayMetrics).toInt()
+            progressBar.setBarHeight(barHeight)
+        }
+
         pauseOverlay = playerView.findViewById(R.id.exo_pause_overlay)
         pauseTitle = playerView.findViewById(R.id.exo_pause_title)
         pauseSynopsis = playerView.findViewById(R.id.exo_pause_synopsis)
@@ -947,15 +963,37 @@ class ExoplayerView :
                 View.VISIBLE
             playerView.findViewById<View>(R.id.exo_fast_rewind_button_cont).visibility =
                 View.VISIBLE
-            playerView.findViewById<ImageButton>(R.id.exo_fast_forward_button).setOnClickListener {
+            val ffButton = playerView.findViewById<ImageButton>(R.id.exo_fast_forward_button)
+            ffButton.setOnClickListener {
                 if (isInitialized) {
                     seek(true)
                 }
             }
-            playerView.findViewById<ImageButton>(R.id.exo_fast_rewind_button).setOnClickListener {
+            ffButton.setOnLongClickListener {
+                if (isInitialized) startSeekRepeat(true)
+                true
+            }
+            ffButton.setOnTouchListener { _, event ->
+                if (event.action == MotionEvent.ACTION_UP || event.action == MotionEvent.ACTION_CANCEL) {
+                    stopSeekRepeat()
+                }
+                false
+            }
+            val rewButton = playerView.findViewById<ImageButton>(R.id.exo_fast_rewind_button)
+            rewButton.setOnClickListener {
                 if (isInitialized) {
                     seek(false)
                 }
+            }
+            rewButton.setOnLongClickListener {
+                if (isInitialized) startSeekRepeat(false)
+                true
+            }
+            rewButton.setOnTouchListener { _, event ->
+                if (event.action == MotionEvent.ACTION_UP || event.action == MotionEvent.ACTION_CANCEL) {
+                    stopSeekRepeat()
+                }
+                false
             }
         }
 
@@ -3331,34 +3369,64 @@ class ExoplayerView :
         return true
     }
 
+    private var seekRepeatHandler: Handler? = null
+    private var seekRepeatRunnable: Runnable? = null
+
+    private fun startSeekRepeat(forward: Boolean) {
+        stopSeekRepeat()
+        val sensitivity = PrefManager.getVal<Int>(PrefName.SeekSensitivity).coerceAtLeast(50)
+        seekRepeatHandler = Handler(Looper.getMainLooper())
+        seekRepeatRunnable = object : Runnable {
+            override fun run() {
+                if (!isInitialized) return
+                val seekTime = PrefManager.getVal<Int>(PrefName.SeekTime)
+                if (forward) {
+                    exoPlayer.seekTo(exoPlayer.currentPosition + seekTime * 1000)
+                } else {
+                    exoPlayer.seekTo(exoPlayer.currentPosition - seekTime * 1000)
+                }
+                seekRepeatHandler?.postDelayed(this, sensitivity.toLong())
+            }
+        }
+        seekRepeatHandler?.post(seekRepeatRunnable!!)
+    }
+
+    private fun stopSeekRepeat() {
+        seekRepeatRunnable?.let { seekRepeatHandler?.removeCallbacks(it) }
+        seekRepeatRunnable = null
+        seekRepeatHandler = null
+    }
+
     override fun dispatchKeyEvent(event: KeyEvent): Boolean {
         if (!isInitialized) return super.dispatchKeyEvent(event)
+        val progressFocused = currentFocus?.id == androidx.media3.ui.R.id.exo_progress
         when (event.keyCode) {
             KeyEvent.KEYCODE_DPAD_UP, KeyEvent.KEYCODE_DPAD_DOWN -> {
                 if (event.action == KeyEvent.ACTION_DOWN) ensureControllerVisible()
                 return false
             }
-            KEYCODE_DPAD_LEFT -> {
-                if (event.action == KeyEvent.ACTION_DOWN) {
-                    ensureControllerVisible()
-                    dpadPressTime = java.lang.System.currentTimeMillis()
-                } else if (event.action == KeyEvent.ACTION_UP) {
-                    val elapsed = java.lang.System.currentTimeMillis() - dpadPressTime
-                    if (elapsed >= 3000L && PrefManager.getVal<Boolean>(PrefName.DpadEpisodeSkip)) {
-                        exoPrev.performClick()
-                        return true
+            KEYCODE_DPAD_LEFT, KEYCODE_DPAD_RIGHT -> {
+                if (progressFocused) {
+                    if (event.action == KeyEvent.ACTION_DOWN) {
+                        ensureControllerVisible()
+                        val forward = event.keyCode == KEYCODE_DPAD_RIGHT
+                        val seekTime = PrefManager.getVal<Int>(PrefName.SeekTime)
+                        if (forward) {
+                            exoPlayer.seekTo(exoPlayer.currentPosition + seekTime * 1000)
+                        } else {
+                            exoPlayer.seekTo(exoPlayer.currentPosition - seekTime * 1000)
+                        }
                     }
+                    return true
                 }
-                return false
-            }
-            KEYCODE_DPAD_RIGHT -> {
                 if (event.action == KeyEvent.ACTION_DOWN) {
                     ensureControllerVisible()
                     dpadPressTime = java.lang.System.currentTimeMillis()
                 } else if (event.action == KeyEvent.ACTION_UP) {
                     val elapsed = java.lang.System.currentTimeMillis() - dpadPressTime
                     if (elapsed >= 3000L && PrefManager.getVal<Boolean>(PrefName.DpadEpisodeSkip)) {
-                        exoNext.performClick()
+                        if (event.keyCode == KEYCODE_DPAD_LEFT) exoPrev.performClick()
+                        else exoNext.performClick()
                         return true
                     }
                 }
@@ -3387,12 +3455,20 @@ class ExoplayerView :
             }
             KeyEvent.KEYCODE_MEDIA_FAST_FORWARD,
             KeyEvent.KEYCODE_MEDIA_SKIP_FORWARD -> {
-                if (event.action == KeyEvent.ACTION_UP) exoPlayer.seekTo(exoPlayer.currentPosition + PrefManager.getVal<Int>(PrefName.SeekTime) * 1000)
+                if (event.action == KeyEvent.ACTION_DOWN) {
+                    startSeekRepeat(true)
+                } else if (event.action == KeyEvent.ACTION_UP) {
+                    stopSeekRepeat()
+                }
                 return true
             }
             KeyEvent.KEYCODE_MEDIA_REWIND,
             KeyEvent.KEYCODE_MEDIA_SKIP_BACKWARD -> {
-                if (event.action == KeyEvent.ACTION_UP) exoPlayer.seekTo(exoPlayer.currentPosition - PrefManager.getVal<Int>(PrefName.SeekTime) * 1000)
+                if (event.action == KeyEvent.ACTION_DOWN) {
+                    startSeekRepeat(false)
+                } else if (event.action == KeyEvent.ACTION_UP) {
+                    stopSeekRepeat()
+                }
                 return true
             }
             KeyEvent.KEYCODE_MEDIA_NEXT -> {

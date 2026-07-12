@@ -195,6 +195,7 @@ enum class PrefName(val data: Pref) {
     DoubleTap(Pref(Location.Player, Boolean::class, true)),
     FastForward(Pref(Location.Player, Boolean::class, true)),
     SeekTime(Pref(Location.Player, Int::class, 10)),
+    SeekSensitivity(Pref(Location.Player, Int::class, 100)),
     SkipTime(Pref(Location.Player, Int::class, 85)),
     Cast(Pref(Location.Player, Boolean::class, true)),
     UseInternalCast(Pref(Location.Player, Boolean::class, false)),
