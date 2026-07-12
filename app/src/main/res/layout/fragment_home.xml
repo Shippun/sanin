@@ -73,21 +73,21 @@
                 <FrameLayout
                     android:id="@+id/homeNavigatingBannerContainer"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="320dp"
                     android:nextFocusUp="@id/mainUserAvatarContainer"
                     android:visibility="gone">
 
                     <ImageView
                         android:id="@+id/navBannerBgA"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
                         android:contentDescription="@null"
                         android:scaleType="centerCrop" />
 
                     <ImageView
                         android:id="@+id/navBannerBgB"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
                         android:alpha="0"
                         android:contentDescription="@null"
                         android:scaleType="centerCrop" />
