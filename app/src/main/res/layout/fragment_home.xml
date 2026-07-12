@@ -75,7 +75,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="320dp"
                     android:nextFocusUp="@id/mainUserAvatarContainer"
-                    android:background="@drawable/gradient_left_banner"
                     android:visibility="gone">
 
                     <ImageView
@@ -92,6 +91,13 @@
                         android:alpha="0"
                         android:contentDescription="@null"
                         android:scaleType="fitEnd" />
+
+                    <View
+                        android:layout_width="420dp"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="start"
+                        android:background="@drawable/gradient_blend_left"
+                        android:importantForAccessibility="no" />
 
                     <View
                         android:layout_width="match_parent"
