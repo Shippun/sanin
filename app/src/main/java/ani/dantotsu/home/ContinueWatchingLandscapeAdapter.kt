@@ -161,4 +161,17 @@ class ContinueWatchingLandscapeAdapter(
         view.background = gradient
     }
 
+    class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        val card: MaterialCardView = view.findViewById(R.id.cwCard)
+        val image: ShapeableImageView = view.findViewById(R.id.cwImage)
+        val gradientOverlay: View = view.findViewById(R.id.cwGradientOverlay)
+        val clearlogo: ImageView = view.findViewById(R.id.cwClearlogo)
+        val overlayTitle: TextView = view.findViewById(R.id.cwOverlayTitle)
+        val title: TextView = view.findViewById(R.id.cwTitle)
+        val subtitle: TextView = view.findViewById(R.id.cwSubtitle)
+        val episodeNo: TextView = view.findViewById(R.id.cwEpisodeNo)
+        val timeWatched: TextView = view.findViewById(R.id.cwTimeWatched)
+        val progress: ProgressBar = view.findViewById(R.id.cwProgress)
+        val ongoing: View = view.findViewById(R.id.cwOngoing)
+    }
 }
