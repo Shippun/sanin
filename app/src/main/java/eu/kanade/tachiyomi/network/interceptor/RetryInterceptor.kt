@@ -26,9 +26,7 @@ class RetryInterceptor(
                 if (response.code in 500..599 && retryCount < maxRetries) {
                     response.close()
                     retryCount++
-                    val delay = 1000L * retryCount
                     Logger.log("RetryInterceptor: retrying ${request.url} after ${response.code} (attempt $retryCount/$maxRetries)")
-                    Thread.sleep(delay)
                 } else {
                     return response
                 }
@@ -37,9 +35,7 @@ class RetryInterceptor(
                     throw e
                 }
                 retryCount++
-                val delay = 1000L * retryCount
                 Logger.log("RetryInterceptor: retrying ${request.url} after ${e::class.simpleName} (attempt $retryCount/$maxRetries)")
-                Thread.sleep(delay)
             }
         }
     }
