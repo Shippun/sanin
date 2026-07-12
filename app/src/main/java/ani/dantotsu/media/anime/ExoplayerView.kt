@@ -742,9 +742,7 @@ class ExoplayerView :
             playerView.findViewById<View>(id)?.nextFocusUpId = androidx.media3.ui.R.id.exo_progress
         }
         progressBar.setOnFocusChangeListener { _, hasFocus ->
-            val barHeight = if (hasFocus) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8f, resources.displayMetrics).toInt()
-                else TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 2f, resources.displayMetrics).toInt()
-            progressBar.setBarHeight(barHeight)
+            progressBar.animate().scaleY(if (hasFocus) 2.5f else 1f).setDuration(150).start()
         }
 
         pauseOverlay = playerView.findViewById(R.id.exo_pause_overlay)
