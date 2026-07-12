@@ -9,6 +9,9 @@ import kotlinx.coroutines.withContext
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.Request
+import okhttp3.RequestBody.Companion.toRequestBody
 import uy.kohesive.injekt.Injekt
 import uy.kohesive.injekt.api.get
 
@@ -36,7 +39,7 @@ object TraktAPI {
     suspend fun searchByImdb(imdbId: String): TraktSearchResult? = withContext(Dispatchers.IO) {
         if (!isEnabled()) return@withContext null
         try {
-            val request = okhttp3.Request.Builder()
+            val request = Request.Builder()
                 .url("$BASE_URL/search/imdb/$imdbId?type=show,movie")
                 .apply { headers().forEach { (k, v) -> addHeader(k, v) } }
                 .get()
@@ -59,7 +62,7 @@ object TraktAPI {
     ): List<TraktComment> = withContext(Dispatchers.IO) {
         if (!isEnabled()) return@withContext emptyList()
         try {
-            val request = okhttp3.Request.Builder()
+            val request = Request.Builder()
                 .url("$BASE_URL/$type/$traktId/comments?sort=$sort&page=$page&limit=25")
                 .apply { headers().forEach { (k, v) -> addHeader(k, v) } }
                 .get()
@@ -76,7 +79,7 @@ object TraktAPI {
     suspend fun getReplies(commentId: Int): List<TraktComment> = withContext(Dispatchers.IO) {
         if (!isEnabled()) return@withContext emptyList()
         try {
-            val request = okhttp3.Request.Builder()
+            val request = Request.Builder()
                 .url("$BASE_URL/comments/$commentId/replies?limit=25")
                 .apply { headers().forEach { (k, v) -> addHeader(k, v) } }
                 .get()
@@ -98,10 +101,10 @@ object TraktAPI {
     suspend fun likeComment(commentId: Int): Boolean = withContext(Dispatchers.IO) {
         if (!TraktAuth.isLoggedIn()) return@withContext false
         try {
-            val request = okhttp3.Request.Builder()
+            val request = Request.Builder()
                 .url("$BASE_URL/comments/$commentId/like")
                 .apply { authHeaders().forEach { (k, v) -> addHeader(k, v) } }
-                .post(okhttp3.RequestBody.create(null, ""))
+                .post("".toRequestBody(null))
                 .build()
             val response = client.newCall(request).execute()
             response.code == 204
@@ -114,7 +117,7 @@ object TraktAPI {
     suspend fun unlikeComment(commentId: Int): Boolean = withContext(Dispatchers.IO) {
         if (!TraktAuth.isLoggedIn()) return@withContext false
         try {
-            val request = okhttp3.Request.Builder()
+            val request = Request.Builder()
                 .url("$BASE_URL/comments/$commentId/like")
                 .apply { authHeaders().forEach { (k, v) -> addHeader(k, v) } }
                 .delete()
@@ -131,10 +134,10 @@ object TraktAPI {
         if (!TraktAuth.isLoggedIn()) return@withContext null
         try {
             val body = json.encodeToString(PostCommentBody(comment = text))
-            val request = okhttp3.Request.Builder()
+            val request = Request.Builder()
                 .url("$BASE_URL/comments/$commentId/replies")
                 .apply { authHeaders().forEach { (k, v) -> addHeader(k, v) } }
-                .post(okhttp3.RequestBody.create(okhttp3.MediaType.parse("application/json"), body))
+                .post(body.toRequestBody("application/json".toMediaType()))
                 .build()
             val response = client.newCall(request).execute()
             val responseBody = response.body?.string() ?: return@withContext null
@@ -150,10 +153,10 @@ object TraktAPI {
         if (!TraktAuth.isLoggedIn()) return@withContext null
         try {
             val body = json.encodeToString(PostCommentBody(comment = text, spoiler = spoiler))
-            val request = okhttp3.Request.Builder()
+            val request = Request.Builder()
                 .url("$BASE_URL/$type/$id/comments")
                 .apply { authHeaders().forEach { (k, v) -> addHeader(k, v) } }
-                .post(okhttp3.RequestBody.create(okhttp3.MediaType.parse("application/json"), body))
+                .post(body.toRequestBody("application/json".toMediaType()))
                 .build()
             val response = client.newCall(request).execute()
             val responseBody = response.body?.string() ?: return@withContext null
