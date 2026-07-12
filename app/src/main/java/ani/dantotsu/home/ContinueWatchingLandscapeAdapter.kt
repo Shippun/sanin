@@ -142,12 +142,6 @@ class ContinueWatchingLandscapeAdapter(
 
     override fun getItemCount() = items.size
 
-    override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
-        super.onDetachedFromRecyclerView(recyclerView)
-        gradientJobs.values.forEach { it.cancel() }
-        gradientJobs.clear()
-    }
-
     private fun setGradient(view: View) {
         val intensity = PrefManager.getVal<Float>(PrefName.CardGradientIntensity)
         if (intensity <= 0f) {
