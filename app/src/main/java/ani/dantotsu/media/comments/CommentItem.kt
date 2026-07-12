@@ -55,6 +55,7 @@ class CommentItem(
     var isReplying = false
     private var repliesVisible = false
     var MAX_DEPTH = 3
+    private var zoomDialog: CommentZoomDialog? = null
 
     init {
         adapter.add(repliesSection)
@@ -64,6 +65,19 @@ class CommentItem(
         binding = viewBinding
         setAnimation(binding.root.context, binding.root)
         val item = this
+        binding.root.setOnClickListener {
+            if (zoomDialog?.isAdded != true) {
+                zoomDialog = CommentZoomDialog.newInstance(
+                    username = comment.username,
+                    timestamp = comment.timestamp,
+                    content = comment.content,
+                    votes = "${comment.upvotes - comment.downvotes} votes",
+                    tag = if (comment.tag != null) "Ep ${comment.tag}" else null,
+                    avatarUrl = comment.profilePictureUrl
+                )
+                zoomDialog?.show(commentsFragment.childFragmentManager, "commentZoom")
+            }
+        }
         viewBinding.apply {
             commentRepliesList.layoutManager =
                 LinearLayoutManager(commentsFragment.activity)

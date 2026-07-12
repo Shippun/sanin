@@ -103,6 +103,9 @@ class SettingsAdapter(private val settings: ArrayList<Settings>) :
                     b.settingsLayout.isFocusable = true
                     b.settingsLayout.isFocusableInTouchMode = false
                     FocusEffectUtil.applyFocusListener(b.settingsLayout)
+                    b.settingsLayout.setOnClickListener {
+                        b.settingsButton.toggle()
+                    }
                     b.settingsLayout.setOnLongClickListener {
                         settings.onLongClick?.invoke()
                         true
