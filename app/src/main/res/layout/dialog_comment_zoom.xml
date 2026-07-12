@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:clickable="true"
@@ -11,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginHorizontal="12.5%"
+        android:layout_marginHorizontal="48dp"
         android:focusable="true"
         app:cardBackgroundColor="?attr/colorSurface"
         app:cardCornerRadius="24dp"
@@ -29,15 +28,14 @@
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
 
-                <ImageView
+                <com.google.android.material.imageview.ShapeableImageView
                     android:id="@+id/zoomUserAvatar"
                     android:layout_width="48dp"
                     android:layout_height="48dp"
                     android:layout_marginEnd="12dp"
                     android:scaleType="centerCrop"
-                    app:srcCompat="@drawable/ic_round_add_circle_24"
                     app:shapeAppearanceOverlay="@style/CircularImageView"
-                    tools:ignore="ContentDescription" />
+                    app:srcCompat="@drawable/ic_round_add_circle_24" />
 
                 <LinearLayout
                     android:layout_width="0dp"
@@ -51,8 +49,7 @@
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/poppins_bold"
                         android:textColor="?attr/colorPrimary"
-                        android:textSize="16sp"
-                        tools:text="Username" />
+                        android:textSize="16sp" />
 
                     <TextView
                         android:id="@+id/zoomUserTime"
@@ -60,8 +57,7 @@
                         android:layout_height="wrap_content"
                         android:alpha="0.6"
                         android:fontFamily="@font/poppins_semi_bold"
-                        android:textSize="12sp"
-                        tools:text="2h" />
+                        android:textSize="12sp" />
                 </LinearLayout>
 
                 <ImageView
@@ -72,8 +68,7 @@
                     android:focusable="true"
                     android:padding="4dp"
                     android:src="@drawable/ic_round_close_24"
-                    app:tint="?attr/colorOnBackground"
-                    tools:ignore="ContentDescription" />
+                    app:tint="?attr/colorOnBackground" />
             </LinearLayout>
 
             <TextView
@@ -84,8 +79,7 @@
                 android:fontFamily="@font/poppins_semi_bold"
                 android:textSize="14sp"
                 android:textColor="?attr/colorOnBackground"
-                android:lineSpacingExtra="4dp"
-                tools:text="This is a comment that will be displayed in the zoomed view" />
+                android:lineSpacingExtra="4dp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -100,8 +94,7 @@
                     android:layout_height="wrap_content"
                     android:alpha="0.6"
                     android:fontFamily="@font/poppins_semi_bold"
-                    android:textSize="12sp"
-                    tools:text="100 votes" />
+                    android:textSize="12sp" />
 
                 <Space
                     android:layout_width="0dp"
@@ -114,8 +107,7 @@
                     android:layout_height="wrap_content"
                     android:alpha="0.6"
                     android:fontFamily="@font/poppins_semi_bold"
-                    android:textSize="12sp"
-                    tools:text="Ep 12" />
+                    android:textSize="12sp" />
             </LinearLayout>
         </LinearLayout>
     </androidx.cardview.widget.CardView>
