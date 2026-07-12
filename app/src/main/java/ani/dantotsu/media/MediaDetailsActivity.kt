@@ -322,7 +322,7 @@ class MediaDetailsActivity : AppCompatActivity() {
         if (PrefManager.getVal<Boolean>(PrefName.SideRailPersist)) {
             showNavPills()
         }
-        binding.root.requestLayout()
+        binding.mediaViewPager?.post { binding.mediaViewPager?.requestFocus() }
     }
 
     override fun dispatchKeyEvent(event: KeyEvent): Boolean {
