@@ -68,6 +68,7 @@
                     android:fontFamily="@font/poppins_semi_bold"
                     android:gravity="center"
                     android:paddingHorizontal="12dp"
+                    android:nextFocusDown="@+id/openRules"
                     android:text="Dantotsu"
                     android:textSize="13sp"
                     android:textColor="?attr/colorOnBackground" />
@@ -82,6 +83,7 @@
                     android:fontFamily="@font/poppins_semi_bold"
                     android:gravity="center"
                     android:paddingHorizontal="12dp"
+                    android:nextFocusDown="@+id/openRules"
                     android:text="Trakt"
                     android:textSize="13sp"
                     android:textColor="?attr/colorOnBackground" />
@@ -101,6 +103,7 @@
                     android:layout_marginEnd="4dp"
                     android:alpha="0.6"
                     android:background="@drawable/btn_transparent_round"
+                    android:focusable="true"
                     android:fontFamily="@font/poppins_semi_bold"
                     android:gravity="center"
                     android:paddingStart="10dp"
@@ -109,6 +112,7 @@
                     android:paddingBottom="3dp"
                     android:textColor="?attr/colorOnBackground"
                     android:textSize="12sp"
+                    android:nextFocusDown="@+id/commentsList"
                     android:visibility="gone"
                     tools:text="Ep 12"
                     tools:visibility="visible" />
@@ -121,6 +125,7 @@
                     android:background="?android:attr/selectableItemBackground"
                     android:contentDescription="@string/open_rules"
                     android:focusable="true"
+                    android:nextFocusDown="@+id/commentsList"
                     app:srcCompat="@drawable/ic_round_info_24"
                     app:tint="?attr/colorOnBackground" />
 
@@ -132,6 +137,7 @@
                     android:background="?android:attr/selectableItemBackground"
                     android:contentDescription="@string/sort_by"
                     android:focusable="true"
+                    android:nextFocusDown="@+id/commentsList"
                     app:srcCompat="@drawable/ic_round_filter_alt_24"
                     app:tint="?attr/colorOnBackground" />
 
@@ -143,6 +149,7 @@
                     android:background="?android:attr/selectableItemBackground"
                     android:contentDescription="@string/sort_by"
                     android:focusable="true"
+                    android:nextFocusDown="@+id/commentsList"
                     app:srcCompat="@drawable/ic_round_sort_24"
                     app:tint="?attr/colorOnBackground" />
             </LinearLayout>
@@ -204,6 +211,8 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="top"
                     android:nestedScrollingEnabled="true"
+                    android:nextFocusUp="@+id/openRules"
+                    android:nextFocusDown="@+id/commentMessageContainer"
                     android:visibility="gone"
                     tools:listitem="@layout/item_comments"
                     tools:visibility="visible" />
