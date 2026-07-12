@@ -716,6 +716,7 @@ class ExoplayerView :
             }
         }
         playerView.post { exoPlay.requestFocus() }
+        FocusEffectUtil.applyFocusListener(playerView)
 
         // Focus chain: ep_sel_btn ← back ← prev ← play → next
         //                    ↑                          ↕
@@ -764,6 +765,7 @@ class ExoplayerView :
                     exoPlay.requestFocus()
                 }
                 if (visibility == View.GONE) {
+                    playerView.findViewById<View>(R.id.exo_controller).clearFocus()
                     playerView.requestFocus()
                     hideSystemBars()
                     brightnessRunnable.run()
