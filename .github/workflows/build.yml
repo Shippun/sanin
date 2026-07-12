@@ -11,10 +11,6 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        flavor: [fdroid, google]
-      fail-fast: false
 
     steps:
       - uses: actions/checkout@v4
@@ -33,31 +29,20 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      - name: Build ${{ matrix.flavor }} release
-        run: ./gradlew assemble${{ matrix.flavor }}Release --build-cache --parallel
+      - name: Build google release
+        run: ./gradlew assembleGoogleRelease --build-cache --parallel
 
       - name: Collect APKs
         run: |
-          mkdir -p /tmp/apks/${{ matrix.flavor }}-release
-          find app/build/outputs/apk -name "*.apk" -exec cp {} /tmp/apks/${{ matrix.flavor }}-release/ \;
+          mkdir -p /tmp/apks/release
+          find app/build/outputs/apk -name "*.apk" -exec cp {} /tmp/apks/release/ \;
           find app/build/outputs/apk -name "*.apk" -exec ls -lh {} \;
 
       - name: Upload APKs
         uses: actions/upload-artifact@v4
         with:
-          name: apk-${{ matrix.flavor }}-release
-          path: /tmp/apks/${{ matrix.flavor }}-release/*.apk
-
-  release:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 1
-
-      - name: Download all APK artifacts
-        uses: actions/download-artifact@v4
+          name: apk-google-release
+          path: /tmp/apks/release/*.apk
 
       - name: Generate release info
         id: info
@@ -67,7 +52,6 @@ jobs:
           TAG="${VER}+${SHA}"
           echo "VERSION=${VER}" >> $GITHUB_OUTPUT
           echo "TAG=${TAG}" >> $GITHUB_OUTPUT
-          echo "NOTES=Build from commit ${GITHUB_SHA}" >> $GITHUB_OUTPUT
 
       - name: Create Release
         uses: softprops/action-gh-release@v2
@@ -75,9 +59,7 @@ jobs:
           tag_name: ${{ steps.info.outputs.TAG }}
           name: "v${{ steps.info.outputs.VERSION }} (${{ github.sha }})"
           body: |
-            ${{ steps.info.outputs.NOTES }}
-            Automated release from [${GITHUB_SHA}](${{ github.server_url }}/${{ github.repository }}/commit/${GITHUB_SHA})
-          files: |
-            apk-*-release/*.apk
+            Automated release from commit ${GITHUB_SHA}
+          files: /tmp/apks/release/*.apk
           generate_release_notes: false
           make_latest: true
