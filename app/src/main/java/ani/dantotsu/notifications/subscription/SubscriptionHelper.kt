@@ -29,7 +29,7 @@ class SubscriptionHelper {
                 PrefManager.getNullableCustomVal("Selected-${mediaId}", null, Selected::class.java)
                     ?: Selected().let {
                         it.sourceIndex = 0
-                        it.preferDub = PrefManager.getVal(PrefName.SettingsPreferDub)
+                        it.preferDub = PrefManager.getVal(PrefName.PreferDub)
                         it
                     }
             return data
@@ -186,7 +186,7 @@ class SubscriptionHelper {
                         val selected = Selected().apply {
                             sourceIndex = media.selected?.sourceIndex ?: 0
                             preferDub = media.selected?.preferDub
-                                ?: PrefManager.getVal(PrefName.SettingsPreferDub)
+                                ?: PrefManager.getVal(PrefName.PreferDub)
                             latest = media.selected?.latest ?: 0f
                         }
                         saveSelected(media.id, selected)

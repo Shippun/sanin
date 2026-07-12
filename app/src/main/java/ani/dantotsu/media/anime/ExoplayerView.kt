@@ -103,9 +103,6 @@ import ani.dantotsu.brightnessConverter
 import ani.dantotsu.circularReveal
 import ani.dantotsu.connections.anilist.Anilist
 import ani.dantotsu.connections.crashlytics.CrashlyticsInterface
-import ani.dantotsu.connections.discord.Discord
-import ani.dantotsu.connections.discord.RPCManager
-import ani.dantotsu.connections.discord.RPC
 import ani.dantotsu.connections.mal.MAL
 import ani.dantotsu.connections.updateProgress
 import ani.dantotsu.databinding.ActivityExoplayerBinding
@@ -1525,53 +1522,6 @@ class ExoplayerView :
         }
     }
 
-    private fun discordRPC() {
-        val context = this
-        val ep = episode
-        val offline: Boolean = PrefManager.getVal(PrefName.OfflineMode)
-        val incognito: Boolean = PrefManager.getVal(PrefName.Incognito)
-        val rpcenabled: Boolean = PrefManager.getVal(PrefName.rpcEnabled)
-        if (RPCManager.shouldSuppressForAdultMedia(media.isAdult)) {
-            RPCManager.clearPresence(context)
-            return
-        }
-        if ((isOnline(context) && !offline) && Discord.token != null && !incognito && rpcenabled) {
-            lifecycleScope.launch {
-                val buttons = mutableListOf<RPC.Link>()
-                buttons.add(RPC.Link("View Anime", "https://anilist.co/anime/${media.id}/"))
-                media.idMAL?.let {
-                    buttons.add(RPC.Link("View on MyAnimeList", "https://myanimelist.net/anime/$it"))
-                }
-
-                val now = java.lang.System.currentTimeMillis()
-                val currentPosMs = if (exoPlayer.currentPosition > 0) exoPlayer.currentPosition else 0L
-                val safeDurationMs = if (exoPlayer.duration > 0 && exoPlayer.duration != C.TIME_UNSET) exoPlayer.duration else 1440000L // default 24 mins
-
-                // If paused, we don't send timestamps so the timer stops
-                val isPaused = !isPlayerPlaying
-                val startTimestamp = if (isPaused) null else now - currentPosMs
-                val endTimestamp = if (isPaused) null else (now - currentPosMs) + safeDurationMs
-
-                val stateText = "Episode : ${ep.number}/${media.anime?.totalEpisodes ?: "??"}"
-                val finalState = if (isPaused) "Paused - $stateText" else stateText
-
-                val rpcData = RPC.Companion.RPCData(
-                    applicationId = Discord.application_Id,
-                    type = RPC.Type.WATCHING,
-                    activityName = media.userPreferredName,
-                    details = ep.title?.takeIf { it.isNotEmpty() } ?: getString(R.string.episode_num, ep.number),
-                    startTimestamp = startTimestamp,
-                    stopTimestamp = endTimestamp,
-                    state = finalState,
-                    largeImage = media.cover?.let { RPC.Link(media.userPreferredName, it) },
-                    smallImage = RPC.Link("Dantotsu", Discord.small_Image),
-                    buttons = buttons,
-                )
-                RPCManager.setPresence(context, rpcData)
-            }
-        }
-    }
-
     private fun initPlayer() {
         checkNotch()
 
@@ -1901,7 +1851,7 @@ class ExoplayerView :
                 .setRendererDisabled(TRACK_TYPE_TEXT, false)
                 .setMaxVideoSize(1, 1)
         // .setOverrideForType(TrackSelectionOverride(trackSelector, TRACK_TYPE_VIDEO))
-        if (PrefManager.getVal(PrefName.SettingsPreferDub)) {
+        if (PrefManager.getVal(PrefName.PreferDub)) {
             parameters.setPreferredAudioLanguage(Locale.getDefault().language)
         }
         trackSelector.setParameters(parameters)
@@ -2113,7 +2063,6 @@ class ExoplayerView :
         exoPlayer.release()
         VideoCache.release()
         mediaSession?.release()
-        RPCManager.clearPresence(this)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -2743,7 +2692,6 @@ class ExoplayerView :
                     .load(if (isPlaying) R.drawable.anim_play_to_pause else R.drawable.anim_pause_to_play)
                     .into(exoPlay)
             }
-            discordRPC()
             if (!isPlaying) {
                 schedulePauseOverlayTimer()
             } else {
@@ -2763,7 +2711,6 @@ class ExoplayerView :
     ) {
         super.onPositionDiscontinuity(oldPosition, newPosition, reason)
         if (reason == Player.DISCONTINUITY_REASON_SEEK || reason == Player.DISCONTINUITY_REASON_SEEK_ADJUSTMENT) {
-            discordRPC()
             // Proactively ensure playback resumes after seek when the player was playing.
             // Seeking to an unbuffered position transitions to STATE_BUFFERING; setting
             // playWhenReady = true here (before buffering begins) ensures ExoPlayer will
@@ -3124,7 +3071,6 @@ class ExoplayerView :
             exoPlayer.play()
             if (episodeLength == 0f) {
                 episodeLength = exoPlayer.duration.toFloat()
-                discordRPC()
             }
         }
         isBuffering = playbackState == Player.STATE_BUFFERING

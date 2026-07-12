@@ -14,13 +14,12 @@ import ani.dantotsu.settings.saving.internal.Pref
 enum class PrefName(val data: Pref) {
     //General
     SharedUserID(Pref(Location.General, Boolean::class, true)),
-    OfflineView(Pref(Location.General, Int::class, 0)),
-    DownloadManager(Pref(Location.General, Int::class, 0)),
+
     NSFWExtension(Pref(Location.General, Boolean::class, true)),
     ContinueMedia(Pref(Location.General, Boolean::class, true)),
     SearchSources(Pref(Location.General, Boolean::class, false)),
     RecentlyListOnly(Pref(Location.General, Boolean::class, false)),
-    SettingsPreferDub(Pref(Location.General, Boolean::class, false)),
+
     SubscriptionCheckingNotifications(Pref(Location.General, Boolean::class, true)),
     SubscriptionPromptAtEnd(Pref(Location.General, Boolean::class, true)),
     CheckUpdate(Pref(Location.General, Boolean::class, true)),
@@ -35,17 +34,14 @@ enum class PrefName(val data: Pref) {
         )
     ),
     AnimeExtensionRepos(Pref(Location.General, Set::class, setOf<String>())),
-    MangaExtensionRepos(Pref(Location.General, Set::class, setOf<String>())),
-    NovelExtensionRepos(Pref(Location.General, Set::class, setOf<String>())),
+
     AnimeSourcesOrder(Pref(Location.General, List::class, listOf<String>())),
-    MangaSourcesOrder(Pref(Location.General, List::class, listOf<String>())),
     SortedAnimeSH(Pref(Location.General, List::class, listOf<SearchHistory>())),
-    SortedMangaSH(Pref(Location.General, List::class, listOf<SearchHistory>())),
     SortedCharacterSH(Pref(Location.General, List::class, listOf<SearchHistory>())),
     SortedStaffSH(Pref(Location.General, List::class, listOf<SearchHistory>())),
     SortedStudioSH(Pref(Location.General, List::class, listOf<SearchHistory>())),
     SortedUserSH(Pref(Location.General, List::class, listOf<SearchHistory>())),
-    NovelSourcesOrder(Pref(Location.General, List::class, listOf<String>())),
+
     CommentNotificationInterval(Pref(Location.General, Int::class, 0)),
     AnilistNotificationInterval(Pref(Location.General, Int::class, 3)),
     UnreadUserNotifications(Pref(Location.General, Int::class, 0)),
@@ -56,21 +52,16 @@ enum class PrefName(val data: Pref) {
     AnilistFilteredTypes(Pref(Location.General, Set::class, setOf<String>())),
     UseAlarmManager(Pref(Location.General, Boolean::class, false)),
     IncludeAnimeList(Pref(Location.General, Boolean::class, true)),
-    IncludeMangaList(Pref(Location.General, Boolean::class, true)),
+
     AdultOnly(Pref(Location.General, Boolean::class, false)),
     CommentsEnabled(Pref(Location.General, Int::class, 0)),
     EnableSocks5Proxy(Pref(Location.General, Boolean::class, false)),
     ProxyAuthEnabled(Pref(Location.General, Boolean::class, false)),
-    AniMangaSearchDirect(Pref(Location.General, Boolean::class, true)),
+
     AnilistNotifications(Pref(Location.General, Boolean::class, true)),
     EpisodeNotifications(Pref(Location.General, Boolean::class, true)),
     AutoSyncAniList(Pref(Location.General, Boolean::class, true)),
     UpdateProgressAutomatically(Pref(Location.General, Boolean::class, true)),
-    UpdateProgressForChapters(Pref(Location.General, Boolean::class, false)),
-    UpdateProgressForHentai(Pref(Location.General, Boolean::class, false)),
-    SelectedDNS(Pref(Location.General, Int::class, 0)),
-    CustomDnsIP(Pref(Location.General, String::class, "")),
-    DataSaverEnabled(Pref(Location.General, Boolean::class, false)),
     AutoUpdateExtensions(Pref(Location.General, Boolean::class, true)),
     TraktClientId(Pref(Location.General, String::class, "")),
     TraktCommentsEnabled(Pref(Location.General, Int::class, 0)),
@@ -79,7 +70,7 @@ enum class PrefName(val data: Pref) {
 
     //User Interface
     EpisodeMetadataSource(Pref(Location.UI, Int::class, 0)),
-    UseOLED(Pref(Location.UI, Boolean::class, false)),
+
     UseCustomTheme(Pref(Location.UI, Boolean::class, false)),
     CustomThemeInt(Pref(Location.UI, Int::class, Color.parseColor("#039BE5"))),
     UseSourceTheme(Pref(Location.UI, Boolean::class, false)),
@@ -88,7 +79,7 @@ enum class PrefName(val data: Pref) {
     SkipExtensionIcons(Pref(Location.UI, Boolean::class, false)),
     DarkMode(Pref(Location.UI, Int::class, 1)),
     AnimeDefaultView(Pref(Location.UI, Int::class, 0)),
-    MangaDefaultView(Pref(Location.UI, Int::class, 0)),
+
     BlurBanners(Pref(Location.UI, Boolean::class, true)),
     BlurRadius(Pref(Location.UI, Float::class, 2f)),
     BlurSampling(Pref(Location.UI, Float::class, 2f)),
@@ -114,10 +105,9 @@ enum class PrefName(val data: Pref) {
     TrendingScroller(Pref(Location.UI, Boolean::class, true)),
     AnimationSpeed(Pref(Location.UI, Float::class, 1f)),
     ListGrid(Pref(Location.UI, Boolean::class, true)),
-    PopularMangaList(Pref(Location.UI, Boolean::class, true)),
     PopularAnimeList(Pref(Location.UI, Boolean::class, true)),
     AnimeListSortOrder(Pref(Location.UI, String::class, "score")),
-    MangaListSortOrder(Pref(Location.UI, String::class, "score")),
+
     CommentSortOrder(Pref(Location.UI, String::class, "newest")),
     FollowerLayout(Pref(Location.UI, Int::class, 0)),
     ShowNotificationRedDot(Pref(Location.UI, Boolean::class, true)),
@@ -130,17 +120,14 @@ enum class PrefName(val data: Pref) {
     SideRailPersist(Pref(Location.UI, Boolean::class, false)),
     FocusEffect(Pref(Location.UI, Int::class, 0)),
     CardStyle(Pref(Location.UI, Int::class, 0)),
-    SpotlightCardStyle(Pref(Location.UI, Int::class, 0)),
-    EpisodeViewMode(Pref(Location.UI, Int::class, 0)),
+
     UIScale(Pref(Location.UI, Float::class, 1.0f)),
-    OverallSpeed(Pref(Location.UI, Float::class, 1.0f)),
+
     AccentColor(Pref(Location.UI, Int::class, 7)),
     SwapColors(Pref(Location.UI, Boolean::class, false)),
-    UseMaterial3(Pref(Location.UI, Boolean::class, true)),
-    BlendLevel(Pref(Location.UI, Int::class, 10)),
+
     CardOrientation(Pref(Location.UI, Int::class, 1)),
-    CardImageType(Pref(Location.UI, Int::class, 0)),
-    CardRoundness(Pref(Location.UI, Int::class, 16)),
+
     StandardCardRoundness(Pref(Location.UI, Int::class, 50)),
     ContinueWatchingCardRoundness(Pref(Location.UI, Int::class, 60)),
     CardTitlePosition(Pref(Location.UI, Int::class, 0)),
@@ -201,79 +188,22 @@ enum class PrefName(val data: Pref) {
     SeekTime(Pref(Location.Player, Int::class, 10)),
     SeekSensitivity(Pref(Location.Player, Int::class, 100)),
     SkipTime(Pref(Location.Player, Int::class, 85)),
-    Cast(Pref(Location.Player, Boolean::class, true)),
-    UseInternalCast(Pref(Location.Player, Boolean::class, false)),
     Pip(Pref(Location.Player, Boolean::class, true)),
-    RotationPlayer(Pref(Location.Player, Boolean::class, true)),
-    TorrentEnabled(Pref(Location.Player, Boolean::class, false)),
     UseAdditionalCodec(Pref(Location.Player, Boolean::class, false)),
     PauseOverlay(Pref(Location.Player, Boolean::class, true)),
-    SourceMemoryExpiryHours(Pref(Location.Player, Int::class, 24)),
     ContinueWatchingShowScreenshot(Pref(Location.Player, Boolean::class, false)),
     SmartSourcePersistence(Pref(Location.General, Boolean::class, false)),
     PreferDub(Pref(Location.General, Boolean::class, false)),
-    QualityProfile(Pref(Location.Player, Int::class, 0)),
+
     AutoHideTimeout(Pref(Location.Player, Int::class, 5)),
     BufferSize(Pref(Location.Player, Int::class, 32)),
     HardwareDecoding(Pref(Location.Player, Boolean::class, true)),
-    VideoOutput(Pref(Location.Player, Int::class, 0)),
-    GpuContext(Pref(Location.Player, Int::class, 0)),
-    Debanding(Pref(Location.Player, Boolean::class, false)),
+
+    GestureSliders(Pref(Location.Player, Boolean::class, true)),
+    DpadEpisodeSkip(Pref(Location.Player, Boolean::class, true)),
     Interpolation(Pref(Location.Player, Boolean::class, false)),
     UpscalingAlgorithm(Pref(Location.Player, Int::class, 0)),
     RawConfiguration(Pref(Location.Player, String::class, "")),
-    GestureSliders(Pref(Location.Player, Boolean::class, true)),
-    DpadEpisodeSkip(Pref(Location.Player, Boolean::class, true)),
-
-    //Reader
-    ShowSource(Pref(Location.Reader, Boolean::class, true)),
-    ShowSystemBars(Pref(Location.Reader, Boolean::class, false)),
-    AutoDetectWebtoon(Pref(Location.Reader, Boolean::class, true)),
-    AskIndividualReader(Pref(Location.Reader, Boolean::class, true)),
-    ChapterZeroReader(Pref(Location.Reader, Boolean::class, true)),
-    UpdateForHReader(Pref(Location.Reader, Boolean::class, false)),
-    Direction(Pref(Location.Reader, Int::class, 0)),
-    LayoutReader(Pref(Location.Reader, Int::class, 2)),
-    DualPageModeReader(Pref(Location.Reader, Int::class, 1)),
-    OverScrollMode(Pref(Location.Reader, Boolean::class, true)),
-    TrueColors(Pref(Location.Reader, Boolean::class, false)),
-    Rotation(Pref(Location.Reader, Boolean::class, true)),
-    Padding(Pref(Location.Reader, Boolean::class, true)),
-    HideScrollBar(Pref(Location.Reader, Boolean::class, false)),
-    HidePageNumbers(Pref(Location.Reader, Boolean::class, false)),
-    HorizontalScrollBar(Pref(Location.Reader, Boolean::class, true)),
-    KeepScreenOn(Pref(Location.Reader, Boolean::class, false)),
-    VolumeButtonsReader(Pref(Location.Reader, Boolean::class, false)),
-    WrapImages(Pref(Location.Reader, Boolean::class, false)),
-    LongClickImage(Pref(Location.Reader, Boolean::class, true)),
-    CropBorders(Pref(Location.Reader, Boolean::class, false)),
-    CropBorderThreshold(Pref(Location.Reader, Int::class, 10)),
-    
-    // Data Saver
-    DataSaverMode(Pref(Location.Reader, Int::class, 0)), // 0=NONE, 1=BANDWIDTH_HERO, 2=WSRV_NL
-    DataSaverImageQuality(Pref(Location.Reader, Int::class, 80)),
-    DataSaverImageFormatJpeg(Pref(Location.Reader, Boolean::class, false)), // false=WebP, true=JPEG
-    DataSaverIgnoreJpeg(Pref(Location.Reader, Boolean::class, false)),
-    DataSaverIgnoreGif(Pref(Location.Reader, Boolean::class, true)),
-    DataSaverServer(Pref(Location.Reader, String::class, "https://bandwidth-hero-proxy-nu-nine.vercel.app/")), // For Bandwidth Hero server URL
-    DataSaverColorBW(Pref(Location.Reader, Boolean::class, false)),
-
-    //Novel Reader
-    CurrentThemeName(Pref(Location.NovelReader, String::class, "Default")),
-    LayoutNovel(Pref(Location.NovelReader, Int::class, 0)),
-    DualPageModeNovel(Pref(Location.NovelReader, Int::class, 1)),
-    LineHeight(Pref(Location.NovelReader, Float::class, 1.4f)),
-    Margin(Pref(Location.NovelReader, Float::class, 0.06f)),
-    Justify(Pref(Location.NovelReader, Boolean::class, true)),
-    Hyphenation(Pref(Location.NovelReader, Boolean::class, true)),
-    UseDarkThemeNovel(Pref(Location.NovelReader, Boolean::class, false)),
-    UseOledThemeNovel(Pref(Location.NovelReader, Boolean::class, false)),
-    Invert(Pref(Location.NovelReader, Boolean::class, false)),
-    MaxInlineSize(Pref(Location.NovelReader, Int::class, 720)),
-    MaxBlockSize(Pref(Location.NovelReader, Int::class, 1440)),
-    HorizontalScrollBarNovel(Pref(Location.NovelReader, Boolean::class, true)),
-    KeepScreenOnNovel(Pref(Location.NovelReader, Boolean::class, false)),
-    VolumeButtonsNovel(Pref(Location.NovelReader, Boolean::class, false)),
 
     //Irrelevant
     Incognito(Pref(Location.Irrelevant, Boolean::class, false)),
@@ -281,15 +211,9 @@ enum class PrefName(val data: Pref) {
     PendingProgressUpdates(Pref(Location.Irrelevant, List::class, listOf<PendingProgressUpdate>())),
     PendingDeletions(Pref(Location.Irrelevant, List::class, listOf<PendingDeletion>())),
     OfflineMode(Pref(Location.Irrelevant, Boolean::class, false)),
-    DiscordStatus(Pref(Location.Irrelevant, String::class, "online")),
-    DiscordRPCModeAnime(Pref(Location.Irrelevant, String::class, "dantotsu")),
-    DiscordRPCModeManga(Pref(Location.Irrelevant, String::class, "dantotsu")),
-    DiscordRPCShowIconAnime(Pref(Location.Irrelevant, Boolean::class, true)),
-    DiscordRPCShowIconManga(Pref(Location.Irrelevant, Boolean::class, true)),
-    DiscordRPCDisableAdultMedia(Pref(Location.Irrelevant, Boolean::class, false)),
-    DiscordShowButtons(Pref(Location.Irrelevant, Boolean::class, true)),
+
     DownloadsKeys(Pref(Location.Irrelevant, String::class, "")),
-    NovelLastExtCheck(Pref(Location.Irrelevant, Long::class, 0L)),
+
     ImageUrl(Pref(Location.Irrelevant, String::class, "")),
     AllowOpeningLinks(Pref(Location.Irrelevant, Boolean::class, false)),
     SearchStyle(Pref(Location.Irrelevant, Int::class, 0)),
@@ -316,14 +240,11 @@ enum class PrefName(val data: Pref) {
     DownloadsDir(Pref(Location.Irrelevant, String::class, "")),
     LocalDir(Pref(Location.Irrelevant, String::class, "")),
     OC(Pref(Location.Irrelevant, Boolean::class, false)),
-    RefreshStatus(Pref(Location.Irrelevant, Boolean::class, false)),
-    rpcEnabled(Pref(Location.Irrelevant, Boolean::class, true)),
+
+
 
     //Protected
-    DiscordToken(Pref(Location.Protected, String::class, "")),
-    DiscordId(Pref(Location.Protected, String::class, "")),
-    DiscordUserName(Pref(Location.Protected, String::class, "")),
-    DiscordAvatar(Pref(Location.Protected, String::class, "")),
+
     AnilistToken(Pref(Location.Protected, String::class, "")),
     AnilistUserName(Pref(Location.Protected, String::class, "")),
     AnilistUserId(Pref(Location.Protected, String::class, "")),

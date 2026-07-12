@@ -59,9 +59,9 @@ class SettingsAnimeActivity : AppCompatActivity() {
                         name = getString(R.string.prefer_dub),
                         desc = getString(R.string.prefer_dub_desc),
                         icon = R.drawable.ic_round_audiotrack_24,
-                        isChecked = PrefManager.getVal(PrefName.SettingsPreferDub),
+                        isChecked = PrefManager.getVal(PrefName.PreferDub),
                         switch = { isChecked, _ ->
-                            PrefManager.setVal(PrefName.SettingsPreferDub, isChecked)
+                            PrefManager.setVal(PrefName.PreferDub, isChecked)
                         }
                     ),
                     Settings(

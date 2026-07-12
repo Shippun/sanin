@@ -49,7 +49,7 @@ class MediaDetailsViewModel : ViewModel() {
             PrefManager.getNullableCustomVal("Selected-${media.id}", null, Selected::class.java)
                 ?: Selected().let {
                     it.sourceIndex = 0
-                    it.preferDub = PrefManager.getVal(PrefName.SettingsPreferDub)
+                    it.preferDub = PrefManager.getVal(PrefName.PreferDub)
                     saveSelected(media.id, it)
                     it
                 }
