@@ -486,24 +486,38 @@ class MainActivity : AppCompatActivity() {
         if (event.action == KeyEvent.ACTION_DOWN) {
             when (event.keyCode) {
                 KeyEvent.KEYCODE_BACK, KeyEvent.KEYCODE_ESCAPE -> {
-                    if (binding.homeNavRail.visibility == View.VISIBLE) {
+                    if (binding.homeNavRail.visibility == View.VISIBLE || binding.homeTopNavRail.visibility == View.VISIBLE) {
                         hideHomeNavRail()
-                        if (binding.homeNavRail.visibility == View.VISIBLE) return true
+                        if (binding.homeNavRail.visibility == View.VISIBLE || binding.homeTopNavRail.visibility == View.VISIBLE) return true
                     }
                 }
                 KeyEvent.KEYCODE_DPAD_RIGHT -> {
                     val id = currentFocus?.id
-                    if (id == R.id.homeNavHome || id == R.id.homeNavAnime || id == R.id.homeNavDiscovery || id == R.id.homeNavLibrary) {
-                        hideHomeNavRail()
-                        return true
+                    if (isNavPillTop()) {
+                        if (id == R.id.homeTopNavHome || id == R.id.homeTopNavAnime || id == R.id.homeTopNavDiscovery || id == R.id.homeTopNavLibrary) {
+                            hideHomeNavRail()
+                            return true
+                        }
+                    } else {
+                        if (id == R.id.homeNavHome || id == R.id.homeNavAnime || id == R.id.homeNavDiscovery || id == R.id.homeNavLibrary) {
+                            hideHomeNavRail()
+                            return true
+                        }
                     }
                 }
                 KeyEvent.KEYCODE_DPAD_LEFT -> {
                     val id = currentFocus?.id
-                    if (id == R.id.homeNavHome || id == R.id.homeNavAnime || id == R.id.homeNavDiscovery || id == R.id.homeNavLibrary) {
-                        return true
+                    if (isNavPillTop()) {
+                        if (id == R.id.homeTopNavHome || id == R.id.homeTopNavAnime || id == R.id.homeTopNavDiscovery || id == R.id.homeTopNavLibrary) {
+                            return true
+                        }
+                    } else {
+                        if (id == R.id.homeNavHome || id == R.id.homeNavAnime || id == R.id.homeNavDiscovery || id == R.id.homeNavLibrary) {
+                            return true
+                        }
                     }
-                    if (binding.homeNavRail.visibility != View.VISIBLE) {
+                    val railVisible = if (isNavPillTop()) binding.homeTopNavRail.visibility else binding.homeNavRail.visibility
+                    if (railVisible != View.VISIBLE) {
                         val focus = currentFocus
                         if (focus != null) {
                             var p = focus.parent
@@ -524,17 +538,25 @@ class MainActivity : AppCompatActivity() {
                                 p = (p as? View)?.parent
                             }
                             if (!inHorizontalRv) {
-                                val railWidth = (60f * resources.displayMetrics.density).toInt()
-                                if (focus.left <= railWidth || focus.focusSearch(View.FOCUS_LEFT) == null) {
-                                    showHomeNavRail()
-                                    return true
+                                if (isNavPillTop()) {
+                                    if (focus.focusSearch(View.FOCUS_LEFT) == null) {
+                                        showHomeNavRail()
+                                        return true
+                                    }
+                                } else {
+                                    val railWidth = (60f * resources.displayMetrics.density).toInt()
+                                    if (focus.left <= railWidth || focus.focusSearch(View.FOCUS_LEFT) == null) {
+                                        showHomeNavRail()
+                                        return true
+                                    }
                                 }
                             }
                         }
                     }
                 }
                 KeyEvent.KEYCODE_MENU -> {
-                    if (binding.homeNavRail.visibility != View.VISIBLE) {
+                    val railVisible = if (isNavPillTop()) binding.homeTopNavRail.visibility else binding.homeNavRail.visibility
+                    if (railVisible != View.VISIBLE) {
                         showHomeNavRail()
                         return true
                     }
@@ -553,9 +575,24 @@ class MainActivity : AppCompatActivity() {
         super.onResume()
         loadAvatar()
         binding.homeNavRailBg.live = PrefManager.getVal(PrefName.LiveSideRail)
-        if (PrefManager.getVal<Boolean>(PrefName.SideRailPersist) && ::navPillsViewModel.isInitialized) {
-            showHomeNavRail()
+        val persist = PrefManager.getVal<Boolean>(PrefName.SideRailPersist)
+        if (persist && ::navPillsViewModel.isInitialized) {
+            if (isNavPillTop()) {
+                binding.homeTopNavRail.visibility = View.VISIBLE
+                val lp = binding.fragmentContainer.layoutParams as ViewGroup.MarginLayoutParams
+                lp.rightMargin = (180f * resources.displayMetrics.density).toInt()
+                binding.fragmentContainer.layoutParams = lp
+            } else {
+                showHomeNavRail()
+            }
+        } else {
+            val lp = binding.fragmentContainer.layoutParams as ViewGroup.MarginLayoutParams
+            if (lp.rightMargin != 0) {
+                lp.rightMargin = 0
+                binding.fragmentContainer.layoutParams = lp
+            }
         }
+        updateNavPillFocusChains()
     }
 
     private fun handleViewIntent(intent: Intent) {
@@ -666,6 +703,8 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun isNavPillTop() = PrefManager.getVal<Int>(PrefName.NavPillPosition) == 1
+
     private fun setupHomeNavRail() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             val cornerPx = 16f * resources.displayMetrics.density
@@ -692,6 +731,31 @@ class MainActivity : AppCompatActivity() {
             }
             FocusEffectUtil.applyFocusListener(pill)
         }
+
+        val topPills = listOf(binding.homeTopNavHome, binding.homeTopNavAnime, binding.homeTopNavDiscovery, binding.homeTopNavLibrary)
+        topPills.forEachIndexed { index, pill ->
+            pill.setOnClickListener {
+                navPillsViewModel.setTab(index)
+                hideHomeNavRail()
+            }
+            FocusEffectUtil.applyFocusListener(pill)
+        }
+
+        updateNavPillFocusChains()
+    }
+
+    private fun updateNavPillFocusChains() {
+        val top = isNavPillTop()
+        if (top) {
+            binding.homeTopNavLibrary.nextFocusRightId = R.id.mainCalendarContainer
+            binding.homeTopNavHome.nextFocusLeftId = R.id.homeTopNavLibrary
+            binding.mainCalendarContainer.nextFocusLeftId = R.id.homeTopNavLibrary
+        } else {
+            binding.mainCalendarContainer.nextFocusLeftId = View.NO_ID
+        }
+        val focusUpId = if (top) R.id.homeTopNavHome else R.id.mainUserAvatarContainer
+        binding.root.findViewById<View>(R.id.homeBannerCarousel)?.nextFocusUpId = focusUpId
+        binding.root.findViewById<View>(R.id.homeNavigatingBannerContainer)?.nextFocusUpId = focusUpId
     }
 
     private fun updateHomeNavIconTints() {
@@ -709,40 +773,76 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showHomeNavRail() {
-        binding.homeNavRail.apply {
-            visibility = View.VISIBLE
-            pivotY = 0f
-            translationX = -60f * resources.displayMetrics.density
-            scaleY = 0.3f
-            alpha = 0f
+        if (isNavPillTop()) {
+            val rail = binding.homeTopNavRail
+            rail.visibility = View.VISIBLE
+            rail.pivotX = 0f
+            rail.translationX = -60f * resources.displayMetrics.density
+            rail.scaleX = 0.3f
+            rail.alpha = 0f
+            rail.post {
+                ObjectAnimator.ofFloat(rail, View.SCALE_X, 1f).apply {
+                    interpolator = SpringInterpolator()
+                    duration = 700
+                }.start()
+                rail.animate()
+                    .translationX(0f)
+                    .alpha(1f)
+                    .setInterpolator(DecelerateInterpolator())
+                    .setDuration(500)
+                    .start()
+            }
+            val tab = navPillsViewModel.currentTab.value
+            val id = when (tab) {
+                0 -> R.id.homeTopNavHome
+                1 -> R.id.homeTopNavAnime
+                2 -> R.id.homeTopNavDiscovery
+                3 -> R.id.homeTopNavLibrary
+                else -> R.id.homeTopNavHome
+            }
+            binding.root.findViewById<View>(id)?.requestFocus()
+        } else {
+            binding.homeNavRail.apply {
+                visibility = View.VISIBLE
+                pivotY = 0f
+                translationX = -60f * resources.displayMetrics.density
+                scaleY = 0.3f
+                alpha = 0f
+            }
+            binding.homeNavRail.post {
+                ObjectAnimator.ofFloat(binding.homeNavRail, View.SCALE_Y, 1f).apply {
+                    interpolator = SpringInterpolator()
+                    duration = 700
+                }.start()
+                binding.homeNavRail.animate()
+                    .translationX(0f)
+                    .alpha(1f)
+                    .setInterpolator(DecelerateInterpolator())
+                    .setDuration(500)
+                    .start()
+                updateHomeNavIconTints()
+            }
+            val tab = navPillsViewModel.currentTab.value
+            val id = when (tab) {
+                0 -> R.id.homeNavHome
+                1 -> R.id.homeNavAnime
+                2 -> R.id.homeNavDiscovery
+                3 -> R.id.homeNavLibrary
+                else -> R.id.homeNavHome
+            }
+            binding.root.findViewById<View>(id)?.requestFocus()
         }
-        binding.homeNavRail.post {
-            ObjectAnimator.ofFloat(binding.homeNavRail, View.SCALE_Y, 1f).apply {
-                interpolator = SpringInterpolator()
-                duration = 700
-            }.start()
-            binding.homeNavRail.animate()
-                .translationX(0f)
-                .alpha(1f)
-                .setInterpolator(DecelerateInterpolator())
-                .setDuration(500)
-                .start()
-            updateHomeNavIconTints()
-        }
-        val tab = navPillsViewModel.currentTab.value
-        val id = when (tab) {
-            0 -> R.id.homeNavHome
-            1 -> R.id.homeNavAnime
-            2 -> R.id.homeNavDiscovery
-            3 -> R.id.homeNavLibrary
-            else -> R.id.homeNavHome
-        }
-        binding.root.findViewById<View>(id)?.requestFocus()
     }
 
     private fun hideHomeNavRail() {
         if (PrefManager.getVal<Boolean>(PrefName.SideRailPersist)) return
         binding.homeNavRail.visibility = View.GONE
+        binding.homeTopNavRail.visibility = View.GONE
+        val lp = binding.fragmentContainer.layoutParams as ViewGroup.MarginLayoutParams
+        if (lp.rightMargin != 0) {
+            lp.rightMargin = 0
+            binding.fragmentContainer.layoutParams = lp
+        }
         val tag = currentFragmentTag
         if (tag != null) {
             supportFragmentManager.findFragmentByTag(tag)?.view?.let {

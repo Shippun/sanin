@@ -37,6 +37,7 @@ class SettingsAnimationActivity : AppCompatActivity() {
             binding.animationLayout,
             binding.animationTrending,
             binding.animationLiveSideRail,
+            binding.animationNavPillTop,
         )
 
         binding.animationEnabled.isChecked = PrefManager.getVal(PrefName.AnimationsEnabled)
@@ -65,6 +66,12 @@ class SettingsAnimationActivity : AppCompatActivity() {
         binding.animationLiveSideRail.isChecked = PrefManager.getVal(PrefName.LiveSideRail)
         binding.animationLiveSideRail.setOnCheckedChangeListener { _, isChecked ->
             PrefManager.setVal(PrefName.LiveSideRail, isChecked)
+        }
+
+        binding.animationNavPillTop.isChecked = PrefManager.getVal<Int>(PrefName.NavPillPosition) == 1
+        binding.animationNavPillTop.setOnCheckedChangeListener { _, isChecked ->
+            PrefManager.setVal(PrefName.NavPillPosition, if (isChecked) 1 else 0)
+            restartApp()
         }
 
         val map = mapOf(
