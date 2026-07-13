@@ -255,7 +255,7 @@ object Anilist {
 
     fun loginIntent(context: Context) {
         val clientID = 45857
-        val url = "https://anilist.co/api/v2/oauth/authorize?client_id=$clientID&response_type=token&redirect_uri=sanin://anilist"
+        val url = "https://anilist.co/api/v2/oauth/authorize?client_id=$clientID&response_type=token&redirect_url=sanin://anilist"
         try {
             context.startActivity(
                 Intent(Intent.ACTION_VIEW, Uri.parse(url))
