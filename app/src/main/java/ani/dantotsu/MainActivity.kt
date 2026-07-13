@@ -709,6 +709,16 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.homeNavRailBg.live = PrefManager.getVal(PrefName.LiveSideRail)
+        binding.homeTopNavRailBg.horizontal = true
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            val cornerPx = 16f * resources.displayMetrics.density
+            binding.homeTopNavRail.outlineProvider = object : android.view.ViewOutlineProvider() {
+                override fun getOutline(view: View, outline: android.graphics.Outline) {
+                    outline.setRoundRect(0, 0, view.width, view.height, cornerPx)
+                }
+            }
+        }
 
         binding.homeNavRailBg.addOnLayoutChangeListener { _, _, _, _, _, _, _, _, _ ->
             updateHomeNavIconTints()

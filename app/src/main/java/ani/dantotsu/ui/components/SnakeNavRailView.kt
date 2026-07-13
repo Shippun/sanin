@@ -38,6 +38,12 @@ class SnakeNavRailView @JvmOverloads constructor(
             invalidate()
         }
 
+    var horizontal: Boolean = false
+        set(value) {
+            field = value
+            invalidate()
+        }
+
     fun getColorAtFraction(fraction: Float): Int {
         val split = 0.33f
         if (fraction >= split) return Color.WHITE
@@ -47,18 +53,27 @@ class SnakeNavRailView @JvmOverloads constructor(
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-        val w = width.toFloat()
+        val w = width.toFloat().coerceAtLeast(1f)
         val h = height.toFloat().coerceAtLeast(1f)
-        val split = h * 0.33f
 
         if (w != cachedWidth || h != cachedHeight) {
             cachedWidth = w
             cachedHeight = h
-            bgPaint.shader = LinearGradient(
-                0f, 0f, 0f, split,
-                Color.BLACK, Color.WHITE,
-                Shader.TileMode.CLAMP
-            )
+            if (horizontal) {
+                val split = w * 0.33f
+                bgPaint.shader = LinearGradient(
+                    0f, 0f, split, 0f,
+                    Color.BLACK, Color.WHITE,
+                    Shader.TileMode.CLAMP
+                )
+            } else {
+                val split = h * 0.33f
+                bgPaint.shader = LinearGradient(
+                    0f, 0f, 0f, split,
+                    Color.BLACK, Color.WHITE,
+                    Shader.TileMode.CLAMP
+                )
+            }
         }
         canvas.drawRect(0f, 0f, w, h, bgPaint)
     }
