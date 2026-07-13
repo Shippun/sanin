@@ -375,7 +375,7 @@ class PlayerSettingsActivity :
                         ani.sanin.media.mpv.MpvNativeDownloader.download(this@PlayerSettingsActivity) { progress ->
                             binding.playerSettingsMpvStatus.text = "Downloading: ${(progress * 100).toInt()}%"
                         }.onSuccess {
-                            ani.sanin.media.mpv.MpvNativeDownloader.getLibDir(this).setReadable(true, false)
+                            ani.sanin.media.mpv.MpvNativeDownloader.getLibDir(this@PlayerSettingsActivity).setReadable(true, false)
                             PrefManager.setVal(PrefName.UseMpvEngine, true)
                             binding.playerSettingsMpvEngine.isChecked = true
                             binding.playerSettingsMpvStatus.text = getString(R.string.mpv_engine_status_downloaded)

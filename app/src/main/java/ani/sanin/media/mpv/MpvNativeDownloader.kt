@@ -41,6 +41,10 @@ object MpvNativeDownloader {
         return File(context.filesDir, "mpv").also { it.mkdirs() }
     }
 
+    fun getLibFile(context: Context): File {
+        return File(getLibDir(context), "libmpv.so")
+    }
+
     fun isDownloaded(context: Context): Boolean {
         return File(getLibDir(context), "libmpv.so").exists()
     }
