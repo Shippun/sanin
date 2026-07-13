@@ -21,9 +21,9 @@ android {
     signingConfigs {
         create("release") {
             storeFile = rootProject.file("release.keystore")
-            storePassword = "midnight123"
-            keyAlias = "midnight"
-            keyPassword = "midnight123"
+            storePassword = "sanin123"
+            keyAlias = "sanin"
+            keyPassword = "sanin123"
         }
     }
 
