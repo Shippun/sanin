@@ -2,8 +2,8 @@ package ani.sanin.connections.anilist
 
 import android.content.ActivityNotFoundException
 import android.content.Context
+import android.content.Intent
 import android.net.Uri
-import androidx.browser.customtabs.CustomTabsIntent
 import ani.sanin.R
 import ani.sanin.client
 import ani.sanin.connections.comments.CommentsAPI
@@ -255,13 +255,13 @@ object Anilist {
 
     fun loginIntent(context: Context) {
         val clientID = 45857
+        val url = "https://anilist.co/api/v2/oauth/authorize?client_id=$clientID&response_type=token&redirect_uri=sanin://anilist"
         try {
-            CustomTabsIntent.Builder().build().launchUrl(
-                context,
-                "https://anilist.co/api/v2/oauth/authorize?client_id=$clientID&response_type=token&redirect_uri=sanin://anilist".toUri()
+            context.startActivity(
+                Intent(Intent.ACTION_VIEW, Uri.parse(url))
             )
         } catch (_: ActivityNotFoundException) {
-            openLinkInBrowser("https://anilist.co/api/v2/oauth/authorize?client_id=$clientID&response_type=token&redirect_uri=sanin://anilist")
+            openLinkInBrowser(url)
         }
     }
 

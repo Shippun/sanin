@@ -2,9 +2,9 @@ package ani.sanin.connections.mal
 
 import android.content.ActivityNotFoundException
 import android.content.Context
+import android.content.Intent
 import android.net.Uri
 import android.util.Base64
-import androidx.browser.customtabs.CustomTabsIntent
 import ani.sanin.R
 import ani.sanin.client
 import ani.sanin.currContext
@@ -39,11 +39,10 @@ object MAL {
         val request =
             "https://myanimelist.net/v1/oauth2/authorize?response_type=code&client_id=$clientId&code_challenge=$codeChallenge&redirect_uri=sanin://mal"
         try {
-            CustomTabsIntent.Builder().build().launchUrl(
-                context,
-                Uri.parse(request)
+            context.startActivity(
+                Intent(Intent.ACTION_VIEW, Uri.parse(request))
             )
-        } catch (e: ActivityNotFoundException) {
+        } catch (_: ActivityNotFoundException) {
             openLinkInBrowser(request)
         }
     }
