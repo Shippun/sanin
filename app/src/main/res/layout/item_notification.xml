@@ -9,12 +9,15 @@
     android:orientation="horizontal">
 
     <androidx.cardview.widget.CardView
+        android:id="@+id/notificationCard"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="start|center_vertical"
         app:cardBackgroundColor="@color/nav_bg"
         app:cardCornerRadius="24dp"
-        app:strokeColor="@color/transparent">
+        app:strokeColor="@color/transparent"
+        android:focusable="true"
+        android:clickable="true">
 
         <ImageView
             android:id="@+id/notificationBannerImage"

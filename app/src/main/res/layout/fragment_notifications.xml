@@ -87,6 +87,9 @@
                 android:layout_height="match_parent"
                 android:nestedScrollingEnabled="true"
                 android:requiresFadingEdge="vertical"
+                android:focusable="true"
+                android:descendantFocusability="afterDescendants"
+                android:nextFocusUp="@id/notificationBack"
                 tools:listitem="@layout/item_follower" />
 
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

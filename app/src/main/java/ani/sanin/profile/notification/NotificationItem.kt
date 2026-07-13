@@ -24,6 +24,7 @@ import ani.sanin.settings.saving.PrefManager
 import ani.sanin.settings.saving.PrefName
 import ani.sanin.snackString
 import ani.sanin.toPx
+import ani.sanin.util.FocusEffectUtil
 import ani.sanin.util.Logger
 import ani.sanin.util.customAlertDialog
 import com.xwray.groupie.GroupieAdapter
@@ -44,6 +45,10 @@ class NotificationItem(
         binding = viewBinding
         setAnimation(binding.root.context, binding.root)
         setBinding()
+        FocusEffectUtil.applyFocusListener(binding.notificationCard)
+        binding.notificationCard.setOnClickListener {
+            binding.notificationBannerImage.performClick()
+        }
     }
 
     fun dialog() {

@@ -53,7 +53,7 @@ class NotificationActivity : AppCompatActivity() {
             topMargin = statusBarHeight
         }
         navBar = binding.notificationNavBar
-        FocusEffectUtil.applyFocusListener(binding.root, navBar)
+        FocusEffectUtil.applyFocusListener(binding.notificationBack)
         binding.root.updateLayoutParams<ViewGroup.MarginLayoutParams> {
             bottomMargin = navBarHeight
         }
@@ -93,6 +93,39 @@ class NotificationActivity : AppCompatActivity() {
         }
 
         binding.notificationBack.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
+
+        navBar.post {
+            val tabCount = navBar.childCount
+            var prevTab: View? = null
+            for (i in 0 until tabCount) {
+                val tab = navBar.getChildAt(i)
+                if (tab is ViewGroup) {
+                    for (j in 0 until tab.childCount) {
+                        val child = tab.getChildAt(j)
+                        if (child is android.widget.TextView || child is android.widget.ImageView) {
+                            val container = tab
+                            container.isFocusable = true
+                            container.isClickable = true
+                            container.isFocusableInTouchMode = true
+                            container.setOnClickListener { navBar.selectTabAt(i) }
+                            FocusEffectUtil.applyFocusListener(container)
+                            if (prevTab != null) {
+                                prevTab.nextFocusRightId = container.id
+                                container.nextFocusLeftId = prevTab.id
+                            }
+                            prevTab = container
+                            break
+                        }
+                    }
+                }
+            }
+            if (prevTab != null) {
+                val firstTab = navBar.getChildAt(0)
+                firstTab.nextFocusLeftId = prevTab.id
+                prevTab.nextFocusRightId = firstTab.id
+            }
+            navBar.nextFocusDownId = R.id.notificationRecyclerView
+        }
         val getOne = intent.getIntExtra("activityId", -1)
         if (getOne != -1) navBar.isVisible = false
         binding.notificationViewPager.isUserInputEnabled = false
