@@ -24,10 +24,8 @@ object Notifications {
      */
     private const val GROUP_DOWNLOADER = "group_downloader"
     const val CHANNEL_DOWNLOADER_PROGRESS = "downloader_progress_channel"
-    const val ID_DOWNLOAD_CHAPTER_PROGRESS = -201
     const val ID_DOWNLOAD_EPISODE_PROGRESS = -203
     const val CHANNEL_DOWNLOADER_ERROR = "downloader_error_channel"
-    const val ID_DOWNLOAD_CHAPTER_ERROR = -202
     const val ID_DOWNLOAD_EPISODE_ERROR = -204
 
     /**
@@ -38,12 +36,6 @@ object Notifications {
     const val ID_NEW_EPISODES = -1301
     const val GROUP_NEW_CHAPTERS = "eu.kanade.tachiyomi.NEW_CHAPTERS"
     const val GROUP_NEW_EPISODES = "eu.kanade.tachiyomi.NEW_EPISODES"
-
-    /**
-     * Notification channel and ids used by the torrent server.
-     */
-    const val ID_TORRENT_SERVER = -1100
-    const val CHANNEL_TORRENT_SERVER = "dantotsu_torrent_server"
 
     /**
      * Notification channel used for Incognito Mode
@@ -160,9 +152,7 @@ object Notifications {
                 buildNotificationChannel(CHANNEL_INCOGNITO_MODE, IMPORTANCE_LOW) {
                     setName("Incognito Mode")
                 },
-                buildNotificationChannel(CHANNEL_TORRENT_SERVER, IMPORTANCE_LOW) {
-                    setName("Torrent Server")
-                },
+
                 buildNotificationChannel(CHANNEL_COMMENTS, IMPORTANCE_HIGH) {
                     setName("Comments")
                     setGroup(GROUP_COMMENTS)
