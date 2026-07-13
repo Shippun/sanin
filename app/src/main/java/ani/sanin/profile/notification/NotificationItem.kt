@@ -48,8 +48,9 @@ class NotificationItem(
         setBinding()
         val primaryColor = FocusEffectUtil.getPrimaryColor(binding.notificationCard.context)
         binding.notificationCard.setOnFocusChangeListener { v, hasFocus ->
-            (v as? androidx.cardview.widget.CardView)?.strokeColor = if (hasFocus) primaryColor else android.graphics.Color.TRANSPARENT
+            v.elevation = if (hasFocus) 16f else 4f
         }
+        FocusEffectUtil.applyFocusListener(binding.notificationCard)
         binding.notificationCard.setOnClickListener {
             binding.notificationBannerImage.performClick()
         }

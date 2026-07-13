@@ -37,7 +37,6 @@ class SettingsAnimationActivity : AppCompatActivity() {
             binding.animationLayout,
             binding.animationTrending,
             binding.animationLiveSideRail,
-            binding.animationNavPillTop,
         )
 
         binding.animationEnabled.isChecked = PrefManager.getVal(PrefName.AnimationsEnabled)

@@ -556,7 +556,8 @@ class MainActivity : AppCompatActivity() {
         val persist = PrefManager.getVal<Boolean>(PrefName.SideRailPersist)
         if (persist && ::navPillsViewModel.isInitialized) {
             showHomeNavRail()
-            updateNavPillFocusChains()
+        }
+        updateNavPillFocusChains()
     }
 
     private fun handleViewIntent(intent: Intent) {
