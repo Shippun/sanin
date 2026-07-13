@@ -10,7 +10,7 @@
     <string name="logout">Logout</string>
 
     <string name="sanin" translatable="false">https://dantotsu.app/</string>
-    <string name="discord" translatable="false">https://discord.gg/4HPZ5nAWwM</string>
+    <string name="discord" translatable="false">https://discord.gg/URnPQKCb</string>
     <string name="github" translatable="false">https://github.com/rebelonion/Sanin</string>
     <string name="telegram" translatable="false" tools:ignore="Typos">https://t.me/+gzBCQExtLQo1YTNh </string>
     <string name="coffee" translatable="false">https://github.com/sponsors/rebelonion</string>

@@ -45,6 +45,7 @@ class LoginFragment : Fragment() {
         } else {
             binding.loginButton.setOnClickListener { Anilist.loginIntent(requireActivity()) }
         }
+        binding.loginDiscord.setOnClickListener { openLinkInBrowser(getString(R.string.discord)) }
         binding.loginGithub.setOnClickListener { openLinkInBrowser(getString(R.string.github)) }
         binding.loginTelegram.setOnClickListener { openLinkInBrowser(getString(R.string.telegram)) }
 
