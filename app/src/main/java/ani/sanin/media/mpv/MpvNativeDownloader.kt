@@ -116,6 +116,7 @@ object MpvNativeDownloader {
                     System.load(libFile.absolutePath)
                 }
             }
+            MpvLib.nativeLoaded = true
             true
         } catch (e: UnsatisfiedLinkError) {
             false

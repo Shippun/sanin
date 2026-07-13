@@ -1403,6 +1403,7 @@ class ExoplayerView :
                 if (useMpv) {
                     playerView.visibility = View.GONE
                     mpvView?.visibility = View.VISIBLE
+                    ani.sanin.media.mpv.MpvNativeDownloader.loadNativeLibs(this)
                     mpvView?.ensureInitialized()
                     mpvView?.seekToMs(currentPos)
                 } else {
