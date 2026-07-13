@@ -37,7 +37,6 @@ enum class PrefName(val data: Pref) {
 
     AnimeSourcesOrder(Pref(Location.General, List::class, listOf<String>())),
     SortedAnimeSH(Pref(Location.General, List::class, listOf<SearchHistory>())),
-    SortedMangaSH(Pref(Location.General, List::class, listOf<SearchHistory>())),
     SortedCharacterSH(Pref(Location.General, List::class, listOf<SearchHistory>())),
     SortedStaffSH(Pref(Location.General, List::class, listOf<SearchHistory>())),
     SortedStudioSH(Pref(Location.General, List::class, listOf<SearchHistory>())),
@@ -53,7 +52,6 @@ enum class PrefName(val data: Pref) {
     AnilistFilteredTypes(Pref(Location.General, Set::class, setOf<String>())),
     UseAlarmManager(Pref(Location.General, Boolean::class, false)),
     IncludeAnimeList(Pref(Location.General, Boolean::class, true)),
-    IncludeMangaList(Pref(Location.General, Boolean::class, true)),
 
     AdultOnly(Pref(Location.General, Boolean::class, false)),
     CommentsEnabled(Pref(Location.General, Int::class, 0)),
@@ -109,7 +107,6 @@ enum class PrefName(val data: Pref) {
     ListGrid(Pref(Location.UI, Boolean::class, true)),
     PopularAnimeList(Pref(Location.UI, Boolean::class, true)),
     AnimeListSortOrder(Pref(Location.UI, String::class, "score")),
-    MangaListSortOrder(Pref(Location.UI, String::class, "score")),
 
     CommentSortOrder(Pref(Location.UI, String::class, "newest")),
     FollowerLayout(Pref(Location.UI, Int::class, 0)),
