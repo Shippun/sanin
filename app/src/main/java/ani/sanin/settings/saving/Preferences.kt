@@ -127,7 +127,6 @@ enum class PrefName(val data: Pref) {
     SwapColors(Pref(Location.UI, Boolean::class, false)),
 
     CardOrientation(Pref(Location.UI, Int::class, 1)),
-    NavPillPosition(Pref(Location.UI, Int::class, 0)),
 
     StandardCardRoundness(Pref(Location.UI, Int::class, 50)),
     ContinueWatchingCardRoundness(Pref(Location.UI, Int::class, 60)),

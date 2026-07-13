@@ -68,12 +68,6 @@ class SettingsAnimationActivity : AppCompatActivity() {
             PrefManager.setVal(PrefName.LiveSideRail, isChecked)
         }
 
-        binding.animationNavPillTop.isChecked = PrefManager.getVal<Int>(PrefName.NavPillPosition) == 1
-        binding.animationNavPillTop.setOnCheckedChangeListener { _, isChecked ->
-            PrefManager.setVal(PrefName.NavPillPosition, if (isChecked) 1 else 0)
-            restartApp()
-        }
-
         val map = mapOf(
             2f to 0.5f,
             1.75f to 0.625f,

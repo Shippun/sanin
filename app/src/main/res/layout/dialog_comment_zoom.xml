@@ -12,7 +12,6 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginHorizontal="48dp"
-        android:focusable="true"
         app:cardBackgroundColor="?attr/colorSurface"
         app:cardCornerRadius="24dp"
         app:cardElevation="8dp">

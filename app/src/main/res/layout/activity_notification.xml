@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:focusable="true">
+    android:focusable="false">
 
     <FrameLayout
         android:id="@+id/notificationToolbar"
@@ -22,7 +22,7 @@
             android:src="@drawable/ic_round_arrow_back_ios_new_24"
             app:tint="?attr/colorOnBackground"
             android:focusable="true"
-            android:nextFocusDown="@id/notificationNavBar"
+            android:nextFocusDown="@id/notificationRecyclerView"
             tools:ignore="ContentDescription" />
 
         <TextView

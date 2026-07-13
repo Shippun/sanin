@@ -317,20 +317,34 @@ class CommentsFragment : Fragment() {
             true
         }
 
-        binding.commentSourceSanin.setOnClickListener {
+        val clickSanin = {
             if (currentSource != CommentSource.DANOTSU) {
                 currentSource = CommentSource.DANOTSU
                 highlightSource()
                 lifecycleScope.launch { loadAndDisplayComments() }
             }
         }
+        binding.commentSourceSanin.setOnClickListener { clickSanin() }
+        binding.commentSourceSanin.setOnKeyListener { v, keyCode, event ->
+            if (event.action == android.view.KeyEvent.ACTION_DOWN && 
+                (keyCode == android.view.KeyEvent.KEYCODE_DPAD_CENTER || keyCode == android.view.KeyEvent.KEYCODE_ENTER)) {
+                clickSanin(); true
+            } else false
+        }
 
-        binding.commentSourceTrakt.setOnClickListener {
+        val clickTrakt = {
             if (currentSource != CommentSource.TRAKT) {
                 currentSource = CommentSource.TRAKT
                 highlightSource()
                 lifecycleScope.launch { loadAndDisplayComments() }
             }
+        }
+        binding.commentSourceTrakt.setOnClickListener { clickTrakt() }
+        binding.commentSourceTrakt.setOnKeyListener { v, keyCode, event ->
+            if (event.action == android.view.KeyEvent.ACTION_DOWN && 
+                (keyCode == android.view.KeyEvent.KEYCODE_DPAD_CENTER || keyCode == android.view.KeyEvent.KEYCODE_ENTER)) {
+                clickTrakt(); true
+            } else false
         }
 
         FocusEffectUtil.applyFocusListener(binding.commentSourceSanin, binding.commentSourceTrakt)

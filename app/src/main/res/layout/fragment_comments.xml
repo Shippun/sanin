@@ -16,7 +16,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:clipChildren="false"
-        android:clipToPadding="false">
+        android:clipToPadding="false"
+        android:focusable="false">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -66,6 +67,7 @@
                     android:background="@drawable/btn_transparent_round"
                     android:clickable="true"
                     android:focusable="true"
+                    android:focusableInTouchMode="true"
                     android:fontFamily="@font/poppins_semi_bold"
                     android:gravity="center"
                     android:paddingHorizontal="12dp"
@@ -83,6 +85,7 @@
                     android:background="@drawable/btn_transparent_round"
                     android:clickable="true"
                     android:focusable="true"
+                    android:focusableInTouchMode="true"
                     android:fontFamily="@font/poppins_semi_bold"
                     android:gravity="center"
                     android:paddingHorizontal="12dp"

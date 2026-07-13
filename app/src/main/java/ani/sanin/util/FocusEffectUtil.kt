@@ -75,6 +75,13 @@ object FocusEffectUtil {
         v.alpha = 1f
     }
 
+    fun getPrimaryColor(context: android.content.Context): Int {
+        val ta: TypedArray = context.theme.obtainStyledAttributes(intArrayOf(com.google.android.material.R.attr.colorPrimary))
+        val color = ta.getColor(0, Color.WHITE)
+        ta.recycle()
+        return color
+    }
+
     private fun getPrimaryColor(v: View): Int {
         val ta: TypedArray = v.context.theme.obtainStyledAttributes(intArrayOf(com.google.android.material.R.attr.colorPrimary))
         val color = ta.getColor(0, Color.WHITE)

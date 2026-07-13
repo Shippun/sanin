@@ -105,10 +105,13 @@ class NotificationActivity : AppCompatActivity() {
                         val child = tab.getChildAt(j)
                         if (child is android.widget.TextView || child is android.widget.ImageView) {
                             val container = tab
+                            container.id = View.generateViewId()
                             container.isFocusable = true
                             container.isClickable = true
                             container.isFocusableInTouchMode = true
                             container.setOnClickListener { navBar.selectTabAt(i) }
+                            container.nextFocusUpId = R.id.notificationRecyclerView
+                            container.nextFocusDownId = R.id.notificationRecyclerView
                             FocusEffectUtil.applyFocusListener(container)
                             if (prevTab != null) {
                                 prevTab.nextFocusRightId = container.id
@@ -125,7 +128,6 @@ class NotificationActivity : AppCompatActivity() {
                 firstTab.nextFocusLeftId = prevTab.id
                 prevTab.nextFocusRightId = firstTab.id
             }
-            navBar.nextFocusDownId = R.id.notificationRecyclerView
         }
         val getOne = intent.getIntExtra("activityId", -1)
         if (getOne != -1) navBar.isVisible = false
