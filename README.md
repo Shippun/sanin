@@ -2,7 +2,7 @@
   <img src="https://raw.githubusercontent.com/n4237074-creator/psycho/main/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png" alt="Psycho" width="128">
 </div>
 
-# Sanin — Anime Tracking & Streaming Client
+# Sanin — Anime Streaming app created mostly for Android tv but also works perfectly for phone
 
 An Android app for tracking, discovering, and watching anime through AniList and MyAnimeList. Fork of Sanin with an optional MPV video engine, improved OAuth reliability, and a focus on D-pad/TV navigation.
 
