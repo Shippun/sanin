@@ -19,7 +19,7 @@ import java.security.SecureRandom
 object MAL {
     val query: MALQueries = MALQueries()
     val jikan: JikanQueries = JikanQueries()
-    const val clientId = "86b35cf02205a0303da3aaea1c9e33f3"
+    const val clientId = "5f1bd6321acb6a4db3cc92bc33df58f4"
     var username: String? = null
     var avatar: String? = null
     var token: String? = null
@@ -37,7 +37,7 @@ object MAL {
 
         PrefManager.setVal(PrefName.MALCodeChallenge, codeChallenge)
         val request =
-            "https://myanimelist.net/v1/oauth2/authorize?response_type=code&client_id=$clientId&code_challenge=$codeChallenge&redirect_uri=dantotsu://mal"
+            "https://myanimelist.net/v1/oauth2/authorize?response_type=code&client_id=$clientId&code_challenge=$codeChallenge&redirect_uri=sanin://mal"
         try {
             CustomTabsIntent.Builder().build().launchUrl(
                 context,

@@ -254,14 +254,14 @@ object Anilist {
     )
 
     fun loginIntent(context: Context) {
-        val clientID = 14959
+        val clientID = 45857
         try {
             CustomTabsIntent.Builder().build().launchUrl(
                 context,
-                "https://anilist.co/api/v2/oauth/authorize?client_id=$clientID&response_type=token&redirect_uri=dantotsu://anilist".toUri()
+                "https://anilist.co/api/v2/oauth/authorize?client_id=$clientID&response_type=token&redirect_uri=sanin://anilist".toUri()
             )
         } catch (_: ActivityNotFoundException) {
-            openLinkInBrowser("https://anilist.co/api/v2/oauth/authorize?client_id=$clientID&response_type=token&redirect_uri=dantotsu://anilist")
+            openLinkInBrowser("https://anilist.co/api/v2/oauth/authorize?client_id=$clientID&response_type=token&redirect_uri=sanin://anilist")
         }
     }
 

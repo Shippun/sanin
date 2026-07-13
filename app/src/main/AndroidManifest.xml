@@ -211,7 +211,7 @@
 
                 <data
                     android:host="anilist"
-                    android:scheme="dantotsu" />
+                    android:scheme="sanin" />
             </intent-filter>
         </activity>
         <activity
@@ -228,7 +228,7 @@
 
                 <data
                     android:host="mal"
-                    android:scheme="dantotsu" />
+                    android:scheme="sanin" />
             </intent-filter>
         </activity>
         <activity
