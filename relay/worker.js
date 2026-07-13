@@ -1,4 +1,4 @@
-// Cloudflare Worker — OAuth relay for Dantotsu TV QR login
+// Cloudflare Worker — OAuth relay for Sanin TV QR login
 // Deploy: wrangler deploy
 // Bind a KV namespace named SESSIONS in wrangler.toml:
 //   [[kv_namespaces]]
@@ -6,10 +6,10 @@
 //   id = "your-kv-id-here"
 //
 // After deploy, set this URL in the app:
-//   SettingsAccountActivity.relayBaseUrl = "https://dantotsu-relay.your-name.workers.dev"
+//   SettingsAccountActivity.relayBaseUrl = "https://sanin-relay.your-name.workers.dev"
 
 const CLIENT_ID = 14959
-const DEPLOY_URL = "https://dantotsu-relay.your-name.workers.dev"
+const DEPLOY_URL = "https://sanin-relay.your-name.workers.dev"
 const REDIRECT_URI = DEPLOY_URL + "/callback"
 
 async function jsonResponse(data, status = 200) {

@@ -47,7 +47,7 @@ app.get('/auth/:sessionId', (req, res) => {
 <html>
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Dantotsu — Login</title>
+  <title>Sanin — Login</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
@@ -74,7 +74,7 @@ app.get('/auth/:sessionId', (req, res) => {
 </head>
 <body>
   <div class="card">
-    <h1>Login to Dantotsu</h1>
+    <h1>Login to Sanin</h1>
     <p>Tap the button below to authorize your TV</p>
     <a class="btn" href="${anilistUrl}">Continue with AniList</a>
     <ol class="steps">
@@ -97,7 +97,7 @@ app.get('/callback', (req, res) => {
 <html>
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Dantotsu — Login Successful</title>
+  <title>Sanin — Login Successful</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
