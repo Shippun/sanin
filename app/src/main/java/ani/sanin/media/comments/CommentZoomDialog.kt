@@ -10,8 +10,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.fragment.app.DialogFragment
+import ani.sanin.R
 import ani.sanin.databinding.DialogCommentZoomBinding
 import ani.sanin.loadImage
+import ani.sanin.util.FocusEffectUtil
 import java.text.SimpleDateFormat
 import java.util.Locale
 import java.util.TimeZone
@@ -19,6 +21,17 @@ import java.util.TimeZone
 class CommentZoomDialog : DialogFragment() {
     private var _binding: DialogCommentZoomBinding? = null
     private val binding get() = _binding!!
+    var listener: ZoomActionListener? = null
+    private var commentId: Int = 0
+    private var userVoteType: Int = 0
+    private var upvotes: Int = 0
+    private var downvotes: Int = 0
+    private var isTrakt: Boolean = false
+
+    interface ZoomActionListener {
+        fun onReply(commentId: Int, username: String)
+        fun onVote(commentId: Int, voteType: Int, currentVoteType: Int, isTrakt: Boolean)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,12 +51,21 @@ class CommentZoomDialog : DialogFragment() {
         super.onViewCreated(view, savedInstanceState)
         val args = arguments ?: return
 
-        binding.zoomUserName.text = args.getString("username")
-
+        commentId = args.getInt("commentId")
+        userVoteType = args.getInt("userVoteType", 0)
+        upvotes = args.getInt("upvotes", 0)
+        downvotes = args.getInt("downvotes", 0)
+        isTrakt = args.getBoolean("isTrakt", false)
+        val username = args.getString("username") ?: ""
         val timestamp = args.getString("timestamp") ?: ""
+
+        binding.zoomUserName.text = username
         binding.zoomUserTime.text = formatTimestamp(timestamp)
         binding.zoomCommentText.text = args.getString("content")
-        binding.zoomVotes.text = args.getString("votes")
+        binding.zoomVotes.text = "${upvotes - downvotes} votes"
+        updateVoteCount()
+        updateVoteIcons()
+
         val tag = args.getString("tag")
         if (tag != null) {
             binding.zoomTag.visibility = View.VISIBLE
@@ -55,6 +77,71 @@ class CommentZoomDialog : DialogFragment() {
 
         binding.zoomClose.setOnClickListener { dismiss() }
         binding.root.setOnClickListener { dismiss() }
+
+        binding.zoomReply.setOnClickListener {
+            listener?.onReply(commentId, username)
+            dismiss()
+        }
+
+        binding.zoomUpVote.setOnClickListener {
+            val newVoteType = if (userVoteType == 1) 0 else 1
+            listener?.onVote(commentId, newVoteType, userVoteType, isTrakt)
+            if (newVoteType != userVoteType) {
+                if (userVoteType == -1) downvotes -= 1
+                upvotes += if (newVoteType == 1) 1 else -1
+                userVoteType = newVoteType
+                updateVoteCount()
+                updateVoteIcons()
+            }
+        }
+
+        binding.zoomDownVote.setOnClickListener {
+            val newVoteType = if (userVoteType == -1) 0 else -1
+            listener?.onVote(commentId, newVoteType, userVoteType, isTrakt)
+            if (newVoteType != userVoteType) {
+                if (userVoteType == 1) upvotes -= 1
+                downvotes += if (newVoteType == -1) 1 else -1
+                userVoteType = newVoteType
+                updateVoteCount()
+                updateVoteIcons()
+            }
+        }
+
+        FocusEffectUtil.applyFocusListener(
+            binding.zoomReply,
+            binding.zoomUpVote,
+            binding.zoomVoteCount,
+            binding.zoomDownVote,
+            binding.zoomClose,
+        )
+    }
+
+    private fun updateVoteCount() {
+        binding.zoomVoteCount.text = (upvotes - downvotes).toString()
+        binding.zoomVotes.text = "${upvotes - downvotes} votes"
+    }
+
+    private fun updateVoteIcons() {
+        when (userVoteType) {
+            1 -> {
+                binding.zoomUpVote.setImageResource(R.drawable.ic_round_upvote_active_24)
+                binding.zoomUpVote.alpha = 1f
+                binding.zoomDownVote.setImageResource(R.drawable.ic_round_upvote_inactive_24)
+                binding.zoomDownVote.alpha = 0.6f
+            }
+            -1 -> {
+                binding.zoomUpVote.setImageResource(R.drawable.ic_round_upvote_inactive_24)
+                binding.zoomUpVote.alpha = 0.6f
+                binding.zoomDownVote.setImageResource(R.drawable.ic_round_upvote_active_24)
+                binding.zoomDownVote.alpha = 1f
+            }
+            else -> {
+                binding.zoomUpVote.setImageResource(R.drawable.ic_round_upvote_inactive_24)
+                binding.zoomUpVote.alpha = 0.6f
+                binding.zoomDownVote.setImageResource(R.drawable.ic_round_upvote_inactive_24)
+                binding.zoomDownVote.alpha = 0.6f
+            }
+        }
     }
 
     override fun onStart() {
@@ -103,20 +190,30 @@ class CommentZoomDialog : DialogFragment() {
 
     companion object {
         fun newInstance(
+            commentId: Int,
             username: String,
             timestamp: String,
             content: String,
             votes: String,
             tag: String?,
-            avatarUrl: String?
+            avatarUrl: String?,
+            userVoteType: Int = 0,
+            upvotes: Int = 0,
+            downvotes: Int = 0,
+            isTrakt: Boolean = false,
         ): CommentZoomDialog {
             val args = Bundle().apply {
+                putInt("commentId", commentId)
                 putString("username", username)
                 putString("timestamp", timestamp)
                 putString("content", content)
                 putString("votes", votes)
                 putString("tag", tag)
                 putString("avatarUrl", avatarUrl)
+                putInt("userVoteType", userVoteType)
+                putInt("upvotes", upvotes)
+                putInt("downvotes", downvotes)
+                putBoolean("isTrakt", isTrakt)
             }
             val dialog = CommentZoomDialog()
             dialog.arguments = args

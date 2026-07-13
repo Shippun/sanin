@@ -66,6 +66,7 @@
                     android:layout_height="32dp"
                     android:background="?android:attr/selectableItemBackgroundBorderless"
                     android:focusable="true"
+                    android:nextFocusDown="@+id/zoomReply"
                     android:padding="4dp"
                     android:src="@drawable/ic_round_close_24"
                     app:tint="?attr/colorOnBackground" />
@@ -108,6 +109,81 @@
                     android:alpha="0.6"
                     android:fontFamily="@font/poppins_semi_bold"
                     android:textSize="12sp" />
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="12dp"
+                android:background="?android:attr/listDivider" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginTop="8dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/zoomReply"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="?android:attr/selectableItemBackgroundBorderless"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:nextFocusRight="@+id/zoomUpVote"
+                    android:padding="8dp"
+                    android:src="@drawable/ic_round_reply_24"
+                    app:tint="?attr/colorOnBackground"
+                    tools:ignore="ContentDescription" />
+
+                <Space
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1" />
+
+                <ImageView
+                    android:id="@+id/zoomUpVote"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="?android:attr/selectableItemBackgroundBorderless"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:nextFocusLeft="@+id/zoomReply"
+                    android:nextFocusRight="@+id/zoomVoteCount"
+                    android:padding="8dp"
+                    android:src="@drawable/ic_round_upvote_inactive_24"
+                    app:tint="?attr/colorOnBackground"
+                    tools:ignore="ContentDescription" />
+
+                <TextView
+                    android:id="@+id/zoomVoteCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:alpha="0.8"
+                    android:focusable="true"
+                    android:fontFamily="@font/poppins_semi_bold"
+                    android:gravity="center"
+                    android:minWidth="32dp"
+                    android:nextFocusLeft="@+id/zoomUpVote"
+                    android:nextFocusRight="@+id/zoomDownVote"
+                    android:text="0"
+                    android:textSize="14sp"
+                    android:textColor="?attr/colorOnBackground" />
+
+                <ImageView
+                    android:id="@+id/zoomDownVote"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="?android:attr/selectableItemBackgroundBorderless"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:nextFocusLeft="@+id/zoomVoteCount"
+                    android:padding="8dp"
+                    android:rotation="270"
+                    android:src="@drawable/ic_round_upvote_inactive_24"
+                    app:tint="?attr/colorOnBackground"
+                    tools:ignore="ContentDescription" />
             </LinearLayout>
         </LinearLayout>
     </androidx.cardview.widget.CardView>

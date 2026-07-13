@@ -70,13 +70,49 @@ class CommentItem(
         binding.root.setOnClickListener {
             if (zoomDialog?.isAdded != true) {
                 zoomDialog = CommentZoomDialog.newInstance(
+                    commentId = comment.commentId,
                     username = comment.username,
                     timestamp = comment.timestamp,
                     content = comment.content,
                     votes = "${comment.upvotes - comment.downvotes} votes",
                     tag = if (comment.tag != null) "Ep ${comment.tag}" else null,
-                    avatarUrl = comment.profilePictureUrl
-                )
+                    avatarUrl = comment.profilePictureUrl,
+                    userVoteType = comment.userVoteType,
+                    upvotes = comment.upvotes,
+                    downvotes = comment.downvotes,
+                    isTrakt = comment.isTrakt,
+                ).apply {
+                    listener = object : CommentZoomDialog.ZoomActionListener {
+                        override fun onReply(commentId: Int, username: String) {
+                            commentsFragment.replyTo(this@CommentItem, username)
+                            commentsFragment.replyCallback(this@CommentItem)
+                        }
+
+                        override fun onVote(commentId: Int, voteType: Int, currentVoteType: Int, isTrakt: Boolean) {
+                            val scope = CoroutineScope(Dispatchers.Main + SupervisorJob())
+                            scope.launch {
+                                val success = if (isTrakt) {
+                                    if (voteType == 1) TraktAPI.likeComment(commentId)
+                                    else TraktAPI.unlikeComment(commentId)
+                                } else {
+                                    CommentsAPI.vote(commentId, voteType)
+                                }
+                                if (success) {
+                                    comment.userVoteType = voteType
+                                    if (!isTrakt) {
+                                        if (currentVoteType == -1) comment.downvotes -= 1
+                                        if (currentVoteType == 1) comment.upvotes -= 1
+                                        comment.upvotes += if (voteType == 1) 1 else 0
+                                        comment.downvotes += if (voteType == -1) 1 else 0
+                                    } else {
+                                        comment.upvotes += if (voteType == 1) 1 else -1
+                                    }
+                                    binding.commentTotalVotes.text = (comment.upvotes - comment.downvotes).toString()
+                                }
+                            }
+                        }
+                    }
+                }
                 zoomDialog?.show(commentsFragment.childFragmentManager, "commentZoom")
             }
         }
