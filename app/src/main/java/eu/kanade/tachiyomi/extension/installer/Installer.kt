@@ -8,9 +8,9 @@ import android.content.IntentFilter
 import android.net.Uri
 import androidx.annotation.CallSuper
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import ani.dantotsu.media.MediaType
-import ani.dantotsu.media.Type
-import ani.dantotsu.parsers.novel.NovelExtensionManager
+import ani.sanin.media.MediaType
+import ani.sanin.media.Type
+import ani.sanin.parsers.novel.NovelExtensionManager
 import eu.kanade.tachiyomi.extension.InstallStep
 import eu.kanade.tachiyomi.extension.anime.AnimeExtensionManager
 import eu.kanade.tachiyomi.extension.manga.MangaExtensionManager

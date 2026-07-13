@@ -15,7 +15,7 @@ val gitCommitHash = providers.exec {
 }.standardOutput.asText.get().trim()
 
 android {
-    namespace = "ani.dantotsu"
+    namespace = "ani.sanin"
     compileSdk = 36
 
     signingConfigs {
@@ -37,7 +37,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "ani.dantotsu"
+        applicationId = "ani.sanin"
         minSdk = 21
         targetSdk = 36
 

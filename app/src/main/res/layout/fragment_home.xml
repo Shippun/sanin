@@ -566,7 +566,7 @@
 
                 </FrameLayout>
 
-                <ani.dantotsu.FadingEdgeRecyclerView
+                <ani.sanin.FadingEdgeRecyclerView
                     android:id="@+id/homeUserStatusRecyclerView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -616,7 +616,7 @@
                         tools:ignore="ContentDescription" />
                 </LinearLayout>
 
-                <ani.dantotsu.FadingEdgeRecyclerView
+                <ani.sanin.FadingEdgeRecyclerView
                     android:id="@+id/homeHiddenItemsRecyclerView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -747,7 +747,7 @@
 
                     </FrameLayout>
 
-                    <ani.dantotsu.FadingEdgeRecyclerView
+                    <ani.sanin.FadingEdgeRecyclerView
                         android:id="@+id/homeWatchingRecyclerView"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -877,7 +877,7 @@
 
                     </FrameLayout>
 
-                    <ani.dantotsu.FadingEdgeRecyclerView
+                    <ani.sanin.FadingEdgeRecyclerView
                         android:id="@+id/homeFavAnimeRecyclerView"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -1010,7 +1010,7 @@
 
                     </FrameLayout>
 
-                    <ani.dantotsu.FadingEdgeRecyclerView
+                    <ani.sanin.FadingEdgeRecyclerView
                         android:id="@+id/homePlannedAnimeRecyclerView"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -1143,7 +1143,7 @@
 
                     </FrameLayout>
 
-                    <ani.dantotsu.FadingEdgeRecyclerView
+                    <ani.sanin.FadingEdgeRecyclerView
                         android:id="@+id/homeReadingRecyclerView"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -1272,7 +1272,7 @@
 
                     </FrameLayout>
 
-                    <ani.dantotsu.FadingEdgeRecyclerView
+                    <ani.sanin.FadingEdgeRecyclerView
                         android:id="@+id/homeFavMangaRecyclerView"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -1406,7 +1406,7 @@
 
                     </FrameLayout>
 
-                    <ani.dantotsu.FadingEdgeRecyclerView
+                    <ani.sanin.FadingEdgeRecyclerView
                         android:id="@+id/homePlannedMangaRecyclerView"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -1533,7 +1533,7 @@
 
                     </FrameLayout>
 
-                    <ani.dantotsu.FadingEdgeRecyclerView
+                    <ani.sanin.FadingEdgeRecyclerView
                         android:id="@+id/homeMissingSequelsRecyclerView"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -1661,7 +1661,7 @@
 
                     </FrameLayout>
 
-                    <ani.dantotsu.FadingEdgeRecyclerView
+                    <ani.sanin.FadingEdgeRecyclerView
                         android:id="@+id/homeRecommendedRecyclerView"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -1677,14 +1677,14 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/homeDantotsuContainer"
+                android:id="@+id/homeSaninContainer"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
                 android:visibility="gone">
 
                 <ImageView
-                    android:id="@+id/homeDantotsuIcon"
+                    android:id="@+id/homeSaninIcon"
                     android:layout_width="match_parent"
                     android:layout_height="480dp"
                     android:contentDescription="@string/app_name"

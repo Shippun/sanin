@@ -17,5 +17,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Dantotsu"
+rootProject.name = "Sanin"
 include(":app")

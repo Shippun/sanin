@@ -2,9 +2,9 @@ package eu.kanade.tachiyomi.extension.anime
 
 import android.content.Context
 import android.graphics.drawable.Drawable
-import ani.dantotsu.media.MediaType
-import ani.dantotsu.snackString
-import ani.dantotsu.util.Logger
+import ani.sanin.media.MediaType
+import ani.sanin.snackString
+import ani.sanin.util.Logger
 import eu.kanade.domain.source.service.SourcePreferences
 import eu.kanade.tachiyomi.extension.InstallStep
 import eu.kanade.tachiyomi.extension.anime.model.AnimeExtension

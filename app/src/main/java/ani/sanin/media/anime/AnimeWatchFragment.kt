@@ -1,0 +1,603 @@
+package ani.sanin.media.anime
+
+import android.annotation.SuppressLint
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
+import android.os.Bundle
+import android.os.Parcelable
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.FrameLayout
+import android.widget.Toast
+import androidx.annotation.OptIn
+import androidx.cardview.widget.CardView
+import androidx.core.content.ContextCompat
+import androidx.core.math.MathUtils
+import androidx.core.view.isGone
+import androidx.core.view.isVisible
+import androidx.core.view.updatePadding
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
+import androidx.media3.common.util.UnstableApi
+import androidx.recyclerview.widget.ConcatAdapter
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.viewpager2.widget.ViewPager2
+import ani.sanin.R
+import ani.sanin.px
+import ani.sanin.connections.LogoApi
+import ani.sanin.databinding.FragmentMediaSourceBinding
+import ani.sanin.loadImage
+import ani.sanin.dp
+import ani.sanin.isOnline
+import ani.sanin.media.Media
+import ani.sanin.media.MediaDetailsActivity
+import ani.sanin.media.MediaDetailsViewModel
+import ani.sanin.media.MediaNameAdapter
+import ani.sanin.media.MediaType
+import ani.sanin.FileUrl
+import ani.sanin.navBarHeight
+import ani.sanin.notifications.subscription.SubscriptionHelper
+import ani.sanin.notifications.subscription.SubscriptionHelper.Companion.saveSubscription
+import ani.sanin.others.LanguageMapper
+import ani.sanin.parsers.AnimeParser
+import ani.sanin.parsers.AnimeSources
+import ani.sanin.parsers.HAnimeSources
+import ani.sanin.setBaseline
+import ani.sanin.setNavigationTheme
+import ani.sanin.toPx
+import ani.sanin.settings.extensionprefs.AnimeSourcePreferencesFragment
+import ani.sanin.settings.saving.PrefManager
+import ani.sanin.settings.saving.PrefName
+import ani.sanin.snackString
+import ani.sanin.toast
+import ani.sanin.util.FocusEffectUtil
+import ani.sanin.util.Logger
+import ani.sanin.util.StoragePermissions.Companion.accessAlertDialog
+import ani.sanin.util.StoragePermissions.Companion.hasDirAccess
+import ani.sanin.util.customAlertDialog
+import com.anggrayudi.storage.file.extension
+import com.google.android.material.appbar.AppBarLayout
+import eu.kanade.tachiyomi.animesource.ConfigurableAnimeSource
+import eu.kanade.tachiyomi.extension.anime.model.AnimeExtension
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.launch
+import tachiyomi.core.util.lang.launchIO
+import uy.kohesive.injekt.Injekt
+import uy.kohesive.injekt.api.get
+import kotlin.math.ceil
+import kotlin.math.max
+import kotlin.math.roundToInt
+
+class AnimeWatchFragment : Fragment() {
+    private var _binding: FragmentMediaSourceBinding? = null
+    private val binding get() = _binding!!
+    private val model: MediaDetailsViewModel by activityViewModels()
+
+    private lateinit var media: Media
+
+    private var start = 0
+    private var end: Int? = null
+    private var style: Int? = null
+    private var reverse = false
+
+    private lateinit var headerAdapter: AnimeWatchAdapter
+    private lateinit var episodeAdapter: EpisodeAdapter
+
+    // download removed
+
+    var screenWidth = 0f
+    private var progress = View.VISIBLE
+
+    var continueEp: Boolean = false
+    var loaded = false
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        _binding = FragmentMediaSourceBinding.inflate(inflater, container, false)
+        return _binding?.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        // download receiver removed
+
+
+        binding.mediaSourceRecycler.updatePadding(bottom = binding.mediaSourceRecycler.paddingBottom + navBarHeight)
+        screenWidth = resources.displayMetrics.widthPixels.dp
+
+        var maxGridSize = (screenWidth / 100f).roundToInt()
+        maxGridSize = max(4, maxGridSize - (maxGridSize % 2))
+
+        val gridLayoutManager = GridLayoutManager(requireContext(), maxGridSize)
+
+        gridLayoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+            override fun getSpanSize(position: Int): Int {
+                val style = episodeAdapter.getItemViewType(position)
+
+                return when (position) {
+                    0 -> maxGridSize
+                    else -> when (style) {
+                        0 -> maxGridSize
+                        1 -> 2
+                        2 -> 1
+                        else -> maxGridSize
+                    }
+                }
+            }
+        }
+
+        binding.mediaSourceRecycler.layoutManager = gridLayoutManager
+
+        binding.ScrollTop.setOnClickListener {
+            binding.mediaSourceRecycler.scrollToPosition(10)
+            binding.mediaSourceRecycler.smoothScrollToPosition(0)
+        }
+        FocusEffectUtil.applyFocusListener(binding.ScrollTop, binding.ScrollTop)
+        binding.mediaSourceRecycler.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+
+                val scrollOffset = recyclerView.computeVerticalScrollOffset().toFloat()
+                val logo = binding.mediaWatchLogo
+                val title = binding.mediaWatchTitle
+                val maxTranslate = 200f.px.toFloat()
+                val translation = -minOf(scrollOffset, maxTranslate)
+                logo.translationY = translation
+                logo.alpha = 1f - (translation / -maxTranslate)
+                title.translationY = translation
+                title.alpha = 1f - (translation / -maxTranslate)
+
+                val position = gridLayoutManager.findFirstVisibleItemPosition()
+                if (position > 2) {
+                    binding.ScrollTop.translationY = -(navBarHeight + 12.toPx).toFloat()
+                    binding.ScrollTop.visibility = View.VISIBLE
+                } else {
+                    binding.ScrollTop.visibility = View.GONE
+                }
+            }
+        })
+        model.scrolledToTop.observe(viewLifecycleOwner) {
+            if (it) binding.mediaSourceRecycler.scrollToPosition(0)
+        }
+
+        continueEp = model.continueMedia ?: false
+        model.getMedia().observe(viewLifecycleOwner) {
+            if (it != null) {
+                if (this::media.isInitialized) {
+                    if (it.anime != null && it.anime?.episodes == null) {
+                        it.anime?.episodes = media.anime?.episodes
+                    }
+                }
+                media = it
+                media.selected = model.loadSelected(media)
+
+                lifecycleScope.launch(Dispatchers.Main) {
+                    val logoUrl = LogoApi.getLogoUrl(media.id)
+                    if (!logoUrl.isNullOrBlank()) {
+                        binding.mediaWatchLogo.visibility = View.VISIBLE
+                        binding.mediaWatchLogo.loadImage(logoUrl)
+                    } else {
+                        binding.mediaWatchTitle.visibility = View.VISIBLE
+                        binding.mediaWatchTitle.text = media.userPreferredName ?: media.name
+                    }
+                }
+                if (!PrefManager.getVal<Boolean>(PrefName.SmartSourcePersistence)) {
+                    if (media.selected != null) {
+                        media.selected!!.sourceIndex = 0
+                        media.selected!!.server = null
+                    }
+                }
+                if (media.format == "LOCAL") {
+                    val localSourceIndex = AnimeSources.list.indexOfFirst { parser -> parser.name == "Local" }
+                        .takeIf { parserIndex -> parserIndex >= 0 } ?: 0
+                    media.selected!!.sourceIndex = localSourceIndex
+                }
+
+                subscribed =
+                    SubscriptionHelper.getSubscriptions().containsKey(media.id)
+
+                style = media.selected!!.recyclerStyle
+                reverse = media.selected!!.recyclerReversed
+
+                progress = View.GONE
+                binding.mediaInfoProgressBar.visibility = progress
+
+                if (!loaded) {
+                    model.watchSources = if (media.isAdult) HAnimeSources else AnimeSources
+
+                    val offlineMode =
+                        model.watchSources!!.isDownloadedSource(media.selected!!.sourceIndex)
+
+                    headerAdapter = AnimeWatchAdapter(it, this, model.watchSources!!)
+                    episodeAdapter =
+                        EpisodeAdapter(
+                            style ?: PrefManager.getVal(PrefName.AnimeDefaultView),
+                            media,
+                            this,
+                            offlineMode = offlineMode
+                        )
+
+                    binding.mediaSourceRecycler.adapter =
+                        ConcatAdapter(headerAdapter, episodeAdapter)
+
+                    lifecycleScope.launch(Dispatchers.IO) {
+                        val offline =
+                            !isOnline(binding.root.context) || PrefManager.getVal(PrefName.OfflineMode)
+                        val isLocal = model.watchSources!!.list.getOrNull(media.selected!!.sourceIndex)?.name == "Local"
+                        if (offline && !isLocal) {
+                            media.selected!!.sourceIndex = model.watchSources!!.list.lastIndex
+                        }
+                        // Load episodes immediately — don't block on metadata APIs
+                        model.loadEpisodes(media, media.selected!!.sourceIndex)
+                        if (!offline && !isLocal) {
+                            launch { model.fetchKitsuEpisodes(media) }
+                            launch { model.fetchAnifyEpisodes(media.id) }
+                            launch { model.fetchFillerEpisodes(media) }
+                        }
+                    }
+                    loaded = true
+                } else {
+                    reload()
+                }
+            }
+        }
+        model.getEpisodes().observe(viewLifecycleOwner) { loadedEpisodes ->
+            if (loadedEpisodes != null) {
+                val episodes = loadedEpisodes[media.selected!!.sourceIndex]
+                if (episodes != null) {
+                    enrichEpisodes(episodes)
+                    media.anime?.episodes = episodes
+
+                    // CHIP GROUP
+                    val total = episodes.size
+                    val divisions = total.toDouble() / 10
+                    start = 0
+                    end = null
+                    val limit = when {
+                        (divisions < 25) -> 25
+                        (divisions < 50) -> 50
+                        else -> 100
+                    }
+                    headerAdapter.clearChips()
+                    if (total > limit) {
+                        val arr = media.anime!!.episodes!!.keys.toTypedArray()
+                        val stored = ceil((total).toDouble() / limit).toInt()
+                        val position = MathUtils.clamp(media.selected!!.chip, 0, stored - 1)
+                        val last = if (position + 1 == stored) total else (limit * (position + 1))
+                        start = limit * (position)
+                        end = last - 1
+                        headerAdapter.updateChips(
+                            limit,
+                            arr,
+                            (1..stored).toList().toTypedArray(),
+                            position
+                        )
+                    }
+
+                    headerAdapter.subscribeButton(true)
+                    reload()
+                }
+            }
+        }
+
+        model.getKitsuEpisodes().observe(viewLifecycleOwner) { i ->
+            if (i != null) {
+                media.anime?.kitsuEpisodes = i
+                refreshEpisodes()
+            }
+        }
+
+        model.getFillerEpisodes().observe(viewLifecycleOwner) { i ->
+            if (i != null) {
+                media.anime?.fillerEpisodes = i
+                refreshEpisodes()
+            }
+        }
+        model.getAnifyEpisodes().observe(viewLifecycleOwner) { i ->
+            if (i != null) {
+                media.anime?.anifyEpisodes = i
+                refreshEpisodes()
+            }
+        }
+    }
+
+    private fun enrichEpisodes(episodes: MutableMap<String, Episode>) {
+        val metadataPriority = PrefManager.getVal<Int>(PrefName.EpisodeMetadataSource)
+        episodes.forEach { (i, episode) ->
+            if (media.anime?.fillerEpisodes != null) {
+                if (media.anime!!.fillerEpisodes!!.containsKey(i)) {
+                    val fillerEp = media.anime!!.fillerEpisodes!![i]
+                    episode.filler = fillerEp?.filler ?: false
+                    episode.date = fillerEp?.date ?: episode.date
+                }
+            }
+
+            val applyKitsu = {
+                if (media.anime?.kitsuEpisodes != null) {
+                    if (media.anime!!.kitsuEpisodes!!.containsKey(i)) {
+                        val kitsuEp = media.anime!!.kitsuEpisodes!![i]
+                        episode.desc = kitsuEp?.desc ?: episode.desc
+                        episode.thumb = kitsuEp?.thumb ?: episode.thumb
+                    }
+                }
+            }
+
+            val applyAniZip = {
+                if (media.anime?.anifyEpisodes != null) {
+                    if (media.anime!!.anifyEpisodes!!.containsKey(i)) {
+                        val anifyEp = media.anime!!.anifyEpisodes!![i]
+                        episode.desc = anifyEp?.desc ?: episode.desc
+                        episode.thumb = anifyEp?.thumb ?: episode.thumb
+                        episode.rating = anifyEp?.extra?.get("rating") ?: episode.rating
+                        val airDate = anifyEp?.extra?.get("airDate")
+                        if (!airDate.isNullOrBlank()) {
+                            episode.date = airDate.substringBefore("T")
+                        }
+                    }
+                }
+            }
+
+            if (metadataPriority == 0) {
+                applyAniZip()
+                applyKitsu()
+            } else {
+                applyKitsu()
+                applyAniZip()
+            }
+
+            val anilistThumb = media.streamingEpisodes?.firstOrNull { se ->
+                se.title?.matches(Regex("""Episode\s*$i[\s:.,]?""", RegexOption.IGNORE_CASE)) == true
+            }?.thumbnail
+            if (anilistThumb != null) {
+                episode.thumb = FileUrl(anilistThumb)
+            }
+
+            val anifyTitle = cleanTitle(media.anime?.anifyEpisodes?.get(i)?.title)
+            val kitsuTitle = cleanTitle(media.anime?.kitsuEpisodes?.get(i)?.title)
+            val jikanTitle = cleanTitle(media.anime?.fillerEpisodes?.get(i)?.title)
+            episode.title = anifyTitle ?: kitsuTitle ?: jikanTitle ?: buildFallbackEpisodeTitle(i, episode)
+        }
+    }
+
+    private fun refreshEpisodes() {
+        val eps = media.anime?.episodes
+        if (eps != null) {
+            enrichEpisodes(eps)
+            episodeAdapter.notifyItemRangeChanged(
+                0, episodeAdapter.arr.size, "metadata"
+            )
+        }
+    }
+
+    private fun cleanTitle(value: String?): String? = value?.trim()?.takeIf { it.isNotEmpty() }
+    private fun buildFallbackEpisodeTitle(index: String, currentEpisode: Episode): String {
+        val parsedNumber = MediaNameAdapter.findEpisodeNumber(currentEpisode.number)
+            ?: MediaNameAdapter.findEpisodeNumber(index)
+            ?: currentEpisode.number
+        return "Episode $parsedNumber"
+    }
+
+    //implement Multi download
+
+    fun multiDelete(episodeNumber: String? = null, n: Int) {
+    }
+
+    fun onSourceChange(i: Int): AnimeParser {
+        media.anime?.episodes = null
+        val selected = model.loadSelected(media)
+        model.watchSources?.get(selected.sourceIndex)?.showUserTextListener = null
+        selected.sourceIndex = i
+        selected.server = null
+        model.saveSelected(media.id, selected)
+        media.selected = selected
+        return model.watchSources?.get(i)!!
+    }
+
+    fun onLangChange(i: Int) {
+        val selected = model.loadSelected(media)
+        selected.langIndex = i
+        model.saveSelected(media.id, selected)
+        media.selected = selected
+    }
+
+    fun onDubClicked(checked: Boolean) {
+        val selected = model.loadSelected(media)
+        model.watchSources?.get(selected.sourceIndex)?.selectDub = checked
+        selected.preferDub = checked
+        model.saveSelected(media.id, selected)
+        media.selected = selected
+        lifecycleScope.launch(Dispatchers.IO) {
+            model.forceLoadEpisode(media, selected.sourceIndex)
+        }
+    }
+
+    fun loadEpisodes(i: Int, invalidate: Boolean) {
+        lifecycleScope.launch(Dispatchers.IO) { model.loadEpisodes(media, i, invalidate) }
+    }
+
+    fun loadKitsuEpisodesAsync() {
+        lifecycleScope.launch(Dispatchers.IO) { model.loadKitsuEpisodes(media) }
+    }
+
+    fun onIconPressed(viewType: Int, rev: Boolean) {
+        style = viewType
+        reverse = rev
+        media.selected!!.recyclerStyle = style
+        media.selected!!.recyclerReversed = reverse
+        model.saveSelected(media.id, media.selected!!)
+        reload()
+    }
+
+    fun onChipClicked(i: Int, s: Int, e: Int) {
+        media.selected!!.chip = i
+        start = s
+        end = e
+        model.saveSelected(media.id, media.selected!!)
+        reload()
+    }
+
+    var subscribed = false
+    fun onNotificationPressed(subscribed: Boolean, source: String) {
+        this.subscribed = subscribed
+        saveSubscription(media, subscribed)
+        snackString(
+            if (subscribed) getString(R.string.subscribed_notification, source)
+            else getString(R.string.unsubscribed_notification)
+        )
+    }
+
+    fun openSettings(pkg: AnimeExtension.Installed) {
+        val changeUIVisibility: (Boolean) -> Unit = { show ->
+            val activity = activity
+            if (activity is MediaDetailsActivity && isAdded) {
+                activity.findViewById<AppBarLayout>(R.id.mediaAppBar)?.isVisible = show
+                activity.findViewById<ViewPager2>(R.id.mediaViewPager)?.isVisible = show
+                activity.findViewById<CardView>(R.id.mediaCover)?.isVisible = show
+                activity.findViewById<CardView>(R.id.mediaClose).isVisible = show
+                activity.findViewById<View>(R.id.mediaNavPills)?.isVisible = show
+                activity.findViewById<FrameLayout>(R.id.fragmentExtensionsContainer).isGone = show
+            }
+        }
+        var itemSelected = false
+        val allSettings = pkg.sources.filterIsInstance<ConfigurableAnimeSource>()
+        if (allSettings.isNotEmpty()) {
+            var selectedSetting = allSettings[0]
+            if (allSettings.size > 1) {
+                val names =
+                    allSettings.map { LanguageMapper.getLanguageName(it.lang) }.toTypedArray()
+                requireContext()
+                    .customAlertDialog()
+                    .apply {
+                        setTitle("Select a Source")
+                        singleChoiceItems(names) { which ->
+                            selectedSetting = allSettings[which]
+                            itemSelected = true
+                            requireActivity().runOnUiThread {
+                                val fragment =
+                                    AnimeSourcePreferencesFragment().getInstance(selectedSetting) {
+                                        changeUIVisibility(true)
+                                        loadEpisodes(media.selected!!.sourceIndex, true)
+                                    }
+                                parentFragmentManager.beginTransaction()
+                                    .setCustomAnimations(R.anim.slide_up, R.anim.slide_down)
+                                    .replace(R.id.fragmentExtensionsContainer, fragment)
+                                    .addToBackStack(null)
+                                    .commit()
+                                changeUIVisibility(false)
+                            }
+                        }
+                        onDismiss {
+                            if (!itemSelected) {
+                                changeUIVisibility(true)
+                            }
+                        }
+                        show()
+                    }
+            } else {
+                requireActivity().runOnUiThread {
+                    val fragment =
+                        AnimeSourcePreferencesFragment().getInstance(selectedSetting) {
+                            changeUIVisibility(true)
+                            loadEpisodes(media.selected!!.sourceIndex, true)
+                        }
+                    parentFragmentManager.beginTransaction().apply {
+                        setCustomAnimations(R.anim.slide_up, R.anim.slide_down)
+                        replace(R.id.fragmentExtensionsContainer, fragment)
+                        addToBackStack(null)
+                        commit()
+                    }
+                    changeUIVisibility(false)
+                }
+            }
+        } else {
+            Toast.makeText(requireContext(), "Source is not configurable", Toast.LENGTH_SHORT)
+                .show()
+        }
+    }
+
+    fun onEpisodeClick(i: String) {
+        model.continueMedia = false
+        model.saveSelected(media.id, media.selected!!)
+        model.onEpisodeClick(media, i, requireActivity().supportFragmentManager)
+    }
+
+
+
+    @OptIn(UnstableApi::class)
+
+    @kotlin.OptIn(DelicateCoroutinesApi::class)
+
+
+    @SuppressLint("NotifyDataSetChanged")
+    private fun reload() {
+        val selected = model.loadSelected(media)
+
+        // Find latest episode for subscription
+        selected.latest =
+            media.anime?.episodes?.values?.maxOfOrNull { it.number.toFloatOrNull() ?: 0f } ?: 0f
+        selected.latest =
+            media.userProgress?.toFloat()?.takeIf { selected.latest < it } ?: selected.latest
+
+        model.saveSelected(media.id, selected)
+        headerAdapter.handleEpisodes()
+        val isDownloaded = model.watchSources!!.isDownloadedSource(media.selected!!.sourceIndex)
+        episodeAdapter.offlineMode = isDownloaded
+        var arr: ArrayList<Episode> = arrayListOf()
+        if (media.anime!!.episodes != null) {
+            val end = if (end != null && end!! < media.anime!!.episodes!!.size) end else null
+            arr.addAll(
+                media.anime!!.episodes!!.values.toList()
+                    .slice(start..(end ?: (media.anime!!.episodes!!.size - 1)))
+            )
+            if (reverse)
+                arr = (arr.reversed() as? ArrayList<Episode>) ?: arr
+        }
+        episodeAdapter.arr = arr
+        episodeAdapter.updateType(style ?: PrefManager.getVal(PrefName.AnimeDefaultView))
+        episodeAdapter.notifyDataSetChanged()
+    }
+
+    override fun onDestroy() {
+        model.watchSources?.flushText()
+        super.onDestroy()
+        try {
+        } catch (_: IllegalArgumentException) {
+        }
+    }
+
+    var state: Parcelable? = null
+    override fun onResume() {
+        super.onResume()
+        binding.mediaInfoProgressBar.visibility = progress
+        binding.mediaSourceRecycler.layoutManager?.onRestoreInstanceState(state)
+
+        requireActivity().setNavigationTheme()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        state = binding.mediaSourceRecycler.layoutManager?.onSaveInstanceState()
+    }
+
+    companion object {
+        const val ACTION_DOWNLOAD_STARTED = "ani.sanin.ACTION_DOWNLOAD_STARTED"
+        const val ACTION_DOWNLOAD_FINISHED = "ani.sanin.ACTION_DOWNLOAD_FINISHED"
+        const val ACTION_DOWNLOAD_FAILED = "ani.sanin.ACTION_DOWNLOAD_FAILED"
+        const val ACTION_DOWNLOAD_PROGRESS = "ani.sanin.ACTION_DOWNLOAD_PROGRESS"
+        const val EXTRA_EPISODE_NUMBER = "extra_episode_number"
+        const val EXTRA_DOWNLOADED_BYTES = "extra_downloaded_bytes"
+        const val EXTRA_ESTIMATED_TOTAL_BYTES = "extra_estimated_total_bytes"
+    }
+
+}

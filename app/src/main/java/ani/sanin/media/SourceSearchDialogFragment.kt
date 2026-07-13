@@ -1,0 +1,129 @@
+package ani.sanin.media
+
+import android.content.Context
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
+import androidx.core.math.MathUtils.clamp
+import androidx.core.view.updateLayoutParams
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.GridLayoutManager
+import ani.sanin.BottomSheetDialogFragment
+import ani.sanin.databinding.BottomSheetSourceSearchBinding
+import ani.sanin.media.anime.AnimeSourceAdapter
+import ani.sanin.navBarHeight
+import ani.sanin.parsers.AnimeParser
+import ani.sanin.parsers.AnimeSources
+import ani.sanin.parsers.HAnimeSources
+import ani.sanin.px
+import ani.sanin.tryWithSuspend
+import ani.sanin.util.FocusEffectUtil
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+
+class SourceSearchDialogFragment : BottomSheetDialogFragment() {
+
+    private var _binding: BottomSheetSourceSearchBinding? = null
+    private val binding get() = _binding!!
+    val model: MediaDetailsViewModel by activityViewModels()
+    private var searched = false
+    var i: Int? = null
+    var id: Int? = null
+    var media: Media? = null
+    var onSourceSelected: ((ani.sanin.parsers.ShowResponse) -> Unit)? = null
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = BottomSheetSourceSearchBinding.inflate(inflater, container, false)
+        FocusEffectUtil.applyFocusListener(binding.root)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        binding.mediaListContainer.updateLayoutParams<ViewGroup.MarginLayoutParams> { bottomMargin += navBarHeight }
+
+        val scope = requireActivity().lifecycleScope
+        val imm =
+            requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        model.getMedia().observe(viewLifecycleOwner) {
+            media = it
+            if (media != null) {
+                binding.mediaListProgressBar.visibility = View.GONE
+                binding.mediaListLayout.visibility = View.VISIBLE
+
+                binding.searchRecyclerView.visibility = View.GONE
+                binding.searchProgress.visibility = View.VISIBLE
+
+                val source: Any? = if (media!!.anime != null) {
+                    if (i == null) i = media!!.selected?.sourceIndex ?: 0
+                    (if (media!!.isAdult) HAnimeSources else AnimeSources)[i!!]
+                } else null
+
+                fun search() {
+                    binding.searchBarText.clearFocus()
+                    imm.hideSoftInputFromWindow(binding.searchBarText.windowToken, 0)
+                    scope.launch {
+                        val src = source as? AnimeParser
+                        model.responses.postValue(
+                            withContext(Dispatchers.IO) {
+                                tryWithSuspend {
+                                    src?.search(binding.searchBarText.text.toString())
+                                }
+                            }
+                        )
+                    }
+                }
+                val srcName = (source as? AnimeParser)?.name ?: "Search"
+                binding.searchSourceTitle.text = srcName
+                binding.searchBarText.setText(media!!.mainName())
+                binding.searchBarText.setOnEditorActionListener { _, actionId, _ ->
+                    return@setOnEditorActionListener when (actionId) {
+                        EditorInfo.IME_ACTION_SEARCH -> {
+                            search()
+                            true
+                        }
+
+                        else -> false
+                    }
+                }
+                binding.searchBar.setEndIconOnClickListener { search() }
+                if (!searched) search()
+                searched = true
+                model.responses.observe(viewLifecycleOwner) { j ->
+                    if (j != null) {
+                        binding.searchRecyclerView.visibility = View.VISIBLE
+                        binding.searchProgress.visibility = View.GONE
+                        binding.searchRecyclerView.adapter =
+                            AnimeSourceAdapter(j, model, i!!, media!!.id, this, scope)
+                        binding.searchRecyclerView.layoutManager = GridLayoutManager(
+                            requireActivity(),
+                            clamp(
+                                requireActivity().resources.displayMetrics.widthPixels / 124f.px,
+                                1,
+                                4
+                            )
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
+    override fun dismiss() {
+        model.responses.value = null
+        super.dismiss()
+    }
+}

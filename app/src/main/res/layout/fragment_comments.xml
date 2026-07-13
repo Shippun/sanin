@@ -59,7 +59,7 @@
                 tools:visibility="visible">
 
                 <TextView
-                    android:id="@+id/commentSourceDantotsu"
+                    android:id="@+id/commentSourceSanin"
                     android:layout_width="0dp"
                     android:layout_height="36dp"
                     android:layout_weight="1"
@@ -69,7 +69,7 @@
                     android:gravity="center"
                     android:paddingHorizontal="12dp"
                     android:nextFocusDown="@+id/openRules"
-                    android:text="Dantotsu"
+                    android:text="Sanin"
                     android:textSize="13sp"
                     android:textColor="?attr/colorOnBackground" />
 
@@ -112,7 +112,7 @@
                     android:paddingBottom="3dp"
                     android:textColor="?attr/colorOnBackground"
                     android:textSize="12sp"
-                    android:nextFocusUp="@+id/commentSourceDantotsu"
+                    android:nextFocusUp="@+id/commentSourceSanin"
                     android:nextFocusDown="@+id/commentsList"
                     android:visibility="gone"
                     tools:text="Ep 12"
@@ -126,7 +126,7 @@
                     android:background="?android:attr/selectableItemBackground"
                     android:contentDescription="@string/open_rules"
                     android:focusable="true"
-                    android:nextFocusUp="@+id/commentSourceDantotsu"
+                    android:nextFocusUp="@+id/commentSourceSanin"
                     android:nextFocusDown="@+id/commentsList"
                     app:srcCompat="@drawable/ic_round_info_24"
                     app:tint="?attr/colorOnBackground" />
@@ -139,7 +139,7 @@
                     android:background="?android:attr/selectableItemBackground"
                     android:contentDescription="@string/sort_by"
                     android:focusable="true"
-                    android:nextFocusUp="@+id/commentSourceDantotsu"
+                    android:nextFocusUp="@+id/commentSourceSanin"
                     android:nextFocusDown="@+id/commentsList"
                     app:srcCompat="@drawable/ic_round_filter_alt_24"
                     app:tint="?attr/colorOnBackground" />
@@ -152,7 +152,7 @@
                     android:background="?android:attr/selectableItemBackground"
                     android:contentDescription="@string/sort_by"
                     android:focusable="true"
-                    android:nextFocusUp="@+id/commentSourceDantotsu"
+                    android:nextFocusUp="@+id/commentSourceSanin"
                     android:nextFocusDown="@+id/commentsList"
                     app:srcCompat="@drawable/ic_round_sort_24"
                     app:tint="?attr/colorOnBackground" />

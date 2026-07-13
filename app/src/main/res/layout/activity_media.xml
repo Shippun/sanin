@@ -120,7 +120,7 @@
         android:visibility="gone"
         android:clipToOutline="true">
 
-        <ani.dantotsu.ui.components.SnakeNavRailView
+        <ani.sanin.ui.components.SnakeNavRailView
             android:id="@+id/navPillBg"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

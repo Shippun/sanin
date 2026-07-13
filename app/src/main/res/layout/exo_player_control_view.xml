@@ -364,7 +364,7 @@
                             app:tint="@color/bg_white"
                             tools:ignore="ContentDescription" />
 
-                        <ani.dantotsu.SpinnerNoSwipe
+                        <ani.sanin.SpinnerNoSwipe
                             android:id="@+id/exo_ep_sel"
                             android:layout_width="match_parent"
                             android:layout_height="48dp"
@@ -499,7 +499,7 @@
 
             <view
                 android:id="@id/exo_progress"
-                class="ani.dantotsu.media.anime.ExoplayerView$ExtendedTimeBar"
+                class="ani.sanin.media.anime.ExoplayerView$ExtendedTimeBar"
                 android:layout_width="match_parent"
                 android:layout_height="24dp"
                 app:ad_marker_color="#A9FFFFFF"

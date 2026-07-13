@@ -5,9 +5,9 @@ import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.os.Build
 import androidx.core.content.pm.PackageInfoCompat
-import ani.dantotsu.connections.crashlytics.CrashlyticsInterface
-import ani.dantotsu.media.MediaType
-import ani.dantotsu.util.Logger
+import ani.sanin.connections.crashlytics.CrashlyticsInterface
+import ani.sanin.media.MediaType
+import ani.sanin.util.Logger
 import dalvik.system.PathClassLoader
 import eu.kanade.domain.source.service.SourcePreferences
 import eu.kanade.tachiyomi.animesource.AnimeCatalogueSource

@@ -218,7 +218,7 @@
                         android:fontFamily="@font/poppins_semi_bold"
                         android:insetTop="0dp"
                         android:insetBottom="0dp"
-                        android:text="STREAM ON DANTOTSU"
+                        android:text="STREAM ON SANIN"
                         android:textColor="#e8e8e8"
                         android:textSize="12sp"
                         app:cornerRadius="50dp"
@@ -248,11 +248,11 @@
                 android:text="@string/discord_nothing_button" />
 
             <com.google.android.material.radiobutton.MaterialRadioButton
-                android:id="@+id/radioDantotsu"
+                android:id="@+id/radioSanin"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/poppins_semi_bold"
-                android:text="@string/discord_dantotsu_mode" />
+                android:text="@string/discord_sanin_mode" />
 
             <com.google.android.material.radiobutton.MaterialRadioButton
                 android:id="@+id/radioAnilist"
