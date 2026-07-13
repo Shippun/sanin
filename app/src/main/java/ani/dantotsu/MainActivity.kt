@@ -62,7 +62,6 @@ import ani.dantotsu.profile.activity.FeedActivity
 import ani.dantotsu.profile.notification.NotificationActivity
 import ani.dantotsu.settings.AddRepositoryBottomSheet
 import ani.dantotsu.settings.ExtensionsActivity
-import ani.dantotsu.settings.SettingsNotificationActivity
 import ani.dantotsu.settings.saving.PrefManager
 import ani.dantotsu.settings.saving.PrefManager.asLiveBool
 import ani.dantotsu.settings.saving.PrefName
@@ -755,7 +754,7 @@ class MainActivity : AppCompatActivity() {
     private fun setupRightRail() {
         val drawerItems = mapOf(
             R.id.rightRailNotifications to {
-                startActivity(Intent(this, SettingsNotificationActivity::class.java))
+                startActivity(Intent(this, NotificationActivity::class.java))
             },
             R.id.rightRailExtensions to {
                 startActivity(Intent(this, ExtensionsActivity::class.java))
