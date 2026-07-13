@@ -67,61 +67,73 @@
             android:layout_gravity="top"
             android:fitsSystemWindows="true">
 
-            <FrameLayout
-                android:id="@+id/homeTopNavRail"
-                android:layout_width="wrap_content"
-                android:layout_height="44dp"
-                android:layout_gravity="center_horizontal"
-                android:visibility="gone">
-
-                <LinearLayout
+                <FrameLayout
+                    android:id="@+id/homeTopNavRail"
                     android:layout_width="wrap_content"
                     android:layout_height="44dp"
-                    android:gravity="center"
-                    android:orientation="horizontal"
-                    android:background="@drawable/surface_rounded_bg">
+                    android:layout_gravity="center_horizontal"
+                    android:visibility="gone">
 
-                    <ImageButton
-                        android:id="@+id/homeTopNavHome"
-                        android:layout_width="44dp"
+                    <LinearLayout
+                        android:layout_width="wrap_content"
                         android:layout_height="44dp"
-                        android:padding="12dp"
-                        android:src="@drawable/ic_round_home_24"
-                        android:scaleType="fitCenter"
-                        android:background="@android:color/transparent"
-                        android:focusable="true" />
+                        android:gravity="center"
+                        android:orientation="horizontal"
+                        android:background="@drawable/top_nav_gradient_bg">
 
-                    <ImageButton
-                        android:id="@+id/homeTopNavAnime"
-                        android:layout_width="44dp"
-                        android:layout_height="44dp"
-                        android:padding="12dp"
-                        android:src="@drawable/ic_round_movie_filter_24"
-                        android:scaleType="fitCenter"
-                        android:background="@android:color/transparent"
-                        android:focusable="true" />
+                        <ImageButton
+                            android:id="@+id/homeTopNavHome"
+                            android:layout_width="44dp"
+                            android:layout_height="44dp"
+                            android:padding="12dp"
+                            android:src="@drawable/ic_round_home_24"
+                            android:scaleType="fitCenter"
+                            android:background="@android:color/transparent"
+                            android:focusable="true"
+                            android:nextFocusRight="@id/homeTopNavAnime"
+                            android:nextFocusLeft="@id/homeTopNavLibrary"
+                            android:nextFocusDown="@id/homeBannerCarousel" />
 
-                    <ImageButton
-                        android:id="@+id/homeTopNavDiscovery"
-                        android:layout_width="44dp"
-                        android:layout_height="44dp"
-                        android:padding="12dp"
-                        android:src="@drawable/ic_round_filter_list_24"
-                        android:scaleType="fitCenter"
-                        android:background="@android:color/transparent"
-                        android:focusable="true" />
+                        <ImageButton
+                            android:id="@+id/homeTopNavAnime"
+                            android:layout_width="44dp"
+                            android:layout_height="44dp"
+                            android:padding="12dp"
+                            android:src="@drawable/ic_round_movie_filter_24"
+                            android:scaleType="fitCenter"
+                            android:background="@android:color/transparent"
+                            android:focusable="true"
+                            android:nextFocusRight="@id/homeTopNavDiscovery"
+                            android:nextFocusLeft="@id/homeTopNavHome"
+                            android:nextFocusDown="@id/homeBannerCarousel" />
 
-                    <ImageButton
-                        android:id="@+id/homeTopNavLibrary"
-                        android:layout_width="44dp"
-                        android:layout_height="44dp"
-                        android:padding="12dp"
-                        android:src="@drawable/ic_round_library_books_24"
-                        android:scaleType="fitCenter"
-                        android:background="@android:color/transparent"
-                        android:focusable="true" />
-                </LinearLayout>
-            </FrameLayout>
+                        <ImageButton
+                            android:id="@+id/homeTopNavDiscovery"
+                            android:layout_width="44dp"
+                            android:layout_height="44dp"
+                            android:padding="12dp"
+                            android:src="@drawable/ic_round_filter_list_24"
+                            android:scaleType="fitCenter"
+                            android:background="@android:color/transparent"
+                            android:focusable="true"
+                            android:nextFocusRight="@id/homeTopNavLibrary"
+                            android:nextFocusLeft="@id/homeTopNavAnime"
+                            android:nextFocusDown="@id/homeBannerCarousel" />
+
+                        <ImageButton
+                            android:id="@+id/homeTopNavLibrary"
+                            android:layout_width="44dp"
+                            android:layout_height="44dp"
+                            android:padding="12dp"
+                            android:src="@drawable/ic_round_library_books_24"
+                            android:scaleType="fitCenter"
+                            android:background="@android:color/transparent"
+                            android:focusable="true"
+                            android:nextFocusRight="@id/mainCalendarContainer"
+                            android:nextFocusLeft="@id/homeTopNavDiscovery"
+                            android:nextFocusDown="@id/homeBannerCarousel" />
+                        </LinearLayout>
+                    </FrameLayout>
 
             <FrameLayout
                 android:id="@+id/mainAvatarContainer"

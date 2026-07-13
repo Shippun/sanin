@@ -505,6 +505,22 @@ class MainActivity : AppCompatActivity() {
                         }
                     }
                 }
+                KeyEvent.KEYCODE_DPAD_UP -> {
+                    val id = currentFocus?.id
+                    if (isNavPillTop()) {
+                        if (id == R.id.homeTopNavHome || id == R.id.homeTopNavAnime || id == R.id.homeTopNavDiscovery || id == R.id.homeTopNavLibrary) {
+                            return true
+                        }
+                        val railVisible = binding.homeTopNavRail.visibility
+                        if (railVisible != View.VISIBLE) {
+                            val focus = currentFocus
+                            if (focus != null && focus.focusSearch(View.FOCUS_UP) == null) {
+                                showHomeNavRail()
+                                return true
+                            }
+                        }
+                    }
+                }
                 KeyEvent.KEYCODE_DPAD_LEFT -> {
                     val id = currentFocus?.id
                     if (isNavPillTop()) {
@@ -515,35 +531,28 @@ class MainActivity : AppCompatActivity() {
                         if (id == R.id.homeNavHome || id == R.id.homeNavAnime || id == R.id.homeNavDiscovery || id == R.id.homeNavLibrary) {
                             return true
                         }
-                    }
-                    val railVisible = if (isNavPillTop()) binding.homeTopNavRail.visibility else binding.homeNavRail.visibility
-                    if (railVisible != View.VISIBLE) {
-                        val focus = currentFocus
-                        if (focus != null) {
-                            var p = focus.parent
-                            var inHorizontalRv = false
-                            while (p != null) {
-                                if (p is RecyclerView) {
-                                    val lm = p.layoutManager
-                                    if (lm != null && lm.canScrollHorizontally()) {
-                                        val holder = p.findContainingViewHolder(focus)
-                                        if (holder != null && holder.bindingAdapterPosition > 0) {
-                                            inHorizontalRv = true
-                                        } else if (p.canScrollHorizontally(-1)) {
-                                            inHorizontalRv = true
+                        val railVisible = if (isNavPillTop()) binding.homeTopNavRail.visibility else binding.homeNavRail.visibility
+                        if (railVisible != View.VISIBLE) {
+                            val focus = currentFocus
+                            if (focus != null) {
+                                var p = focus.parent
+                                var inHorizontalRv = false
+                                while (p != null) {
+                                    if (p is RecyclerView) {
+                                        val lm = p.layoutManager
+                                        if (lm != null && lm.canScrollHorizontally()) {
+                                            val holder = p.findContainingViewHolder(focus)
+                                            if (holder != null && holder.bindingAdapterPosition > 0) {
+                                                inHorizontalRv = true
+                                            } else if (p.canScrollHorizontally(-1)) {
+                                                inHorizontalRv = true
+                                            }
                                         }
+                                        break
                                     }
-                                    break
+                                    p = (p as? View)?.parent
                                 }
-                                p = (p as? View)?.parent
-                            }
-                            if (!inHorizontalRv) {
-                                if (isNavPillTop()) {
-                                    if (focus.focusSearch(View.FOCUS_LEFT) == null) {
-                                        showHomeNavRail()
-                                        return true
-                                    }
-                                } else {
+                                if (!inHorizontalRv) {
                                     val railWidth = (60f * resources.displayMetrics.density).toInt()
                                     if (focus.left <= railWidth || focus.focusSearch(View.FOCUS_LEFT) == null) {
                                         showHomeNavRail()
@@ -737,15 +746,32 @@ class MainActivity : AppCompatActivity() {
 
     private fun updateNavPillFocusChains() {
         val top = isNavPillTop()
+        val bannerId = R.id.homeBannerCarousel
+        val focusUpId: Int
         if (top) {
+            focusUpId = R.id.homeTopNavHome
             binding.homeTopNavLibrary.nextFocusRightId = R.id.mainCalendarContainer
             binding.homeTopNavHome.nextFocusLeftId = R.id.homeTopNavLibrary
+            binding.homeTopNavHome.nextFocusUpId = R.id.mainCalendarContainer
+            binding.homeTopNavAnime.nextFocusUpId = R.id.mainCalendarContainer
+            binding.homeTopNavDiscovery.nextFocusUpId = R.id.mainCalendarContainer
+            binding.homeTopNavLibrary.nextFocusUpId = R.id.mainCalendarContainer
             binding.mainCalendarContainer.nextFocusLeftId = R.id.homeTopNavLibrary
+            binding.mainCalendarContainer.nextFocusDownId = R.id.homeTopNavLibrary
+            binding.mainUserAvatarContainer.nextFocusDownId = R.id.homeTopNavLibrary
         } else {
+            focusUpId = R.id.mainUserAvatarContainer
+            binding.homeTopNavLibrary.nextFocusRightId = View.NO_ID
+            binding.homeTopNavHome.nextFocusLeftId = View.NO_ID
+            binding.homeTopNavHome.nextFocusUpId = View.NO_ID
+            binding.homeTopNavAnime.nextFocusUpId = View.NO_ID
+            binding.homeTopNavDiscovery.nextFocusUpId = View.NO_ID
+            binding.homeTopNavLibrary.nextFocusUpId = View.NO_ID
             binding.mainCalendarContainer.nextFocusLeftId = View.NO_ID
+            binding.mainCalendarContainer.nextFocusDownId = bannerId
+            binding.mainUserAvatarContainer.nextFocusDownId = bannerId
         }
-        val focusUpId = if (top) R.id.homeTopNavHome else R.id.mainUserAvatarContainer
-        binding.root.findViewById<View>(R.id.homeBannerCarousel)?.nextFocusUpId = focusUpId
+        binding.root.findViewById<View>(bannerId)?.nextFocusUpId = focusUpId
         binding.root.findViewById<View>(R.id.homeNavigatingBannerContainer)?.nextFocusUpId = focusUpId
     }
 
