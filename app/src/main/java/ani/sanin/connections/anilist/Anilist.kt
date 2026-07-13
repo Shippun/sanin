@@ -258,10 +258,10 @@ object Anilist {
         try {
             CustomTabsIntent.Builder().build().launchUrl(
                 context,
-                "https://anilist.co/api/v2/oauth/authorize?client_id=$clientID&response_type=token&redirect_uri=sanin://anilist".toUri()
+                "https://anilist.co/api/v2/oauth/authorize?client_id=$clientID&response_type=token&redirect_uri=dantotsu://anilist".toUri()
             )
         } catch (_: ActivityNotFoundException) {
-            openLinkInBrowser("https://anilist.co/api/v2/oauth/authorize?client_id=$clientID&response_type=token&redirect_uri=sanin://anilist")
+            openLinkInBrowser("https://anilist.co/api/v2/oauth/authorize?client_id=$clientID&response_type=token&redirect_uri=dantotsu://anilist")
         }
     }
 

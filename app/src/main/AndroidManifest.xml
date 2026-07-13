@@ -211,7 +211,7 @@
 
                 <data
                     android:host="anilist"
-                    android:scheme="sanin" />
+                    android:scheme="dantotsu" />
             </intent-filter>
         </activity>
         <activity
@@ -228,7 +228,7 @@
 
                 <data
                     android:host="mal"
-                    android:scheme="sanin" />
+                    android:scheme="dantotsu" />
             </intent-filter>
         </activity>
         <activity
@@ -243,7 +243,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
-                <data android:scheme="sanin" />
+                <data android:scheme="dantotsu" />
                 <data android:host="discord" />
             </intent-filter>
         </activity>
@@ -274,7 +274,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
-                <data android:scheme="sanin" />
+                <data android:scheme="dantotsu" />
                 <data android:scheme="http" />
                 <data android:scheme="https" />
                 <data android:host="discord.sanin.com" />

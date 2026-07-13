@@ -37,7 +37,7 @@ object MAL {
 
         PrefManager.setVal(PrefName.MALCodeChallenge, codeChallenge)
         val request =
-            "https://myanimelist.net/v1/oauth2/authorize?response_type=code&client_id=$clientId&code_challenge=$codeChallenge&redirect_uri=sanin://mal"
+            "https://myanimelist.net/v1/oauth2/authorize?response_type=code&client_id=$clientId&code_challenge=$codeChallenge&redirect_uri=dantotsu://mal"
         try {
             CustomTabsIntent.Builder().build().launchUrl(
                 context,
