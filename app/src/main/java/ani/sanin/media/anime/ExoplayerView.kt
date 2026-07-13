@@ -1410,7 +1410,7 @@ class ExoplayerView :
                     playerView.visibility = View.VISIBLE
                     exoPlayer.seekTo(currentPos)
                 }
-                snackString(if (useMpv) "MPV Engine" else "ExoPlayer")
+                snackString(if (useMpv) "Switched to MPV Engine" else "Switched to ExoPlayer")
             } else {
                 snackString("Download MPV from Player Settings first")
             }
