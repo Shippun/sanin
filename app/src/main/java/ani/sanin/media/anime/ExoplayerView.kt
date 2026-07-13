@@ -252,6 +252,9 @@ class ExoplayerView :
         private const val MAX_PLAYER_ERROR_RETRIES = 1
     }
 
+    private var useMpv = false
+    private var mpvView: ani.sanin.media.mpv.SaninMpvView? = null
+
     private lateinit var episode: Episode
     private lateinit var episodes: MutableMap<String, Episode>
     private lateinit var episodeArr: List<String>
@@ -472,6 +475,21 @@ class ExoplayerView :
         hideSystemBarsExtendView()
 
         playerView = findViewById(R.id.player_view)
+        mpvView = findViewById(R.id.mpv_view)
+
+        useMpv = PrefManager.getVal(PrefName.UseMpvEngine) &&
+            ani.sanin.media.mpv.MpvNativeDownloader.isDownloaded(this)
+        if (useMpv) {
+            playerView.visibility = View.GONE
+            mpvView?.visibility = View.VISIBLE
+            val loaded = ani.sanin.media.mpv.MpvNativeDownloader.loadNativeLibs(this)
+            if (!loaded) {
+                useMpv = false
+                mpvView?.visibility = View.GONE
+                playerView.visibility = View.VISIBLE
+            }
+        }
+
         exoPlay = playerView.findViewById(androidx.media3.ui.R.id.exo_play)
         exoSource = playerView.findViewById(R.id.exo_source)
         exoSettings = playerView.findViewById(R.id.exo_settings)
@@ -570,14 +588,14 @@ class ExoplayerView :
         // Play Pause
         exoPlay.setOnClickListener {
             if (isInitialized) {
-                isPlayerPlaying = exoPlayer.isPlaying
+                isPlayerPlaying = if (useMpv) mpvView?.isPlayingNow() == true else exoPlayer.isPlaying
                 (exoPlay.drawable as Animatable?)?.start()
                 if (isPlayerPlaying) {
                     Glide.with(this).load(R.drawable.anim_play_to_pause).into(exoPlay)
-                    exoPlayer.pause()
+                    if (useMpv) mpvView?.setPaused(true) else exoPlayer.pause()
                 } else {
                     Glide.with(this).load(R.drawable.anim_pause_to_play).into(exoPlay)
-                    exoPlayer.play()
+                    if (useMpv) mpvView?.setPaused(false) else exoPlayer.play()
                 }
             }
         }
@@ -600,7 +618,8 @@ class ExoplayerView :
             exoSkip.findViewById<TextView>(R.id.exo_skip_time).text = skipTime.toString()
             exoSkip.setOnClickListener {
                 if (isInitialized) {
-                    exoPlayer.seekTo(exoPlayer.currentPosition + skipTime * 1000)
+                    val pos = if (useMpv) mpvView?.currentPositionMs() ?: 0L else exoPlayer.currentPosition
+                    if (useMpv) mpvView?.seekToMs(pos + skipTime * 1000) else exoPlayer.seekTo(pos + skipTime * 1000)
                 }
             }
             exoSkip.setOnLongClickListener {
@@ -890,12 +909,12 @@ class ExoplayerView :
                 if (forward) {
                     val text = "+${seekTime * ++seekTimesF}"
                     forwardText.text = text
-                    handler.post { exoPlayer.seekTo(exoPlayer.currentPosition + seekTime * 1000) }
+                    handler.post { if (useMpv) mpvView?.seekToMs(mpvView?.currentPositionMs()?.plus(seekTime * 1000L) ?: 0) else exoPlayer.seekTo(exoPlayer.currentPosition + seekTime * 1000) }
                     fastForwardCard to forwardText
                 } else {
                     val text = "-${seekTime * ++seekTimesR}"
                     rewindText.text = text
-                    handler.post { exoPlayer.seekTo(exoPlayer.currentPosition - seekTime * 1000) }
+                    handler.post { if (useMpv) mpvView?.seekToMs(mpvView?.currentPositionMs()?.minus(seekTime * 1000L) ?: 0) else exoPlayer.seekTo(exoPlayer.currentPosition - seekTime * 1000) }
                     fastRewindCard to rewindText
                 }
 
@@ -1067,6 +1086,14 @@ class ExoplayerView :
             var fastForwardOriginalSpeed = 1f
             var lastFastForwardSpeed = 1f
 
+            fun mpvSetSpeed(speed: Float) {
+                mpvView?.setPlaybackSpeed(speed)
+            }
+
+            fun currentPlaybackSpeed(): Float {
+                return if (useMpv) mpvView?.let { 1f } ?: 1f else exoPlayer.playbackParameters.speed
+            }
+
             fun updateFastForwardText(speed: Float) {
                 fastForward.text = String.format(Locale.US, "%.2fx", speed)
             }
@@ -1074,12 +1101,12 @@ class ExoplayerView :
             fun fastForward(event: MotionEvent) {
                 isFastForwarding = true
                 fastForwardStartX = event.rawX
-                fastForwardOriginalSpeed = exoPlayer.playbackParameters.speed
+                fastForwardOriginalSpeed = currentPlaybackSpeed()
                 fastForwardInitialSpeed = clamp(fastForwardOriginalSpeed * 2f, minLongPressSpeed, maxLongPressSpeed)
-                exoPlayer.setPlaybackSpeed(fastForwardInitialSpeed)
+                if (useMpv) mpvSetSpeed(fastForwardInitialSpeed) else exoPlayer.setPlaybackSpeed(fastForwardInitialSpeed)
                 lastFastForwardSpeed = fastForwardInitialSpeed
                 fastForward.visibility = View.VISIBLE
-                updateFastForwardText(exoPlayer.playbackParameters.speed)
+                updateFastForwardText(fastForwardInitialSpeed)
             }
 
             fun updateFastForwardSpeed(event: MotionEvent) {
@@ -1095,15 +1122,15 @@ class ExoplayerView :
                         maxLongPressSpeed,
                     )
                 if (abs(targetSpeed - lastFastForwardSpeed) < minSpeedUpdateDelta) return
-                exoPlayer.setPlaybackSpeed(targetSpeed)
+                if (useMpv) mpvSetSpeed(targetSpeed) else exoPlayer.setPlaybackSpeed(targetSpeed)
                 lastFastForwardSpeed = targetSpeed
-                updateFastForwardText(exoPlayer.playbackParameters.speed)
+                updateFastForwardText(targetSpeed)
             }
 
             fun stopFastForward() {
                 if (isFastForwarding) {
                     isFastForwarding = false
-                    exoPlayer.setPlaybackSpeed(fastForwardOriginalSpeed)
+                    if (useMpv) mpvSetSpeed(fastForwardOriginalSpeed) else exoPlayer.setPlaybackSpeed(fastForwardOriginalSpeed)
                     fastForward.visibility = View.GONE
                 }
             }
@@ -1419,7 +1446,7 @@ class ExoplayerView :
                     speed = speeds.getOrNull(i) ?: 1f
                     curSpeed = i
                     playbackParameters = PlaybackParameters(speed)
-                    exoPlayer.playbackParameters = playbackParameters
+                    if (useMpv) mpvView?.setPlaybackSpeed(speed) else exoPlayer.playbackParameters = playbackParameters
                     hideSystemBars()
                 }
                 setOnCancelListener { hideSystemBars() }
@@ -1899,6 +1926,18 @@ class ExoplayerView :
         // Reset the error retry counter so fresh sources get the full retry budget.
         playerErrorRetryCount = 0
 
+        if (useMpv) {
+            exoPlayer = ExoPlayer.Builder(this).build()
+            playerView.player = exoPlayer
+            val mpv = mpvView ?: return
+            val headers = video?.file?.headers ?: defaultHeaders
+            mpv.setMedia(video!!.file.url, headers)
+            mpv.setPlaybackSpeed(playbackParameters.speed)
+            mpv.setPaused(false)
+            startMpvProgressUpdates()
+            return
+        }
+
         // Player
         val bufferSize = PrefManager.getVal<Int>(PrefName.BufferSize)
         val minBufferMs = bufferSize * 1000
@@ -2055,6 +2094,10 @@ class ExoplayerView :
     }
 
     private fun releasePlayer() {
+        if (useMpv) {
+            mpvView?.releasePlayer()
+            return
+        }
         isPlayerPlaying = exoPlayer.playWhenReady
         playbackPosition = exoPlayer.currentPosition
         disappeared = false
@@ -2065,10 +2108,38 @@ class ExoplayerView :
         mediaSession?.release()
     }
 
+    private fun startMpvProgressUpdates() {
+        lifecycleScope.launch {
+            while (true) {
+                delay(250)
+                val mpv = mpvView ?: break
+                val pos = mpv.currentPositionMs()
+                val dur = mpv.durationMs()
+                isPlayerPlaying = mpv.isPlayingNow()
+                if (dur > 0) {
+                    val progress = (pos.toFloat() / dur.toFloat() * 100).toInt()
+                    runOnUiThread {
+                        timeStampText?.let { v ->
+                            val minutes = (pos / 60000).toInt()
+                            val seconds = ((pos % 60000) / 1000).toInt()
+                            val totalMin = (dur / 60000).toInt()
+                            val totalSec = ((dur % 60000) / 1000).toInt()
+                            v.text = String.format("%02d:%02d / %02d:%02d", minutes, seconds, totalMin, totalSec)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     override fun onSaveInstanceState(outState: Bundle) {
         if (isInitialized) {
-            outState.putInt(resumeWindow, exoPlayer.currentMediaItemIndex)
-            outState.putLong(resumePosition, exoPlayer.currentPosition)
+            if (useMpv) {
+                outState.putLong(resumePosition, mpvView?.currentPositionMs() ?: 0L)
+            } else {
+                outState.putInt(resumeWindow, exoPlayer.currentMediaItemIndex)
+                outState.putLong(resumePosition, exoPlayer.currentPosition)
+            }
         }
         outState.putInt(playerFullscreen, isFullscreen)
         outState.putBoolean(playerOnPlay, isPlayerPlaying)
@@ -2081,7 +2152,7 @@ class ExoplayerView :
         media.selected!!.server = null
         PrefManager.setCustomVal(
             "${media.id}_${media.anime!!.selectedEpisode}",
-            exoPlayer.currentPosition,
+            if (useMpv) mpvView?.currentPositionMs() ?: 0L else exoPlayer.currentPosition,
         )
         model.saveSelected(media.id, media.selected!!)
         model.onEpisodeClick(
@@ -2096,7 +2167,7 @@ class ExoplayerView :
         Logger.log("subClick: Opening subtitle dialog")
         PrefManager.setCustomVal(
             "${media.id}_${media.anime!!.selectedEpisode}",
-            exoPlayer.currentPosition,
+            if (useMpv) mpvView?.currentPositionMs() ?: 0L else exoPlayer.currentPosition,
         )
         model.saveSelected(media.id, media.selected!!)
         val dialog = SubtitleDialogFragment()
@@ -2137,6 +2208,7 @@ class ExoplayerView :
 
 
     private fun applyLocalSubtitle(uri: android.net.Uri) {
+        if (useMpv) return
         try {
             val label = "Local Subtitle"
             val contentResolver = applicationContext.contentResolver
@@ -2618,10 +2690,11 @@ class ExoplayerView :
         super.onPause()
         orientationListener?.disable()
         if (isInitialized) {
-            if (exoPlayer.currentPosition > 5000) {
+            val pos = if (useMpv) mpvView?.currentPositionMs() ?: 0L else exoPlayer.currentPosition
+            if (pos > 5000) {
                 PrefManager.setCustomVal(
                     "${media.id}_${media.anime!!.selectedEpisode}",
-                    exoPlayer.currentPosition,
+                    pos,
                 )
             }
         }
@@ -2645,7 +2718,7 @@ class ExoplayerView :
                 true
             }
         if (shouldPausePlayback) {
-            playerView.player?.pause()
+            if (useMpv) mpvView?.setPaused(true) else playerView.player?.pause()
         }
         super.onStop()
     }
@@ -2810,7 +2883,7 @@ class ExoplayerView :
 
     private fun updateTimeStamp() {
         if (isInitialized) {
-            val playerCurrentTime = exoPlayer.currentPosition / 1000
+            val playerCurrentTime = (if (useMpv) mpvView?.currentPositionMs() ?: 0L else exoPlayer.currentPosition) / 1000
             currentTimeStamp =
                 model.timeStamps.value?.find { timestamp ->
                     timestamp.interval.startTime < playerCurrentTime &&
@@ -2826,7 +2899,7 @@ class ExoplayerView :
                         exoSkip.visibility = View.GONE
                         skipTimeText.text = new.skipType.getType()
                         skipTimeButton.setOnClickListener {
-                            exoPlayer.seekTo((new.interval.endTime * 1000).toLong())
+                            seekToMs((new.interval.endTime * 1000).toLong())
                         }
                         var timer: CountDownTimer? = null
 
@@ -2867,7 +2940,7 @@ class ExoplayerView :
                             exoSkip.visibility = View.GONE
                             skipTimeText.text = new.skipType.getType()
                             skipTimeButton.setOnClickListener {
-                                exoPlayer.seekTo((new.interval.endTime * 1000).toLong())
+                                seekToMs((new.interval.endTime * 1000).toLong())
                             }
                         }
                     }
@@ -2875,7 +2948,7 @@ class ExoplayerView :
                         (new.skipType == "op" || new.skipType == "ed") &&
                         !skippedTimeStamps.contains(new)
                     ) {
-                        exoPlayer.seekTo((new.interval.endTime * 1000).toLong())
+                        seekToMs((new.interval.endTime * 1000).toLong())
                         skippedTimeStamps.add(new)
                     }
                     if (PrefManager.getVal(PrefName.AutoSkipRecap) &&
@@ -2884,7 +2957,7 @@ class ExoplayerView :
                             new,
                         )
                     ) {
-                        exoPlayer.seekTo((new.interval.endTime * 1000).toLong())
+                        seekToMs((new.interval.endTime * 1000).toLong())
                         skippedTimeStamps.add(new)
                     }
                     new.skipType.getType()
@@ -3090,8 +3163,9 @@ class ExoplayerView :
             maybeHandleSubscriptionAfterEpisodeCompletion(false, incognito)
             return
         }
+        val currentPos = if (useMpv) mpvView?.currentPositionMs() ?: 0L else exoPlayer.currentPosition
         val episodeEnd =
-            exoPlayer.currentPosition / episodeLength >
+            currentPos / episodeLength >
                     PrefManager.getVal<Float>(
                         PrefName.WatchPercentage,
                     )
@@ -3339,10 +3413,11 @@ class ExoplayerView :
             override fun run() {
                 if (!isInitialized) return
                 val seekTime = PrefManager.getVal<Int>(PrefName.SeekTime)
-                if (forward) {
-                    exoPlayer.seekTo(exoPlayer.currentPosition + seekTime * 1000)
+                val currentPos = if (useMpv) mpvView?.currentPositionMs() ?: 0L else exoPlayer.currentPosition
+                if (useMpv) {
+                    mpvView?.seekToMs(currentPos + (if (forward) seekTime else -seekTime) * 1000L)
                 } else {
-                    exoPlayer.seekTo(exoPlayer.currentPosition - seekTime * 1000)
+                    if (forward) exoPlayer.seekTo(currentPos + seekTime * 1000) else exoPlayer.seekTo(currentPos - seekTime * 1000)
                 }
                 seekRepeatHandler?.postDelayed(this, sensitivity.toLong())
             }
@@ -3373,10 +3448,11 @@ class ExoplayerView :
                         ensureControllerVisible()
                         val forward = event.keyCode == KEYCODE_DPAD_RIGHT
                         val seekTime = PrefManager.getVal<Int>(PrefName.SeekTime)
+                        val currentPos = if (useMpv) mpvView?.currentPositionMs() ?: 0L else exoPlayer.currentPosition
                         if (forward) {
-                            exoPlayer.seekTo(exoPlayer.currentPosition + seekTime * 1000)
+                            seekToMs(currentPos + seekTime * 1000)
                         } else {
-                            exoPlayer.seekTo(exoPlayer.currentPosition - seekTime * 1000)
+                            seekToMs(currentPos - seekTime * 1000)
                         }
                     }
                     return true
@@ -3410,8 +3486,7 @@ class ExoplayerView :
             }
             KeyEvent.KEYCODE_MEDIA_STOP -> {
                 if (event.action == KeyEvent.ACTION_UP) {
-                    exoPlayer.stop()
-                    exoPlayer.seekTo(0)
+                    if (useMpv) mpvView?.seekToMs(0) else { exoPlayer.stop(); exoPlayer.seekTo(0) }
                 }
                 return true
             }
@@ -3461,6 +3536,10 @@ class ExoplayerView :
         exoPlayer.setMediaItem(mediaItem)
         exoPlayer.prepare()
         playerView.player = exoPlayer
+    }
+
+    private fun seekToMs(positionMs: Long) {
+        if (useMpv) mpvView?.seekToMs(positionMs) else exoPlayer.seekTo(positionMs)
     }
 
     @SuppressLint("ViewConstructor")

@@ -143,6 +143,7 @@ class PlayerSettingsActivity :
             binding.playerSettingsDpadEpisodeSkip,
             binding.playerSettingsPiP,
             binding.playerSettingsAdditionalCodec,
+            binding.playerSettingsMpvEngine,
             binding.exoSkip,
         )
 
@@ -352,6 +353,44 @@ class PlayerSettingsActivity :
             PrefManager.getVal(PrefName.UseAdditionalCodec)
         binding.playerSettingsAdditionalCodec.setOnCheckedChangeListener { _, isChecked ->
             PrefManager.setVal(PrefName.UseAdditionalCodec, isChecked)
+        }
+
+        val mpvLibFile = ani.sanin.media.mpv.MpvNativeDownloader.getLibFile(this)
+        val mpvAvailable = mpvLibFile.exists()
+        binding.playerSettingsMpvEngine.isChecked = mpvAvailable && PrefManager.getVal(PrefName.UseMpvEngine)
+        binding.playerSettingsMpvStatus.text = if (mpvAvailable) {
+            getString(R.string.mpv_engine_status_downloaded)
+        } else {
+            getString(R.string.mpv_engine_status_not_downloaded)
+        }
+        binding.playerSettingsMpvEngine.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                if (mpvLibFile.exists()) {
+                    PrefManager.setVal(PrefName.UseMpvEngine, true)
+                    binding.playerSettingsMpvStatus.text = getString(R.string.mpv_engine_status_downloaded)
+                } else {
+                    binding.playerSettingsMpvEngine.isChecked = false
+                    binding.playerSettingsMpvStatus.text = getString(R.string.mpv_engine_status_downloading)
+                    lifecycleScope.launch {
+                        ani.sanin.media.mpv.MpvNativeDownloader.download(this@PlayerSettingsActivity) { progress ->
+                            binding.playerSettingsMpvStatus.text = "Downloading: ${(progress * 100).toInt()}%"
+                        }.onSuccess {
+                            ani.sanin.media.mpv.MpvNativeDownloader.getLibDir(this).setReadable(true, false)
+                            PrefManager.setVal(PrefName.UseMpvEngine, true)
+                            binding.playerSettingsMpvEngine.isChecked = true
+                            binding.playerSettingsMpvStatus.text = getString(R.string.mpv_engine_status_downloaded)
+                            snackString("MPV engine downloaded")
+                        }.onFailure { e ->
+                            binding.playerSettingsMpvStatus.text = getString(R.string.mpv_engine_error)
+                            snackString("MPV download failed: ${e.message}")
+                        }
+                    }
+                }
+            } else {
+                PrefManager.setVal(PrefName.UseMpvEngine, false)
+                ani.sanin.media.mpv.MpvNativeDownloader.deleteLib(this)
+                binding.playerSettingsMpvStatus.text = getString(R.string.mpv_engine_status_not_downloaded)
+            }
         }
 
         val resizeModes = arrayOf("Original", "Zoom", "Stretch")

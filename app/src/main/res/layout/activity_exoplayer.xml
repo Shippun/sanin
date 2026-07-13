@@ -5,13 +5,25 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <androidx.media3.ui.PlayerView
-        android:id="@+id/player_view"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:focusable="true"
-        app:animation_enabled="false"
-        app:resize_mode="fit"
-        app:show_buffering="when_playing"></androidx.media3.ui.PlayerView>
+        android:layout_height="match_parent">
+
+        <androidx.media3.ui.PlayerView
+            android:id="@+id/player_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:focusable="true"
+            app:animation_enabled="false"
+            app:resize_mode="fit"
+            app:show_buffering="when_playing" />
+
+        <ani.sanin.media.mpv.SaninMpvView
+            android:id="@+id/mpv_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone" />
+
+    </FrameLayout>
 </LinearLayout>

@@ -1195,5 +1195,11 @@ Non quae tempore quo provident laudantium qui illo dolor vel quia dolor et exerc
     <string name="data_saver_image_format_info">When disabled, images are converted to WebP format. When enabled, images are converted to JPEG</string>
     <string name="dpad_episode_skip">Long Press DPad to Skip Episode</string>
     <string name="dpad_episode_skip_info">Hold DPad Right for 3 seconds to go to next episode, Left for previous</string>
+    <string name="use_mpv_engine">Use MPV Engine</string>
+    <string name="mpv_engine_status_unknown">Status unknown</string>
+    <string name="mpv_engine_status_downloaded">MPV native library ready</string>
+    <string name="mpv_engine_status_downloading">Downloading MPV engine…</string>
+    <string name="mpv_engine_status_not_downloaded">Download MPV engine (~20MB) to enable</string>
+    <string name="mpv_engine_error">MPV engine unavailable</string>
 
 </resources>
