@@ -13,7 +13,7 @@ object MpvNativeDownloader {
 
     private const val MPV_LIB_VERSION = "0.1.12"
 
-    private val DOWNLOAD_BASE = "https://github.com/n4237074-creator/psycho/releases/download/mpv-native-v$MPV_LIB_VERSION"
+    private val DOWNLOAD_BASE = "https://github.com/n4237074-creator/sanin-mpv-libs/releases/download/v$MPV_LIB_VERSION"
 
     val LOAD_ORDER = listOf(
         "libc++_shared.so",
