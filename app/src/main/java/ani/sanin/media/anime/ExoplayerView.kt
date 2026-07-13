@@ -213,6 +213,7 @@ class ExoplayerView :
     private lateinit var exoAudioTrack: ImageButton
     private lateinit var exoSpeed: ImageButton
     private lateinit var exoScreen: ImageButton
+    private lateinit var exoSwitchPlayer: ImageButton
     private lateinit var exoNext: ImageButton
     private lateinit var exoPrev: ImageButton
     private lateinit var exoSkipOpEd: ImageButton
@@ -502,6 +503,7 @@ class ExoplayerView :
 
         exoSpeed = playerView.findViewById(androidx.media3.ui.R.id.exo_playback_speed)
         exoScreen = playerView.findViewById(R.id.exo_screen)
+        exoSwitchPlayer = playerView.findViewById(R.id.exo_switch_player)
         exoBrightness = playerView.findViewById(R.id.exo_brightness)
         exoVolume = playerView.findViewById(R.id.exo_volume)
         exoBrightnessCont = playerView.findViewById(R.id.exo_brightness_cont)
@@ -701,7 +703,7 @@ class ExoplayerView :
             }
         listOf(
             androidx.media3.ui.R.id.exo_play, R.id.exo_source, R.id.exo_settings, R.id.exo_sub,
-            R.id.exo_audio, R.id.exo_screen,
+            R.id.exo_audio, R.id.exo_screen, R.id.exo_switch_player,
             R.id.exo_skip_op_ed, R.id.exo_back, R.id.exo_skip, R.id.exo_next_ep,
             R.id.exo_prev_ep,
             androidx.media3.ui.R.id.exo_playback_speed,
@@ -718,7 +720,7 @@ class ExoplayerView :
         animeTitle.isFocusable = false
         listOf(
             androidx.media3.ui.R.id.exo_play, R.id.exo_source, R.id.exo_settings, R.id.exo_sub,
-            R.id.exo_audio, R.id.exo_screen,
+            R.id.exo_audio, R.id.exo_screen, R.id.exo_switch_player,
             R.id.exo_skip_op_ed, R.id.exo_back, R.id.exo_skip, R.id.exo_next_ep,
             R.id.exo_prev_ep,
             androidx.media3.ui.R.id.exo_playback_speed,
@@ -754,10 +756,12 @@ class ExoplayerView :
         exoPlay.nextFocusDownId = androidx.media3.ui.R.id.exo_progress
         playerView.findViewById<View>(R.id.exo_prev_ep).nextFocusDownId = androidx.media3.ui.R.id.exo_progress
         playerView.findViewById<View>(R.id.exo_next_ep).nextFocusDownId = androidx.media3.ui.R.id.exo_progress
-        val bottomIds = listOf(R.id.exo_settings, R.id.exo_source, R.id.exo_sub, R.id.exo_audio, R.id.exo_screen)
+        val bottomIds = listOf(R.id.exo_settings, R.id.exo_source, R.id.exo_sub, R.id.exo_audio, R.id.exo_screen, R.id.exo_switch_player)
         for (id in bottomIds) {
             playerView.findViewById<View>(id)?.nextFocusUpId = androidx.media3.ui.R.id.exo_progress
         }
+        exoSwitchPlayer.nextFocusLeftId = R.id.exo_screen
+        playerView.findViewById<View>(R.id.exo_screen).nextFocusRightId = R.id.exo_switch_player
         progressBar.setOnFocusChangeListener { _, hasFocus ->
             progressBar.animate().scaleY(if (hasFocus) 2.5f else 1f).setDuration(150).start()
         }
@@ -1388,6 +1392,28 @@ class ExoplayerView :
                 },
             )
             PrefManager.setCustomVal("${media.id}_fullscreenInt", isFullscreen)
+        }
+
+        // Switch player
+        exoSwitchPlayer.setOnClickListener {
+            if (ani.sanin.media.mpv.MpvNativeDownloader.isDownloaded(this)) {
+                val currentPos = if (useMpv) mpvView?.currentPositionMs() ?: 0L else exoPlayer.currentPosition
+                useMpv = !useMpv
+                PrefManager.setVal(PrefName.UseMpvEngine, useMpv)
+                if (useMpv) {
+                    playerView.visibility = View.GONE
+                    mpvView?.visibility = View.VISIBLE
+                    mpvView?.ensureInitialized()
+                    mpvView?.seekToMs(currentPos)
+                } else {
+                    mpvView?.visibility = View.GONE
+                    playerView.visibility = View.VISIBLE
+                    exoPlayer.seekTo(currentPos)
+                }
+                snackString(if (useMpv) "MPV Engine" else "ExoPlayer")
+            } else {
+                snackString("Download MPV from Player Settings first")
+            }
         }
 
         // Settings

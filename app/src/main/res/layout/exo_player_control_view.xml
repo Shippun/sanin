@@ -179,6 +179,16 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         tools:ignore="ContentDescription,SpeakableTextPresentCheck" />
 
+                    <ImageButton
+                        android:id="@+id/exo_switch_player"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:focusable="true"
+                        android:backgroundTint="#00FFFFFF"
+                        android:src="@drawable/ic_round_sync_24"
+                        app:tint="#fff"
+                        tools:ignore="ContentDescription,SpeakableTextPresentCheck" />
+
                 </LinearLayout>
             </LinearLayout>
 

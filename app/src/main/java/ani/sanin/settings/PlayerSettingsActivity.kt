@@ -34,6 +34,7 @@ import com.google.android.material.slider.Slider.OnChangeListener
 import eltos.simpledialogfragment.SimpleDialog
 import eltos.simpledialogfragment.color.SimpleColorWheelDialog
 import kotlin.math.roundToInt
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -370,25 +371,36 @@ class PlayerSettingsActivity :
                     binding.playerSettingsMpvStatus.text = getString(R.string.mpv_engine_status_downloaded)
                 } else {
                     binding.playerSettingsMpvEngine.isChecked = false
+                    binding.playerSettingsMpvProgress.visibility = View.VISIBLE
+                    binding.playerSettingsMpvProgress.progress = 0
                     binding.playerSettingsMpvStatus.text = getString(R.string.mpv_engine_status_downloading)
-                    lifecycleScope.launch {
+                    GlobalScope.launch {
                         ani.sanin.media.mpv.MpvNativeDownloader.download(this@PlayerSettingsActivity) { progress ->
-                            binding.playerSettingsMpvStatus.text = "Downloading: ${(progress * 100).toInt()}%"
+                            binding.playerSettingsMpvProgress.post {
+                                binding.playerSettingsMpvProgress.progress = (progress * 100).toInt()
+                            }
                         }.onSuccess {
                             ani.sanin.media.mpv.MpvNativeDownloader.getLibDir(this@PlayerSettingsActivity).setReadable(true, false)
                             PrefManager.setVal(PrefName.UseMpvEngine, true)
-                            binding.playerSettingsMpvEngine.isChecked = true
-                            binding.playerSettingsMpvStatus.text = getString(R.string.mpv_engine_status_downloaded)
-                            snackString("MPV engine downloaded")
+                            runOnUiThread {
+                                binding.playerSettingsMpvEngine.isChecked = true
+                                binding.playerSettingsMpvProgress.visibility = View.GONE
+                                binding.playerSettingsMpvStatus.text = getString(R.string.mpv_engine_status_downloaded)
+                                snackString("MPV engine downloaded")
+                            }
                         }.onFailure { e ->
-                            binding.playerSettingsMpvStatus.text = getString(R.string.mpv_engine_error)
-                            snackString("MPV download failed: ${e.message}")
+                            runOnUiThread {
+                                binding.playerSettingsMpvProgress.visibility = View.GONE
+                                binding.playerSettingsMpvStatus.text = getString(R.string.mpv_engine_error)
+                                snackString("MPV download failed: ${e.message}")
+                            }
                         }
                     }
                 }
             } else {
                 PrefManager.setVal(PrefName.UseMpvEngine, false)
                 ani.sanin.media.mpv.MpvNativeDownloader.deleteLib(this)
+                binding.playerSettingsMpvProgress.visibility = View.GONE
                 binding.playerSettingsMpvStatus.text = getString(R.string.mpv_engine_status_not_downloaded)
             }
         }

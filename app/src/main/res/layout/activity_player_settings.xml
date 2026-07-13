@@ -1420,6 +1420,17 @@
                 app:showText="false"
                 app:thumbTint="@color/button_switch_track" />
 
+            <ProgressBar
+                android:id="@+id/playerSettingsMpvProgress"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="8dp"
+                android:layout_marginHorizontal="32dp"
+                android:layout_marginTop="-8dp"
+                android:max="100"
+                android:progress="0"
+                android:visibility="gone" />
+
             <TextView
                 android:id="@+id/playerSettingsMpvStatus"
                 android:layout_width="match_parent"
@@ -1430,17 +1441,6 @@
                 android:fontFamily="@font/poppins_family"
                 android:paddingHorizontal="32dp"
                 android:text="@string/mpv_engine_status_unknown"
-                android:textSize="14sp" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="-8dp"
-                android:layout_marginBottom="8dp"
-                android:alpha="0.58"
-                android:fontFamily="@font/poppins_family"
-                android:paddingHorizontal="32dp"
-                android:text=""
                 android:textSize="14sp" />
 
 
