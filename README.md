@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://files.catbox.moe/s3mwfr.png" alt="Sanin Banner" width="830">
+  <img src="https://raw.githubusercontent.com/n4237074-creator/psycho/main/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png" alt="Psycho" width="128">
 </div>
 
 # Psycho — Anime Tracking & Streaming Client
