@@ -143,7 +143,7 @@ class ListActivity : AppCompatActivity() {
                     else -> null
                 }
                 PrefManager.setVal(
-                    if (anime) PrefName.AnimeListSortOrder else PrefName.MangaListSortOrder,
+                    PrefName.AnimeListSortOrder,
                     sort ?: ""
                 )
                 binding.listProgressBar.visibility = View.VISIBLE

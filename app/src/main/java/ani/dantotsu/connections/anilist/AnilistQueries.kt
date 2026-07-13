@@ -948,8 +948,7 @@ class AnilistQueries {
         }
 
         sorted["All"] = all
-        val listSort: String? = if (anime) PrefManager.getVal(PrefName.AnimeListSortOrder)
-        else PrefManager.getVal(PrefName.MangaListSortOrder)
+        val listSort: String? = PrefManager.getVal(PrefName.AnimeListSortOrder)
         val sort = listSort ?: sortOrder ?: options?.rowOrder
         for (i in sorted.keys) {
             when (sort) {
@@ -1383,7 +1382,6 @@ class AnilistQueries {
     ): String {
         val includeList = when {
             type == "ANIME" && !getPreference(PrefName.IncludeAnimeList) -> "onList:false"
-            type == "MANGA" && !getPreference(PrefName.IncludeMangaList) -> "onList:false"
             else -> ""
         }
         val isAdult = if (getPreference(PrefName.AdultOnly)) "isAdult:true" else ""
