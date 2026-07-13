@@ -77,7 +77,7 @@ class CommentItem(
                     votes = "${comment.upvotes - comment.downvotes} votes",
                     tag = if (comment.tag != null) "Ep ${comment.tag}" else null,
                     avatarUrl = comment.profilePictureUrl,
-                    userVoteType = comment.userVoteType,
+                    userVoteType = comment.userVoteType ?: 0,
                     upvotes = comment.upvotes,
                     downvotes = comment.downvotes,
                     isTrakt = comment.isTrakt,
