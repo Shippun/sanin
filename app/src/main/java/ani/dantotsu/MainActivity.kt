@@ -579,17 +579,8 @@ class MainActivity : AppCompatActivity() {
         if (persist && ::navPillsViewModel.isInitialized) {
             if (isNavPillTop()) {
                 binding.homeTopNavRail.visibility = View.VISIBLE
-                val lp = binding.fragmentContainer.layoutParams as ViewGroup.MarginLayoutParams
-                lp.rightMargin = (180f * resources.displayMetrics.density).toInt()
-                binding.fragmentContainer.layoutParams = lp
             } else {
                 showHomeNavRail()
-            }
-        } else {
-            val lp = binding.fragmentContainer.layoutParams as ViewGroup.MarginLayoutParams
-            if (lp.rightMargin != 0) {
-                lp.rightMargin = 0
-                binding.fragmentContainer.layoutParams = lp
             }
         }
         updateNavPillFocusChains()
