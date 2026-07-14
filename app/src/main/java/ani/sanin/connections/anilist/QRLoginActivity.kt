@@ -42,13 +42,13 @@ class QRLoginActivity : AppCompatActivity() {
                 val body = withContext(Dispatchers.IO) { resp.text }
                 val json = org.json.JSONObject(body)
                 val sid = json.getString("sessionId")
+                val code = json.optString("code", "")
                 sessionId = sid
 
-                val authUrl = "$relayUrl/qr?session=$sid"
-
-                val qrBitmap = generateQrCode(authUrl, 480)
+                val qrBitmap = generateQrCode(relayUrl, 480)
                 withContext(Dispatchers.Main) {
                     binding.qrCodeImage.setImageBitmap(qrBitmap)
+                    binding.qrCodeDisplay.text = code
                     binding.qrCancel.visibility = View.VISIBLE
                     binding.qrCancel.setOnClickListener { finish() }
                     startPolling(relayUrl, sid)

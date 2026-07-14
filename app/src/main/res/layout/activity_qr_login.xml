@@ -29,10 +29,25 @@
         android:contentDescription="@string/qr_code_anilist" />
 
     <TextView
+        android:id="@+id/qrCodeDisplay"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:background="#1AFFFFFF"
+        android:fontFamily="@font/poppins_bold"
+        android:gravity="center"
+        android:letterSpacing="0.2"
+        android:paddingHorizontal="32dp"
+        android:paddingVertical="12dp"
+        android:textColor="@android:color/white"
+        android:textSize="36sp"
+        tools:text="ABC123" />
+
+    <TextView
         android:id="@+id/qrStatus"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="16dp"
         android:fontFamily="@font/poppins"
         android:gravity="center"
         android:text="@string/qr_scan_instructions"
