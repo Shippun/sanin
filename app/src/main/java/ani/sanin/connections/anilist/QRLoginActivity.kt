@@ -44,10 +44,7 @@ class QRLoginActivity : AppCompatActivity() {
                 val sid = json.getString("sessionId")
                 sessionId = sid
 
-                val authUrl = "https://anilist.co/api/v2/oauth/authorize" +
-                        "?client_id=45857" +
-                        "&response_type=token" +
-                        "&redirect_url=$relayUrl/callback?session=$sid"
+                val authUrl = "$relayUrl/qr?session=$sid"
 
                 val qrBitmap = generateQrCode(authUrl, 480)
                 withContext(Dispatchers.Main) {

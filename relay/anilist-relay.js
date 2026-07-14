@@ -32,6 +32,33 @@ export default {
       });
     }
 
+    // GET /qr?session=…  →  HTML that redirects to Anilist OAuth
+    if (path === '/qr') {
+      const sessionId = url.searchParams.get('session');
+      if (!sessionId)
+        return new Response('Missing session', { status: 400 });
+      const redirectBack = url.origin + '/callback?session=' + encodeURIComponent(sessionId);
+      const authUrl = 'https://anilist.co/api/v2/oauth/authorize' +
+        '?client_id=45857' +
+        '&response_type=token' +
+        '&redirect_url=' + encodeURIComponent(redirectBack);
+      const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Redirecting to Anilist...</title>
+</head>
+<body>
+<p>Redirecting to Anilist for authorization...</p>
+<script>window.location.href=${JSON.stringify(authUrl)};</script>
+</body>
+</html>`;
+      return new Response(html, {
+        headers: { 'Content-Type': 'text/html; charset=utf-8', ...corsHeaders },
+      });
+    }
+
     // GET /callback?session=…  →  HTML that captures URL fragment
     if (path === '/callback') {
       const sessionId = url.searchParams.get('session') || '';
