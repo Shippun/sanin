@@ -183,7 +183,7 @@
         android:paddingBottom="80dp">
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
@@ -222,10 +222,10 @@
                 android:fontFamily="@font/poppins"
                 android:lineSpacingExtra="4sp"
                 android:textColor="@android:color/white"
-                    android:textSize="17sp"
-                    android:maxLines="6"
-                    android:ellipsize="end"
-                    tools:text="Centuries ago, mankind was slaughtered to near extinction by monstrous humanoid giants called Titans..." />
+                android:textSize="13sp"
+                android:maxLines="6"
+                android:ellipsize="end"
+                tools:text="Centuries ago, mankind was slaughtered to near extinction by monstrous humanoid giants called Titans..." />
 
             <TextView
                 android:id="@+id/exo_pause_genres"
