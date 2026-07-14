@@ -155,7 +155,6 @@ import java.io.File
 import kotlinx.coroutines.withContext
 import android.content.res.Resources
 import android.view.LayoutInflater
-import android.view.ViewGroup
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
