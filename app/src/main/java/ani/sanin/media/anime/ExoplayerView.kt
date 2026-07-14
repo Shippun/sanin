@@ -1417,15 +1417,34 @@ class ExoplayerView :
                     mpvView?.visibility = View.VISIBLE
                     val loaded = ani.sanin.media.mpv.MpvNativeDownloader.loadNativeLibs(this)
                     if (loaded) {
-                        mpvView?.ensureInitialized()
-                        val headers = video?.file?.headers ?: defaultHeaders
-                        video?.let { v ->
-                            mpvView?.setMedia(v.file.url, headers, currentPos)
+                        try {
+                            mpvView?.ensureInitialized()
+                            val headers = video?.file?.headers ?: defaultHeaders
+                            video?.let { v ->
+                                mpvView?.setMedia(v.file.url, headers, currentPos)
+                            }
+                            mpvView?.setPlaybackSpeed(playbackParameters.speed)
+                            mpvView?.setPaused(false)
+                            startMpvProgressUpdates()
+                            snackString("Switched to MPV Engine")
+                        } catch (e: UnsatisfiedLinkError) {
+                            android.util.Log.e("MpvLib", "JNI symbols missing in native libs: ${e.message}")
+                            ani.sanin.media.mpv.MpvLib.nativeLoaded = false
+                            useMpv = false
+                            PrefManager.setVal(PrefName.UseMpvEngine, false)
+                            mpvView?.visibility = View.GONE
+                            playerView.visibility = View.VISIBLE
+                            exoPlayer.seekTo(currentPos)
+                            snackString("MPV native bridge not available — using ExoPlayer")
+                        } catch (e: Exception) {
+                            android.util.Log.e("MpvLib", "Failed to initialize MPV: ${e.message}")
+                            useMpv = false
+                            PrefManager.setVal(PrefName.UseMpvEngine, false)
+                            mpvView?.visibility = View.GONE
+                            playerView.visibility = View.VISIBLE
+                            exoPlayer.seekTo(currentPos)
+                            snackString("MPV init failed — using ExoPlayer")
                         }
-                        mpvView?.setPlaybackSpeed(playbackParameters.speed)
-                        mpvView?.setPaused(false)
-                        startMpvProgressUpdates()
-                        snackString("Switched to MPV Engine")
                     } else {
                         useMpv = false
                         PrefManager.setVal(PrefName.UseMpvEngine, false)
