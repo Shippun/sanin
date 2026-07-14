@@ -241,6 +241,7 @@ class ExoplayerView :
     private lateinit var episodeTitleText: TextView
     private lateinit var episodeTitleBtn: ImageButton
     private lateinit var episodeDrawer: DrawerLayout
+    private lateinit var episodeDrawerContent: View
     private lateinit var episodeDrawerList: RecyclerView
     private lateinit var episodeDrawerClose: ImageButton
     private var episodeDrawerAdapter: EpisodeRailAdapter? = null
@@ -520,7 +521,8 @@ class ExoplayerView :
         episodeDrawer = binding.root
         episodeDrawerList = findViewById(R.id.episodeDrawerList)
         episodeDrawerClose = findViewById(R.id.episodeDrawerClose)
-        episodeDrawerClose.setOnClickListener { episodeDrawer.close() }
+        episodeDrawerContent = findViewById(R.id.episodeDrawer)
+        episodeDrawerClose.setOnClickListener { episodeDrawer.closeDrawer(episodeDrawerContent) }
         episodeDrawer.setDrawerListener(object : DrawerLayout.DrawerListener {
             override fun onDrawerSlide(drawerView: View, slideOffset: Float) {}
             override fun onDrawerOpened(drawerView: View) {
@@ -533,10 +535,10 @@ class ExoplayerView :
         })
 
         episodeTitleBtn.setOnClickListener {
-            if (episodeDrawer.isDrawerOpen(findViewById(R.id.episodeDrawer))) {
-                episodeDrawer.close()
+            if (episodeDrawer.isDrawerOpen(episodeDrawerContent)) {
+                episodeDrawer.closeDrawer(episodeDrawerContent)
             } else {
-                episodeDrawer.open()
+                episodeDrawer.openDrawer(episodeDrawerContent)
             }
         }
 
@@ -3418,8 +3420,8 @@ class ExoplayerView :
         if (event.action == KeyEvent.ACTION_DOWN) {
             when (event.keyCode) {
                 KeyEvent.KEYCODE_BACK, KeyEvent.KEYCODE_ESCAPE -> {
-                    if (episodeDrawer.isDrawerOpen(findViewById(R.id.episodeDrawer))) {
-                        episodeDrawer.close()
+                    if (episodeDrawer.isDrawerOpen(episodeDrawerContent)) {
+                        episodeDrawer.closeDrawer(episodeDrawerContent)
                         return true
                     }
                 }
@@ -3428,7 +3430,7 @@ class ExoplayerView :
                     if (id == R.id.episodeDrawerClose || id == R.id.episodeRailCard) {
                         val focus = currentFocus
                         if (focus?.focusSearch(View.FOCUS_LEFT) == null) {
-                            episodeDrawer.close()
+                            episodeDrawer.closeDrawer(episodeDrawerContent)
                             return true
                         }
                     }

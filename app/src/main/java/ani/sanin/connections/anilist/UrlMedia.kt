@@ -13,7 +13,7 @@ class UrlMedia : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         ThemeManager(this).applyTheme()
-        val data: Uri? = intent?.data ?: return
+        val data = intent?.data ?: return
 
         // If URL is an OAuth/api URL, forward to browser instead
         if (data.pathSegments?.getOrNull(0) == "api") {
