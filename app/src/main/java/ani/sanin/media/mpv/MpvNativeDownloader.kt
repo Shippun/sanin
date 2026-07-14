@@ -119,6 +119,7 @@ object MpvNativeDownloader {
             MpvLib.nativeLoaded = true
             true
         } catch (e: UnsatisfiedLinkError) {
+            android.util.Log.e("MpvLib", "Failed to load native libs: ${e.message}")
             false
         }
     }

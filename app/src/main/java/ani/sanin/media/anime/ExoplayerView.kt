@@ -1407,12 +1407,12 @@ class ExoplayerView :
                     if (loaded) {
                         mpvView?.ensureInitialized()
                         mpvView?.seekToMs(currentPos)
-                    } else {
-                        useMpv = false
-                        mpvView?.visibility = View.GONE
-                        playerView.visibility = View.VISIBLE
-                        snackString("Failed to load MPV native libraries")
-                    }
+                } else {
+                    useMpv = false
+                    mpvView?.visibility = View.GONE
+                    playerView.visibility = View.VISIBLE
+                    snackString("MPV libs failed to load")
+                }
                 } else {
                     mpvView?.visibility = View.GONE
                     playerView.visibility = View.VISIBLE
