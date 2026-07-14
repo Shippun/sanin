@@ -599,6 +599,17 @@ class ExoplayerView :
                     Glide.with(this).load(R.drawable.anim_pause_to_play).into(exoPlay)
                     if (useMpv) mpvView?.setPaused(false) else exoPlayer.play()
                 }
+                if (useMpv) {
+                    if (isPlayerPlaying) {
+                        pauseMetadataTimer?.let { handler.removeCallbacks(it) }
+                        pauseMetadataTimer = null
+                        pauseOverlay.animate().alpha(0f).setDuration(200).withEndAction {
+                            pauseOverlay.visibility = View.GONE
+                        }.start()
+                    } else {
+                        schedulePauseOverlayTimer()
+                    }
+                }
             }
         }
 
@@ -2781,7 +2792,7 @@ class ExoplayerView :
         pauseMetadataTimer?.let { handler.removeCallbacks(it) }
         if (!isPlayerPlaying) {
             val timer = Runnable {
-                if (!exoPlayer.isPlaying) {
+                if (!isPlayerPlaying) {
                     pauseOverlay.visibility = View.VISIBLE
                     pauseOverlay.alpha = 0f
                     pauseOverlay.animate().alpha(1f).setDuration(300).start()
