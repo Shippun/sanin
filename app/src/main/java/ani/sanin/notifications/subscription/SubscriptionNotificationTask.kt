@@ -143,6 +143,20 @@ class SubscriptionNotificationTask : Task {
                                     notification
                                 )
                         }
+                        if (PrefManager.getVal<Boolean>(PrefName.NotificationPopup)) {
+                            App.currentActivity()?.let {
+                                val popupIntent = Intent(
+                                    context.applicationContext,
+                                    NotificationPopupActivity::class.java
+                                ).apply {
+                                    flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_NO_USER_ACTION
+                                    putExtra("title", media.name)
+                                    putExtra("text", text.first)
+                                    putExtra("coverUrl", media.image)
+                                }
+                                context.startActivity(popupIntent)
+                            }
+                        }
                     }
 
                     if (newSubscriptionCount > 0) {

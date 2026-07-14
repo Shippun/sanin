@@ -448,6 +448,8 @@
     </string>
     <string name="notification_for_checking_subscriptions">Checking Subscriptions notification</string>
     <string name="subscription_prompt_at_end">Subscription popup at media end</string>
+    <string name="notification_popup">In-App notification popup</string>
+    <string name="notification_popup_desc">Show a small popup at the top of the screen when new episodes are found</string>
     <string name="use_alarm_manager">Use Alarm Manager</string>
     <string name="use_alarm_manager_reliable">Use Alarm Manager for reliable Notifications</string>
     <string name="use_alarm_manager_confirm">Using Alarm Manager can help fight against battery optimization, but may consume more battery. It also requires the Alarm Manager permission.</string>

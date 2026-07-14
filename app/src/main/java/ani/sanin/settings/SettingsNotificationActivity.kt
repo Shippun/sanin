@@ -428,6 +428,19 @@ class SettingsNotificationActivity : AppCompatActivity() {
                     ),
                     Settings(
                         type = 2,
+                        name = getString(R.string.notification_popup),
+                        desc = getString(R.string.notification_popup_desc),
+                        icon = R.drawable.ic_round_smart_button_24,
+                        isChecked = PrefManager.getVal(PrefName.NotificationPopup),
+                        switch = { isChecked, _ ->
+                            PrefManager.setVal(
+                                PrefName.NotificationPopup,
+                                isChecked
+                            )
+                        }
+                    ),
+                    Settings(
+                        type = 2,
                         name = getString(R.string.use_alarm_manager_reliable),
                         desc = getString(R.string.use_alarm_manager_reliable_desc),
                         icon = R.drawable.ic_anilist,

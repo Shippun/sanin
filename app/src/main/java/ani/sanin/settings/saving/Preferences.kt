@@ -21,6 +21,7 @@ enum class PrefName(val data: Pref) {
     RecentlyListOnly(Pref(Location.General, Boolean::class, false)),
 
     SubscriptionCheckingNotifications(Pref(Location.General, Boolean::class, true)),
+    NotificationPopup(Pref(Location.General, Boolean::class, true)),
     SubscriptionPromptAtEnd(Pref(Location.General, Boolean::class, true)),
     CheckUpdate(Pref(Location.General, Boolean::class, true)),
     VerboseLogging(Pref(Location.General, Boolean::class, false)),

@@ -381,6 +381,14 @@
         <receiver android:name=".notifications.comment.CommentNotificationReceiver" />
         <receiver android:name=".notifications.subscription.SubscriptionNotificationReceiver" />
 
+        <activity
+            android:name=".notifications.subscription.NotificationPopupActivity"
+            android:excludeFromRecents="true"
+            android:noHistory="true"
+            android:theme="@style/Theme.Sanin.Dialog"
+            android:taskAffinity=""
+            android:launchMode="singleInstance" />
+
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
