@@ -118,18 +118,22 @@ class AnimePageAdapter : RecyclerView.Adapter<AnimePageAdapter.AnimePageViewHold
         rv.descendantFocusability = android.view.ViewGroup.FOCUS_AFTER_DESCENDANTS
         val scope = CoroutineScope(Dispatchers.Main)
         scope.launch(Dispatchers.IO) {
-            val urls = media.associate { it.id to AniZip.getBackdropUrl(it.id) }
+            val allImages = AniZip.getImagesBatch(media.map { it.id })
+            val backdrops = allImages.mapValues { it.value.backdropUrl }
+            val logos = allImages.mapValues { it.value.logoUrl }
             withContext(Dispatchers.Main) {
-                bannerAdapter = BannerCarouselAdapter(media, scope, { item ->
-                    val context = binding.root.context
-                    ContextCompat.startActivity(
-                        context,
-                        Intent(context, ani.sanin.media.MediaDetailsActivity::class.java)
-                            .putExtra("media", item)
-                            .putExtra("anime", true),
-                        null
-                    )
-                }, urls)
+                bannerAdapter = BannerCarouselAdapter(
+                    media, scope, { item ->
+                        val context = binding.root.context
+                        ContextCompat.startActivity(
+                            context,
+                            Intent(context, ani.sanin.media.MediaDetailsActivity::class.java)
+                                .putExtra("media", item)
+                                .putExtra("anime", true),
+                            null
+                        )
+                    }, backdrops, logos
+                )
                 rv.adapter = bannerAdapter
                 setupTrendingDots(rv, media.size)
                 rv.layoutAnimation = LayoutAnimationController(setSlideIn(), 0.25f)

@@ -9,21 +9,20 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import ani.sanin.R
-import ani.sanin.connections.LogoApi
 import ani.sanin.connections.anilist.Anilist
 import ani.sanin.loadImage
 import ani.sanin.media.Media
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 class BannerCarouselAdapter(
     private val items: List<Media>,
     private val scope: CoroutineScope,
     private val onItemClick: (Media) -> Unit,
     private val backdropUrls: Map<Int, String?> = emptyMap(),
+    private val logoUrls: Map<Int, String?> = emptyMap(),
 ) : RecyclerView.Adapter<BannerCarouselAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -46,21 +45,16 @@ class BannerCarouselAdapter(
             holder.bannerImage.loadImage(imageUrl)
         }
 
-        // --- Clearlogo (from LogoApi) / Title fallback ---
+        // --- Clearlogo (pre-fetched) / Title fallback ---
         holder.title.text = media.userPreferredName ?: media.name
         holder.title.isVisible = true
         holder.clearlogo.isVisible = false
         holder.clearlogo.setImageDrawable(null)
-        holder.logoJob?.cancel()
-        holder.logoJob = scope.launch(Dispatchers.IO) {
-            val logoUrl = LogoApi.getLogoUrl(media.id)
-            withContext(Dispatchers.Main) {
-                if (!logoUrl.isNullOrBlank()) {
-                    holder.clearlogo.isVisible = true
-                    holder.title.isVisible = false
-                    holder.clearlogo.loadImage(logoUrl)
-                }
-            }
+        val logoUrl = logoUrls[media.id]
+        if (!logoUrl.isNullOrBlank()) {
+            holder.clearlogo.isVisible = true
+            holder.title.isVisible = false
+            holder.clearlogo.loadImage(logoUrl)
         }
 
         // --- Format tag ---
@@ -191,6 +185,18 @@ class BannerCarouselAdapter(
         holder.itemView.nextFocusRightId = View.NO_ID
         holder.playBtn.nextFocusDownId = R.id.homeContinueWatch
         holder.favBtn.nextFocusDownId = R.id.homeContinueWatch
+
+        // --- Preload adjacent items ---
+        for (offset in listOf(-1, 1)) {
+            val pos = position + offset
+            if (pos in items.indices) {
+                val item = items[pos]
+                val url = backdropUrls[item.id] ?: item.banner ?: item.cover
+                if (!url.isNullOrBlank()) {
+                    Glide.with(ctx).load(url).preload()
+                }
+            }
+        }
     }
 
     override fun getItemCount() = items.size
@@ -200,8 +206,6 @@ class BannerCarouselAdapter(
         val bannerImage: ImageView = view.findViewById(R.id.bannerImage)
         val clearlogo: ImageView = view.findViewById(R.id.bannerClearlogo)
         val title: TextView = view.findViewById(R.id.bannerTitle)
-        var logoJob: Job? = null
-
         val formatTag: TextView = view.findViewById(R.id.bannerFormatTag)
         val statusTag: TextView = view.findViewById(R.id.bannerStatusTag)
         val seasonTag: TextView = view.findViewById(R.id.bannerSeasonTag)
