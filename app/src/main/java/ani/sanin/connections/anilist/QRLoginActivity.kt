@@ -69,7 +69,7 @@ class QRLoginActivity : AppCompatActivity() {
 
     private fun startPolling(relayUrl: String, sid: String) {
         polling = true
-        poller.post(object : Runnable {
+        val task = object : Runnable {
             override fun run() {
                 if (!polling) return
                 lifecycleScope.launch(Dispatchers.IO) {
@@ -108,10 +108,11 @@ class QRLoginActivity : AppCompatActivity() {
                     } catch (e: Exception) {
                         Logger.log("QRLogin: poll error — ${e.message}")
                     }
-                    if (polling) poller.postDelayed(this, 2000)
+                    if (polling) poller.postDelayed(task, 2000)
                 }
             }
-        })
+        }
+        poller.post(task)
     }
 
     override fun onDestroy() {
