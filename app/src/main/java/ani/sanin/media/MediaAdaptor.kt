@@ -364,7 +364,7 @@ class MediaAdaptor(
                     KeyEvent.ACTION_DOWN -> {
                         view.postDelayed(runnable, ViewConfiguration.getLongPressTimeout().toLong())
                     }
-                    KeyEvent.ACTION_UP, KeyEvent.ACTION_CANCEL -> {
+                    KeyEvent.ACTION_UP -> {
                         view.removeCallbacks(runnable)
                     }
                 }
