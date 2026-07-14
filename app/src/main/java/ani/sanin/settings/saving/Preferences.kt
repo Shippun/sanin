@@ -201,7 +201,6 @@ enum class PrefName(val data: Pref) {
 
     GestureSliders(Pref(Location.Player, Boolean::class, true)),
     DpadEpisodeSkip(Pref(Location.Player, Boolean::class, true)),
-    UseMpvEngine(Pref(Location.Player, Boolean::class, false)),
     Interpolation(Pref(Location.Player, Boolean::class, false)),
     UpscalingAlgorithm(Pref(Location.Player, Int::class, 0)),
     RawConfiguration(Pref(Location.Player, String::class, "")),

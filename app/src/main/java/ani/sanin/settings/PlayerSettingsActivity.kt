@@ -144,7 +144,6 @@ class PlayerSettingsActivity :
             binding.playerSettingsDpadEpisodeSkip,
             binding.playerSettingsPiP,
             binding.playerSettingsAdditionalCodec,
-            binding.playerSettingsMpvEngine,
             binding.exoSkip,
         )
 
@@ -354,55 +353,6 @@ class PlayerSettingsActivity :
             PrefManager.getVal(PrefName.UseAdditionalCodec)
         binding.playerSettingsAdditionalCodec.setOnCheckedChangeListener { _, isChecked ->
             PrefManager.setVal(PrefName.UseAdditionalCodec, isChecked)
-        }
-
-        val mpvLibFile = ani.sanin.media.mpv.MpvNativeDownloader.getLibFile(this)
-        val mpvAvailable = mpvLibFile.exists()
-        binding.playerSettingsMpvEngine.isChecked = mpvAvailable && PrefManager.getVal(PrefName.UseMpvEngine)
-        binding.playerSettingsMpvStatus.text = if (mpvAvailable) {
-            getString(R.string.mpv_engine_status_downloaded)
-        } else {
-            getString(R.string.mpv_engine_status_not_downloaded)
-        }
-        binding.playerSettingsMpvEngine.setOnCheckedChangeListener { _, isChecked ->
-            if (isChecked) {
-                if (mpvLibFile.exists()) {
-                    PrefManager.setVal(PrefName.UseMpvEngine, true)
-                    binding.playerSettingsMpvStatus.text = getString(R.string.mpv_engine_status_downloaded)
-                } else {
-                    binding.playerSettingsMpvEngine.isChecked = false
-                    binding.playerSettingsMpvProgress.visibility = View.VISIBLE
-                    binding.playerSettingsMpvProgress.progress = 0
-                    binding.playerSettingsMpvStatus.text = getString(R.string.mpv_engine_status_downloading)
-                    GlobalScope.launch {
-                        ani.sanin.media.mpv.MpvNativeDownloader.download(this@PlayerSettingsActivity) { progress ->
-                            binding.playerSettingsMpvProgress.post {
-                                binding.playerSettingsMpvProgress.progress = (progress * 100).toInt()
-                            }
-                        }.onSuccess {
-                            ani.sanin.media.mpv.MpvNativeDownloader.getLibDir(this@PlayerSettingsActivity).setReadable(true, false)
-                            PrefManager.setVal(PrefName.UseMpvEngine, true)
-                            runOnUiThread {
-                                binding.playerSettingsMpvEngine.isChecked = true
-                                binding.playerSettingsMpvProgress.visibility = View.GONE
-                                binding.playerSettingsMpvStatus.text = getString(R.string.mpv_engine_status_downloaded)
-                                snackString("MPV engine downloaded")
-                            }
-                        }.onFailure { e ->
-                            runOnUiThread {
-                                binding.playerSettingsMpvProgress.visibility = View.GONE
-                                binding.playerSettingsMpvStatus.text = getString(R.string.mpv_engine_error)
-                                snackString("MPV download failed: ${e.message}")
-                            }
-                        }
-                    }
-                }
-            } else {
-                PrefManager.setVal(PrefName.UseMpvEngine, false)
-                ani.sanin.media.mpv.MpvNativeDownloader.deleteLib(this)
-                binding.playerSettingsMpvProgress.visibility = View.GONE
-                binding.playerSettingsMpvStatus.text = getString(R.string.mpv_engine_status_not_downloaded)
-            }
         }
 
         val resizeModes = arrayOf("Original", "Zoom", "Stretch")
