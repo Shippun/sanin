@@ -1,5 +1,8 @@
 package ani.sanin.profile.activity
 
+import android.content.res.ColorStateList
+import android.content.res.TypedArray
+import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
@@ -12,17 +15,16 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 import ani.sanin.R
 import ani.sanin.databinding.ActivityNotificationBinding
 import ani.sanin.initActivity
-import ani.sanin.navBarHeight
 import ani.sanin.profile.activity.ActivityFragment.Companion.ActivityType
+import ani.sanin.settings.saving.PrefManager
+import ani.sanin.settings.saving.PrefName
 import ani.sanin.statusBarHeight
 import ani.sanin.themes.ThemeManager
 import ani.sanin.util.FocusEffectUtil
-import nl.joery.animatedbottombar.AnimatedBottomBar
 
 class FeedActivity : AppCompatActivity() {
     private lateinit var binding: ActivityNotificationBinding
     private var selected: Int = 0
-    lateinit var navBar: AnimatedBottomBar
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,44 +36,54 @@ class FeedActivity : AppCompatActivity() {
         binding.notificationToolbar.updateLayoutParams<ViewGroup.MarginLayoutParams> {
             topMargin = statusBarHeight
         }
-        navBar = binding.notificationNavBar
-        FocusEffectUtil.applyFocusListener(binding.root, navBar)
-        binding.root.updateLayoutParams<ViewGroup.MarginLayoutParams> {
-            bottomMargin = navBarHeight
-        }
-        val tabs = listOf(
-            Pair(R.drawable.ic_round_person_24, "Following"),
-            Pair(R.drawable.ic_globe_24, "Global"),
+        binding.notificationNavRailBg.live = PrefManager.getVal(PrefName.LiveSideRail)
+        FocusEffectUtil.applyFocusListener(binding.notificationBack)
+
+        val navButtons = listOf(
+            binding.notificationNavUser,
+            binding.notificationNavMedia,
         )
-        tabs.forEach { (icon, title) -> navBar.addTab(navBar.createTab(icon, title)) }
+        binding.notificationNavSubs.visibility = View.GONE
+        binding.notificationNavComment.visibility = View.GONE
+        binding.notificationNavMedia.setImageResource(R.drawable.ic_globe_24)
+
+        navButtons.forEach { btn ->
+            btn.setOnClickListener {
+                val idx = navButtons.indexOf(btn)
+                selected = idx
+                binding.notificationViewPager.setCurrentItem(selected, false)
+                updateNavTints(navButtons, selected)
+            }
+            FocusEffectUtil.applyFocusListener(btn)
+        }
 
         binding.notificationBack.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
         val getOne = intent.getIntExtra("activityId", -1)
         if (getOne != -1) {
-            navBar.visibility = View.GONE
+            navButtons.forEach { it.visibility = View.GONE }
         }
         binding.notificationViewPager.isUserInputEnabled = false
         binding.notificationViewPager.adapter =
             ViewPagerAdapter(supportFragmentManager, lifecycle, getOne)
         binding.notificationViewPager.setOffscreenPageLimit(4)
         binding.notificationViewPager.setCurrentItem(selected, false)
-        navBar.selectTabAt(selected)
-        navBar.setOnTabSelectListener(object : AnimatedBottomBar.OnTabSelectListener {
-            override fun onTabSelected(
-                lastIndex: Int,
-                lastTab: AnimatedBottomBar.Tab?,
-                newIndex: Int,
-                newTab: AnimatedBottomBar.Tab
-            ) {
-                selected = newIndex
-                binding.notificationViewPager.setCurrentItem(selected, false)
-            }
-        })
+        updateNavTints(navButtons, selected)
+    }
+
+    private fun updateNavTints(buttons: List<android.widget.ImageButton>, selectedIndex: Int) {
+        val ta: TypedArray = theme.obtainStyledAttributes(intArrayOf(com.google.android.material.R.attr.colorPrimary))
+        val primary = ta.getColor(0, Color.WHITE)
+        ta.recycle()
+        buttons.forEachIndexed { i, btn ->
+            btn.imageTintList = ColorStateList.valueOf(if (i == selectedIndex) primary else Color.WHITE)
+            btn.alpha = if (i == selectedIndex) 1f else 0.6f
+        }
     }
 
     override fun onResume() {
         super.onResume()
-        navBar.selectTabAt(selected)
+        val navButtons = listOf(binding.notificationNavUser, binding.notificationNavMedia)
+        updateNavTints(navButtons, selected)
     }
 
     private class ViewPagerAdapter(
