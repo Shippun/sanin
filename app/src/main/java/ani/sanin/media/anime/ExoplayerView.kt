@@ -1406,7 +1406,13 @@ class ExoplayerView :
                     val loaded = ani.sanin.media.mpv.MpvNativeDownloader.loadNativeLibs(this)
                     if (loaded) {
                         mpvView?.ensureInitialized()
-                        mpvView?.seekToMs(currentPos)
+                        val headers = video?.file?.headers ?: defaultHeaders
+                        video?.let { v ->
+                            mpvView?.setMedia(v.file.url, headers, currentPos)
+                        }
+                        mpvView?.setPlaybackSpeed(playbackParameters.speed)
+                        mpvView?.setPaused(false)
+                        startMpvProgressUpdates()
                 } else {
                     useMpv = false
                     mpvView?.visibility = View.GONE
