@@ -1403,9 +1403,16 @@ class ExoplayerView :
                 if (useMpv) {
                     playerView.visibility = View.GONE
                     mpvView?.visibility = View.VISIBLE
-                    ani.sanin.media.mpv.MpvNativeDownloader.loadNativeLibs(this)
-                    mpvView?.ensureInitialized()
-                    mpvView?.seekToMs(currentPos)
+                    val loaded = ani.sanin.media.mpv.MpvNativeDownloader.loadNativeLibs(this)
+                    if (loaded) {
+                        mpvView?.ensureInitialized()
+                        mpvView?.seekToMs(currentPos)
+                    } else {
+                        useMpv = false
+                        mpvView?.visibility = View.GONE
+                        playerView.visibility = View.VISIBLE
+                        snackString("Failed to load MPV native libraries")
+                    }
                 } else {
                     mpvView?.visibility = View.GONE
                     playerView.visibility = View.VISIBLE
