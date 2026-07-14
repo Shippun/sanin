@@ -174,6 +174,48 @@ object Logger {
     }
 
     /**
+     * Reads recent logcat output for the current process from the last [minutes] minutes.
+     */
+    fun readLogcatLastMinutes(minutes: Int = 2): String {
+        return try {
+            val pid = android.os.Process.myPid()
+            val process = Runtime.getRuntime().exec(
+                arrayOf("logcat", "-d", "-v", "time", "--pid=$pid")
+            )
+            val reader = BufferedReader(InputStreamReader(process.inputStream))
+            val allLines = reader.readLines()
+            reader.close()
+            process.destroy()
+
+            val cutoff = System.currentTimeMillis() - minutes * 60_000L
+            val recent = allLines.filter { line ->
+                try {
+                    if (line.length < 18) return@filter false
+                    val month = line.substring(0, 2).toInt()
+                    val day = line.substring(3, 5).toInt()
+                    val hour = line.substring(6, 8).toInt()
+                    val min = line.substring(9, 11).toInt()
+                    val sec = line.substring(12, 14).toInt()
+                    val cal = java.util.Calendar.getInstance().apply {
+                        timeInMillis = System.currentTimeMillis()
+                        set(java.util.Calendar.MONTH, month - 1)
+                        set(java.util.Calendar.DAY_OF_MONTH, day)
+                        set(java.util.Calendar.HOUR_OF_DAY, hour)
+                        set(java.util.Calendar.MINUTE, min)
+                        set(java.util.Calendar.SECOND, sec)
+                    }
+                    cal.timeInMillis >= cutoff
+                } catch (_: Exception) {
+                    true
+                }
+            }
+            recent.joinToString("\n").ifEmpty { "No logs found in the last $minutes minutes." }
+        } catch (e: Exception) {
+            "Failed to read logcat: ${e.message}"
+        }
+    }
+
+    /**
      * Reads recent logcat output for the current process.
      * Capped at [maxLines] to avoid blowing past the Intent size limit.
      */

@@ -126,6 +126,9 @@
             android:name=".settings.SettingsAnimationActivity"
             android:parentActivityName=".MainActivity" />
         <activity
+            android:name=".settings.SettingsLogActivity"
+            android:parentActivityName=".MainActivity" />
+        <activity
             android:name=".settings.ExtensionsActivity"
             android:parentActivityName=".MainActivity"
             android:windowSoftInputMode="adjustResize|stateHidden" />

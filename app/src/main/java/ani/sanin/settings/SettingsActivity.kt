@@ -177,6 +177,16 @@ class SettingsActivity : AppCompatActivity() {
                             startActivity(Intent(context, SettingsNotificationActivity::class.java))
                         },
                         isActivity = true
+                    ),
+                    Settings(
+                        type = 1,
+                        name = "Log Capture",
+                        desc = "Manage app logs and logcat capture",
+                        icon = R.drawable.ic_round_view_list_24,
+                        onClick = {
+                            startActivity(Intent(context, SettingsLogActivity::class.java))
+                        },
+                        isActivity = true
                     )
                 )
             )
