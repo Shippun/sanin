@@ -245,13 +245,14 @@ class FinalExceptionHandler : Thread.UncaughtExceptionHandler {
 
     override fun uncaughtException(t: Thread, e: Throwable) {
         val stackTraceString = Log.getStackTraceString(e)
-        Injekt.get<CrashlyticsInterface>().logException(e)
+        try {
+            Injekt.get<CrashlyticsInterface>().logException(e)
+        } catch (_: Exception) { }
 
         if (App.instance?.applicationContext != null) {
             App.instance?.applicationContext?.let { ctx ->
                 val lastLoadedActivity = App.instance?.mFTActivityLifecycleCallbacks?.lastActivity
 
-                // --- crash report (same as before) ---
                 val report = StringBuilder()
                 report.append(getDeviceAndAppInfo(ctx))
                 report.append("Thread: ${t.name}\n")
@@ -260,10 +261,11 @@ class FinalExceptionHandler : Thread.UncaughtExceptionHandler {
                 report.append("Stack trace:\n")
                 report.append(stackTraceString)
                 val reportString = report.toString()
-                Logger.uncaughtException(t, Error(reportString))
+                try {
+                    Logger.uncaughtException(t, Error(reportString))
+                } catch (_: Exception) { }
 
-                // --- logcat snapshot taken at crash time ---
-                val logcatString = Logger.readLogcat()
+                val logcatString = try { Logger.readLogcat() } catch (_: Exception) { "Failed to read logcat" }
 
                 val intent = Intent(ctx, CrashActivity::class.java)
 
@@ -271,7 +273,6 @@ class FinalExceptionHandler : Thread.UncaughtExceptionHandler {
                     reportString.substring(0, MAX_STACK_TRACE_SIZE)
                 else reportString
 
-                // Logcat gets its own size budget so it never crowds out the stack trace
                 val trimmedLogcat = if (logcatString.length > MAX_STACK_TRACE_SIZE)
                     logcatString.substring(logcatString.length - MAX_STACK_TRACE_SIZE)
                 else logcatString
@@ -279,14 +280,25 @@ class FinalExceptionHandler : Thread.UncaughtExceptionHandler {
                 intent.putExtra("stackTrace", trimmedReport)
                 intent.putExtra("logcat", trimmedLogcat)
                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                ctx.startActivity(intent)
+                try {
+                    ctx.startActivity(intent)
+                } catch (_: Exception) { }
+
+                // Give CrashActivity time to launch and render before killing the process
+                try {
+                    Thread.sleep(500)
+                } catch (_: InterruptedException) { }
             }
         } else {
-            Logger.log("App context is null")
-            Logger.uncaughtException(t, e)
+            try {
+                Logger.log("App context is null")
+                Logger.uncaughtException(t, e)
+            } catch (_: Exception) { }
         }
 
-        defaultUEH?.uncaughtException(t, e)
+        try {
+            defaultUEH?.uncaughtException(t, e)
+        } catch (_: Exception) { }
         android.os.Process.killProcess(android.os.Process.myPid())
         exitProcess(10)
     }
