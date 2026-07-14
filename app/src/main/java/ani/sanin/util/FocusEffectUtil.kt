@@ -38,6 +38,12 @@ object FocusEffectUtil {
                     }
                 }
             }
+            if (view.isFocused) {
+                resetView(lastFocusedView)
+                lastFocusedView = view
+                applyBorder(view, view is ImageButton)
+                applyFocusGain(view)
+            }
         }
     }
 
