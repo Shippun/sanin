@@ -1335,8 +1335,8 @@ class ExoplayerView :
 
         // Episode Side Rail
         episodeDrawerList.layoutManager = LinearLayoutManager(this)
-        episodeDrawerAdapter = EpisodeRailAdapter(episodes) { epNumber ->
-            val idx = episodeArr.indexOf(epNumber)
+        episodeDrawerAdapter = EpisodeRailAdapter(episodes) { epKey ->
+            val idx = episodeArr.indexOf(epKey)
             if (idx >= 0 && idx != currentEpisodeIndex) {
                 episodeDrawer.close()
                 disappeared = false
@@ -3563,15 +3563,15 @@ class ExoplayerView :
     }
 }
 
-private class EpisodeRailDiff : DiffUtil.ItemCallback<Map.Entry<Int, Episode>>() {
-    override fun areItemsTheSame(a: Map.Entry<Int, Episode>, b: Map.Entry<Int, Episode>) = a.key == b.key
-    override fun areContentsTheSame(a: Map.Entry<Int, Episode>, b: Map.Entry<Int, Episode>) = a.key == b.key
+private class EpisodeRailDiff : DiffUtil.ItemCallback<Map.Entry<String, Episode>>() {
+    override fun areItemsTheSame(a: Map.Entry<String, Episode>, b: Map.Entry<String, Episode>) = a.key == b.key
+    override fun areContentsTheSame(a: Map.Entry<String, Episode>, b: Map.Entry<String, Episode>) = a.key == b.key
 }
 
 private class EpisodeRailAdapter(
-    private val episodes: Map<Int, Episode>,
-    private val onEpisodeClick: (Int) -> Unit,
-) : ListAdapter<Map.Entry<Int, Episode>, EpisodeRailViewHolder>(EpisodeRailDiff()) {
+    private val episodes: Map<String, Episode>,
+    private val onEpisodeClick: (String) -> Unit,
+) : ListAdapter<Map.Entry<String, Episode>, EpisodeRailViewHolder>(EpisodeRailDiff()) {
 
     init {
         submitList(episodes.entries.toList())
@@ -3598,9 +3598,9 @@ private class EpisodeRailViewHolder(val card: CardView) : ViewHolder(card) {
     private val date = card.findViewById<TextView>(R.id.episodeRailDate)
     private val rating = card.findViewById<TextView>(R.id.episodeRailRating)
 
-    fun bind(epNumber: Int, ep: Episode) {
-        number.text = epNumber.toString()
-        title.text = if (ep.filler) "[FILLER] ${ep.title ?: ""}" else ep.title ?: "Episode $epNumber"
+    fun bind(epKey: String, ep: Episode) {
+        number.text = epKey
+        title.text = if (ep.filler) "[FILLER] ${ep.title ?: ""}" else ep.title ?: "Episode $epKey"
         desc.text = ep.desc ?: ""
         date.text = ep.date ?: ""
         date.visibility = if (ep.date != null) View.VISIBLE else View.GONE
