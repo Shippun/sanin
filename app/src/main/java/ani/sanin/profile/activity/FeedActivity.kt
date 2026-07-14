@@ -1,16 +1,21 @@
 package ani.sanin.profile.activity
 
+import android.animation.ObjectAnimator
 import android.content.res.ColorStateList
 import android.content.res.TypedArray
 import android.graphics.Color
 import android.os.Bundle
+import android.view.KeyEvent
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.DecelerateInterpolator
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.updateLayoutParams
+import androidx.dynamicanimation.animation.SpringInterpolator
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Lifecycle
+import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import ani.sanin.R
 import ani.sanin.databinding.ActivityNotificationBinding
@@ -68,6 +73,98 @@ class FeedActivity : AppCompatActivity() {
         binding.notificationViewPager.setOffscreenPageLimit(4)
         binding.notificationViewPager.setCurrentItem(selected, false)
         updateNavTints(navButtons, selected)
+        binding.notificationNavRail.visibility = View.GONE
+    }
+
+    override fun dispatchKeyEvent(event: KeyEvent): Boolean {
+        if (event.action == KeyEvent.ACTION_DOWN) {
+            when (event.keyCode) {
+                KeyEvent.KEYCODE_BACK, KeyEvent.KEYCODE_ESCAPE -> {
+                    if (binding.notificationNavRail.visibility == View.VISIBLE) {
+                        hideNotificationNavRail()
+                        if (binding.notificationNavRail.visibility == View.VISIBLE) return true
+                    }
+                }
+                KeyEvent.KEYCODE_DPAD_RIGHT -> {
+                    val id = currentFocus?.id
+                    if (id == R.id.notificationNavUser || id == R.id.notificationNavMedia) {
+                        hideNotificationNavRail()
+                        return true
+                    }
+                }
+                KeyEvent.KEYCODE_DPAD_LEFT -> {
+                    val id = currentFocus?.id
+                    if (id == R.id.notificationNavUser || id == R.id.notificationNavMedia) {
+                        return true
+                    }
+                    if (binding.notificationNavRail.visibility != View.VISIBLE) {
+                        val focus = currentFocus
+                        if (focus != null) {
+                            var p = focus.parent
+                            var inHorizontalRv = false
+                            while (p != null) {
+                                if (p is RecyclerView) {
+                                    val lm = p.layoutManager
+                                    if (lm != null && lm.canScrollHorizontally()) {
+                                        val holder = p.findContainingViewHolder(focus)
+                                        if (holder != null && holder.bindingAdapterPosition > 0) {
+                                            inHorizontalRv = true
+                                        } else if (p.canScrollHorizontally(-1)) {
+                                            inHorizontalRv = true
+                                        }
+                                    }
+                                    break
+                                }
+                                p = (p as? View)?.parent
+                            }
+                            if (!inHorizontalRv) {
+                                val railWidth = (60f * resources.displayMetrics.density).toInt()
+                                if (focus.left <= railWidth || focus.focusSearch(View.FOCUS_LEFT) == null) {
+                                    showNotificationNavRail()
+                                    return true
+                                }
+                            }
+                        }
+                    }
+                }
+                KeyEvent.KEYCODE_MENU -> {
+                    if (binding.notificationNavRail.visibility != View.VISIBLE) {
+                        showNotificationNavRail()
+                        return true
+                    }
+                }
+            }
+        }
+        return super.dispatchKeyEvent(event)
+    }
+
+    private fun showNotificationNavRail() {
+        binding.notificationNavRail.apply {
+            visibility = View.VISIBLE
+            pivotY = 0f
+            translationX = -60f * resources.displayMetrics.density
+            scaleY = 0.3f
+            alpha = 0f
+        }
+        binding.notificationNavRail.post {
+            ObjectAnimator.ofFloat(binding.notificationNavRail, View.SCALE_Y, 1f).apply {
+                interpolator = SpringInterpolator()
+                duration = 700
+            }.start()
+            binding.notificationNavRail.animate()
+                .translationX(0f)
+                .alpha(1f)
+                .setInterpolator(DecelerateInterpolator())
+                .setDuration(500)
+                .start()
+        }
+        val id = if (selected == 0) R.id.notificationNavUser else R.id.notificationNavMedia
+        binding.root.findViewById<View>(id)?.requestFocus()
+    }
+
+    private fun hideNotificationNavRail() {
+        binding.notificationNavRail.visibility = View.GONE
+        binding.notificationBack.requestFocus()
     }
 
     private fun updateNavTints(buttons: List<android.widget.ImageButton>, selectedIndex: Int) {
