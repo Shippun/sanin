@@ -95,6 +95,7 @@ object MpvNativeDownloader {
                             outFile.outputStream().use { fos ->
                                 zis.copyTo(fos)
                             }
+                            outFile.setExecutable(true, false)
                         }
                         entry = zis.nextEntry
                     }
