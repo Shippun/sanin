@@ -1370,8 +1370,6 @@ class ExoplayerView :
             PrefManager.setCustomVal("${media.id}_fullscreenInt", isFullscreen)
         }
 
-        }
-
         // Settings
         exoSettings.setOnClickListener {
             PrefManager.setCustomVal(
