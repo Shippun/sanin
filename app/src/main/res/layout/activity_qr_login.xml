@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="32dp">
+
+    <ImageButton
+        android:id="@+id/qrBack"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_gravity="start"
+        android:layout_marginBottom="16dp"
+        android:background="@color/nav_bg_inv"
+        android:focusable="true"
+        android:padding="16dp"
+        app:srcCompat="@drawable/ic_round_arrow_back_ios_new_24"
+        app:tint="?attr/colorOnBackground"
+        tools:ignore="ContentDescription,SpeakableTextPresentCheck" />
+
+    <ImageView
+        android:id="@+id/qrCodeImage"
+        android:layout_width="240dp"
+        android:layout_height="240dp"
+        android:scaleType="fitCenter"
+        android:contentDescription="@string/qr_code_anilist" />
+
+    <TextView
+        android:id="@+id/qrStatus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:fontFamily="@font/poppins"
+        android:gravity="center"
+        android:text="@string/qr_scan_instructions"
+        android:textColor="?attr/colorOnBackground"
+        android:textSize="16sp" />
+
+    <Button
+        android:id="@+id/qrCancel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:backgroundTint="?attr/colorPrimary"
+        android:fontFamily="@font/poppins_bold"
+        android:minWidth="200dp"
+        android:text="@string/cancel"
+        android:textColor="?attr/colorOnPrimary"
+        android:textSize="14sp"
+        android:visibility="gone"
+        tools:visibility="visible" />
+
+</LinearLayout>

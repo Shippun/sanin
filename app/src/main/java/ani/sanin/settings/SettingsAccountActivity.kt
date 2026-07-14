@@ -13,6 +13,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import ani.sanin.R
 import ani.sanin.connections.anilist.Anilist
+import ani.sanin.connections.anilist.QRLoginActivity
 
 import ani.sanin.connections.mal.MAL
 import ani.sanin.connections.trakt.TraktAuth
@@ -157,7 +158,24 @@ class SettingsAccountActivity : AppCompatActivity() {
                     settingsRecyclerView.visibility = View.GONE
                     settingsAnilistLogin.setText(R.string.login)
                     settingsAnilistLogin.setOnClickListener {
-                        Anilist.loginIntent(context)
+                        context.customAlertDialog().apply {
+                            setTitle(getString(R.string.login_to_anilist))
+                            singleChoiceItems(
+                                arrayOf(
+                                    getString(R.string.browser_login),
+                                    getString(R.string.qr_login)
+                                )
+                            ) { choice ->
+                                when (choice) {
+                                    0 -> Anilist.loginIntent(context)
+                                    1 -> startActivity(
+                                        Intent(context, QRLoginActivity::class.java)
+                                    )
+                                }
+                            }
+                            setNegButton(R.string.cancel)
+                            show()
+                        }
                     }
                     settingsMALLoginRequired.visibility = View.VISIBLE
                     settingsMALLogin.visibility = View.GONE
