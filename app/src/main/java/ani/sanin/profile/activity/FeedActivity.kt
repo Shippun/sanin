@@ -9,9 +9,9 @@ import android.view.KeyEvent
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.DecelerateInterpolator
+import android.view.animation.OvershootInterpolator
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.updateLayoutParams
-import androidx.dynamicanimation.animation.SpringInterpolator
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Lifecycle
@@ -148,8 +148,8 @@ class FeedActivity : AppCompatActivity() {
         }
         binding.notificationNavRail.post {
             ObjectAnimator.ofFloat(binding.notificationNavRail, View.SCALE_Y, 1f).apply {
-                interpolator = SpringInterpolator()
-                duration = 700
+                interpolator = OvershootInterpolator()
+                duration = 500
             }.start()
             binding.notificationNavRail.animate()
                 .translationX(0f)
