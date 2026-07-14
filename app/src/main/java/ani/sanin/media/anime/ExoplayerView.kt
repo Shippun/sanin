@@ -486,6 +486,7 @@ class ExoplayerView :
             val loaded = ani.sanin.media.mpv.MpvNativeDownloader.loadNativeLibs(this)
             if (!loaded) {
                 useMpv = false
+                PrefManager.setVal(PrefName.UseMpvEngine, false)
                 mpvView?.visibility = View.GONE
                 playerView.visibility = View.VISIBLE
             }
@@ -1424,18 +1425,20 @@ class ExoplayerView :
                         mpvView?.setPlaybackSpeed(playbackParameters.speed)
                         mpvView?.setPaused(false)
                         startMpvProgressUpdates()
-                } else {
-                    useMpv = false
-                    mpvView?.visibility = View.GONE
-                    playerView.visibility = View.VISIBLE
-                    snackString("MPV libs failed to load")
-                }
+                        snackString("Switched to MPV Engine")
+                    } else {
+                        useMpv = false
+                        PrefManager.setVal(PrefName.UseMpvEngine, false)
+                        mpvView?.visibility = View.GONE
+                        playerView.visibility = View.VISIBLE
+                        snackString("Failed to switch — MPV libs could not load")
+                    }
                 } else {
                     mpvView?.visibility = View.GONE
                     playerView.visibility = View.VISIBLE
                     exoPlayer.seekTo(currentPos)
+                    snackString("Switched to ExoPlayer")
                 }
-                snackString(if (useMpv) "Switched to MPV Engine" else "Switched to ExoPlayer")
             } else {
                 snackString("Download MPV from Player Settings first")
             }

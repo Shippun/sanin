@@ -109,19 +109,33 @@ object MpvNativeDownloader {
         }
 
     fun loadNativeLibs(context: Context): Boolean {
+        if (MpvLib.nativeLoaded) return true
         val libDir = getLibDir(context)
-        return try {
-            for (libName in LOAD_ORDER) {
-                val libFile = File(libDir, libName)
-                if (libFile.exists()) {
-                    System.load(libFile.absolutePath)
-                }
-            }
-            MpvLib.nativeLoaded = true
-            true
-        } catch (e: UnsatisfiedLinkError) {
-            android.util.Log.e("MpvLib", "Failed to load native libs: ${e.message}")
-            false
+        if (!libDir.exists() || !libDir.isDirectory) {
+            android.util.Log.e("MpvLib", "MPV lib directory missing: ${libDir.absolutePath}")
+            return false
         }
+        val missingLibs = LOAD_ORDER.filter { !File(libDir, it).exists() }
+        if (missingLibs.isNotEmpty()) {
+            android.util.Log.e("MpvLib", "Missing MPV libraries: ${missingLibs.joinToString(", ")}")
+            return false
+        }
+        val failedLibs = mutableListOf<String>()
+        for (libName in LOAD_ORDER) {
+            val libFile = File(libDir, libName)
+            try {
+                System.load(libFile.absolutePath)
+            } catch (e: UnsatisfiedLinkError) {
+                android.util.Log.e("MpvLib", "Failed to load $libName: ${e.message}")
+                failedLibs.add(libName)
+            }
+        }
+        if (failedLibs.isNotEmpty()) {
+            android.util.Log.e("MpvLib", "Failed libs: ${failedLibs.joinToString(", ")}")
+            return false
+        }
+        MpvLib.nativeLoaded = true
+        android.util.Log.d("MpvLib", "All MPV native libraries loaded successfully")
+        return true
     }
 }
