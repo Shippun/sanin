@@ -69,47 +69,46 @@ class QRLoginActivity : AppCompatActivity() {
 
     private fun startPolling(relayUrl: String, sid: String) {
         polling = true
-        val task = object : Runnable {
-            override fun run() {
-                if (!polling) return
-                lifecycleScope.launch(Dispatchers.IO) {
-                    try {
-                        val resp = client.get("$relayUrl/poll?session=$sid")
-                        val body = resp.text
-                        val json = org.json.JSONObject(body)
-                        val status = json.optString("status")
-                        if (status == "done") {
-                            val token = json.optString("token", null)
-                            if (token != null) {
-                                Anilist.token = token
-                                PrefManager.setVal(PrefName.AnilistToken, token)
-                                polling = false
-                                withContext(Dispatchers.Main) {
-                                    binding.qrStatus.setText(ani.sanin.R.string.qr_success)
-                                    binding.qrCancel.text =
-                                        getString(ani.sanin.R.string.continue_label)
-                                    binding.qrCancel.setOnClickListener {
-                                        startMainActivity(this@QRLoginActivity)
-                                    }
-                                }
-                                return@launch
-                            }
-                        } else if (status == "expired") {
+        lateinit var task: Runnable
+        task = Runnable {
+            if (!polling) return@Runnable
+            lifecycleScope.launch(Dispatchers.IO) {
+                try {
+                    val resp = client.get("$relayUrl/poll?session=$sid")
+                    val body = resp.text
+                    val json = org.json.JSONObject(body)
+                    val status = json.optString("status")
+                    if (status == "done") {
+                        val token = json.optString("token", null)
+                        if (token != null) {
+                            Anilist.token = token
+                            PrefManager.setVal(PrefName.AnilistToken, token)
                             polling = false
                             withContext(Dispatchers.Main) {
-                                binding.qrStatus.setText(ani.sanin.R.string.qr_expired)
-                                binding.qrCancel.text = getString(ani.sanin.R.string.retry)
+                                binding.qrStatus.setText(ani.sanin.R.string.qr_success)
+                                binding.qrCancel.text =
+                                    getString(ani.sanin.R.string.continue_label)
                                 binding.qrCancel.setOnClickListener {
-                                    recreate()
+                                    startMainActivity(this@QRLoginActivity)
                                 }
                             }
                             return@launch
                         }
-                    } catch (e: Exception) {
-                        Logger.log("QRLogin: poll error — ${e.message}")
+                    } else if (status == "expired") {
+                        polling = false
+                        withContext(Dispatchers.Main) {
+                            binding.qrStatus.setText(ani.sanin.R.string.qr_expired)
+                            binding.qrCancel.text = getString(ani.sanin.R.string.retry)
+                            binding.qrCancel.setOnClickListener {
+                                recreate()
+                            }
+                        }
+                        return@launch
                     }
-                    if (polling) poller.postDelayed(task, 2000)
+                } catch (e: Exception) {
+                    Logger.log("QRLogin: poll error — ${e.message}")
                 }
+                if (polling) poller.postDelayed(task, 2000)
             }
         }
         poller.post(task)
