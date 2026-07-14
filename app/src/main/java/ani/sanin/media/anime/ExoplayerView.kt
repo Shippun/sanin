@@ -86,8 +86,11 @@ import androidx.media3.exoplayer.source.SingleSampleMediaSource
 import androidx.media3.exoplayer.trackselection.DefaultTrackSelector
 import androidx.media3.exoplayer.util.EventLogger
 import androidx.media3.session.MediaSession
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.media3.ui.AspectRatioFrameLayout
 import androidx.media3.ui.CaptionStyleCompat
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import androidx.media3.ui.CaptionStyleCompat.EDGE_TYPE_DEPRESSED
 import androidx.media3.ui.CaptionStyleCompat.EDGE_TYPE_DROP_SHADOW
 import androidx.media3.ui.CaptionStyleCompat.EDGE_TYPE_NONE
@@ -150,7 +153,15 @@ import ani.sanin.util.customAlertDialog
 import com.anggrayudi.storage.file.extension
 import java.io.File
 import kotlinx.coroutines.withContext
+import android.content.res.Resources
+import android.view.LayoutInflater
+import android.view.ViewGroup
+import androidx.cardview.widget.CardView
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
+import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.google.android.material.slider.Slider
 import com.lagradost.nicehttp.ignoreAllSSLErrors
 import io.github.peerless2012.ass.media.AssHandler
@@ -230,6 +241,10 @@ class ExoplayerView :
     private lateinit var episodeTitle: Spinner
     private lateinit var episodeTitleText: TextView
     private lateinit var episodeTitleBtn: ImageButton
+    private lateinit var episodeDrawer: DrawerLayout
+    private lateinit var episodeDrawerList: RecyclerView
+    private lateinit var episodeDrawerClose: ImageButton
+    private var episodeDrawerAdapter: EpisodeRailAdapter? = null
     private lateinit var customSubtitleView: Xubtitle
     private var assHandler: AssHandler? = null
     private var assSubtitleView: io.github.peerless2012.ass.media.widget.AssSubtitleView? = null
@@ -502,7 +517,29 @@ class ExoplayerView :
         episodeTitle = playerView.findViewById(R.id.exo_ep_sel)
         episodeTitleText = playerView.findViewById(R.id.exo_ep_sel_text)
         episodeTitleBtn = playerView.findViewById(R.id.exo_ep_sel_btn)
-        episodeTitleBtn.setOnClickListener { episodeTitle.performClick() }
+
+        episodeDrawer = binding.root
+        episodeDrawerList = findViewById(R.id.episodeDrawerList)
+        episodeDrawerClose = findViewById(R.id.episodeDrawerClose)
+        episodeDrawerClose.setOnClickListener { episodeDrawer.close() }
+        episodeDrawer.setDrawerListener(object : DrawerLayout.DrawerListener {
+            override fun onDrawerSlide(drawerView: View, slideOffset: Float) {}
+            override fun onDrawerOpened(drawerView: View) {
+                episodeDrawerList.requestFocus()
+            }
+            override fun onDrawerClosed(drawerView: View) {
+                episodeTitleBtn.requestFocus()
+            }
+            override fun onDrawerStateChanged(newState: Int) {}
+        })
+
+        episodeTitleBtn.setOnClickListener {
+            if (episodeDrawer.isDrawerOpen(findViewById(R.id.episodeDrawer))) {
+                episodeDrawer.close()
+            } else {
+                episodeDrawer.open()
+            }
+        }
 
         playerView.controllerShowTimeoutMs = PrefManager.getVal<Int>(PrefName.AutoHideTimeout) * 1000
 
@@ -1295,6 +1332,20 @@ class ExoplayerView :
 
                 override fun onNothingSelected(parent: AdapterView<*>) {}
             }
+
+        // Episode Side Rail
+        episodeDrawerList.layoutManager = LinearLayoutManager(this)
+        episodeDrawerAdapter = EpisodeRailAdapter(episodes) { epNumber ->
+            val idx = episodeArr.indexOf(epNumber)
+            if (idx >= 0 && idx != currentEpisodeIndex) {
+                episodeDrawer.close()
+                disappeared = false
+                functionstarted = false
+                currentEpisodeIndex = idx
+                change(idx)
+            }
+        }
+        episodeDrawerList.adapter = episodeDrawerAdapter
 
         // Next Episode
         exoNext = playerView.findViewById(R.id.exo_next_ep)
@@ -3366,6 +3417,24 @@ class ExoplayerView :
     override fun dispatchKeyEvent(event: KeyEvent): Boolean {
         if (!isInitialized) return super.dispatchKeyEvent(event)
         if (event.action == KeyEvent.ACTION_DOWN) {
+            when (event.keyCode) {
+                KeyEvent.KEYCODE_BACK, KeyEvent.KEYCODE_ESCAPE -> {
+                    if (episodeDrawer.isDrawerOpen(findViewById(R.id.episodeDrawer))) {
+                        episodeDrawer.close()
+                        return true
+                    }
+                }
+                KeyEvent.KEYCODE_DPAD_LEFT -> {
+                    val id = currentFocus?.id
+                    if (id == R.id.episodeDrawerClose || id == R.id.episodeRailCard) {
+                        val focus = currentFocus
+                        if (focus?.focusSearch(View.FOCUS_LEFT) == null) {
+                            episodeDrawer.close()
+                            return true
+                        }
+                    }
+                }
+            }
             schedulePauseOverlayTimer()
         }
         val progressFocused = currentFocus?.id == androidx.media3.ui.R.id.exo_progress
@@ -3490,6 +3559,61 @@ class ExoplayerView :
         fun setForceDisabled(forceDisabled: Boolean) {
             this.forceDisabled = forceDisabled
             isEnabled = enabled
+        }
+    }
+}
+
+private class EpisodeRailDiff : DiffUtil.ItemCallback<Map.Entry<Int, Episode>>() {
+    override fun areItemsTheSame(a: Map.Entry<Int, Episode>, b: Map.Entry<Int, Episode>) = a.key == b.key
+    override fun areContentsTheSame(a: Map.Entry<Int, Episode>, b: Map.Entry<Int, Episode>) = a.key == b.key
+}
+
+private class EpisodeRailAdapter(
+    private val episodes: Map<Int, Episode>,
+    private val onEpisodeClick: (Int) -> Unit,
+) : ListAdapter<Map.Entry<Int, Episode>, EpisodeRailViewHolder>(EpisodeRailDiff()) {
+
+    init {
+        submitList(episodes.entries.toList())
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EpisodeRailViewHolder {
+        val view = LayoutInflater.from(parent.context)
+            .inflate(R.layout.item_episode_rail, parent, false) as CardView
+        return EpisodeRailViewHolder(view)
+    }
+
+    override fun onBindViewHolder(holder: EpisodeRailViewHolder, position: Int) {
+        val entry = getItem(position)
+        holder.bind(entry.key, entry.value)
+        holder.itemView.setOnClickListener { onEpisodeClick(entry.key) }
+    }
+}
+
+private class EpisodeRailViewHolder(val card: CardView) : ViewHolder(card) {
+    private val thumb = card.findViewById<ImageView>(R.id.episodeRailThumb)
+    private val number = card.findViewById<TextView>(R.id.episodeRailNumber)
+    private val title = card.findViewById<TextView>(R.id.episodeRailTitle)
+    private val desc = card.findViewById<TextView>(R.id.episodeRailDesc)
+    private val date = card.findViewById<TextView>(R.id.episodeRailDate)
+    private val rating = card.findViewById<TextView>(R.id.episodeRailRating)
+
+    fun bind(epNumber: Int, ep: Episode) {
+        number.text = epNumber.toString()
+        title.text = if (ep.filler) "[FILLER] ${ep.title ?: ""}" else ep.title ?: "Episode $epNumber"
+        desc.text = ep.desc ?: ""
+        date.text = ep.date ?: ""
+        date.visibility = if (ep.date != null) View.VISIBLE else View.GONE
+        rating.text = ep.rating?.let { "★ $it" } ?: ""
+        rating.visibility = if (ep.rating != null) View.VISIBLE else View.GONE
+
+        val url = ep.thumb?.url?.takeIf { it.isNotEmpty() }
+        if (url != null) {
+            Glide.with(card).load(url)
+                .transition(DrawableTransitionOptions.withCrossFade())
+                .into(thumb)
+        } else {
+            thumb.setImageResource(android.R.color.transparent)
         }
     }
 }
