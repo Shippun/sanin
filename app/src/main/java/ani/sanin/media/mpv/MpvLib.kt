@@ -1,32 +1,29 @@
 package ani.sanin.media.mpv
 
 import android.content.Context
+import android.util.Log
 import android.view.Surface
+import `is`.xyz.mpv.MPV
 
 class MpvLib(context: Context) {
-    private var nativeHandle: Long = 0
-    val isInitialized: Boolean get() = nativeHandle != 0L
+    private val mpv: MPV = MPV()
 
-    private external fun nativeCreate(appctx: Context)
-    private external fun nativeInit()
-    external fun nativeDestroy()
+    fun attachSurface(surface: Surface) = mpv.attachSurface(surface)
+    fun detachSurface() = mpv.detachSurface()
 
-    external fun attachSurface(surface: Surface)
-    external fun detachSurface()
+    fun command(vararg cmd: String) = mpv.command(*cmd)
+    fun commandNode(vararg cmd: String): MpvNode? = mpv.commandNode(*cmd) as? MpvNode
 
-    external fun command(vararg cmd: String)
-    external fun commandNode(vararg cmd: String): MpvNode?
+    fun setOptionString(name: String, value: String) = mpv.setOptionString(name, value)
 
-    external fun setOptionString(name: String, value: String): Int
-
-    external fun getPropertyInt(property: String): Int?
-    external fun setPropertyInt(property: String, value: Int)
-    external fun getPropertyDouble(property: String): Double?
-    external fun setPropertyDouble(property: String, value: Double)
-    external fun getPropertyBoolean(property: String): Boolean?
-    external fun setPropertyBoolean(property: String, value: Boolean)
-    external fun getPropertyString(property: String): String?
-    external fun setPropertyString(property: String, value: String)
+    fun getPropertyInt(property: String) = mpv.getPropertyInt(property)
+    fun setPropertyInt(property: String, value: Int) = mpv.setPropertyInt(property, value)
+    fun getPropertyDouble(property: String) = mpv.getPropertyDouble(property)
+    fun setPropertyDouble(property: String, value: Double) = mpv.setPropertyDouble(property, value)
+    fun getPropertyBoolean(property: String) = mpv.getPropertyBoolean(property)
+    fun setPropertyBoolean(property: String, value: Boolean) = mpv.setPropertyBoolean(property, value)
+    fun getPropertyString(property: String) = mpv.getPropertyString(property)
+    fun setPropertyString(property: String, value: String) = mpv.setPropertyString(property, value)
 
     fun getPropertyFloat(property: String) = getPropertyDouble(property)?.toFloat()
     fun setPropertyFloat(property: String, value: Float) =
@@ -36,32 +33,19 @@ class MpvLib(context: Context) {
     fun setPropertyLong(property: String, value: Long) = setPropertyInt(property, value.toInt())
 
     fun close() {
-        nativeDestroy()
+        mpv.close()
     }
 
     companion object {
         var nativeLoaded = false
-        private const val LIB_NAME = "mpv"
-
-        fun loadNative(libDir: String): Boolean {
-            if (nativeLoaded) return true
-            return try {
-                System.load("$libDir/lib$LIB_NAME.so")
-                nativeLoaded = true
-                true
-            } catch (e: UnsatisfiedLinkError) {
-                false
-            }
-        }
     }
 
     init {
         if (!nativeLoaded) {
             throw IllegalStateException("mpv native library not loaded")
         }
-        nativeCreate(context)
-        nativeInit()
-        setOptionString("idle", "once")
-        setPropertyBoolean("pause", true)
+        mpv.init(context)
+        mpv.setOptionString("idle", "once")
+        mpv.setPropertyBoolean("pause", true)
     }
 }
