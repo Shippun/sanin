@@ -6,6 +6,7 @@ import android.view.Surface
 import `is`.xyz.mpv.MPV
 
 class MpvLib(context: Context) {
+    val isInitialized: Boolean get() = true
     private val mpv: MPV = MPV()
 
     fun attachSurface(surface: Surface) = mpv.attachSurface(surface)
