@@ -126,7 +126,7 @@ class QRLoginActivity : AppCompatActivity() {
     }
 
     companion object {
-        const val RELAY_URL = "https://anilist-login-relay.your-username.workers.dev"
+        const val RELAY_URL = "https://anilist-relay.shemaus58.workers.dev"
 
         private fun generateQrCode(text: String, size: Int): Bitmap? {
             return try {
