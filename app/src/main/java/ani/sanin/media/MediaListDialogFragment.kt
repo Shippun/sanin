@@ -1,16 +1,22 @@
 package ani.sanin.media
 
+import android.animation.AnimatorSet
+import android.animation.ObjectAnimator
+import android.graphics.Color
 import android.os.Bundle
 import android.text.InputFilter.LengthFilter
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
+import android.view.animation.DecelerateInterpolator
+import android.view.animation.OvershootInterpolator
 import android.widget.ArrayAdapter
 import androidx.core.view.updateLayoutParams
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
-import ani.sanin.BottomSheetDialogFragment
 import ani.sanin.DatePickerFragment
 import ani.sanin.InputFilterMinMax
 import ani.sanin.R
@@ -20,6 +26,8 @@ import ani.sanin.connections.anilist.Anilist
 import ani.sanin.connections.anilist.api.FuzzyDate
 import ani.sanin.connections.mal.MAL
 import ani.sanin.databinding.BottomSheetMediaListBinding
+import ani.sanin.getThemeColor
+import ani.sanin.loadImage
 import ani.sanin.navBarHeight
 import ani.sanin.settings.saving.PrefManager
 import ani.sanin.settings.saving.PrefName
@@ -31,11 +39,63 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-
-class MediaListDialogFragment : BottomSheetDialogFragment() {
+class MediaListDialogFragment : DialogFragment() {
 
     private var _binding: BottomSheetMediaListBinding? = null
     private val binding get() = _binding!!
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setStyle(STYLE_NO_FRAME, com.google.android.material.R.style.Theme_Material3_DayNight_NoActionBar)
+    }
+
+    override fun onStart() {
+        super.onStart()
+        dialog?.window?.let { w ->
+            w.setBackgroundDrawableResource(android.R.color.transparent)
+            val widthPx = (resources.displayMetrics.widthPixels * 0.80f).toInt()
+            w.setLayout(widthPx, WindowManager.LayoutParams.WRAP_CONTENT)
+            w.setGravity(Gravity.CENTER)
+            w.setDimAmount(0.5f)
+            w.statusBarColor = Color.TRANSPARENT
+            w.navigationBarColor =
+                requireContext().getThemeColor(com.google.android.material.R.attr.colorSurface)
+        }
+        animateEntry()
+    }
+
+    private fun animateEntry() {
+        val density = resources.displayMetrics.density
+        binding.root.apply {
+            pivotY = 0f
+            pivotX = width / 2f
+            rotationX = 10f
+            translationY = 40f * density
+            scaleY = 0.96f
+            alpha = 0.8f
+        }
+        binding.root.post {
+            val lift = ObjectAnimator.ofFloat(binding.root, View.TRANSLATION_Y, 0f).apply {
+                duration = 180
+                interpolator = DecelerateInterpolator()
+            }
+            val tilt = ObjectAnimator.ofFloat(binding.root, View.ROTATION_X, 0f).apply {
+                duration = 220
+                interpolator = DecelerateInterpolator()
+            }
+            val scale = ObjectAnimator.ofFloat(binding.root, View.SCALE_Y, 1f).apply {
+                duration = 280
+                interpolator = OvershootInterpolator(1.5f)
+            }
+            val fade = ObjectAnimator.ofFloat(binding.root, View.ALPHA, 1f).apply {
+                duration = 200
+            }
+            AnimatorSet().apply {
+                playTogether(lift, tilt, scale, fade)
+                start()
+            }
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -58,6 +118,8 @@ class MediaListDialogFragment : BottomSheetDialogFragment() {
             if (media != null) {
                 binding.mediaListProgressBar.visibility = View.GONE
                 binding.mediaListLayout.visibility = View.VISIBLE
+                binding.mediaListBannerContainer.visibility = View.VISIBLE
+                binding.mediaListBanner.loadImage(media!!.banner ?: media!!.cover)
 
                 val statuses: Array<String> = resources.getStringArray(R.array.status)
                 val statusStrings = resources.getStringArray(R.array.status_anime)
@@ -73,11 +135,10 @@ class MediaListDialogFragment : BottomSheetDialogFragment() {
                     )
                 )
 
-
                 var total: Int? = null
                 binding.mediaListProgress.setText(if (media!!.userProgress != null) media!!.userProgress.toString() else "")
                 if (media!!.anime != null) if (media!!.anime!!.totalEpisodes != null) {
-                    total = media!!.anime!!.totalEpisodes!!;
+                    total = media!!.anime!!.totalEpisodes!!
                     binding.mediaListProgress.filters =
                         arrayOf(
                             InputFilterMinMax(0.0, total.toDouble(), binding.mediaListStatus),
@@ -130,7 +191,6 @@ class MediaListDialogFragment : BottomSheetDialogFragment() {
                 }
                 start.dialog.setOnDismissListener { _binding?.mediaListStart?.setText(start.date.toStringOrEmpty()) }
                 end.dialog.setOnDismissListener { _binding?.mediaListEnd?.setText(end.date.toStringOrEmpty()) }
-
 
                 fun onComplete() {
                     if (total != null) binding.mediaListProgress.setText(total.toString())
@@ -223,7 +283,6 @@ class MediaListDialogFragment : BottomSheetDialogFragment() {
                         }
                     }
                 }
-
 
                 binding.mediaListSave.setOnClickListener {
                     val progressText = binding.mediaListProgress.text.toString()
@@ -323,7 +382,6 @@ class MediaListDialogFragment : BottomSheetDialogFragment() {
                         }, onNotFound = {
                             snackString(getString(R.string.no_list_id))
                         })
-
                     }
                 }
             }
