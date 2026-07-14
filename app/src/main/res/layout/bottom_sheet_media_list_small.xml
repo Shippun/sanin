@@ -1,305 +1,306 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mediaListContainer"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/bottom_sheet_background">
-
-    <FrameLayout
-        android:id="@+id/mediaListProgressBar"
-        android:layout_width="76.5dp"
-        android:layout_height="76.5dp"
-        android:layout_gravity="center"
-        tools:visibility="invisible"
-    >
-
-        <com.airbnb.lottie.LottieAnimationView
-        android:layout_width="45dp"
-        android:layout_height="45dp"
-        android:layout_gravity="center_horizontal|top"
-        android:layout_marginTop="4dp"
-        app:lottie_rawRes="@raw/tomoe"
-        app:lottie_autoPlay="true"
-        app:lottie_loop="true"
-        app:lottie_colorFilter="?attr/colorSecondary" 
-        app:lottie_speed="1.75" android:rotation="75" />
-
-        <com.airbnb.lottie.LottieAnimationView
-        android:layout_width="45dp"
-        android:layout_height="45dp"
-        android:layout_gravity="bottom|start"
-        android:layout_marginStart="4dp"
-        android:layout_marginBottom="8dp"
-        app:lottie_rawRes="@raw/tomoe"
-        app:lottie_autoPlay="true"
-        app:lottie_loop="true"
-        app:lottie_colorFilter="?attr/colorSecondary" 
-        app:lottie_speed="1.75" android:rotation="-45" />
-
-        <com.airbnb.lottie.LottieAnimationView
-        android:layout_width="45dp"
-        android:layout_height="45dp"
-        android:layout_gravity="bottom|end"
-        android:layout_marginEnd="4dp"
-        android:layout_marginBottom="8dp"
-        app:lottie_rawRes="@raw/tomoe"
-        app:lottie_autoPlay="true"
-        app:lottie_loop="true"
-        app:lottie_colorFilter="?attr/colorSecondary" 
-        app:lottie_speed="1.75" android:rotation="195" />
-
-    </FrameLayout>
+    android:clipToPadding="false">
 
     <LinearLayout
-        android:id="@+id/mediaListLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@drawable/bottom_sheet_background"
         android:orientation="vertical"
-        android:padding="20dp"
-        android:visibility="invisible"
-        tools:visibility="visible">
+        android:clipToOutline="true">
 
-        <!-- Header -->
-        <LinearLayout
+        <FrameLayout
+            android:id="@+id/mediaListBannerContainer"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/snake_scale_bg"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:padding="16dp">
+            android:layout_height="160dp"
+            android:visibility="invisible"
+            tools:visibility="visible">
 
-            <TextView
-                android:id="@+id/mediaTitle"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
-                android:layout_weight="1"
-                android:fontFamily="@font/poppins"
-                android:gravity="center_vertical"
-                android:text="@string/list_editor"
-                android:textColor="?android:attr/textColorPrimary"
-                android:textSize="22sp"
-                android:textStyle="bold" />
-        </LinearLayout>
+            <ImageView
+                android:id="@+id/mediaListBanner"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                tools:ignore="ContentDescription" />
+        </FrameLayout>
 
-        <View
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="8dp" />
+            android:layout_height="wrap_content">
 
-        <!-- Status -->
-        <com.google.android.material.textfield.TextInputLayout
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-            android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:background="@drawable/snake_input_bg"
-            android:hint="@string/status"
-            app:boxCornerRadiusBottomEnd="12dp"
-            app:boxCornerRadiusBottomStart="12dp"
-            app:boxCornerRadiusTopEnd="12dp"
-            app:boxCornerRadiusTopStart="12dp"
-            app:boxStrokeColor="@color/text_input_layout_stroke_color"
-            app:hintAnimationEnabled="true"
-            app:startIconDrawable="@drawable/ic_round_playlist_play_24">
+            <FrameLayout
+                android:id="@+id/mediaListProgressBar"
+                android:layout_width="76.5dp"
+                android:layout_height="76.5dp"
+                android:layout_gravity="center"
+                tools:visibility="invisible">
 
-            <AutoCompleteTextView
-                android:id="@+id/mediaListStatus"
+                <com.airbnb.lottie.LottieAnimationView
+                    android:layout_width="45dp"
+                    android:layout_height="45dp"
+                    android:layout_gravity="center_horizontal|top"
+                    android:layout_marginTop="4dp"
+                    android:rotation="75"
+                    app:lottie_rawRes="@raw/tomoe"
+                    app:lottie_autoPlay="true"
+                    app:lottie_loop="true"
+                    app:lottie_colorFilter="?attr/colorSecondary"
+                    app:lottie_speed="1.75" />
+
+                <com.airbnb.lottie.LottieAnimationView
+                    android:layout_width="45dp"
+                    android:layout_height="45dp"
+                    android:layout_gravity="bottom|start"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginBottom="8dp"
+                    android:rotation="-45"
+                    app:lottie_rawRes="@raw/tomoe"
+                    app:lottie_autoPlay="true"
+                    app:lottie_loop="true"
+                    app:lottie_colorFilter="?attr/colorSecondary"
+                    app:lottie_speed="1.75" />
+
+                <com.airbnb.lottie.LottieAnimationView
+                    android:layout_width="45dp"
+                    android:layout_height="45dp"
+                    android:layout_gravity="bottom|end"
+                    android:layout_marginEnd="4dp"
+                    android:layout_marginBottom="8dp"
+                    android:rotation="195"
+                    app:lottie_rawRes="@raw/tomoe"
+                    app:lottie_autoPlay="true"
+                    app:lottie_loop="true"
+                    app:lottie_colorFilter="?attr/colorSecondary"
+                    app:lottie_speed="1.75" />
+            </FrameLayout>
+
+            <LinearLayout
+                android:id="@+id/mediaListLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:fontFamily="@font/poppins_bold"
-                android:freezesText="false"
-                android:inputType="none"
-                android:padding="8dp"
-                android:text="@string/watch"
-                android:textAllCaps="true"
-                android:textColor="?android:attr/textColorSecondary"
-                android:textSize="14sp"
-                tools:ignore="LabelFor,TextContrastCheck,DuplicateSpeakableTextCheck" />
-        </com.google.android.material.textfield.TextInputLayout>
+                android:orientation="vertical"
+                android:padding="16dp"
+                android:visibility="invisible"
+                tools:visibility="visible">
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="8dp" />
+                <TextView
+                    android:id="@+id/mediaTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp"
+                    android:fontFamily="@font/poppins"
+                    android:text="@string/list_editor"
+                    android:textColor="?android:attr/textColorPrimary"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
 
-        <!-- Progress + Increment -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/snake_input_bg"
-            android:orientation="horizontal"
-            android:padding="4dp">
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:background="@drawable/snake_input_bg"
+                    android:hint="@string/status"
+                    app:boxCornerRadiusBottomEnd="12dp"
+                    app:boxCornerRadiusBottomStart="12dp"
+                    app:boxCornerRadiusTopEnd="12dp"
+                    app:boxCornerRadiusTopStart="12dp"
+                    app:boxStrokeColor="@color/text_input_layout_stroke_color"
+                    app:hintAnimationEnabled="true"
+                    app:startIconDrawable="@drawable/ic_round_playlist_play_24">
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/mediaListProgressLayout"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:hint="@string/progress"
-                app:boxCornerRadiusBottomEnd="12dp"
-                app:boxCornerRadiusBottomStart="12dp"
-                app:boxCornerRadiusTopEnd="12dp"
-                app:boxCornerRadiusTopStart="12dp"
-                app:boxStrokeColor="@color/text_input_layout_stroke_color"
-                app:endIconMode="none"
-                app:hintAnimationEnabled="true"
-                app:startIconDrawable="@drawable/ic_round_add_circle_outline_24"
-                app:suffixTextAppearance="@style/Suffix">
+                    <AutoCompleteTextView
+                        android:id="@+id/mediaListStatus"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:fontFamily="@font/poppins_bold"
+                        android:freezesText="false"
+                        android:inputType="none"
+                        android:padding="6dp"
+                        android:text="@string/watch"
+                        android:textAllCaps="true"
+                        android:textColor="?android:attr/textColorSecondary"
+                        android:textSize="12sp"
+                        tools:ignore="LabelFor,TextContrastCheck,DuplicateSpeakableTextCheck" />
+                </com.google.android.material.textfield.TextInputLayout>
 
-                <AutoCompleteTextView
-                    android:id="@+id/mediaListProgress"
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="6dp" />
+
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
+                    android:background="@drawable/snake_input_bg"
+                    android:orientation="horizontal"
+                    android:padding="4dp">
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/mediaListProgressLayout"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:hint="@string/progress"
+                        app:boxCornerRadiusBottomEnd="12dp"
+                        app:boxCornerRadiusBottomStart="12dp"
+                        app:boxCornerRadiusTopEnd="12dp"
+                        app:boxCornerRadiusTopStart="12dp"
+                        app:boxStrokeColor="@color/text_input_layout_stroke_color"
+                        app:endIconMode="none"
+                        app:hintAnimationEnabled="true"
+                        app:startIconDrawable="@drawable/ic_round_add_circle_outline_24"
+                        app:suffixTextAppearance="@style/Suffix">
+
+                        <AutoCompleteTextView
+                            android:id="@+id/mediaListProgress"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:fontFamily="@font/poppins_bold"
+                            android:inputType="number"
+                            android:maxLength="4"
+                            android:padding="6dp"
+                            android:textColor="?android:attr/textColorSecondary"
+                            android:textSize="12sp"
+                            tools:ignore="LabelFor,TextContrastCheck" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <View
+                        android:layout_width="6dp"
+                        android:layout_height="match_parent" />
+
+                    <Button
+                        android:id="@+id/mediaListIncrement"
+                        style="@style/Widget.Material3.Button.OutlinedButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="42dp"
+                        android:layout_marginTop="-2dp"
+                        android:elevation="0dp"
+                        android:fontFamily="@font/poppins_bold"
+                        android:insetTop="0dp"
+                        android:insetBottom="0dp"
+                        android:minWidth="@null"
+                        android:paddingLeft="12dp"
+                        android:paddingRight="12dp"
+                        android:singleLine="true"
+                        android:text="+1\u0020"
+                        android:textSize="14sp"
+                        app:cornerRadius="12dp"
+                        app:strokeColor="?attr/colorPrimaryContainer"
+                        tools:ignore="HardcodedText" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="6dp" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/mediaListScoreLayout"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:background="@drawable/snake_input_bg"
+                    android:hint="@string/score"
+                    app:boxCornerRadiusBottomEnd="12dp"
+                    app:boxCornerRadiusBottomStart="12dp"
+                    app:boxCornerRadiusTopEnd="12dp"
+                    app:boxCornerRadiusTopStart="12dp"
+                    app:boxStrokeColor="@color/text_input_layout_stroke_color"
+                    app:endIconMode="none"
+                    app:hintAnimationEnabled="true"
+                    app:startIconDrawable="@drawable/ic_round_star_24"
+                    app:suffixText="@string/score_suffix"
+                    app:suffixTextAppearance="@style/Suffix">
+
+                    <AutoCompleteTextView
+                        android:id="@+id/mediaListScore"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:fontFamily="@font/poppins_bold"
+                        android:inputType="numberDecimal"
+                        android:padding="6dp"
+                        android:textColor="?android:attr/textColorSecondary"
+                        android:textSize="12sp"
+                        tools:ignore="LabelFor,TextContrastCheck" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="6dp" />
+
+                <com.google.android.material.materialswitch.MaterialSwitch
+                    android:id="@+id/mediaListPrivate"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/snake_input_bg"
                     android:fontFamily="@font/poppins_bold"
-                    android:inputType="number"
-                    android:maxLength="4"
-                    android:padding="8dp"
-                    android:textColor="?android:attr/textColorSecondary"
-                    android:textSize="14sp"
-                    tools:ignore="LabelFor,TextContrastCheck" />
-            </com.google.android.material.textfield.TextInputLayout>
+                    android:padding="6dp"
+                    android:text="@string/list_private"
+                    android:textSize="13sp" />
 
-            <View
-                android:layout_width="8dp"
-                android:layout_height="match_parent" />
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="6dp" />
 
-            <Button
-                android:id="@+id/mediaListIncrement"
-                style="@style/Widget.Material3.Button.OutlinedButton"
-                android:layout_width="wrap_content"
-                android:layout_height="48dp"
-                android:layout_marginTop="-2dp"
-                android:elevation="0dp"
-                android:fontFamily="@font/poppins_bold"
-                android:insetTop="0dp"
-                android:insetBottom="0dp"
-                android:minWidth="@null"
-                android:paddingLeft="16dp"
-                android:paddingRight="16dp"
-                android:singleLine="true"
-                android:text="+1\u0020"
-                android:textSize="16sp"
-                app:cornerRadius="12dp"
-                app:strokeColor="?attr/colorPrimaryContainer"
-                tools:ignore="HardcodedText" />
-        </LinearLayout>
+                <com.google.android.material.materialswitch.MaterialSwitch
+                    android:id="@+id/mediaListShow"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/snake_input_bg"
+                    android:fontFamily="@font/poppins_bold"
+                    android:padding="6dp"
+                    android:text="@string/hide_in_home_screen"
+                    android:textSize="13sp" />
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="8dp" />
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="10dp" />
 
-        <!-- Score -->
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/mediaListScoreLayout"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-            android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:background="@drawable/snake_input_bg"
-            android:hint="@string/score"
-            app:boxCornerRadiusBottomEnd="12dp"
-            app:boxCornerRadiusBottomStart="12dp"
-            app:boxCornerRadiusTopEnd="12dp"
-            app:boxCornerRadiusTopStart="12dp"
-            app:boxStrokeColor="@color/text_input_layout_stroke_color"
-            app:endIconMode="none"
-            app:hintAnimationEnabled="true"
-            app:startIconDrawable="@drawable/ic_round_star_24"
-            app:suffixText="@string/score_suffix"
-            app:suffixTextAppearance="@style/Suffix">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
 
-            <AutoCompleteTextView
-                android:id="@+id/mediaListScore"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:fontFamily="@font/poppins_bold"
-                android:inputType="numberDecimal"
-                android:padding="8dp"
-                android:textColor="?android:attr/textColorSecondary"
-                android:textSize="14sp"
-                tools:ignore="LabelFor,TextContrastCheck" />
-        </com.google.android.material.textfield.TextInputLayout>
+                    <Button
+                        android:id="@+id/mediaListDelete"
+                        style="@style/Widget.Material3.Button.OutlinedButton"
+                        android:layout_width="0dp"
+                        android:layout_height="46dp"
+                        android:layout_marginEnd="6dp"
+                        android:layout_weight="1"
+                        android:fontFamily="@font/poppins_bold"
+                        android:insetTop="0dp"
+                        android:insetBottom="0dp"
+                        android:padding="6dp"
+                        android:text="@string/delete"
+                        android:textSize="14sp"
+                        app:cornerRadius="12dp"
+                        app:strokeColor="?attr/colorPrimaryContainer" />
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="8dp" />
-
-        <com.google.android.material.materialswitch.MaterialSwitch
-            android:id="@+id/mediaListPrivate"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/snake_input_bg"
-            android:fontFamily="@font/poppins_bold"
-            android:padding="12dp"
-            android:text="@string/list_private" />
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="8dp" />
-
-        <com.google.android.material.materialswitch.MaterialSwitch
-            android:id="@+id/mediaListShow"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/snake_input_bg"
-            android:fontFamily="@font/poppins_bold"
-            android:padding="12dp"
-            android:text="@string/hide_in_home_screen" />
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="12dp" />
-
-        <!-- Action Buttons -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <Button
-                android:id="@+id/mediaListDelete"
-                style="@style/Widget.Material3.Button.OutlinedButton"
-                android:layout_width="0dp"
-                android:layout_height="52dp"
-                android:layout_marginEnd="6dp"
-                android:layout_weight="1"
-                android:fontFamily="@font/poppins_bold"
-                android:insetTop="0dp"
-                android:insetBottom="0dp"
-                android:padding="8dp"
-                android:text="@string/delete"
-                android:textSize="16sp"
-                app:cornerRadius="12dp"
-                app:strokeColor="?attr/colorPrimaryContainer" />
-
-            <Button
-                android:id="@+id/mediaListSave"
-                style="@style/Widget.Material3.Button.OutlinedButton"
-                android:layout_width="0dp"
-                android:layout_height="52dp"
-                android:layout_marginStart="6dp"
-                android:layout_weight="1"
-                android:fontFamily="@font/poppins_bold"
-                android:insetTop="0dp"
-                android:insetBottom="0dp"
-                android:padding="8dp"
-                android:text="@string/save"
-                android:textSize="16sp"
-                app:cornerRadius="12dp"
-                app:strokeColor="?attr/colorPrimaryContainer" />
-        </LinearLayout>
+                    <Button
+                        android:id="@+id/mediaListSave"
+                        style="@style/Widget.Material3.Button.OutlinedButton"
+                        android:layout_width="0dp"
+                        android:layout_height="46dp"
+                        android:layout_marginStart="6dp"
+                        android:layout_weight="1"
+                        android:fontFamily="@font/poppins_bold"
+                        android:insetTop="0dp"
+                        android:insetBottom="0dp"
+                        android:padding="6dp"
+                        android:text="@string/save"
+                        android:textSize="14sp"
+                        app:cornerRadius="12dp"
+                        app:strokeColor="?attr/colorPrimaryContainer" />
+                </LinearLayout>
+            </LinearLayout>
+        </FrameLayout>
     </LinearLayout>
-
-    <androidx.cardview.widget.CardView
-        android:layout_width="32dp"
-        android:layout_height="4dp"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="14dp"
-        app:cardBackgroundColor="?attr/colorPrimary"
-        app:cardCornerRadius="2dp"
-        app:cardElevation="0dp" />
-</FrameLayout>
+</androidx.core.widget.NestedScrollView>

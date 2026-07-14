@@ -1,15 +1,25 @@
 package ani.sanin.media
 
+import android.animation.AnimatorSet
+import android.animation.ObjectAnimator
+import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import android.text.InputFilter.LengthFilter
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
+import android.view.animation.DecelerateInterpolator
+import android.view.animation.OvershootInterpolator
 import android.widget.ArrayAdapter
+import androidx.core.graphics.ColorUtils
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.core.view.updateLayoutParams
+import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.lifecycleScope
-import ani.sanin.BottomSheetDialogFragment
 import ani.sanin.DatePickerFragment
 import ani.sanin.InputFilterMinMax
 import ani.sanin.R
@@ -19,22 +29,25 @@ import ani.sanin.connections.anilist.Anilist
 import ani.sanin.connections.anilist.api.FuzzyDate
 import ani.sanin.connections.mal.MAL
 import ani.sanin.databinding.BottomSheetMediaListSmallBinding
+import ani.sanin.getThemeColor
+import ani.sanin.loadImage
 import ani.sanin.navBarHeight
 import ani.sanin.others.getSerialized
 import ani.sanin.settings.saving.PrefManager
 import ani.sanin.settings.saving.PrefName
 import ani.sanin.snackString
-import ani.sanin.tryWith
 import ani.sanin.util.FocusEffectUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.Serializable
 
-
-class MediaListDialogSmallFragment : BottomSheetDialogFragment() {
+class MediaListDialogSmallFragment : DialogFragment() {
 
     private lateinit var media: Media
+    private var _binding: BottomSheetMediaListSmallBinding? = null
+    private val binding get() = _binding!!
+    private var animated = false
 
     companion object {
         fun newInstance(m: Media): MediaListDialogSmallFragment =
@@ -52,8 +65,60 @@ class MediaListDialogSmallFragment : BottomSheetDialogFragment() {
         }
     }
 
-    private var _binding: BottomSheetMediaListSmallBinding? = null
-    private val binding get() = _binding!!
+    override fun onStart() {
+        super.onStart()
+        dialog?.window?.let { w ->
+            WindowCompat.setDecorFitsSystemWindows(w, false)
+            w.setBackgroundDrawableResource(android.R.color.transparent)
+            val widthPx = (resources.displayMetrics.widthPixels * 0.80f).toInt()
+            w.setLayout(widthPx, WindowManager.LayoutParams.WRAP_CONTENT)
+            w.setGravity(Gravity.CENTER)
+            w.setDimAmount(0.5f)
+            w.statusBarColor = Color.TRANSPARENT
+            val surfaceColor = requireContext().getThemeColor(com.google.android.material.R.attr.colorSurface)
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+                @Suppress("DEPRECATION")
+                w.navigationBarColor = surfaceColor
+            }
+            val controller = WindowInsetsControllerCompat(w, w.decorView)
+            controller.isAppearanceLightNavigationBars = ColorUtils.calculateLuminance(surfaceColor) > 0.5
+        }
+        if (!animated) animateEntry()
+    }
+
+    private fun animateEntry() {
+        animated = true
+        val density = resources.displayMetrics.density
+        binding.root.apply {
+            pivotY = 0f
+            pivotX = width / 2f
+            rotationX = 10f
+            translationY = 40f * density
+            scaleY = 0.96f
+            alpha = 0.8f
+        }
+        binding.root.postDelayed({
+            val lift = ObjectAnimator.ofFloat(binding.root, View.TRANSLATION_Y, 0f).apply {
+                duration = 180
+                interpolator = DecelerateInterpolator()
+            }
+            val tilt = ObjectAnimator.ofFloat(binding.root, View.ROTATION_X, 0f).apply {
+                duration = 220
+                interpolator = DecelerateInterpolator()
+            }
+            val scale = ObjectAnimator.ofFloat(binding.root, View.SCALE_Y, 1f).apply {
+                duration = 280
+                interpolator = OvershootInterpolator(1.5f)
+            }
+            val fade = ObjectAnimator.ofFloat(binding.root, View.ALPHA, 1f).apply {
+                duration = 200
+            }
+            AnimatorSet().apply {
+                playTogether(lift, tilt, scale, fade)
+                start()
+            }
+        }, 50)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -65,32 +130,15 @@ class MediaListDialogSmallFragment : BottomSheetDialogFragment() {
         return binding.root
     }
 
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding.mediaListContainer.updateLayoutParams<ViewGroup.MarginLayoutParams> { bottomMargin += navBarHeight }
         val scope = viewLifecycleOwner.lifecycleScope
-        binding.mediaListDelete.setOnClickListener {
-            scope.launch {
-                media.deleteFromList(scope, onSuccess = {
-                    Refresh.all()
-                    snackString(getString(R.string.deleted_from_list))
-                    dismissAllowingStateLoss()
-                }, onError = { e ->
-                    withContext(Dispatchers.Main) {
-                        snackString(
-                            getString(
-                                R.string.delete_fail_reason, e.message
-                            )
-                        )
-                    }
-                }, onNotFound = {
-                    snackString(getString(R.string.no_list_id))
-                })
-            }
-        }
 
         binding.mediaListProgressBar.visibility = View.GONE
         binding.mediaListLayout.visibility = View.VISIBLE
+        binding.mediaListBannerContainer.visibility = View.VISIBLE
+        binding.mediaListBanner.loadImage(media.banner ?: media.cover)
+
         val statuses: Array<String> = resources.getStringArray(R.array.status)
         val statusStrings = resources.getStringArray(R.array.status_anime)
         val userStatus =
@@ -104,7 +152,6 @@ class MediaListDialogSmallFragment : BottomSheetDialogFragment() {
                 statusStrings
             )
         )
-
 
         var total: Int? = null
         binding.mediaListProgress.setText(if (media.userProgress != null) media.userProgress.toString() else "")
@@ -121,8 +168,6 @@ class MediaListDialogSmallFragment : BottomSheetDialogFragment() {
         }
         binding.mediaListProgressLayout.suffixTextView.gravity = Gravity.CENTER
 
-
-
         binding.mediaListScore.setText(
             if (media.userScore != 0) media.userScore.div(
                 10.0
@@ -134,8 +179,6 @@ class MediaListDialogSmallFragment : BottomSheetDialogFragment() {
             height = ViewGroup.LayoutParams.MATCH_PARENT
         }
         binding.mediaListScoreLayout.suffixTextView.gravity = Gravity.CENTER
-
-
 
         binding.mediaListIncrement.setOnClickListener {
             if (binding.mediaListStatus.text.toString() == statusStrings[0]) binding.mediaListStatus.setText(
@@ -228,6 +271,26 @@ class MediaListDialogSmallFragment : BottomSheetDialogFragment() {
                 Refresh.all()
                 snackString(getString(R.string.list_updated))
                 dismissAllowingStateLoss()
+            }
+        }
+
+        binding.mediaListDelete.setOnClickListener {
+            scope.launch {
+                media.deleteFromList(scope, onSuccess = {
+                    Refresh.all()
+                    snackString(getString(R.string.deleted_from_list))
+                    dismissAllowingStateLoss()
+                }, onError = { e ->
+                    withContext(Dispatchers.Main) {
+                        snackString(
+                            getString(
+                                R.string.delete_fail_reason, e.message
+                            )
+                        )
+                    }
+                }, onNotFound = {
+                    snackString(getString(R.string.no_list_id))
+                })
             }
         }
     }

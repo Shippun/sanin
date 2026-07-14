@@ -3,6 +3,7 @@ package ani.sanin.media
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import android.text.InputFilter.LengthFilter
 import android.view.Gravity
@@ -13,6 +14,9 @@ import android.view.WindowManager
 import android.view.animation.DecelerateInterpolator
 import android.view.animation.OvershootInterpolator
 import android.widget.ArrayAdapter
+import androidx.core.graphics.ColorUtils
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
@@ -43,28 +47,32 @@ class MediaListDialogFragment : DialogFragment() {
 
     private var _binding: BottomSheetMediaListBinding? = null
     private val binding get() = _binding!!
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setStyle(STYLE_NO_FRAME, com.google.android.material.R.style.Theme_Material3_DayNight_NoActionBar)
-    }
+    private var animated = false
 
     override fun onStart() {
         super.onStart()
         dialog?.window?.let { w ->
+            WindowCompat.setDecorFitsSystemWindows(w, false)
             w.setBackgroundDrawableResource(android.R.color.transparent)
             val widthPx = (resources.displayMetrics.widthPixels * 0.80f).toInt()
             w.setLayout(widthPx, WindowManager.LayoutParams.WRAP_CONTENT)
             w.setGravity(Gravity.CENTER)
             w.setDimAmount(0.5f)
             w.statusBarColor = Color.TRANSPARENT
-            w.navigationBarColor =
-                requireContext().getThemeColor(com.google.android.material.R.attr.colorSurface)
+            val surfaceColor = requireContext().getThemeColor(com.google.android.material.R.attr.colorSurface)
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+                @Suppress("DEPRECATION")
+                w.navigationBarColor = surfaceColor
+            }
+            WindowInsetsCompat.Type.navigationBars()
+            val controller = androidx.core.view.WindowInsetsControllerCompat(w, w.decorView)
+            controller.isAppearanceLightNavigationBars = ColorUtils.calculateLuminance(surfaceColor) > 0.5
         }
-        animateEntry()
+        if (!animated) animateEntry()
     }
 
     private fun animateEntry() {
+        animated = true
         val density = resources.displayMetrics.density
         binding.root.apply {
             pivotY = 0f
@@ -74,7 +82,7 @@ class MediaListDialogFragment : DialogFragment() {
             scaleY = 0.96f
             alpha = 0.8f
         }
-        binding.root.post {
+        binding.root.postDelayed({
             val lift = ObjectAnimator.ofFloat(binding.root, View.TRANSLATION_Y, 0f).apply {
                 duration = 180
                 interpolator = DecelerateInterpolator()
@@ -94,7 +102,7 @@ class MediaListDialogFragment : DialogFragment() {
                 playTogether(lift, tilt, scale, fade)
                 start()
             }
-        }
+        }, 50)
     }
 
     override fun onCreateView(
