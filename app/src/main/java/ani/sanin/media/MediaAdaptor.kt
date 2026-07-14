@@ -7,8 +7,10 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.GradientDrawable
+import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewConfiguration
 import android.view.ViewGroup
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.ImageView
@@ -354,6 +356,23 @@ class MediaAdaptor(
         }
     }
 
+    private fun setupDpadLongPress(view: View, callback: () -> Boolean) {
+        val runnable = Runnable { callback() }
+        view.setOnKeyListener { _, keyCode, event ->
+            if (keyCode == KeyEvent.KEYCODE_DPAD_CENTER || keyCode == KeyEvent.KEYCODE_ENTER) {
+                when (event.action) {
+                    KeyEvent.ACTION_DOWN -> {
+                        view.postDelayed(runnable, ViewConfiguration.getLongPressTimeout().toLong())
+                    }
+                    KeyEvent.ACTION_UP, KeyEvent.ACTION_CANCEL -> {
+                        view.removeCallbacks(runnable)
+                    }
+                }
+            }
+            false
+        }
+    }
+
     inner class MediaViewHolder(val binding: ItemMediaCompactBinding) :
         RecyclerView.ViewHolder(binding.root) {
         init {
@@ -368,6 +387,7 @@ class MediaAdaptor(
                 )
             }
             itemView.setOnLongClickListener { longClicked(bindingAdapterPosition) }
+            setupDpadLongPress(itemView) { longClicked(bindingAdapterPosition) }
             applyFocusWithFade(itemView, binding.itemCompactCard)
         }
     }
@@ -385,6 +405,7 @@ class MediaAdaptor(
                 )
             }
             itemView.setOnLongClickListener { longClicked(bindingAdapterPosition) }
+            setupDpadLongPress(itemView) { longClicked(bindingAdapterPosition) }
             applyFocusWithFade(itemView, binding.itemCompactCard)
         }
     }
@@ -404,7 +425,8 @@ class MediaAdaptor(
             itemView.isFocusableInTouchMode = false
             applyFocusWithFade(itemView, binding.itemCompactCard)
             itemView.setOnTouchListener { _, _ -> true }
-            binding.itemCompactImage.setOnLongClickListener { longClicked(bindingAdapterPosition) }
+            itemView.setOnLongClickListener { longClicked(bindingAdapterPosition) }
+            setupDpadLongPress(itemView) { longClicked(bindingAdapterPosition) }
         }
     }
 
@@ -430,7 +452,8 @@ class MediaAdaptor(
             itemView.isFocusableInTouchMode = false
             applyFocusWithFade(itemView, binding.itemCompactCard)
             itemView.setOnTouchListener { _, _ -> true }
-            binding.itemCompactImage.setOnLongClickListener { longClicked(bindingAdapterPosition) }
+            itemView.setOnLongClickListener { longClicked(bindingAdapterPosition) }
+            setupDpadLongPress(itemView) { longClicked(bindingAdapterPosition) }
         }
     }
 
@@ -448,6 +471,7 @@ class MediaAdaptor(
                 )
             }
             itemView.setOnLongClickListener { longClicked(bindingAdapterPosition) }
+            setupDpadLongPress(itemView) { longClicked(bindingAdapterPosition) }
             applyFocusWithFade(itemView, binding.itemCompactCard)
         }
     }
