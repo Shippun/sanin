@@ -317,37 +317,26 @@ class CommentsFragment : Fragment() {
             true
         }
 
-        val clickSanin = {
+        binding.commentSourceSanin.setOnClickListener {
             if (currentSource != CommentSource.DANOTSU) {
                 currentSource = CommentSource.DANOTSU
                 highlightSource()
                 lifecycleScope.launch { loadAndDisplayComments() }
             }
         }
-        binding.commentSourceSanin.setOnClickListener { clickSanin() }
-        binding.commentSourceSanin.setOnKeyListener { v, keyCode, event ->
-            if (event.action == android.view.KeyEvent.ACTION_DOWN && 
-                (keyCode == android.view.KeyEvent.KEYCODE_DPAD_CENTER || keyCode == android.view.KeyEvent.KEYCODE_ENTER)) {
-                clickSanin(); true
-            } else false
+        binding.commentSourceSanin.setOnFocusChangeListener { v, hasFocus ->
+            v.elevation = if (hasFocus) 8f else 0f
         }
-
-        val clickTrakt = {
+        binding.commentSourceTrakt.setOnClickListener {
             if (currentSource != CommentSource.TRAKT) {
                 currentSource = CommentSource.TRAKT
                 highlightSource()
                 lifecycleScope.launch { loadAndDisplayComments() }
             }
         }
-        binding.commentSourceTrakt.setOnClickListener { clickTrakt() }
-        binding.commentSourceTrakt.setOnKeyListener { v, keyCode, event ->
-            if (event.action == android.view.KeyEvent.ACTION_DOWN && 
-                (keyCode == android.view.KeyEvent.KEYCODE_DPAD_CENTER || keyCode == android.view.KeyEvent.KEYCODE_ENTER)) {
-                clickTrakt(); true
-            } else false
+        binding.commentSourceTrakt.setOnFocusChangeListener { v, hasFocus ->
+            v.elevation = if (hasFocus) 8f else 0f
         }
-
-        FocusEffectUtil.applyFocusListener(binding.commentSourceSanin, binding.commentSourceTrakt)
         FocusEffectUtil.applyFocusListener(binding.openRules, binding.commentFilter, binding.commentSort)
 
         var isFetching = false
