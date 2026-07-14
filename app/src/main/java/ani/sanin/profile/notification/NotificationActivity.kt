@@ -55,6 +55,14 @@ class NotificationActivity : AppCompatActivity() {
         }
         binding.notificationNavRailBg.live = PrefManager.getVal(PrefName.LiveSideRail)
         FocusEffectUtil.applyFocusListener(binding.notificationBack)
+        val cornerPx = 16f * resources.displayMetrics.density
+        binding.notificationNavRail.outlineProvider = object : android.view.ViewOutlineProvider() {
+            override fun getOutline(view: View, outline: android.graphics.Outline) {
+                outline.setRoundRect(0, 0, view.width, view.height, cornerPx)
+            }
+        }
+        binding.notificationNavRail.elevation = 10f
+        binding.notificationNavRail.clipToOutline = true
 
         val navButtons = listOf(
             binding.notificationNavUser,
@@ -218,7 +226,7 @@ class NotificationActivity : AppCompatActivity() {
 
     private fun hideNotificationNavRail() {
         binding.notificationNavRail.visibility = View.GONE
-        binding.notificationBack.requestFocus()
+        binding.notificationViewPager.requestFocus()
     }
 
     private fun updateNavTints(buttons: List<android.widget.ImageButton>, selectedIndex: Int) {

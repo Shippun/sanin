@@ -9,6 +9,7 @@
     android:clipToPadding="false"
     android:descendantFocusability="afterDescendants"
     android:fillViewport="true"
+    android:focusable="false"
     android:nextFocusUp="@+id/mediaNavPills">
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout

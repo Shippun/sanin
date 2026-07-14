@@ -22,7 +22,7 @@
             android:src="@drawable/ic_round_arrow_back_ios_new_24"
             app:tint="?attr/colorOnBackground"
             android:focusable="true"
-            android:nextFocusDown="@id/notificationRecyclerView"
+            android:nextFocusDown="@id/notificationViewPager"
             tools:ignore="ContentDescription" />
 
         <TextView
@@ -129,6 +129,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:focusable="true"
             android:nestedScrollingEnabled="true"
             tools:ignore="SpeakableTextPresentCheck" />
 
