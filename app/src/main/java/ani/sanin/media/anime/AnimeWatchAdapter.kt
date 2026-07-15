@@ -228,9 +228,11 @@ class AnimeWatchAdapter(
             } catch (e: java.lang.Exception) {}
         }
         FocusEffectUtil.applyFocusListener(binding.mediaSourceSearch, binding.mediaSourceSearch)
+        binding.mediaSourceSearch.nextFocusRightId = R.id.mediaSourceSearch
         FocusEffectUtil.applyFocusListener(binding.mediaSourceSettings, binding.mediaSourceSettings, true)
         FocusEffectUtil.applyFocusListener(binding.mediaSourceSubscribe, binding.mediaSourceSubscribe, true)
         FocusEffectUtil.applyFocusListener(binding.mediaNestedButton, binding.mediaNestedButton, true)
+        binding.mediaNestedButton.nextFocusRightId = R.id.mediaNestedButton
         FocusEffectUtil.applyFocusListener(binding.sourceContinue)
         binding.mediaNestedButton.nextFocusDownId = R.id.ScrollTop
         binding.mediaSourceSubscribe.nextFocusDownId = R.id.ScrollTop

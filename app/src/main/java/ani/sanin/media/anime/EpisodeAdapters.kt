@@ -401,6 +401,7 @@ class EpisodeAdapter(
         init {
             itemView.isFocusable = true
             FocusEffectUtil.applyFocusListener(itemView)
+            itemView.nextFocusRightId = R.id.itemEpisodeCont
             itemView.setOnClickListener {
                 if (bindingAdapterPosition < arr.size && bindingAdapterPosition >= 0)
                     fragment.onEpisodeClick(arr[bindingAdapterPosition].number)
@@ -413,6 +414,7 @@ class EpisodeAdapter(
         init {
             itemView.isFocusable = true
             FocusEffectUtil.applyFocusListener(itemView)
+            itemView.nextFocusRightId = R.id.itemEpisodeCont
             itemView.setOnClickListener {
                 if (bindingAdapterPosition < arr.size && bindingAdapterPosition >= 0)
                     fragment.onEpisodeClick(arr[bindingAdapterPosition].number)
@@ -425,6 +427,7 @@ class EpisodeAdapter(
         init {
             itemView.isFocusable = true
             FocusEffectUtil.applyFocusListener(itemView)
+            itemView.nextFocusRightId = R.id.itemEpisodeCont
             itemView.setOnClickListener {
                 if (bindingAdapterPosition < arr.size && bindingAdapterPosition >= 0)
                     fragment.onEpisodeClick(arr[bindingAdapterPosition].number)
