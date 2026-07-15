@@ -1591,6 +1591,15 @@ class ExoplayerView :
         if (PrefManager.getVal(PrefName.TimeStampsEnabled)) {
             updateTimeStamp()
         }
+
+        window.decorView.post {
+            val oledId = ani.sanin.themes.OledBackgroundManager.overlayId
+            if (oledId != 0) {
+                window.decorView.findViewById<View>(oledId)?.let {
+                    it.visibility = View.GONE
+                }
+            }
+        }
     }
 
     private fun initPlayer() {
