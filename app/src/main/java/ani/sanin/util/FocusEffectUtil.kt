@@ -1,23 +1,38 @@
 package ani.sanin.util
 
-import android.content.res.TypedArray
+import android.animation.ValueAnimator
 import android.graphics.Color
-import android.widget.ImageButton
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.GradientDrawable
 import android.graphics.drawable.LayerDrawable
 import android.os.Build
+import android.os.Handler
+import android.os.Looper
 import android.util.TypedValue
 import android.view.View
-import ani.sanin.R
+import android.view.animation.DecelerateInterpolator
+import android.view.animation.OvershootInterpolator
+import ani.sanin.settings.saving.PrefManager
+import ani.sanin.settings.saving.PrefName
 
 object FocusEffectUtil {
 
     private var lastFocusedView: View? = null
     private val savedForegrounds = mutableMapOf<View, Drawable?>()
-    private val savedBackgrounds = mutableMapOf<View, Drawable?>()
+    private val savedElevations = mutableMapOf<View, Float>()
+    private val pulseHandlers = mutableMapOf<View, Handler>()
 
-    fun applyFocusListener(vararg views: View, fade: Boolean = false) {
+    private val icyBlue = Color.rgb(176, 224, 230)
+    private val icyBlueGlow = Color.argb(45, 176, 224, 230)
+    private val icyBlueStart = Color.argb(100, 190, 235, 245)
+
+    private const val SCALE_PEAK = 1.08f
+    private const val SCALE_FOCUSED = 1.06f
+    private const val ELEVATION_BOOST = 12f
+
+    fun isEnabled(): Boolean = PrefManager.getVal<Int>(PrefName.FocusEffect) != 4
+
+    fun applyFocusListener(vararg views: View) {
         for (view in views) {
             view.onFocusChangeListener = null
             view.setOnFocusChangeListener { v, hasFocus ->
@@ -26,23 +41,15 @@ object FocusEffectUtil {
                         resetView(lastFocusedView)
                         lastFocusedView = v
                     }
-                    applyBorder(v, v is ImageButton)
-                    applyFocusGain(v)
-                    if (fade) v.animate().alpha(1f).setDuration(200).start()
+                    focusGained(v)
                 } else {
-                    removeBorder(v)
-                    if (fade) {
-                        v.animate().alpha(0.85f).rotationY(0f).setDuration(200).start()
-                    } else {
-                        applyFocusLoss(v)
-                    }
+                    focusLost(v)
                 }
             }
             if (view.isFocused) {
                 resetView(lastFocusedView)
                 lastFocusedView = view
-                applyBorder(view, view is ImageButton)
-                applyFocusGain(view)
+                focusGained(view)
             }
         }
     }
@@ -53,110 +60,188 @@ object FocusEffectUtil {
             if (hasFocus) {
                 if (lastFocusedView != v) {
                     resetView(lastFocusedView)
-                    lastFocusedView = v
+                    lastFocusedView = borderTarget
                 }
-                applyBorder(borderTarget, isCircular)
-                applyFocusGain(borderTarget)
+                focusGained(borderTarget)
                 if (fade) v.animate().alpha(1f).setDuration(200).start()
             } else {
-                removeBorder(borderTarget)
-                if (fade) {
-                    v.animate().alpha(0.85f).rotationY(0f).setDuration(200).start()
-                } else {
-                    applyFocusLoss(borderTarget)
-                }
+                focusLost(borderTarget)
+                if (fade) v.animate().alpha(0.85f).rotationY(0f).setDuration(200).start()
             }
+        }
+        if (focusView.isFocused) {
+            resetView(lastFocusedView)
+            lastFocusedView = borderTarget
+            focusGained(borderTarget)
         }
     }
 
     private fun resetView(v: View?) {
         if (v == null) return
-        removeBorder(v)
-        v.elevation = 0f
+        stopPulse(v)
+        removeGlow(v)
+        v.animate().cancel()
         v.scaleX = 1f
         v.scaleY = 1f
-        v.translationX = 0f
-        v.translationY = 0f
-        v.rotationY = 0f
-        v.alpha = 1f
+        v.translationZ = 0f
+        v.elevation = savedElevations.remove(v) ?: 0f
     }
 
-    fun getPrimaryColor(context: android.content.Context): Int {
-        val ta: TypedArray = context.theme.obtainStyledAttributes(intArrayOf(com.google.android.material.R.attr.colorPrimary))
-        val color = ta.getColor(0, Color.WHITE)
-        ta.recycle()
-        return color
+    private fun focusGained(v: View) {
+        if (!isEnabled()) return
+        savedElevations[v] = v.elevation
+
+        v.animate().cancel()
+
+        v.animate()
+            .scaleX(SCALE_PEAK).scaleY(SCALE_PEAK)
+            .setDuration(100)
+            .setInterpolator(DecelerateInterpolator())
+            .withEndAction {
+                v.animate()
+                    .scaleX(SCALE_FOCUSED).scaleY(SCALE_FOCUSED)
+                    .setDuration(80)
+                    .setInterpolator(OvershootInterpolator(0.6f))
+                    .start()
+            }
+            .start()
+
+        v.translationZ = ELEVATION_BOOST
+
+        applyGlow(v)
     }
 
-    private fun getPrimaryColor(v: View): Int {
-        val ta: TypedArray = v.context.theme.obtainStyledAttributes(intArrayOf(com.google.android.material.R.attr.colorPrimary))
-        val color = ta.getColor(0, Color.WHITE)
-        ta.recycle()
-        return color
+    private fun focusLost(v: View) {
+        if (!isEnabled()) return
+        stopPulse(v)
+        removeGlow(v)
+
+        v.animate().cancel()
+        v.animate()
+            .scaleX(1f).scaleY(1f)
+            .translationZ(0f)
+            .setDuration(150)
+            .setInterpolator(DecelerateInterpolator())
+            .start()
+
+        v.elevation = savedElevations.remove(v) ?: 0f
     }
 
-    private fun applyBorder(v: View, isCircular: Boolean = false) {
-        val primaryColor = getPrimaryColor(v)
-        val borderWidthPx = TypedValue.applyDimension(
-            TypedValue.COMPLEX_UNIT_DIP, 3f, v.resources.displayMetrics
-        ).toInt()
-        val cardRadius = if (v is androidx.cardview.widget.CardView) v.radius else 0f
-        val defaultRadius = TypedValue.applyDimension(
-            TypedValue.COMPLEX_UNIT_DIP, 8f, v.resources.displayMetrics
-        ).toInt()
-        val cornerRadius = if (cardRadius > 0f) cardRadius.toInt() else defaultRadius
+    private fun applyGlow(v: View) {
+        val metrics = v.resources.displayMetrics
+        val cornerRadius = if (v is androidx.cardview.widget.CardView && v.radius > 0) {
+            v.radius
+        } else {
+            TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8f, metrics)
+        }
 
-        val borderDrawable = GradientDrawable().apply {
-            setShape(if (isCircular) GradientDrawable.OVAL else GradientDrawable.RECTANGLE)
+        val glowWidth = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8f, metrics).toInt()
+        val edgeWidth = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 2f, metrics).toInt()
+
+        val glowLayer = GradientDrawable().apply {
+            setShape(GradientDrawable.RECTANGLE)
             setColor(Color.TRANSPARENT)
-            setStroke(borderWidthPx, primaryColor)
-            if (!isCircular) setCornerRadius(cornerRadius.toFloat())
+            setStroke(glowWidth, icyBlueGlow)
+            setCornerRadius(cornerRadius)
         }
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            savedForegrounds[v] = v.foreground
-            v.foreground = borderDrawable
-        } else {
-            if (v is androidx.cardview.widget.CardView) return
-            val originalBg = v.background
-            savedBackgrounds[v] = originalBg
-            val layers = arrayOf(
-                originalBg ?: GradientDrawable().apply { setColor(Color.TRANSPARENT) },
-                borderDrawable
-            )
-            v.setBackgroundDrawable(LayerDrawable(layers))
+        val edgeLayer = GradientDrawable().apply {
+            setShape(GradientDrawable.RECTANGLE)
+            setColor(Color.TRANSPARENT)
+            setStroke(edgeWidth, icyBlue)
+            setCornerRadius(cornerRadius)
         }
+
+        val layers = LayerDrawable(arrayOf(glowLayer, edgeLayer))
+
+        savedForegrounds[v] = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) v.foreground else null
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            v.foreground = layers
+        }
+
+        val startWidth = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 14f, metrics).toInt()
+        glowLayer.setStroke(startWidth, icyBlueStart)
+        v.invalidate()
+
+        val crystalAnim = ValueAnimator.ofInt(startWidth, glowWidth)
+        crystalAnim.duration = 300
+        crystalAnim.interpolator = DecelerateInterpolator()
+        crystalAnim.addUpdateListener { a ->
+            glowLayer.setStroke(a.animatedValue as Int, icyBlueGlow)
+            v.invalidate()
+        }
+        crystalAnim.start()
+
+        startPulse(v, glowLayer, glowWidth, crystalAnim)
     }
 
-    private fun removeBorder(v: View) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            v.foreground = savedForegrounds.remove(v) ?: savedForegrounds.remove(v)
-        } else {
-            if (v is androidx.cardview.widget.CardView) return
-            val original = savedBackgrounds.remove(v)
-            if (original != null) {
-                v.setBackgroundDrawable(original)
-            } else {
-                v.background = null
+    private fun startPulse(v: View, glow: GradientDrawable, baseWidth: Int, crystalAnim: ValueAnimator) {
+        val handler = Handler(Looper.getMainLooper())
+        val runnable = object : Runnable {
+            var pulsing = false
+            override fun run() {
+                if (pulsing || !v.isFocused) return
+                pulsing = true
+                val extra = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 1.5f, v.resources.displayMetrics).toInt()
+                val pulseWidth = baseWidth + extra
+                val pulseColor = Color.argb(65, 185, 230, 240)
+
+                val expand = ValueAnimator.ofInt(baseWidth, pulseWidth)
+                expand.duration = 300
+                expand.interpolator = DecelerateInterpolator()
+                expand.addUpdateListener { a ->
+                    if (v.isFocused) {
+                        glow.setStroke(a.animatedValue as Int, pulseColor)
+                        v.invalidate()
+                    }
+                }
+                expand.addListener(object : android.animation.AnimatorListenerAdapter() {
+                    override fun onAnimationEnd(animation: android.animation.Animator) {
+                        if (!v.isFocused) { pulsing = false; return }
+                        val contract = ValueAnimator.ofInt(pulseWidth, baseWidth)
+                        contract.duration = 300
+                        contract.interpolator = DecelerateInterpolator()
+                        contract.addUpdateListener { a ->
+                            if (v.isFocused) {
+                                glow.setStroke(a.animatedValue as Int, icyBlueGlow)
+                                v.invalidate()
+                            } else {
+                                glow.setStroke(baseWidth, icyBlueGlow)
+                                v.invalidate()
+                            }
+                        }
+                        contract.addListener(object : android.animation.AnimatorListenerAdapter() {
+                            override fun onAnimationEnd(animation: android.animation.Animator) {
+                                pulsing = false
+                            }
+                        })
+                        contract.start()
+                    }
+                })
+                expand.start()
+
+                val delay = 1500L + (Math.random() * 500).toLong()
+                handler.postDelayed(this, delay)
             }
         }
+        pulseHandlers[v] = handler
+
+        crystalAnim.addListener(object : android.animation.AnimatorListenerAdapter() {
+            override fun onAnimationEnd(animation: android.animation.Animator) {
+                handler.postDelayed(runnable, 1500)
+            }
+        })
     }
 
-    private fun shouldSpin(v: View): Boolean {
-        if (v is ImageButton) return true
-        val id = v.id
-        return id == R.id.mainCalendarContainer ||
-                id == R.id.mainUserAvatarContainer
+    private fun stopPulse(v: View) {
+        pulseHandlers[v]?.removeCallbacksAndMessages(null)
+        pulseHandlers.remove(v)
     }
 
-    private fun applyFocusGain(v: View) {
-        if (shouldSpin(v)) {
-            v.animate().rotationYBy(360f).setDuration(400).start()
+    private fun removeGlow(v: View) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            val orig = savedForegrounds.remove(v)
+            v.foreground = orig ?: v.foreground
         }
-    }
-
-    private fun applyFocusLoss(v: View) {
-        v.animate().cancel()
-        v.animate().rotationY(0f).setDuration(200).start()
     }
 }
