@@ -768,19 +768,19 @@ class ExoplayerView :
         playerView.post { exoPlay.requestFocus() }
         FocusEffectUtil.applyFocusListener(playerView)
 
-        // Focus chain: ep_sel_btn ← back ← prev ← play → next
-        //                    ↑                          ↕
-        //               speed ──────────────────────────┘
-        episodeTitleBtn.nextFocusRightId = R.id.exo_back
-        exoBack.nextFocusLeftId = R.id.exo_ep_sel_btn
+        // Focus chain: back → speed → ep_sel_btn
+        //                 ↑              ↓
+        //            prev ← play → next
         exoBack.nextFocusRightId = R.id.exo_prev_ep
+        exoBack.nextFocusLeftId = R.id.exo_ep_sel_btn
         playerView.findViewById<View>(R.id.exo_prev_ep).nextFocusLeftId = R.id.exo_back
         playerView.findViewById<View>(R.id.exo_prev_ep).nextFocusRightId = androidx.media3.ui.R.id.exo_play
         exoPlay.nextFocusLeftId = R.id.exo_prev_ep
         exoPlay.nextFocusRightId = R.id.exo_next_ep
         playerView.findViewById<View>(R.id.exo_next_ep).nextFocusLeftId = androidx.media3.ui.R.id.exo_play
-        exoPlay.nextFocusUpId = androidx.media3.ui.R.id.exo_playback_speed
+        exoPlay.nextFocusUpId = R.id.exo_ep_sel_btn
         exoSpeed.nextFocusDownId = androidx.media3.ui.R.id.exo_play
+        episodeTitleBtn.nextFocusDownId = androidx.media3.ui.R.id.exo_play
 
         val progressBar = playerView.findViewById<DefaultTimeBar>(androidx.media3.ui.R.id.exo_progress)
         progressBar.isFocusable = true

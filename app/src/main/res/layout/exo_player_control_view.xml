@@ -332,7 +332,6 @@
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:layout_alignWithParentIfMissing="true"
-                            android:layout_toStartOf="@+id/exo_ep_sel_btn"
                             android:gravity="center_vertical"
                             android:fontFamily="@font/poppins_bold"
                             android:singleLine="true"
@@ -352,18 +351,6 @@
                         app:tint="#fff"
                         tools:ignore="ContentDescription,SpeakableTextPresentCheck" />
 
-                    <ImageButton
-                            android:id="@+id/exo_ep_sel_btn"
-                            android:layout_width="48dp"
-                            android:layout_height="match_parent"
-                            android:layout_alignParentEnd="true"
-                            android:focusable="true"
-                            android:nextFocusRight="@id/exo_playback_speed"
-                            android:backgroundTint="#00FFFFFF"
-                            android:src="@drawable/ic_round_video_library_24"
-                            app:tint="@color/bg_white"
-                            tools:ignore="ContentDescription" />
-
                         <ani.sanin.SpinnerNoSwipe
                             android:id="@+id/exo_ep_sel"
                             android:layout_width="match_parent"
@@ -379,7 +366,6 @@
                         android:id="@+id/exo_anime_title"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginEnd="48dp"
                         android:alpha="0.75"
                         android:fontFamily="@font/poppins"
                         android:singleLine="false"
@@ -396,17 +382,36 @@
                     android:gravity="center_vertical"
                     android:orientation="vertical">
 
-                    <ImageButton
-                        android:id="@id/exo_playback_speed"
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
-                        android:focusable="true"
-                        android:nextFocusLeft="@id/exo_ep_sel_btn"
-                        android:nextFocusDown="@id/exo_play"
-                        android:backgroundTint="#00FFFFFF"
-                        android:src="@drawable/ic_round_slow_motion_video_24"
-                        app:tint="#fff"
-                        tools:ignore="ContentDescription,SpeakableTextPresentCheck" />
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <ImageButton
+                            android:id="@id/exo_playback_speed"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
+                            android:focusable="true"
+                            android:nextFocusLeft="@id/exo_back"
+                            android:nextFocusRight="@+id/exo_ep_sel_btn"
+                            android:nextFocusDown="@id/exo_play"
+                            android:backgroundTint="#00FFFFFF"
+                            android:src="@drawable/ic_round_slow_motion_video_24"
+                            app:tint="#fff"
+                            tools:ignore="ContentDescription,SpeakableTextPresentCheck" />
+
+                        <ImageButton
+                            android:id="@+id/exo_ep_sel_btn"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
+                            android:focusable="true"
+                            android:nextFocusLeft="@id/exo_playback_speed"
+                            android:nextFocusDown="@id/exo_play"
+                            android:backgroundTint="#00FFFFFF"
+                            android:src="@drawable/ic_round_video_library_24"
+                            app:tint="@color/bg_white"
+                            tools:ignore="ContentDescription" />
+                    </LinearLayout>
 
                     <TextView
                         android:id="@+id/exo_video_info"
