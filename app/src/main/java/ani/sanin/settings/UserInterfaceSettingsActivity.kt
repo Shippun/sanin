@@ -29,9 +29,13 @@ class UserInterfaceSettingsActivity : AppCompatActivity() {
     private val ui = "ui_settings"
 
     private fun getFocusEffectLabel(effect: Int): String = when (effect) {
-        0 -> "Enabled"
-        4 -> "Disabled"
-        else -> "Enabled"
+        0 -> "Icy Glow"
+        1 -> "Glass Lift"
+        2 -> "Crystal Edge"
+        3 -> "Snap Bounce"
+        4 -> "Serpent Pulse"
+        5 -> "None"
+        else -> "None"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -156,10 +160,9 @@ class UserInterfaceSettingsActivity : AppCompatActivity() {
         binding.uiSettingsFocusEffect.setOnClickListener {
             customAlertDialog().apply {
                 setTitle("Focus Effect")
-                val labels = arrayOf("Enabled", "Disabled")
-                val current = if (PrefManager.getVal<Int>(PrefName.FocusEffect) == 4) 1 else 0
-                singleChoiceItems(labels, current) { index ->
-                    PrefManager.setVal(PrefName.FocusEffect, if (index == 0) 0 else 4)
+                val labels = arrayOf("Icy Glow", "Glass Lift", "Crystal Edge", "Snap Bounce", "Serpent Pulse", "None")
+                singleChoiceItems(labels, PrefManager.getVal<Int>(PrefName.FocusEffect)) { index ->
+                    PrefManager.setVal(PrefName.FocusEffect, index)
                 }
                 show()
             }
