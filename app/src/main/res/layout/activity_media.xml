@@ -184,6 +184,7 @@
         android:layout_gravity="bottom"
         android:background="@android:color/transparent"
         android:focusable="true"
+        android:descendantFocusability="afterDescendants"
         android:nextFocusUp="@+id/commentsList"
         android:orientation="vertical"
         android:windowSoftInputMode="adjustResize"

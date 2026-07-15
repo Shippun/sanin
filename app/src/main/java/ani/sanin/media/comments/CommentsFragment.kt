@@ -451,6 +451,10 @@ class CommentsFragment : Fragment() {
 
         activity.binding.commentInput.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus) {
+                activity.binding.commentInput.post {
+                    val imm = activity.getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+                    imm.showSoftInput(activity.binding.commentInput, InputMethodManager.SHOW_IMPLICIT)
+                }
                 val targetWidth = activity.binding.commentInputLayout.width -
                         activity.binding.commentLabel.width -
                         activity.binding.commentSend.width -
