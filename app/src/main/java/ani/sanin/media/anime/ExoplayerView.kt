@@ -1351,7 +1351,7 @@ class ExoplayerView :
         episodeDrawerAdapter = EpisodeRailAdapter(episodes) { epKey ->
             val idx = episodeArr.indexOf(epKey)
             if (idx >= 0 && idx != currentEpisodeIndex) {
-                episodeDrawer.close()
+                episodeDrawer.closeDrawer(episodeDrawerContent)
                 disappeared = false
                 functionstarted = false
                 currentEpisodeIndex = idx
@@ -1590,6 +1590,15 @@ class ExoplayerView :
         // Start the recursive Fun
         if (PrefManager.getVal(PrefName.TimeStampsEnabled)) {
             updateTimeStamp()
+        }
+
+        window.decorView.post {
+            val oledId = ani.sanin.themes.OledBackgroundManager.overlayId
+            if (oledId != 0) {
+                window.decorView.findViewById<View>(oledId)?.let {
+                    it.visibility = View.GONE
+                }
+            }
         }
     }
 

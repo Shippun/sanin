@@ -231,7 +231,12 @@ class NotificationActivity : AppCompatActivity() {
     private fun hideNotificationNavRail() {
         if (PrefManager.getVal<Boolean>(PrefName.SideRailPersist)) return
         binding.notificationNavRail.visibility = View.GONE
-        binding.notificationViewPager.requestFocus()
+        val frag = fragments[selected]
+        if (frag != null) {
+            frag.focusRecyclerView()
+        } else {
+            binding.notificationViewPager.requestFocus()
+        }
     }
 
     private fun updateNavTints(buttons: List<android.widget.ImageButton>, selectedIndex: Int) {
@@ -240,7 +245,7 @@ class NotificationActivity : AppCompatActivity() {
         ta.recycle()
         buttons.forEachIndexed { i, btn ->
             btn.imageTintList = ColorStateList.valueOf(if (i == selectedIndex) primary else Color.WHITE)
-            btn.alpha = if (i == selectedIndex) 1f else 0.6f
+            btn.alpha = 1f
         }
     }
 

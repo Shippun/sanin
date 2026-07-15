@@ -1,6 +1,5 @@
 package ani.sanin.profile.notification
 
-import android.graphics.Color
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
@@ -46,10 +45,6 @@ class NotificationItem(
         binding = viewBinding
         setAnimation(binding.root.context, binding.root)
         setBinding()
-        val primaryColor = FocusEffectUtil.getPrimaryColor(binding.notificationCard.context)
-        binding.notificationCard.setOnFocusChangeListener { v, hasFocus ->
-            v.elevation = if (hasFocus) 16f else 4f
-        }
         FocusEffectUtil.applyFocusListener(binding.notificationCard)
         binding.notificationCard.setOnClickListener {
             binding.notificationBannerImage.performClick()

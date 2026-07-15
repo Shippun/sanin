@@ -239,6 +239,9 @@ class NotificationFragment : Fragment() {
             binding.root.requestLayout()
         }
     }
+    fun focusRecyclerView() {
+        binding.notificationRecyclerView.requestFocus()
+    }
     fun onVisible() {
         resetCountIfNeeded()
     }

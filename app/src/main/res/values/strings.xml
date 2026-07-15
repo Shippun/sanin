@@ -451,15 +451,8 @@
     <string name="notification_popup">In-App notification popup</string>
     <string name="notification_popup_desc">Show a small popup at the top of the screen when new episodes are found</string>
 
-    <string name="qr_code_anilist">QR Code for Anilist Login</string>
-    <string name="qr_scan_instructions">Scan this QR code with your phone camera to log in</string>
-    <string name="qr_connection_error">Could not connect to login relay. Check your connection.</string>
-    <string name="qr_success">Login successful!</string>
-    <string name="qr_expired">Session expired. Please try again.</string>
     <string name="login_to_anilist">Login to Anilist</string>
     <string name="browser_login">Browser</string>
-    <string name="qr_login">QR Code</string>
-    <string name="continue_label">Continue</string>
     <string name="retry">Retry</string>
     <string name="use_alarm_manager">Use Alarm Manager</string>
     <string name="use_alarm_manager_reliable">Use Alarm Manager for reliable Notifications</string>

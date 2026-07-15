@@ -19,6 +19,7 @@ object FocusEffectUtil {
 
     fun applyFocusListener(vararg views: View, fade: Boolean = false) {
         for (view in views) {
+            removeBorder(view)
             view.onFocusChangeListener = null
             view.setOnFocusChangeListener { v, hasFocus ->
                 if (hasFocus) {
@@ -48,6 +49,7 @@ object FocusEffectUtil {
     }
 
     fun applyFocusListener(focusView: View, borderTarget: View, isCircular: Boolean = false, fade: Boolean = false) {
+        removeBorder(borderTarget)
         focusView.onFocusChangeListener = null
         focusView.setOnFocusChangeListener { v, hasFocus ->
             if (hasFocus) {

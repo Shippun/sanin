@@ -163,9 +163,6 @@
             android:name=".media.ReviewViewActivity"
             android:parentActivityName=".media.ReviewActivity" />
         <activity
-            android:name=".connections.anilist.QRLoginActivity"
-            android:parentActivityName=".MainActivity" />
-        <activity
             android:name=".media.SearchActivity"
             android:parentActivityName=".MainActivity" />
         <activity android:name=".media.StudioActivity" />

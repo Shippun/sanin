@@ -21,6 +21,9 @@ object OledBackgroundManager {
     private var overlayView: View? = null
     private var overlayParentId: Int = -1
 
+    var overlayId: Int = 0
+        private set
+
     fun apply(activity: Activity, oledMode: Int, primaryColor: Int, gradientDir: Int = 0) {
         val drawable = when (oledMode) {
             1 -> DarkBgDrawable()
@@ -59,6 +62,8 @@ object OledBackgroundManager {
                 overlay.isClickable = false
                 overlay.isFocusable = false
                 overlay.isFocusableInTouchMode = false
+                overlay.id = View.generateViewId()
+                overlayId = overlay.id
                 decorGroup?.addView(overlay)
                 overlayView = overlay
             }

@@ -172,24 +172,9 @@ class MediaDetailsActivity : AppCompatActivity() {
         binding.navPillBg?.live = PrefManager.getVal(PrefName.LiveSideRail)
         binding.navPillBg?.doOnLayout { updateMediaNavIconTints(selected) }
 
-        fun getNavContrastColor(yCenter: Float): Int {
-            val bg = binding.navPillBg ?: return onBgColor
-            if (bg.height <= 0) return onBgColor
-            val fraction = yCenter / bg.height
-            val color = bg.getColorAtFraction(fraction)
-            val luminance = (0.299 * Color.red(color) + 0.587 * Color.green(color) + 0.114 * Color.blue(color)) / 255.0
-            return if (luminance > 0.5) Color.parseColor("#2A2A2A") else Color.WHITE
-        }
-
         fun selectTab(idx: Int) {
             selected = idx
-            allNav.forEachIndexed { i, btn ->
-                val yCenter = btn.top + btn.height / 2f
-                val contrast = getNavContrastColor(yCenter)
-                val tint = if (i == idx) primaryColor else Color.argb(115, Color.red(contrast), Color.green(contrast), Color.blue(contrast))
-                btn.imageTintList = ColorStateList.valueOf(tint)
-                btn.alpha = if (i == idx) 1f else 0.7f
-            }
+            updateMediaNavIconTints(selected)
             binding.commentInputLayout.isVisible = selected == 2
             when (idx) {
                 0 -> {
@@ -377,19 +362,15 @@ class MediaDetailsActivity : AppCompatActivity() {
     }
 
     private fun updateMediaNavIconTints(selectedIdx: Int) {
-        val bg = binding.navPillBg ?: return
-        if (bg.height <= 0) return
         val primaryColor = getThemeColor(com.google.android.material.R.attr.colorPrimary)
         val pills = listOfNotNull(binding.navPillInfo, binding.navPillWatch, binding.navPillComments)
         pills.forEachIndexed { i, pill ->
-            val yCenter = pill.top + pill.height / 2f
-            val fraction = yCenter / bg.height
-            val color = bg.getColorAtFraction(fraction)
-            val luminance = (0.299 * Color.red(color) + 0.587 * Color.green(color) + 0.114 * Color.blue(color)) / 255.0
-            val contrast = if (luminance > 0.5) Color.parseColor("#2A2A2A") else Color.WHITE
-            val tint = if (i == selectedIdx) primaryColor else Color.argb(115, Color.red(contrast), Color.green(contrast), Color.blue(contrast))
-            pill.imageTintList = ColorStateList.valueOf(tint)
-            pill.alpha = if (i == selectedIdx) 1f else 0.7f
+            if (i == selectedIdx) {
+                pill.imageTintList = ColorStateList.valueOf(primaryColor)
+            } else {
+                pill.imageTintList = ColorStateList.valueOf(if (i == 0) Color.WHITE else Color.BLACK)
+            }
+            pill.alpha = 1f
         }
     }
 
