@@ -148,7 +148,7 @@ class AnimeWatchFragment : Fragment() {
         }
         FocusEffectUtil.applyFocusListener(binding.ScrollTop, binding.ScrollTop)
         binding.mediaWatchAddToList.setOnClickListener {
-            val rescueMode = PrefManager.getVal(PrefName.RescueMode)
+            val rescueMode: Boolean = PrefManager.getVal(PrefName.RescueMode)
             if (rescueMode) {
                 if (MAL.token != null) {
                     if (childFragmentManager.findFragmentByTag("dialog") == null)

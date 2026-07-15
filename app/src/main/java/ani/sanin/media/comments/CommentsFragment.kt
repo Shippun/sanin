@@ -139,7 +139,7 @@ class CommentsFragment : Fragment() {
         }
 
         binding.commentsAddToList.setOnClickListener {
-            val rescueMode = PrefManager.getVal(PrefName.RescueMode)
+            val rescueMode: Boolean = PrefManager.getVal(PrefName.RescueMode)
             if (rescueMode) {
                 if (MAL.token != null) {
                     if (childFragmentManager.findFragmentByTag("dialog") == null)
