@@ -103,6 +103,13 @@ object FocusEffectUtil {
         }
     }
 
+    fun getPrimaryColor(context: android.content.Context): Int {
+        val ta: android.content.res.TypedArray = context.theme.obtainStyledAttributes(intArrayOf(com.google.android.material.R.attr.colorPrimary))
+        val color = ta.getColor(0, Color.WHITE)
+        ta.recycle()
+        return color
+    }
+
     private fun focusLost(v: View) {
         if (mode() == 5) return
         stopPulse(v)
