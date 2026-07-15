@@ -522,11 +522,23 @@ class ExoplayerView :
         episodeDrawerList = findViewById(R.id.episodeDrawerList)
         episodeDrawerClose = findViewById(R.id.episodeDrawerClose)
         episodeDrawerContent = findViewById(R.id.episodeDrawer)
+        episodeDrawerClose.nextFocusDownId = R.id.episodeDrawerList
+        episodeDrawerList.nextFocusUpId = R.id.episodeDrawerClose
+        FocusEffectUtil.applyFocusListener(episodeDrawerClose)
         episodeDrawerClose.setOnClickListener { episodeDrawer.closeDrawer(episodeDrawerContent) }
         episodeDrawer.setDrawerListener(object : DrawerLayout.DrawerListener {
             override fun onDrawerSlide(drawerView: View, slideOffset: Float) {}
             override fun onDrawerOpened(drawerView: View) {
-                episodeDrawerList.requestFocus()
+                val pos = currentEpisodeIndex.coerceIn(0, episodeDrawerAdapter?.itemCount?.minus(1) ?: 0)
+                episodeDrawerList.scrollToPosition(pos)
+                episodeDrawerList.post {
+                    val holder = episodeDrawerList.findViewHolderForAdapterPosition(pos)
+                    if (holder != null) {
+                        holder.itemView.requestFocus()
+                    } else {
+                        episodeDrawerList.requestFocus()
+                    }
+                }
             }
             override fun onDrawerClosed(drawerView: View) {
                 episodeTitleBtn.requestFocus()
@@ -3598,6 +3610,10 @@ private class EpisodeRailViewHolder(val card: CardView) : ViewHolder(card) {
     private val desc = card.findViewById<TextView>(R.id.episodeRailDesc)
     private val date = card.findViewById<TextView>(R.id.episodeRailDate)
     private val rating = card.findViewById<TextView>(R.id.episodeRailRating)
+
+    init {
+        FocusEffectUtil.applyFocusListener(card)
+    }
 
     fun bind(epKey: String, ep: Episode) {
         number.text = epKey
