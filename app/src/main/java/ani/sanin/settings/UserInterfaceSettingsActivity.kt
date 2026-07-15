@@ -264,7 +264,6 @@ class UserInterfaceSettingsActivity : AppCompatActivity() {
             pill.imageTintList = android.content.res.ColorStateList.valueOf(tint)
         }
     }
-    }
 
     inner class HomeLayoutAdapter(
         private val displayList: MutableList<Int>,

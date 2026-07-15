@@ -170,8 +170,8 @@ class MediaDetailsActivity : AppCompatActivity() {
         binding.navPillBg?.doOnLayout { updateMediaNavIconTints(selected) }
 
         fun getNavContrastColor(yCenter: Float): Int {
-            val bg = binding.navPillBg ?: return onBgColor
-            if (bg.height <= 0) return onBgColor
+            val bg = binding.navPillBg ?: return Color.WHITE
+            if (bg.height <= 0) return Color.WHITE
             val fraction = yCenter / bg.height
             val color = bg.getColorAtFraction(fraction)
             val luminance = (0.299 * Color.red(color) + 0.587 * Color.green(color) + 0.114 * Color.blue(color)) / 255.0
