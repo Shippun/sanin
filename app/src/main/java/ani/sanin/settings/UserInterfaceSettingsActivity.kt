@@ -1,9 +1,11 @@
 package ani.sanin.settings
 
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.updateLayoutParams
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -60,11 +62,6 @@ class UserInterfaceSettingsActivity : AppCompatActivity() {
             binding.uiSettingsImmersive,
             binding.uiSettingsSmallView,
             binding.uiSettingsEmoji,
-            binding.uiSettingsNavPillWidth,
-            binding.uiSettingsNavPillHeight,
-            binding.uiSettingsNavPillSpacing,
-            binding.uiSettingsNavPillCorner,
-            binding.uiSettingsNavPillBgStyle,
         )
 
         binding.uiSettingsHomeLayout.setOnClickListener {
