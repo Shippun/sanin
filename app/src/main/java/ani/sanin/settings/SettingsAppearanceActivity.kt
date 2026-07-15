@@ -1,7 +1,11 @@
 package ani.sanin.settings
 
 import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
+import android.widget.SeekBar
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.updateLayoutParams
 import ani.sanin.R
@@ -14,6 +18,7 @@ import ani.sanin.settings.saving.PrefName
 import ani.sanin.statusBarHeight
 import ani.sanin.themes.ThemeManager
 import ani.sanin.util.FocusEffectUtil
+import ani.sanin.util.applyNavPillCustomizations
 import ani.sanin.util.customAlertDialog
 
 class SettingsAppearanceActivity : AppCompatActivity() {
@@ -48,6 +53,12 @@ class SettingsAppearanceActivity : AppCompatActivity() {
             binding.appearanceBlurRadius,
             binding.appearanceBlurSampling,
             binding.appearanceUiScale,
+            binding.appearanceNavPillWidth,
+            binding.appearanceNavPillHeight,
+            binding.appearanceNavPillSpacing,
+            binding.appearanceNavPillIconSize,
+            binding.appearanceNavPillCorner,
+            binding.appearanceNavPillBgStyle,
         )
 
         binding.appearanceCardSize.isFocusable = true
@@ -163,6 +174,91 @@ class SettingsAppearanceActivity : AppCompatActivity() {
         binding.appearancePersistSideRail.isChecked = PrefManager.getVal(PrefName.SideRailPersist)
         binding.appearancePersistSideRail.setOnCheckedChangeListener { _, isChecked ->
             PrefManager.setVal(PrefName.SideRailPersist, isChecked)
+        }
+
+        updateNavPillPreview()
+        setupNavPillSetting(
+            binding.appearanceNavPillWidth, "Pill Width", PrefName.NavPillWidth, 24, 80
+        ) { updateNavPillPreview() }
+        setupNavPillSetting(
+            binding.appearanceNavPillHeight, "Pill Height", PrefName.NavPillHeight, 24, 80
+        ) { updateNavPillPreview() }
+        setupNavPillSetting(
+            binding.appearanceNavPillSpacing, "Pill Spacing", PrefName.NavPillSpacing, 0, 32
+        ) { updateNavPillPreview() }
+        setupNavPillSetting(
+            binding.appearanceNavPillIconSize, "Icon Size", PrefName.NavPillIconSize, 4, 24
+        ) { updateNavPillPreview() }
+        setupNavPillSetting(
+            binding.appearanceNavPillCorner, "Rail Corner", PrefName.NavPillCornerRadius, 0, 100
+        ) { updateNavPillPreview() }
+
+        binding.appearanceNavPillBgStyle.setOnClickListener {
+            val labels = arrayOf("Top Dark → Bottom Light", "Top Light → Bottom Dark")
+            customAlertDialog().apply {
+                setTitle("Background Style")
+                singleChoiceItems(labels, PrefManager.getVal<Int>(PrefName.NavPillBgStyle)) { index ->
+                    PrefManager.setVal(PrefName.NavPillBgStyle, index)
+                    updateNavPillPreview()
+                }
+                show()
+            }
+        }
+    }
+
+    private fun setupNavPillSetting(
+        button: View, title: String, pref: PrefName, min: Int, max: Int,
+        onChanged: () -> Unit
+    ) {
+        button.setOnClickListener {
+            val current = PrefManager.getVal<Int>(pref)
+            val layout = LayoutInflater.from(this).inflate(R.layout.dialog_seekbar, null)
+            val valueText = layout.findViewById<TextView>(R.id.dialogSeekbarValue)
+            val seekBar = layout.findViewById<SeekBar>(R.id.dialogSeekbar)
+            seekBar.max = max - min
+            seekBar.progress = current - min
+            valueText.text = "${current}dp"
+            seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+                override fun onProgressChanged(sb: SeekBar, progress: Int, fromUser: Boolean) {
+                    val v = progress + min
+                    valueText.text = "${v}dp"
+                }
+                override fun onStartTrackingTouch(sb: SeekBar) {}
+                override fun onStopTrackingTouch(sb: SeekBar) {}
+            })
+            customAlertDialog().apply {
+                setTitle(title)
+                setCustomView(layout)
+                setPosButton(R.string.ok) {
+                    val v = seekBar.progress + min
+                    PrefManager.setVal(pref, v)
+                    onChanged()
+                }
+                setNegButton(R.string.cancel, null)
+                show()
+            }
+        }
+    }
+
+    private fun updateNavPillPreview() {
+        val previewPills = listOf(
+            binding.navPillPreview1,
+            binding.navPillPreview2,
+            binding.navPillPreview3,
+        )
+        applyNavPillCustomizations(
+            railContainer = binding.navPillPreviewContainer,
+            railBg = binding.navPillPreviewBg,
+            pills = previewPills,
+        )
+        val bg = binding.navPillPreviewBg
+        previewPills.forEach { pill ->
+            val yCenter = pill.top + pill.height / 2f
+            val fraction = if (bg.height > 0) yCenter / bg.height else 0f
+            val color = bg.getColorAtFraction(fraction)
+            val luminance = (0.299 * android.graphics.Color.red(color) + 0.587 * android.graphics.Color.green(color) + 0.114 * android.graphics.Color.blue(color)) / 255.0
+            val tint = if (luminance > 0.5) android.graphics.Color.parseColor("#2A2A2A") else android.graphics.Color.WHITE
+            pill.imageTintList = android.content.res.ColorStateList.valueOf(tint)
         }
     }
 }

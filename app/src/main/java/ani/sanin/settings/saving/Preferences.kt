@@ -125,6 +125,7 @@ enum class PrefName(val data: Pref) {
     NavPillSpacing(Pref(Location.UI, Int::class, 0)),
     NavPillBgStyle(Pref(Location.UI, Int::class, 0)),
     NavPillCornerRadius(Pref(Location.UI, Int::class, 50)),
+    NavPillIconSize(Pref(Location.UI, Int::class, 12)),
     CardStyle(Pref(Location.UI, Int::class, 0)),
 
     UIScale(Pref(Location.UI, Float::class, 1.0f)),

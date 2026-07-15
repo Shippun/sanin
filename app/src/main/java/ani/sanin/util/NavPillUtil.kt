@@ -22,6 +22,7 @@ fun applyNavPillCustomizations(
     val pillHeight = (PrefManager.getVal<Int>(PrefName.NavPillHeight) * density).toInt()
     val spacing = (PrefManager.getVal<Int>(PrefName.NavPillSpacing) * density).toInt()
     val cornerPercent = PrefManager.getVal<Int>(PrefName.NavPillCornerRadius)
+    val iconPadding = (PrefManager.getVal<Int>(PrefName.NavPillIconSize) * density).toInt()
     val railWidth = (pillWidth + 16 * density).toInt().coerceAtLeast(pillWidth + 8)
 
     val containerLp = railContainer.layoutParams
@@ -46,6 +47,7 @@ fun applyNavPillCustomizations(
         val mlp = pill.layoutParams as? ViewGroup.MarginLayoutParams
         mlp?.topMargin = spacing / 2
         mlp?.bottomMargin = spacing / 2
+        pill.setPadding(iconPadding, iconPadding, iconPadding, iconPadding)
     }
 
     railBg.invalidate()
