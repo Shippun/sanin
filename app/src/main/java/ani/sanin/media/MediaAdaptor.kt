@@ -180,23 +180,6 @@ class MediaAdaptor(
                         (if (media.userScore != 0) R.drawable.item_user_score else R.drawable.item_score)
                     )
                     b.itemCompactTitle.text = media.userPreferredName
-                    val intensity = PrefManager.getVal<Float>(PrefName.CardGradientIntensity)
-                    if (intensity <= 0f) {
-                        b.itemCompactOverlay.background = null
-                        b.itemCompactOverlay.visibility = View.GONE
-                    } else {
-                        b.itemCompactOverlay.visibility = View.VISIBLE
-                        val endAlpha = 255
-                        val endColor = Color.argb(
-                            (endAlpha * intensity).toInt().coerceIn(0, 255),
-                            0, 0, 0
-                        )
-                        val gradient = GradientDrawable(
-                            GradientDrawable.Orientation.BOTTOM_TOP,
-                            intArrayOf(endColor, endColor, android.graphics.Color.TRANSPARENT)
-                        )
-                        b.itemCompactOverlay.background = gradient
-                    }
                 }
             }
 

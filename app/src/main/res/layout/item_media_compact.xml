@@ -36,12 +36,6 @@
                 tools:ignore="ContentDescription,ImageContrastCheck"
                 tools:srcCompat="@tools:sample/backgrounds/scenic" />
 
-            <View
-                android:id="@+id/itemCompactOverlay"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:visibility="gone" />
-
             <LinearLayout
                 android:id="@+id/itemCompactScoreBG"
                 android:layout_width="wrap_content"
