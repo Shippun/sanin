@@ -231,9 +231,9 @@ class AnimeWatchAdapter(
         FocusEffectUtil.applyFocusListener(binding.mediaSourceSettings, binding.mediaSourceSettings, true)
         FocusEffectUtil.applyFocusListener(binding.mediaSourceSubscribe, binding.mediaSourceSubscribe, true)
         FocusEffectUtil.applyFocusListener(binding.mediaNestedButton, binding.mediaNestedButton, true)
+        FocusEffectUtil.applyFocusListener(binding.sourceContinue)
         binding.mediaNestedButton.nextFocusDownId = R.id.ScrollTop
         binding.mediaSourceSubscribe.nextFocusDownId = R.id.ScrollTop
-        binding.sourceContinue.nextFocusDownId = R.id.ScrollTop
         binding.faqbutton.nextFocusDownId = R.id.ScrollTop
 
         // Icons
