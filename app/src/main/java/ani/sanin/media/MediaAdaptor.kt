@@ -513,7 +513,7 @@ class MediaAdaptor(
                     if (intensity <= 0f) {
                         b.itemCompactOverlay.background = null
                     } else {
-                        val endAlpha = 200
+                        val endAlpha = 255
                         val startColor = Color.argb(0, 0, 0, 0)
                         val endColor = Color.argb(
                             (endAlpha * intensity).toInt().coerceIn(0, 255),

@@ -112,7 +112,7 @@
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:minHeight="250dp">
+            android:minHeight="0dp">
 
             <FrameLayout
                 android:id="@+id/animeUpdatedProgressBar"
@@ -161,7 +161,7 @@
             <ani.sanin.FadingEdgeRecyclerView
                 android:id="@+id/animeUpdatedRecyclerView"
                 android:layout_width="match_parent"
-                android:layout_height="250dp"
+                android:layout_height="wrap_content"
                 android:clipToPadding="false"
                 android:nestedScrollingEnabled="true"
                 android:nextFocusUp="@+id/animeSeasons"
@@ -212,7 +212,7 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:minHeight="250dp">
+        android:minHeight="0dp">
 
         <FrameLayout
             android:id="@+id/animeMoviesProgressBar"
@@ -261,7 +261,7 @@
             <ani.sanin.FadingEdgeRecyclerView
                 android:id="@+id/animeMoviesRecyclerView"
                 android:layout_width="match_parent"
-                android:layout_height="250dp"
+                android:layout_height="wrap_content"
                 android:clipToPadding="false"
                 android:nestedScrollingEnabled="true"
                 android:nextFocusUp="@+id/animeUpdatedRecyclerView"
@@ -311,7 +311,7 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:minHeight="250dp">
+        android:minHeight="0dp">
 
         <FrameLayout
             android:id="@+id/animeTopRatedProgressBar"
@@ -360,7 +360,7 @@
             <ani.sanin.FadingEdgeRecyclerView
                 android:id="@+id/animeTopRatedRecyclerView"
                 android:layout_width="match_parent"
-                android:layout_height="250dp"
+                android:layout_height="wrap_content"
                 android:clipToPadding="false"
                 android:nestedScrollingEnabled="true"
                 android:nextFocusUp="@+id/animeMoviesRecyclerView"
@@ -409,7 +409,7 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:minHeight="250dp">
+        android:minHeight="0dp">
 
         <FrameLayout
             android:id="@+id/animeMostFavProgressBar"
@@ -458,7 +458,7 @@
         <ani.sanin.FadingEdgeRecyclerView
             android:id="@+id/animeMostFavRecyclerView"
             android:layout_width="match_parent"
-            android:layout_height="250dp"
+            android:layout_height="wrap_content"
             android:clipToPadding="false"
             android:nestedScrollingEnabled="true"
             android:paddingStart="20dp"
