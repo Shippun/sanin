@@ -127,7 +127,11 @@ class NotificationActivity : AppCompatActivity() {
         )
         binding.notificationViewPager.setCurrentItem(selected, false)
         updateNavTints(navButtons, selected)
-        binding.notificationNavRail.visibility = View.GONE
+        if (PrefManager.getVal<Boolean>(PrefName.SideRailPersist)) {
+            showNotificationNavRail()
+        } else {
+            binding.notificationNavRail.visibility = View.GONE
+        }
     }
 
     override fun dispatchKeyEvent(event: KeyEvent): Boolean {
@@ -225,6 +229,7 @@ class NotificationActivity : AppCompatActivity() {
     }
 
     private fun hideNotificationNavRail() {
+        if (PrefManager.getVal<Boolean>(PrefName.SideRailPersist)) return
         binding.notificationNavRail.visibility = View.GONE
         binding.notificationViewPager.requestFocus()
     }
@@ -257,6 +262,9 @@ class NotificationActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         updateCounts()
+        if (PrefManager.getVal<Boolean>(PrefName.SideRailPersist)) {
+            binding.notificationNavRail.visibility = View.VISIBLE
+        }
     }
 
     val fragments = mutableMapOf<Int, NotificationFragment>()
