@@ -84,7 +84,7 @@ object FocusEffectUtil {
         v.scaleX = 1f
         v.scaleY = 1f
         v.translationZ = 0f
-        v.elevation = savedElevations.remove(v) ?: 0f
+        savedElevations.remove(v)?.let { v.elevation = it }
     }
 
     private fun focusGained(v: View) {
@@ -124,7 +124,7 @@ object FocusEffectUtil {
             .setInterpolator(DecelerateInterpolator())
             .start()
 
-        v.elevation = savedElevations.remove(v) ?: 0f
+        savedElevations.remove(v)?.let { v.elevation = it }
     }
 
     private fun applyGlow(v: View) {
