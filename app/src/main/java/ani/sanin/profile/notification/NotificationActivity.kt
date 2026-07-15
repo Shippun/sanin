@@ -2,7 +2,6 @@ package ani.sanin.profile.notification
 
 import android.animation.ObjectAnimator
 import android.content.res.ColorStateList
-import android.content.res.TypedArray
 import android.graphics.Color
 import android.os.Bundle
 import android.view.KeyEvent
@@ -11,6 +10,7 @@ import android.view.ViewGroup
 import android.view.animation.DecelerateInterpolator
 import android.view.animation.OvershootInterpolator
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.doOnLayout
 import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
@@ -32,6 +32,7 @@ import ani.sanin.settings.saving.PrefManager
 import ani.sanin.settings.saving.PrefName
 import ani.sanin.statusBarHeight
 import ani.sanin.themes.ThemeManager
+import ani.sanin.util.applyNavPillCustomizations
 import ani.sanin.util.FocusEffectUtil
 
 class NotificationActivity : AppCompatActivity() {
@@ -55,21 +56,19 @@ class NotificationActivity : AppCompatActivity() {
         }
         binding.notificationNavRailBg.live = PrefManager.getVal(PrefName.LiveSideRail)
         FocusEffectUtil.applyFocusListener(binding.notificationBack)
-        val cornerPx = 16f * resources.displayMetrics.density
-        binding.notificationNavRail.outlineProvider = object : android.view.ViewOutlineProvider() {
-            override fun getOutline(view: View, outline: android.graphics.Outline) {
-                outline.setRoundRect(0, 0, view.width, view.height, cornerPx)
-            }
-        }
-        binding.notificationNavRail.elevation = 10f
-        binding.notificationNavRail.clipToOutline = true
 
-        val navButtons = listOf(
+        val navButtons = listOfNotNull(
             binding.notificationNavUser,
             binding.notificationNavMedia,
             binding.notificationNavSubs,
             binding.notificationNavComment,
         )
+        applyNavPillCustomizations(
+            railContainer = binding.notificationNavRail,
+            railBg = binding.notificationNavRailBg,
+            pills = navButtons,
+        )
+        binding.notificationNavRail.elevation = 10f
 
         val visibleButtons = mutableListOf(
             binding.notificationNavUser,
@@ -235,11 +234,18 @@ class NotificationActivity : AppCompatActivity() {
     }
 
     private fun updateNavTints(buttons: List<android.widget.ImageButton>, selectedIndex: Int) {
-        val ta: TypedArray = theme.obtainStyledAttributes(intArrayOf(com.google.android.material.R.attr.colorPrimary))
-        val primary = ta.getColor(0, Color.WHITE)
-        ta.recycle()
+        val bg = binding.notificationNavRailBg
+        if (bg.height <= 0) {
+            bg.doOnLayout { updateNavTints(buttons, selectedIndex) }
+            return
+        }
         buttons.forEachIndexed { i, btn ->
-            btn.imageTintList = ColorStateList.valueOf(if (i == selectedIndex) primary else Color.WHITE)
+            val yCenter = btn.top + btn.height / 2f
+            val fraction = yCenter / bg.height
+            val color = bg.getColorAtFraction(fraction)
+            val luminance = (0.299 * Color.red(color) + 0.587 * Color.green(color) + 0.114 * Color.blue(color)) / 255.0
+            val contrast = if (luminance > 0.5) Color.parseColor("#2A2A2A") else Color.WHITE
+            btn.imageTintList = ColorStateList.valueOf(contrast)
             btn.alpha = if (i == selectedIndex) 1f else 0.6f
         }
     }

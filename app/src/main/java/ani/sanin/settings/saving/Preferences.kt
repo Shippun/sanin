@@ -120,6 +120,11 @@ enum class PrefName(val data: Pref) {
     LiveSideRail(Pref(Location.UI, Boolean::class, true)),
     SideRailPersist(Pref(Location.UI, Boolean::class, false)),
     FocusEffect(Pref(Location.UI, Int::class, 0)),
+    NavPillWidth(Pref(Location.UI, Int::class, 44)),
+    NavPillHeight(Pref(Location.UI, Int::class, 44)),
+    NavPillSpacing(Pref(Location.UI, Int::class, 0)),
+    NavPillBgStyle(Pref(Location.UI, Int::class, 0)),
+    NavPillCornerRadius(Pref(Location.UI, Int::class, 50)),
     CardStyle(Pref(Location.UI, Int::class, 0)),
 
     UIScale(Pref(Location.UI, Float::class, 1.0f)),

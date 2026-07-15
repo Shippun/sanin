@@ -8,6 +8,8 @@ import android.graphics.Paint
 import android.graphics.Shader
 import android.util.AttributeSet
 import android.view.View
+import ani.sanin.settings.saving.PrefManager
+import ani.sanin.settings.saving.PrefName
 
 class SnakeNavRailView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
@@ -44,11 +46,22 @@ class SnakeNavRailView @JvmOverloads constructor(
             invalidate()
         }
 
+    private var style: Int = -1
+
+    private fun getStyle(): Int {
+        if (style == -1 || live) {
+            style = PrefManager.getVal(PrefName.NavPillBgStyle)
+        }
+        return style
+    }
+
     fun getColorAtFraction(fraction: Float): Int {
         val split = 0.33f
-        if (fraction >= split) return Color.WHITE
+        val isInverted = getStyle() == 1
+        if (fraction >= split) return if (isInverted) Color.BLACK else Color.WHITE
         val t = fraction / split
-        return lerpColor(Color.BLACK, Color.WHITE, t)
+        return if (isInverted) lerpColor(Color.WHITE, Color.BLACK, t)
+        else lerpColor(Color.BLACK, Color.WHITE, t)
     }
 
     override fun onDraw(canvas: Canvas) {
@@ -56,21 +69,24 @@ class SnakeNavRailView @JvmOverloads constructor(
         val w = width.toFloat().coerceAtLeast(1f)
         val h = height.toFloat().coerceAtLeast(1f)
 
-        if (w != cachedWidth || h != cachedHeight) {
+        if (w != cachedWidth || h != cachedHeight || live) {
             cachedWidth = w
             cachedHeight = h
+            val isInverted = getStyle() == 1
+            val topColor = if (isInverted) Color.WHITE else Color.BLACK
+            val bottomColor = if (isInverted) Color.BLACK else Color.WHITE
             if (horizontal) {
                 val split = w * 0.33f
                 bgPaint.shader = LinearGradient(
                     0f, 0f, split, 0f,
-                    Color.BLACK, Color.WHITE,
+                    topColor, bottomColor,
                     Shader.TileMode.CLAMP
                 )
             } else {
                 val split = h * 0.33f
                 bgPaint.shader = LinearGradient(
                     0f, 0f, 0f, split,
-                    Color.BLACK, Color.WHITE,
+                    topColor, bottomColor,
                     Shader.TileMode.CLAMP
                 )
             }

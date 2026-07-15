@@ -43,6 +43,7 @@ import ani.sanin.connections.LogoApi
 import ani.sanin.connections.anilist.Anilist
 import ani.sanin.connections.anilist.AnilistHomeViewModel
 import ani.sanin.connections.mal.MAL
+import ani.sanin.util.applyNavPillCustomizations
 import ani.sanin.util.FocusEffectUtil
 import ani.sanin.databinding.ActivityMainBinding
 import ani.sanin.databinding.DialogUserAgentBinding
@@ -671,15 +672,14 @@ class MainActivity : AppCompatActivity() {
     private fun isNavPillTop() = false
 
     private fun setupHomeNavRail() {
+        val pills = listOf(binding.homeNavHome, binding.homeNavAnime, binding.homeNavDiscovery, binding.homeNavLibrary)
+        applyNavPillCustomizations(
+            railContainer = binding.homeNavRail,
+            railBg = binding.homeNavRailBg,
+            pills = pills,
+        )
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            val cornerPx = 16f * resources.displayMetrics.density
-            binding.homeNavRail.outlineProvider = object : android.view.ViewOutlineProvider() {
-                override fun getOutline(view: View, outline: android.graphics.Outline) {
-                    outline.setRoundRect(0, 0, view.width, view.height, cornerPx)
-                }
-            }
             binding.homeNavRail.elevation = 10f
-            binding.homeNavRail.clipToOutline = true
         }
 
         binding.homeNavRailBg.live = PrefManager.getVal(PrefName.LiveSideRail)
@@ -688,7 +688,6 @@ class MainActivity : AppCompatActivity() {
             updateHomeNavIconTints()
         }
 
-        val pills = listOf(binding.homeNavHome, binding.homeNavAnime, binding.homeNavDiscovery, binding.homeNavLibrary)
         pills.forEachIndexed { index, pill ->
             pill.setOnClickListener {
                 navPillsViewModel.setTab(index)
