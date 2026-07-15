@@ -22,6 +22,8 @@ import ani.sanin.R
 import ani.sanin.buildMarkwon
 import ani.sanin.connections.LogoApi
 import ani.sanin.connections.anilist.Anilist
+import ani.sanin.connections.mal.MAL
+import ani.sanin.media.MediaListDialogFragment
 import ani.sanin.connections.comments.Comment
 import ani.sanin.connections.comments.CommentResponse
 import ani.sanin.connections.comments.CommentsAPI
@@ -136,6 +138,20 @@ class CommentsFragment : Fragment() {
             activity.binding.commentReplyToContainer.visibility = View.GONE
         }
 
+        binding.commentsAddToList.setOnClickListener {
+            val rescueMode = PrefManager.getVal(PrefName.RescueMode)
+            if (rescueMode) {
+                if (MAL.token != null) {
+                    if (childFragmentManager.findFragmentByTag("dialog") == null)
+                        MediaListDialogFragment().show(childFragmentManager, "dialog")
+                } else snackString("Please login to MAL")
+            } else if (Anilist.userid != null) {
+                if (childFragmentManager.findFragmentByTag("dialog") == null)
+                    MediaListDialogFragment().show(childFragmentManager, "dialog")
+            } else snackString(getString(R.string.please_login_anilist))
+        }
+        FocusEffectUtil.applyFocusListener(binding.commentsAddToList, binding.commentsAddToList)
+
         binding.commentsList.adapter = adapter
         binding.commentsList.layoutManager = LinearLayoutManager(activity)
         adapter.add(section)
@@ -152,6 +168,7 @@ class CommentsFragment : Fragment() {
                         binding.commentsTitle.visibility = View.VISIBLE
                         binding.commentsTitle.text = newMedia.userPreferredName ?: newMedia.name
                     }
+                    binding.commentsAddToList.visibility = View.VISIBLE
                 }
                 isAnime = newMedia.anime != null
                 userProgress = newMedia.userProgress

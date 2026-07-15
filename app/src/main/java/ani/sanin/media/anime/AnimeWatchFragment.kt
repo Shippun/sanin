@@ -30,7 +30,10 @@ import androidx.viewpager2.widget.ViewPager2
 import ani.sanin.R
 import ani.sanin.px
 import ani.sanin.connections.LogoApi
+import ani.sanin.connections.anilist.Anilist
+import ani.sanin.connections.mal.MAL
 import ani.sanin.databinding.FragmentMediaSourceBinding
+import ani.sanin.media.MediaListDialogFragment
 import ani.sanin.loadImage
 import ani.sanin.dp
 import ani.sanin.isOnline
@@ -144,6 +147,19 @@ class AnimeWatchFragment : Fragment() {
             binding.mediaSourceRecycler.smoothScrollToPosition(0)
         }
         FocusEffectUtil.applyFocusListener(binding.ScrollTop, binding.ScrollTop)
+        binding.mediaWatchAddToList.setOnClickListener {
+            val rescueMode = PrefManager.getVal(PrefName.RescueMode)
+            if (rescueMode) {
+                if (MAL.token != null) {
+                    if (childFragmentManager.findFragmentByTag("dialog") == null)
+                        MediaListDialogFragment().show(childFragmentManager, "dialog")
+                } else snackString("Please login to MAL")
+            } else if (Anilist.userid != null) {
+                if (childFragmentManager.findFragmentByTag("dialog") == null)
+                    MediaListDialogFragment().show(childFragmentManager, "dialog")
+            } else snackString(getString(R.string.please_login_anilist))
+        }
+        FocusEffectUtil.applyFocusListener(binding.mediaWatchAddToList, binding.mediaWatchAddToList)
         binding.mediaSourceRecycler.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
@@ -151,12 +167,15 @@ class AnimeWatchFragment : Fragment() {
                 val scrollOffset = recyclerView.computeVerticalScrollOffset().toFloat()
                 val logo = binding.mediaWatchLogo
                 val title = binding.mediaWatchTitle
+                val btn = binding.mediaWatchAddToList
                 val maxTranslate = 200f.px.toFloat()
                 val translation = -minOf(scrollOffset, maxTranslate)
                 logo.translationY = translation
                 logo.alpha = 1f - (translation / -maxTranslate)
                 title.translationY = translation
                 title.alpha = 1f - (translation / -maxTranslate)
+                btn.translationY = translation
+                btn.alpha = 1f - (translation / -maxTranslate)
 
                 val position = gridLayoutManager.findFirstVisibleItemPosition()
                 if (position > 2) {
@@ -191,6 +210,7 @@ class AnimeWatchFragment : Fragment() {
                         binding.mediaWatchTitle.visibility = View.VISIBLE
                         binding.mediaWatchTitle.text = media.userPreferredName ?: media.name
                     }
+                    binding.mediaWatchAddToList.visibility = View.VISIBLE
                 }
                 if (!PrefManager.getVal<Boolean>(PrefName.SmartSourcePersistence)) {
                     if (media.selected != null) {

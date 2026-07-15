@@ -49,6 +49,32 @@
                 android:visibility="gone"
                 tools:visibility="visible" />
 
+            <Button
+                android:id="@+id/commentsAddToList"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:ellipsize="marquee"
+                android:focusable="true"
+                android:fontFamily="@font/poppins_bold"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                android:marqueeRepeatLimit="marquee_forever"
+                android:minWidth="200dp"
+                android:padding="8dp"
+                android:singleLine="true"
+                android:text="@string/add_list"
+                android:textAllCaps="true"
+                android:textColor="@android:color/white"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:visibility="gone"
+                android:nextFocusDown="@+id/commentSourceBar"
+                app:cornerRadius="16dp"
+                app:strokeColor="@android:color/white" />
+
             <LinearLayout
                 android:id="@+id/commentSourceBar"
                 android:layout_width="match_parent"
