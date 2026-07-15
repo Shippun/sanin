@@ -716,7 +716,7 @@ class MainActivity : AppCompatActivity() {
             val fraction = yCenter / bg.height
             val color = bg.getColorAtFraction(fraction)
             val luminance = (0.299 * Color.red(color) + 0.587 * Color.green(color) + 0.114 * Color.blue(color)) / 255.0
-            val tintColor = if (luminance > 0.5) Color.parseColor("#2A2A2A") else Color.WHITE
+            val tintColor = if (luminance > 0.5) Color.BLACK else Color.WHITE
             pill.imageTintList = android.content.res.ColorStateList.valueOf(tintColor)
         }
     }

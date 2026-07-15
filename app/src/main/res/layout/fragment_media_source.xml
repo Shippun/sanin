@@ -38,7 +38,7 @@
         android:layout_width="wrap_content"
         android:layout_height="48dp"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="250dp"
+        android:layout_marginTop="290dp"
         android:ellipsize="marquee"
         android:focusable="true"
         android:fontFamily="@font/poppins_bold"

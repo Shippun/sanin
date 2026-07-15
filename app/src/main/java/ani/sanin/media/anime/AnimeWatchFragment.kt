@@ -211,6 +211,12 @@ class AnimeWatchFragment : Fragment() {
                         binding.mediaWatchTitle.text = media.userPreferredName ?: media.name
                     }
                     binding.mediaWatchAddToList.visibility = View.VISIBLE
+                    val statuses = resources.getStringArray(ani.sanin.R.array.status)
+                    val statusStrings = resources.getStringArray(ani.sanin.R.array.status_anime)
+                    val userStatus = if (media.userStatus != null)
+                        statusStrings[statuses.indexOf(media.userStatus).coerceAtLeast(0)]
+                    else null
+                    binding.mediaWatchAddToList.text = userStatus ?: getString(ani.sanin.R.string.add_list)
                 }
                 if (!PrefManager.getVal<Boolean>(PrefName.SmartSourcePersistence)) {
                     if (media.selected != null) {

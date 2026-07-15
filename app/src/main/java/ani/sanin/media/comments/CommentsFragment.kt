@@ -169,6 +169,12 @@ class CommentsFragment : Fragment() {
                         binding.commentsTitle.text = newMedia.userPreferredName ?: newMedia.name
                     }
                     binding.commentsAddToList.visibility = View.VISIBLE
+                    val statuses = resources.getStringArray(ani.sanin.R.array.status)
+                    val statusStrings = resources.getStringArray(ani.sanin.R.array.status_anime)
+                    val userStatus = if (newMedia.userStatus != null)
+                        statusStrings[statuses.indexOf(newMedia.userStatus).coerceAtLeast(0)]
+                    else null
+                    binding.commentsAddToList.text = userStatus ?: getString(ani.sanin.R.string.add_list)
                 }
                 isAnime = newMedia.anime != null
                 userProgress = newMedia.userProgress

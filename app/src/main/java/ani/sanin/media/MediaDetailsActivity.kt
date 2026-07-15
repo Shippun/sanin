@@ -175,7 +175,7 @@ class MediaDetailsActivity : AppCompatActivity() {
             val fraction = yCenter / bg.height
             val color = bg.getColorAtFraction(fraction)
             val luminance = (0.299 * Color.red(color) + 0.587 * Color.green(color) + 0.114 * Color.blue(color)) / 255.0
-            return if (luminance > 0.5) Color.parseColor("#2A2A2A") else Color.WHITE
+            return if (luminance > 0.5) Color.BLACK else Color.WHITE
         }
 
         fun selectTab(idx: Int) {
@@ -184,7 +184,7 @@ class MediaDetailsActivity : AppCompatActivity() {
                 val yCenter = btn.top + btn.height / 2f
                 val contrast = getNavContrastColor(yCenter)
                 btn.imageTintList = ColorStateList.valueOf(contrast)
-                btn.alpha = if (i == idx) 1f else 0.7f
+                btn.alpha = if (i == idx) 1f else 0.5f
             }
             binding.commentInputLayout.isVisible = selected == 2
             when (idx) {
@@ -365,9 +365,9 @@ class MediaDetailsActivity : AppCompatActivity() {
             val fraction = yCenter / bg.height
             val color = bg.getColorAtFraction(fraction)
             val luminance = (0.299 * Color.red(color) + 0.587 * Color.green(color) + 0.114 * Color.blue(color)) / 255.0
-            val contrast = if (luminance > 0.5) Color.parseColor("#2A2A2A") else Color.WHITE
+            val contrast = if (luminance > 0.5) Color.BLACK else Color.WHITE
             pill.imageTintList = ColorStateList.valueOf(contrast)
-            pill.alpha = if (i == selectedIdx) 1f else 0.7f
+            pill.alpha = if (i == selectedIdx) 1f else 0.5f
         }
     }
 
