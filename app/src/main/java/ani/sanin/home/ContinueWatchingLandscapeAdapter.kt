@@ -149,14 +149,13 @@ class ContinueWatchingLandscapeAdapter(
             return
         }
         val endAlpha = 255
-        val startColor = Color.argb(0, 0, 0, 0)
         val endColor = Color.argb(
             (endAlpha * intensity).toInt().coerceIn(0, 255),
             0, 0, 0
         )
         val gradient = GradientDrawable(
             GradientDrawable.Orientation.BOTTOM_TOP,
-            intArrayOf(endColor, startColor)
+            intArrayOf(endColor, endColor, Color.TRANSPARENT)
         )
         view.background = gradient
     }
