@@ -120,11 +120,7 @@ class MediaListDialogFragment : DialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding.mediaListContainer.updateLayoutParams<ViewGroup.MarginLayoutParams> { bottomMargin += navBarHeight }
-        val glass = GlassEffectManager.applyGlassToSheet(binding.mediaListContainer, GlassComponent.ListEditor, 16f)
-        if (glass != null) {
-            val child = (binding.mediaListContainer as? ViewGroup)?.getChildAt(0)
-            child?.background = null
-        }
+        GlassEffectManager.applyGlassToSheet(binding.mediaListContainer, GlassComponent.ListEditor, 16f)
         var media: Media?
         val model: MediaDetailsViewModel by activityViewModels()
         val scope = viewLifecycleOwner.lifecycleScope

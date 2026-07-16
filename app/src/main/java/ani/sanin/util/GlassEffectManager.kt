@@ -1,7 +1,9 @@
 package ani.sanin.util
 
+import android.app.Activity
 import android.graphics.Color
 import android.view.View
+import android.view.ViewGroup
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
@@ -110,8 +112,20 @@ object GlassEffectManager {
     ): GlassEffectDrawable? {
         if (!isComponentEnabled(component)) return null
         rootView.setBackgroundColor(Color.TRANSPARENT)
+        (rootView as? ViewGroup)?.let { group ->
+            for (i in 0 until group.childCount) {
+                group.getChildAt(i).background = null
+            }
+        }
         val tint = getTintColor()
-        return applyGlass(rootView, component, cornerRadiusDp, tint)
+        val drawable = applyGlass(rootView, component, cornerRadiusDp, tint)
+        if (drawable != null) {
+            val activity = rootView.context as? Activity
+            if (activity != null) {
+                drawable.setCaptureRootView(activity.window.decorView)
+            }
+        }
+        return drawable
     }
 }
 

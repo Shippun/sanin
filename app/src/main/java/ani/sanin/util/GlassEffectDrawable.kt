@@ -29,6 +29,7 @@ class GlassEffectDrawable(
 ) : Drawable() {
 
     private val targetRef = WeakReference(targetView)
+    private var captureRootRef: WeakReference<View>? = null
     private var backdropCache: Bitmap? = null
     private var blurCache: Bitmap? = null
     private var effectsCache: Bitmap? = null
@@ -57,6 +58,12 @@ class GlassEffectDrawable(
     private var needsEffectsRefresh = false
     var averageBrightness: Float = 0.5f
         private set
+
+    fun setCaptureRootView(root: View) {
+        captureRootRef = WeakReference(root)
+        invalidateCache()
+        invalidateSelf()
+    }
 
     private val layoutListener = ViewTreeObserver.OnGlobalLayoutListener {
         invalidateCache()
@@ -270,7 +277,7 @@ class GlassEffectDrawable(
         val sw = (w * ds).roundToInt().coerceAtLeast(1)
         val sh = (h * ds).roundToInt().coerceAtLeast(1)
 
-        val root = target.rootView
+        val root = captureRootRef?.get() ?: target.rootView
         val bitmap = try {
             Bitmap.createBitmap(sw, sh, Bitmap.Config.ARGB_8888)
         } catch (e: OutOfMemoryError) {
