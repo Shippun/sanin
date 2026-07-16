@@ -11,6 +11,7 @@ import android.view.GestureDetector
 import android.view.KeyEvent
 import android.view.MotionEvent
 import android.view.View
+import android.widget.FrameLayout
 import android.widget.ImageView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -20,12 +21,9 @@ import androidx.appcompat.widget.AppCompatImageButton
 import androidx.core.content.ContextCompat
 import androidx.core.view.doOnLayout
 import androidx.core.view.isVisible
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
-import androidx.viewpager2.adapter.FragmentStateAdapter
 import ani.sanin.GesturesListener
 import ani.sanin.R
 import ani.sanin.Refresh
@@ -64,6 +62,9 @@ class MediaDetailsActivity : AppCompatActivity() {
     var anime = true
     private var adult = false
     private var hasComments = false
+    private lateinit var watchFragment: AnimeWatchFragment
+    private lateinit var commentsFragment: CommentsFragment
+    private var commentsAdded = false
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -172,35 +173,120 @@ class MediaDetailsActivity : AppCompatActivity() {
         binding.navPillBg?.live = PrefManager.getVal(PrefName.LiveSideRail)
         binding.navPillBg?.doOnLayout { updateMediaNavIconTints(selected) }
 
-        fun selectTab(idx: Int) {
+        fun selectTab(idx: Int, animate: Boolean = true) {
             selected = idx
             updateMediaNavIconTints(selected)
             binding.commentInputLayout.isVisible = selected == 2
+            val tabContent = binding.mediaTabContent ?: return
             when (idx) {
                 0 -> {
-                    // Info: show info fragment, hide right panel
                     binding.mediaInfoFragmentContainer!!.visibility = View.VISIBLE
                     binding.mediaRightPanel!!.visibility = View.GONE
                     binding.mediaInfoAddToListBtn!!.visibility = View.GONE
                 }
                 1 -> {
-                    // Watch: hide info, show right panel
                     binding.mediaInfoFragmentContainer!!.visibility = View.GONE
                     binding.mediaRightPanel!!.visibility = View.VISIBLE
                     binding.mediaInfoAddToListBtn!!.visibility = View.VISIBLE
-                    binding.mediaViewPager!!.setCurrentItem(0, true)
+                    showWatchTab(tabContent, animate)
+                    tabContent.requestFocus()
                 }
                 2 -> {
-                    // Comments
                     binding.mediaInfoFragmentContainer!!.visibility = View.GONE
                     binding.mediaRightPanel!!.visibility = View.VISIBLE
                     binding.mediaInfoAddToListBtn!!.visibility = View.VISIBLE
-                    binding.mediaViewPager!!.setCurrentItem(1, true)
+                    showCommentsTab(tabContent, animate)
+                    tabContent.requestFocus()
                 }
             }
             val sel = model.loadSelected(media, isDownload)
             sel.window = idx
             model.saveSelected(media.id, sel)
+        }
+
+        fun showWatchTab(container: FrameLayout, animate: Boolean) {
+            val ft = supportFragmentManager.beginTransaction()
+            if (::watchFragment.isInitialized && watchFragment.isAdded) {
+                ft.show(watchFragment)
+            } else {
+                watchFragment = AnimeWatchFragment()
+                ft.add(R.id.mediaTabContent, watchFragment, "watch")
+            }
+            if (::commentsFragment.isInitialized && commentsFragment.isAdded) {
+                if (animate) {
+                    val watchView = watchFragment.requireView()
+                    val commentsView = commentsFragment.requireView()
+                    watchView.alpha = 0f
+                    watchView.scaleX = 0.92f
+                    watchView.scaleY = 0.92f
+                    ft.hide(commentsFragment).commit()
+                    watchView.animate()
+                        .alpha(1f).scaleX(1f).scaleY(1f)
+                        .setDuration(300)
+                        .setInterpolator(android.view.animation.OvershootInterpolator())
+                        .start()
+                } else {
+                    ft.hide(commentsFragment).commit()
+                }
+            } else {
+                ft.commit()
+            }
+        }
+
+        fun showCommentsTab(container: FrameLayout, animate: Boolean) {
+            if (!commentsAdded) {
+                commentsAdded = true
+                val ft = supportFragmentManager.beginTransaction()
+                commentsFragment = CommentsFragment().apply {
+                    arguments = Bundle().apply {
+                        putInt("mediaId", media.id)
+                        putString("mediaName", media.mainName())
+                        putString("mediaFormat", media.format)
+                        val commentId = intent.getIntExtra("commentId", -1)
+                        if (commentId != -1) putInt("commentId", commentId)
+                    }
+                }
+                if (::watchFragment.isInitialized && watchFragment.isAdded) {
+                    ft.hide(watchFragment)
+                }
+                ft.add(R.id.mediaTabContent, commentsFragment, "comments")
+                ft.commit()
+                if (animate) {
+                    tabContent.post {
+                        val commentsView = commentsFragment.requireView()
+                        commentsView.alpha = 0f
+                        commentsView.scaleX = 0.92f
+                        commentsView.scaleY = 0.92f
+                        commentsView.animate()
+                            .alpha(1f).scaleX(1f).scaleY(1f)
+                            .setDuration(300)
+                            .setInterpolator(android.view.animation.OvershootInterpolator())
+                            .start()
+                    }
+                }
+            } else {
+                val ft = supportFragmentManager.beginTransaction()
+                ft.show(commentsFragment)
+                if (::watchFragment.isInitialized && watchFragment.isAdded) {
+                    if (animate) {
+                        val watchView = watchFragment.requireView()
+                        val commentsView = commentsFragment.requireView()
+                        commentsView.alpha = 0f
+                        commentsView.scaleX = 0.92f
+                        commentsView.scaleY = 0.92f
+                        ft.hide(watchFragment).commit()
+                        commentsView.animate()
+                            .alpha(1f).scaleX(1f).scaleY(1f)
+                            .setDuration(300)
+                            .setInterpolator(android.view.animation.OvershootInterpolator())
+                            .start()
+                    } else {
+                        ft.hide(watchFragment).commit()
+                    }
+                } else {
+                    ft.commit()
+                }
+            }
         }
 
         navInfo?.setOnClickListener { selectTab(0); hideNavPills() }
@@ -223,18 +309,6 @@ class MediaDetailsActivity : AppCompatActivity() {
             } else snackString(getString(R.string.please_login_anilist))
         }
 
-        // ViewPager setup (2 tabs: Watch, Comments)
-        val viewPager = binding.mediaViewPager!!
-        viewPager.offscreenPageLimit = 2
-        viewPager.isUserInputEnabled = false
-        viewPager.adapter = ViewPagerAdapter(
-            supportFragmentManager,
-            lifecycle,
-            media,
-            intent.getIntExtra("commentId", -1),
-            hasComments
-        )
-
         // Restore last selected tab (0=Info, 1=Watch, 2=Comments)
         val savedWindow = media.selected!!.window
         var defaultTab = if (savedWindow == 2 && (!hasComments || rescueMode)) 1 else savedWindow
@@ -243,7 +317,7 @@ class MediaDetailsActivity : AppCompatActivity() {
             defaultTab = 1
         }
         if (intent.getStringExtra("FRAGMENT_TO_LOAD") != null && hasComments) defaultTab = 2
-        selectTab(defaultTab)
+        selectTab(defaultTab, animate = false)
 
         // Gesture for double-tap on banner bg
         val gestureDetector = GestureDetector(this, object : GesturesListener() {
@@ -307,7 +381,7 @@ class MediaDetailsActivity : AppCompatActivity() {
         if (PrefManager.getVal<Boolean>(PrefName.SideRailPersist)) {
             showNavPills()
         }
-        binding.mediaViewPager?.post { binding.mediaViewPager?.requestFocus() }
+        binding.mediaTabContent?.post { binding.mediaTabContent?.requestFocus() }
     }
 
     override fun dispatchKeyEvent(event: KeyEvent): Boolean {
@@ -358,7 +432,7 @@ class MediaDetailsActivity : AppCompatActivity() {
     private fun hideNavPills() {
         if (PrefManager.getVal<Boolean>(PrefName.SideRailPersist)) return
         binding.mediaNavPills?.visibility = View.GONE
-        binding.mediaViewPager!!.requestFocus()
+        binding.mediaTabContent!!.requestFocus()
     }
 
     private fun updateMediaNavIconTints(selectedIdx: Int) {
@@ -386,33 +460,6 @@ class MediaDetailsActivity : AppCompatActivity() {
             target.requestFocus()
         } else {
             binding.navPillInfo?.requestFocus()
-        }
-    }
-
-    // ViewPager with 2 tabs (Watch, Comments)
-    private class ViewPagerAdapter(
-        fragmentManager: FragmentManager,
-        lifecycle: Lifecycle,
-        private val media: Media,
-        private val commentId: Int,
-        private val hasComments: Boolean
-    ) : FragmentStateAdapter(fragmentManager, lifecycle) {
-
-        override fun getItemCount(): Int = if (hasComments) 2 else 1
-
-        override fun createFragment(position: Int): Fragment = when (position) {
-            0 -> AnimeWatchFragment()
-            1 -> {
-                val fragment = CommentsFragment()
-                val bundle = Bundle()
-                bundle.putInt("mediaId", media.id)
-                bundle.putString("mediaName", media.mainName())
-                bundle.putString("mediaFormat", media.format)
-                if (commentId != -1) bundle.putInt("commentId", commentId)
-                fragment.arguments = bundle
-                fragment
-            }
-            else -> AnimeWatchFragment()
         }
     }
 

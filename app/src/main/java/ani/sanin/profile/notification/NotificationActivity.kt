@@ -5,43 +5,74 @@ import android.content.res.ColorStateList
 import android.content.res.TypedArray
 import android.graphics.Color
 import android.os.Bundle
+import android.view.Gravity
 import android.view.KeyEvent
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.DecelerateInterpolator
 import android.view.animation.OvershootInterpolator
+import android.widget.FrameLayout
+import android.widget.ImageButton
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.view.updateLayoutParams
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
-import androidx.lifecycle.Lifecycle
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.viewpager2.adapter.FragmentStateAdapter
-import androidx.viewpager2.widget.ViewPager2
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import ani.sanin.FadingEdgeRecyclerView
 import ani.sanin.R
 import ani.sanin.connections.anilist.Anilist
+import ani.sanin.connections.anilist.api.Notification
 import ani.sanin.databinding.ActivityNotificationBinding
 import ani.sanin.initActivity
-import ani.sanin.profile.notification.NotificationFragment.Companion.NotificationType.COMMENT
-import ani.sanin.profile.notification.NotificationFragment.Companion.NotificationType.MEDIA
-import ani.sanin.profile.notification.NotificationFragment.Companion.NotificationType.ONE
-import ani.sanin.profile.notification.NotificationFragment.Companion.NotificationType.SUBSCRIPTION
-import ani.sanin.profile.notification.NotificationFragment.Companion.NotificationType.USER
-import ani.sanin.profile.notification.NotificationFragment.Companion.newInstance
+import ani.sanin.media.MediaDetailsActivity
+import ani.sanin.notifications.comment.CommentStore
+import ani.sanin.notifications.subscription.SubscriptionStore
+import ani.sanin.profile.ProfileActivity
+import ani.sanin.profile.activity.FeedActivity
 import ani.sanin.settings.saving.PrefManager
 import ani.sanin.settings.saving.PrefName
 import ani.sanin.statusBarHeight
 import ani.sanin.themes.ThemeManager
 import ani.sanin.util.FocusEffectUtil
+import com.airbnb.lottie.LottieAnimationView
+import com.xwray.groupie.GroupieAdapter
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
+
+enum class NotificationClickType { USER, MEDIA, ACTIVITY, COMMENT, UNDEFINED }
+enum class TabType { USER, MEDIA, SUBSCRIPTION, COMMENT, ONE }
 
 class NotificationActivity : AppCompatActivity() {
     lateinit var binding: ActivityNotificationBinding
-    private var selected: Int = 0
+    private var selected = 0
     private val CommentsEnabled = PrefManager.getVal<Int>(PrefName.CommentsEnabled) == 1
-    private var userCount: Int = 0
-    private var mediaCount: Int = 0
-    private var subsCount: Int = 0
-    private var commentCount: Int = 0
+    private var userCount = 0
+    private var mediaCount = 0
+    private var subsCount = 0
+    private var commentCount = 0
+    private var getOne = -1
+
+    private val ioScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+    private val tabAdapter = GroupieAdapter()
+    private lateinit var tabRecycler: FadingEdgeRecyclerView
+    private lateinit var tabSwipeRefresh: SwipeRefreshLayout
+    private lateinit var tabProgress: FrameLayout
+    private lateinit var tabEmpty: TextView
+
+    private class TabState {
+        val items = mutableListOf<Notification>()
+        var currentPage = 1
+        var hasNextPage = false
+        var loaded = false
+        var loading = false
+    }
+    private val tabStates = Array(4) { TabState() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,13 +95,14 @@ class NotificationActivity : AppCompatActivity() {
         binding.notificationNavRail.elevation = 10f
         binding.notificationNavRail.clipToOutline = true
 
+        setupContent()
+
         val navButtons = listOf(
             binding.notificationNavUser,
             binding.notificationNavMedia,
             binding.notificationNavSubs,
             binding.notificationNavComment,
         )
-
         val visibleButtons = mutableListOf(
             binding.notificationNavUser,
             binding.notificationNavMedia,
@@ -82,50 +114,24 @@ class NotificationActivity : AppCompatActivity() {
             binding.notificationNavComment.visibility = View.GONE
         }
 
+        getOne = intent.getIntExtra("activityId", -1)
+        if (getOne != -1) navButtons.forEach { it.visibility = View.GONE }
+
         updateCounts()
         navButtons.forEach { btn ->
             btn.setOnClickListener {
                 val idx = navButtons.indexOf(btn)
                 if (idx >= 0 && idx < visibleButtons.size) {
                     selected = idx
-                    binding.notificationViewPager.setCurrentItem(selected, false)
+                    selectTab(selected)
                     updateNavTints(navButtons, selected)
                 }
             }
             FocusEffectUtil.applyFocusListener(btn)
         }
-
         binding.notificationBack.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
 
-        val getOne = intent.getIntExtra("activityId", -1)
-        if (getOne != -1) {
-            navButtons.forEach { it.visibility = View.GONE }
-        }
-        binding.notificationViewPager.isUserInputEnabled = false
-        binding.notificationViewPager.adapter =
-            ViewPagerAdapter(supportFragmentManager, lifecycle, getOne, CommentsEnabled) { type, reset ->
-                if (reset) {
-                    when (type) {
-                        USER -> userCount = 0
-                        MEDIA -> mediaCount = 0
-                        SUBSCRIPTION -> subsCount = 0
-                        COMMENT -> if (CommentsEnabled) commentCount = 0
-                        ONE -> {}
-                    }
-                    saveCounts()
-                }
-            }
-        binding.notificationViewPager.registerOnPageChangeCallback(
-            object : ViewPager2.OnPageChangeCallback() {
-                override fun onPageSelected(position: Int) {
-                    super.onPageSelected(position)
-                    selected = position
-                    updateNavTints(navButtons, selected)
-                    fragments[position]?.onVisible()
-                }
-            }
-        )
-        binding.notificationViewPager.setCurrentItem(selected, false)
+        selectTab(selected)
         updateNavTints(navButtons, selected)
         if (PrefManager.getVal<Boolean>(PrefName.SideRailPersist)) {
             showNotificationNavRail()
@@ -134,29 +140,287 @@ class NotificationActivity : AppCompatActivity() {
         }
     }
 
+    private fun tomoe(sizeDp: Float, speed: Float, rot: Float, grav: Int): LottieAnimationView {
+        val s = (sizeDp * resources.displayMetrics.density).toInt()
+        return LottieAnimationView(this).apply {
+            layoutParams = FrameLayout.LayoutParams(s, s).apply { this.gravity = grav }
+            setAnimation(R.raw.tomoe)
+            this.speed = speed
+            repeatCount = LottieAnimationView.INFINITE
+            playAnimation()
+            rotation = rot
+        }
+    }
+
+    private fun setupContent() {
+        val dp = resources.displayMetrics.density
+
+        tabSwipeRefresh = SwipeRefreshLayout(this).apply {
+            layoutParams = FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT
+            )
+            isEnabled = false
+            setOnRefreshListener { refreshCurrentTab() }
+        }
+
+        tabRecycler = FadingEdgeRecyclerView(this).apply {
+            layoutParams = ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT
+            )
+            adapter = tabAdapter
+            layoutManager = LinearLayoutManager(context)
+            isNestedScrollingEnabled = true
+            isFocusable = true
+            descendantFocusability = ViewGroup.FOCUS_AFTER_DESCENDANTS
+            clipToPadding = false
+            addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                    if (shouldLoadMore()) loadMore()
+                }
+            })
+        }
+        tabSwipeRefresh.addView(tabRecycler)
+
+        tabEmpty = TextView(this).apply {
+            text = getString(R.string.nothing_here)
+            layoutParams = FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT
+            )
+            gravity = Gravity.CENTER
+            val ta = theme.obtainStyledAttributes(intArrayOf(com.google.android.material.R.attr.colorOnBackground))
+            setTextColor(ta.getColor(0, Color.WHITE))
+            ta.recycle()
+            setTypeface(android.graphics.Typeface.DEFAULT_BOLD)
+            visibility = View.GONE
+        }
+
+        val refreshBtn = ImageButton(this).apply {
+            layoutParams = FrameLayout.LayoutParams(
+                (48 * dp).toInt(), (48 * dp).toInt()
+            ).apply {
+                gravity = Gravity.TOP or Gravity.END
+                topMargin = (8 * dp).toInt()
+                rightMargin = (8 * dp).toInt()
+            }
+            setImageResource(R.drawable.ic_round_refresh_24)
+            setBackgroundColor(Color.TRANSPARENT)
+            scaleType = ImageView.ScaleType.FIT_CENTER
+            setPadding((12 * dp).toInt(), (12 * dp).toInt(), (12 * dp).toInt(), (12 * dp).toInt())
+            isFocusable = true
+            setOnClickListener { refreshCurrentTab() }
+            FocusEffectUtil.applyFocusListener(this)
+        }
+
+        tabProgress = FrameLayout(this).apply {
+            val sz = (76.5f * dp).toInt()
+            layoutParams = FrameLayout.LayoutParams(sz, sz).apply { gravity = Gravity.CENTER }
+            addView(tomoe(45f, 1.75f, 75f, Gravity.TOP or Gravity.CENTER_HORIZONTAL))
+            addView(tomoe(45f, 1.75f, -45f, Gravity.BOTTOM or Gravity.START))
+            addView(tomoe(45f, 1.75f, 195f, Gravity.BOTTOM or Gravity.END))
+            visibility = View.GONE
+        }
+
+        FrameLayout(this).apply {
+            layoutParams = FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT
+            )
+            addView(tabProgress)
+            addView(tabEmpty)
+            addView(tabSwipeRefresh)
+            addView(refreshBtn)
+            binding.notificationContent.addView(this)
+        }
+    }
+
+    private fun selectTab(idx: Int) {
+        selected = idx
+        val state = tabStates[idx]
+        if (getOne != -1 || !state.loaded) {
+            loadTab(idx, force = true)
+        } else {
+            showTabContent(idx)
+        }
+    }
+
+    private fun showTabContent(idx: Int) {
+        val state = tabStates[idx]
+        tabAdapter.clear()
+        tabAdapter.addAll(state.items.map { n ->
+            NotificationItem(n, TabType.entries[idx], tabAdapter, ::onNotificationClick)
+        })
+        tabEmpty.visibility = if (tabAdapter.itemCount == 0) View.VISIBLE else View.GONE
+        tabProgress.visibility = View.GONE
+        tabSwipeRefresh.isEnabled = true
+
+        binding.notificationContent.alpha = 0f
+        binding.notificationContent.scaleX = 0.92f
+        binding.notificationContent.scaleY = 0.92f
+        binding.notificationContent.animate().cancel()
+        binding.notificationContent.animate()
+            .alpha(1f).scaleX(1f).scaleY(1f)
+            .setDuration(300)
+            .setInterpolator(OvershootInterpolator())
+            .start()
+
+        tabRecycler.post { tabRecycler.requestFocus() }
+    }
+
+    private fun loadTab(idx: Int, force: Boolean = false) {
+        val state = tabStates[idx]
+        if (state.loading && !force) return
+        state.loading = true
+        if (force) { state.items.clear(); state.currentPage = 1 }
+        tabProgress.visibility = View.VISIBLE
+        tabEmpty.visibility = View.GONE
+        tabSwipeRefresh.isEnabled = false
+
+        ioScope.launch {
+            try {
+                val list = fetchNotificationsForTab(idx, state.currentPage)
+                launch(Dispatchers.Main) {
+                    state.items.addAll(list)
+                    if (list.isNotEmpty()) state.currentPage++
+                    state.hasNextPage = list.size >= 25
+                    state.loaded = true; state.loading = false
+                    if (idx == selected) showTabContent(idx)
+                    resetCountIfNeeded(idx)
+                }
+            } catch (_: Exception) {
+                launch(Dispatchers.Main) {
+                    state.loading = false
+                    if (idx == selected) {
+                        tabProgress.visibility = View.GONE
+                        tabEmpty.visibility = View.VISIBLE
+                    }
+                }
+            }
+        }
+    }
+
+    private fun fetchNotificationsForTab(idx: Int, page: Int): List<Notification> {
+        val uid = Anilist.userid ?: PrefManager.getVal<String>(PrefName.AnilistUserId).toIntOrNull() ?: 0
+        return when (TabType.entries[idx]) {
+            TabType.USER -> Anilist.query.getNotifications(uid, page, true, null)
+                ?.data?.page?.notifications?.filter {
+                    it.media == null && it.notificationType != "RELATED_MEDIA_ADDITION"
+                } ?: listOf()
+            TabType.MEDIA -> Anilist.query.getNotifications(uid, page, true, true)
+                ?.data?.page?.notifications?.filter {
+                    it.media != null || it.notificationType == "MEDIA_DELETION"
+                } ?: listOf()
+            TabType.SUBSCRIPTION -> {
+                val list = PrefManager.getNullableVal<List<SubscriptionStore>>(
+                    PrefName.SubscriptionNotificationStore, null
+                ) ?: listOf()
+                list.sortedByDescending { (it.time / 1000L).toInt() }
+                    .filter { it.image != null }
+                    .map { Notification(it.type, System.currentTimeMillis().toInt(),
+                        commentId = it.mediaId, mediaId = it.mediaId,
+                        notificationType = it.type,
+                        context = it.title + ": " + it.content,
+                        createdAt = (it.time / 1000L).toInt(),
+                        image = it.image, banner = it.banner ?: it.image) }
+            }
+            TabType.COMMENT -> {
+                val list = PrefManager.getNullableVal<List<CommentStore>>(
+                    PrefName.CommentNotificationStore, null
+                ) ?: listOf()
+                list.sortedByDescending { (it.time / 1000L).toInt() }
+                    .map { Notification(it.type.toString(), System.currentTimeMillis().toInt(),
+                        commentId = it.commentId, notificationType = it.type.toString(),
+                        mediaId = it.mediaId,
+                        context = it.title + "\n" + it.content,
+                        createdAt = (it.time / 1000L).toInt()) }
+            }
+            TabType.ONE -> Anilist.query.getNotifications(uid, 1, false, null)
+                ?.data?.page?.notifications?.filter { it.id == getOne } ?: listOf()
+        }
+    }
+
+    private fun refreshCurrentTab() {
+        val state = tabStates[selected]
+        state.loaded = false; state.items.clear(); state.currentPage = 1
+        loadTab(selected, force = true)
+        tabSwipeRefresh.isRefreshing = false
+    }
+
+    private fun loadMore() {
+        val state = tabStates[selected]
+        if (!state.hasNextPage || state.loading) return
+        state.loading = true
+        ioScope.launch {
+            try {
+                val list = fetchNotificationsForTab(selected, state.currentPage)
+                launch(Dispatchers.Main) {
+                    state.items.addAll(list)
+                    if (list.isNotEmpty()) state.currentPage++
+                    state.hasNextPage = list.size >= 25
+                    state.loading = false
+                    if (list.isNotEmpty()) {
+                        tabAdapter.addAll(list.map { n ->
+                            NotificationItem(n, TabType.entries[selected], tabAdapter, ::onNotificationClick)
+                        })
+                    }
+                }
+            } catch (_: Exception) {
+                launch(Dispatchers.Main) { state.loading = false }
+            }
+        }
+    }
+
+    private fun shouldLoadMore(): Boolean {
+        val lm = tabRecycler.layoutManager as? LinearLayoutManager ?: return false
+        val lastVisible = lm.findLastVisibleItemPosition()
+        val state = tabStates[selected]
+        return state.hasNextPage && !state.loading && tabAdapter.itemCount > 0 &&
+                lastVisible >= tabAdapter.itemCount - 1 && !tabRecycler.canScrollVertically(1)
+    }
+
+    private fun onNotificationClick(id: Int, optional: Int?, type: NotificationClickType) {
+        val intent = when (type) {
+            NotificationClickType.USER -> Intent(this, ProfileActivity::class.java).apply { putExtra("userId", id) }
+            NotificationClickType.MEDIA -> Intent(this, MediaDetailsActivity::class.java).apply { putExtra("mediaId", id) }
+            NotificationClickType.ACTIVITY -> Intent(this, FeedActivity::class.java).apply { putExtra("activityId", id) }
+            NotificationClickType.COMMENT -> Intent(this, MediaDetailsActivity::class.java).apply {
+                putExtra("FRAGMENT_TO_LOAD", "COMMENTS")
+                putExtra("mediaId", id)
+                putExtra("commentId", optional ?: -1)
+            }
+            NotificationClickType.UNDEFINED -> null
+        }
+        intent?.let { ContextCompat.startActivity(this, it, null) }
+    }
+
+    private fun resetCountIfNeeded(idx: Int) {
+        if (getOne != -1) return
+        when (TabType.entries[idx]) {
+            TabType.USER -> { userCount = 0; PrefManager.setVal(PrefName.UnreadUserNotifications, 0) }
+            TabType.MEDIA -> { mediaCount = 0; PrefManager.setVal(PrefName.UnreadMediaNotifications, 0) }
+            TabType.SUBSCRIPTION -> { subsCount = 0; PrefManager.setVal(PrefName.UnreadSubscriptionNotifications, 0) }
+            TabType.COMMENT -> if (CommentsEnabled) { commentCount = 0; PrefManager.setVal(PrefName.UnreadCommentNotifications, 0) }
+            TabType.ONE -> {}
+        }
+        saveCounts()
+    }
+
     override fun dispatchKeyEvent(event: KeyEvent): Boolean {
         if (event.action == KeyEvent.ACTION_DOWN) {
             when (event.keyCode) {
                 KeyEvent.KEYCODE_BACK, KeyEvent.KEYCODE_ESCAPE -> {
                     if (binding.notificationNavRail.visibility == View.VISIBLE) {
                         hideNotificationNavRail()
-                        if (binding.notificationNavRail.visibility == View.VISIBLE) return true
                     }
                 }
                 KeyEvent.KEYCODE_DPAD_RIGHT -> {
-                    val id = currentFocus?.id
-                    if (id == R.id.notificationNavUser || id == R.id.notificationNavMedia ||
-                        id == R.id.notificationNavSubs || id == R.id.notificationNavComment) {
+                    if (currentFocus?.id in setOf(R.id.notificationNavUser, R.id.notificationNavMedia,
+                            R.id.notificationNavSubs, R.id.notificationNavComment)) {
                         hideNotificationNavRail()
                         return true
                     }
                 }
                 KeyEvent.KEYCODE_DPAD_LEFT -> {
-                    val id = currentFocus?.id
-                    if (id == R.id.notificationNavUser || id == R.id.notificationNavMedia ||
-                        id == R.id.notificationNavSubs || id == R.id.notificationNavComment) {
-                        return true
-                    }
+                    if (currentFocus?.id in setOf(R.id.notificationNavUser, R.id.notificationNavMedia,
+                            R.id.notificationNavSubs, R.id.notificationNavComment)) return true
                     if (binding.notificationNavRail.visibility != View.VISIBLE) {
                         val focus = currentFocus
                         if (focus != null) {
@@ -166,20 +430,17 @@ class NotificationActivity : AppCompatActivity() {
                                 if (p is RecyclerView) {
                                     val lm = p.layoutManager
                                     if (lm != null && lm.canScrollHorizontally()) {
-                                        val holder = p.findContainingViewHolder(focus)
-                                        if (holder != null && holder.bindingAdapterPosition > 0) {
-                                            inHorizontalRv = true
-                                        } else if (p.canScrollHorizontally(-1)) {
-                                            inHorizontalRv = true
-                                        }
+                                        inHorizontalRv = p.findContainingViewHolder(focus)?.let {
+                                            it.bindingAdapterPosition > 0
+                                        } == true || p.canScrollHorizontally(-1)
                                     }
                                     break
                                 }
                                 p = (p as? View)?.parent
                             }
                             if (!inHorizontalRv) {
-                                val railWidth = (60f * resources.displayMetrics.density).toInt()
-                                if (focus.left <= railWidth || focus.focusSearch(View.FOCUS_LEFT) == null) {
+                                val railW = (60f * resources.displayMetrics.density).toInt()
+                                if (focus.left <= railW || focus.focusSearch(View.FOCUS_LEFT) == null) {
                                     showNotificationNavRail()
                                     return true
                                 }
@@ -201,28 +462,20 @@ class NotificationActivity : AppCompatActivity() {
     private fun showNotificationNavRail() {
         binding.notificationNavRail.apply {
             visibility = View.VISIBLE
-            pivotY = 0f
-            translationX = -60f * resources.displayMetrics.density
-            scaleY = 0.3f
-            alpha = 0f
+            pivotY = 0f; translationX = -60f * resources.displayMetrics.density
+            scaleY = 0.3f; alpha = 0f
         }
         binding.notificationNavRail.post {
             ObjectAnimator.ofFloat(binding.notificationNavRail, View.SCALE_Y, 1f).apply {
-                interpolator = OvershootInterpolator()
-                duration = 500
+                interpolator = OvershootInterpolator(); duration = 500
             }.start()
             binding.notificationNavRail.animate()
-                .translationX(0f)
-                .alpha(1f)
-                .setInterpolator(DecelerateInterpolator())
-                .setDuration(500)
-                .start()
+                .translationX(0f).alpha(1f)
+                .setInterpolator(DecelerateInterpolator()).setDuration(500).start()
         }
         val id = when (selected) {
-            0 -> R.id.notificationNavUser
-            1 -> R.id.notificationNavMedia
-            2 -> R.id.notificationNavSubs
-            3 -> R.id.notificationNavComment
+            0 -> R.id.notificationNavUser; 1 -> R.id.notificationNavMedia
+            2 -> R.id.notificationNavSubs; 3 -> R.id.notificationNavComment
             else -> R.id.notificationNavUser
         }
         binding.root.findViewById<View>(id)?.requestFocus()
@@ -231,16 +484,11 @@ class NotificationActivity : AppCompatActivity() {
     private fun hideNotificationNavRail() {
         if (PrefManager.getVal<Boolean>(PrefName.SideRailPersist)) return
         binding.notificationNavRail.visibility = View.GONE
-        val frag = fragments[selected]
-        if (frag != null) {
-            frag.focusRecyclerView()
-        } else {
-            binding.notificationViewPager.requestFocus()
-        }
+        tabRecycler.requestFocus()
     }
 
-    private fun updateNavTints(buttons: List<android.widget.ImageButton>, selectedIndex: Int) {
-        val ta: TypedArray = theme.obtainStyledAttributes(intArrayOf(com.google.android.material.R.attr.colorPrimary))
+    private fun updateNavTints(buttons: List<ImageButton>, selectedIndex: Int) {
+        val ta = theme.obtainStyledAttributes(intArrayOf(com.google.android.material.R.attr.colorPrimary))
         val primary = ta.getColor(0, Color.WHITE)
         ta.recycle()
         buttons.forEachIndexed { i, btn ->
@@ -267,31 +515,12 @@ class NotificationActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         updateCounts()
-        if (PrefManager.getVal<Boolean>(PrefName.SideRailPersist)) {
+        if (PrefManager.getVal<Boolean>(PrefName.SideRailPersist))
             binding.notificationNavRail.visibility = View.VISIBLE
-        }
     }
 
-    val fragments = mutableMapOf<Int, NotificationFragment>()
-    private inner class ViewPagerAdapter(
-        fragmentManager: FragmentManager,
-        lifecycle: Lifecycle,
-        val id: Int = -1,
-        val commentsEnabled: Boolean,
-        private val countResetCallback: (NotificationFragment.Companion.NotificationType, Boolean) -> Unit
-    ) : FragmentStateAdapter(fragmentManager, lifecycle) {
-        override fun getItemCount(): Int = if (id != -1) 1 else if (commentsEnabled) 4 else 3
-
-        override fun createFragment(position: Int): Fragment {
-            val fragment = when (position) {
-                0 -> newInstance(if (id != -1) ONE else USER, id, countResetCallback)
-                1 -> newInstance(MEDIA, countResetCallback = countResetCallback)
-                2 -> newInstance(SUBSCRIPTION, countResetCallback = countResetCallback)
-                3 -> newInstance(COMMENT, countResetCallback = countResetCallback)
-                else -> newInstance(MEDIA, countResetCallback = countResetCallback)
-            }
-            fragments[position] = fragment
-            return fragment
-        }
+    override fun onDestroy() {
+        ioScope.cancel()
+        super.onDestroy()
     }
 }

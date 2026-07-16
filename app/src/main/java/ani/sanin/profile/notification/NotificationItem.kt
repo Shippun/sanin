@@ -16,9 +16,10 @@ import ani.sanin.loadImage
 import ani.sanin.notifications.comment.CommentStore
 import ani.sanin.notifications.subscription.SubscriptionStore
 import ani.sanin.profile.activity.ActivityItemBuilder
-import ani.sanin.profile.notification.NotificationFragment.Companion.NotificationClickType
-import ani.sanin.profile.notification.NotificationFragment.Companion.NotificationType.COMMENT
-import ani.sanin.profile.notification.NotificationFragment.Companion.NotificationType.SUBSCRIPTION
+import ani.sanin.profile.notification.NotificationClickType
+import ani.sanin.profile.notification.TabType
+import ani.sanin.profile.notification.TabType.COMMENT
+import ani.sanin.profile.notification.TabType.SUBSCRIPTION
 import ani.sanin.setAnimation
 import ani.sanin.settings.saving.PrefManager
 import ani.sanin.settings.saving.PrefName
@@ -35,7 +36,7 @@ import kotlinx.coroutines.withContext
 
 class NotificationItem(
     private val notification: Notification,
-    val type: NotificationFragment.Companion.NotificationType,
+    val type: TabType,
     val parentAdapter: GroupieAdapter,
     val clickCallback: (Int, Int?, NotificationClickType) -> Unit,
 

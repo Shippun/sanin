@@ -124,14 +124,13 @@
             </LinearLayout>
         </FrameLayout>
 
-        <androidx.viewpager2.widget.ViewPager2
-            android:id="@+id/notificationViewPager"
+        <FrameLayout
+            android:id="@+id/notificationContent"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:focusable="true"
-            android:nestedScrollingEnabled="true"
-            tools:ignore="SpeakableTextPresentCheck" />
+            android:descendantFocusability="afterDescendants" />
 
     </LinearLayout>
 

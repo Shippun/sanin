@@ -49,13 +49,11 @@
                 android:layout_height="match_parent"
                 android:background="#CC000000" />
 
-            <androidx.viewpager2.widget.ViewPager2
-                android:id="@+id/mediaViewPager"
+            <FrameLayout
+                android:id="@+id/mediaTabContent"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:nextFocusUp="@+id/mediaNavPills"
-                android:nestedScrollingEnabled="false"
-                tools:ignore="SpeakableTextPresentCheck" />
+                android:nextFocusUp="@+id/mediaNavPills" />
         </FrameLayout>
     </LinearLayout>
 
