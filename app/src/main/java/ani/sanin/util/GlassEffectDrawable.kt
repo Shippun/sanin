@@ -139,6 +139,21 @@ class GlassEffectDrawable(
         effectsCache = null
     }
 
+    private var scrollInvalidator: Runnable? = null
+
+    fun invalidateOnScroll(scrollableView: View) {
+        scrollInvalidator?.let { scrollableView.removeCallbacks(it) }
+        val invalidator = Runnable {
+            invalidateCache()
+            targetRef.get()?.invalidate()
+        }
+        scrollInvalidator = invalidator
+        scrollableView.setOnScrollChangeListener { _, _, _, _, _ ->
+            scrollableView.removeCallbacks(invalidator)
+            scrollableView.postOnAnimation(invalidator)
+        }
+    }
+
     override fun draw(canvas: Canvas) {
         if (isCapturing) return
         val w = bounds.width()

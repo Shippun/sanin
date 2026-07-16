@@ -8,6 +8,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalView
+import androidx.core.widget.NestedScrollView
+import androidx.recyclerview.widget.RecyclerView
 import ani.sanin.settings.saving.PrefManager
 import ani.sanin.settings.saving.PrefName
 
@@ -93,7 +95,28 @@ object GlassEffectManager {
         )
         applyParams(drawable)
         activeDrawables[view] = drawable
+        view.post { wireScrollInvalidator(view, drawable) }
         return drawable
+    }
+
+    private fun wireScrollInvalidator(view: View, drawable: GlassEffectDrawable) {
+        val root = view.rootView
+        if (root is ViewGroup) {
+            findScrollableDescendant(root)?.let { drawable.invalidateOnScroll(it) }
+        }
+    }
+
+    private fun findScrollableDescendant(group: ViewGroup): View? {
+        for (i in 0 until group.childCount) {
+            val child = group.getChildAt(i)
+            if (child is RecyclerView || child is NestedScrollView ||
+                child is android.widget.ScrollView || child is android.widget.ListView
+            ) return child
+            if (child is ViewGroup) {
+                findScrollableDescendant(child)?.let { return it }
+            }
+        }
+        return null
     }
 
     fun removeGlass(view: View) {

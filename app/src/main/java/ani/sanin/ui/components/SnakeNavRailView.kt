@@ -8,6 +8,10 @@ import android.graphics.Paint
 import android.graphics.Shader
 import android.util.AttributeSet
 import android.view.View
+import android.view.ViewGroup
+import android.widget.ScrollView
+import androidx.core.widget.NestedScrollView
+import androidx.recyclerview.widget.RecyclerView
 import ani.sanin.util.GlassComponent
 import ani.sanin.util.GlassEffectDrawable
 import ani.sanin.util.GlassEffectManager
@@ -55,7 +59,6 @@ class SnakeNavRailView @JvmOverloads constructor(
         _glassEnabled = enabled && GlassEffectManager.isComponentEnabled(GlassComponent.NavPills)
         if (_glassEnabled) {
             if (glassDrawable == null) {
-                val cornerPx = NavPillCustomizer.getCornerRadiusDp() * resources.displayMetrics.density
                 glassDrawable = GlassEffectDrawable.applyToView(
                     view = this,
                     cornerRadiusDp = NavPillCustomizer.getCornerRadiusDp().toFloat(),
@@ -63,6 +66,7 @@ class SnakeNavRailView @JvmOverloads constructor(
                     tintColor = GlassEffectManager.getTintColor()
                 ).also { d ->
                     GlassEffectManager.applyParams(d)
+                    post { wireScrollInvalidator(d) }
                 }
             }
             setWillNotDraw(false)
@@ -72,6 +76,23 @@ class SnakeNavRailView @JvmOverloads constructor(
             background = null
         }
         invalidate()
+    }
+
+    private fun wireScrollInvalidator(drawable: GlassEffectDrawable) {
+        val rv = rootView
+        if (rv is ViewGroup) {
+            fun find(vg: ViewGroup): View? {
+                for (i in 0 until vg.childCount) {
+                    val c = vg.getChildAt(i)
+                    if (c is RecyclerView || c is NestedScrollView ||
+                        c is ScrollView || c is android.widget.ListView
+                    ) return c
+                    if (c is ViewGroup) find(c)?.let { return it }
+                }
+                return null
+            }
+            find(rv)?.let { drawable.invalidateOnScroll(it) }
+        }
     }
 
     fun updateGlassParams() {
