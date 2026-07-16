@@ -310,14 +310,18 @@ class GlassEffectDrawable(
         val w = bitmap.width
         val h = bitmap.height
         if (w <= 0 || h <= 0) return
-        val step = (w * h / 64).coerceAtLeast(1)
-        val pixels = IntArray((w * h + step - 1) / step)
-        bitmap.getPixels(pixels, 0, 1, 0, 0, (w * h + step - 1) / step, 1)
+        val totalPixels = w * h
+        val step = (totalPixels / 64).coerceAtLeast(1)
+        val pixels = IntArray(totalPixels)
+        bitmap.getPixels(pixels, 0, w, 0, 0, w, h)
         var total = 0f
         var count = 0
-        for (p in pixels) {
+        var i = 0
+        while (i < totalPixels) {
+            val p = pixels[i]
             total += (Color.red(p) * 0.299f + Color.green(p) * 0.587f + Color.blue(p) * 0.114f)
             count++
+            i += step
         }
         averageBrightness = (total / count / 255f).coerceIn(0f, 1f)
     }
