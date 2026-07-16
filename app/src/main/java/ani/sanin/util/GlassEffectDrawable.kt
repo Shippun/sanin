@@ -167,7 +167,7 @@ class GlassEffectDrawable(
             val pix = pixels.copyOf()
 
             val vmin = IntArray(w.coerceAtLeast(h))
-            val divsum = (div + 1) shr 1
+            val divsum = div
             val dv = IntArray(256 * divsum)
             for (i in dv.indices) dv[i] = i / divsum
 
