@@ -123,6 +123,7 @@ enum class PrefName(val data: Pref) {
     NavPillWidth(Pref(Location.UI, Int::class, 59)),
     NavPillSpacing(Pref(Location.UI, Int::class, 26)),
     NavPillIconSize(Pref(Location.UI, Int::class, 23)),
+    NavPillIconColor(Pref(Location.UI, Int::class, 0xFFFFFFFF.toInt())),
     NavPillCornerRadius(Pref(Location.UI, Int::class, 18)),
     BlurUnwatchedEpisodes(Pref(Location.UI, Boolean::class, false)),
     GreyWatchedEpisodes(Pref(Location.UI, Boolean::class, false)),
