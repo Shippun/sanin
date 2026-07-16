@@ -21,6 +21,7 @@ import ani.sanin.media.Media
 import ani.sanin.media.MediaNameAdapter
 import ani.sanin.setAnimation
 import ani.sanin.settings.saving.PrefManager
+import ani.sanin.settings.saving.PrefName
 import ani.sanin.util.customAlertDialog
 import ani.sanin.util.FocusEffectUtil
 import ani.sanin.util.SizeFormatter
