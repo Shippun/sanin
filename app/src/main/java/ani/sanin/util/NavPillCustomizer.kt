@@ -1,6 +1,5 @@
 package ani.sanin.util
 
-import android.graphics.Color
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
@@ -10,11 +9,11 @@ import ani.sanin.settings.saving.PrefName
 
 object NavPillCustomizer {
 
-    fun getHeightDp(): Int = PrefManager.getVal(PrefName.NavPillHeight).coerceIn(32, 72)
-    fun getWidthDp(): Int = PrefManager.getVal(PrefName.NavPillWidth).coerceIn(32, 72)
-    fun getSpacingDp(): Int = PrefManager.getVal(PrefName.NavPillSpacing).coerceIn(0, 24)
-    fun getIconPaddingDp(): Int = PrefManager.getVal(PrefName.NavPillIconPadding).coerceIn(4, 28)
-    fun getIconColor(): Int = PrefManager.getVal(PrefName.NavPillIconColor)
+    fun getHeightDp(): Int = PrefManager.getVal<Int>(PrefName.NavPillHeight).coerceIn(32, 72)
+    fun getWidthDp(): Int = PrefManager.getVal<Int>(PrefName.NavPillWidth).coerceIn(32, 72)
+    fun getSpacingDp(): Int = PrefManager.getVal<Int>(PrefName.NavPillSpacing).coerceIn(0, 24)
+    fun getIconPaddingDp(): Int = PrefManager.getVal<Int>(PrefName.NavPillIconPadding).coerceIn(4, 28)
+    fun getIconColor(): Int = PrefManager.getVal<Int>(PrefName.NavPillIconColor)
 
     fun applyToPillList(pillList: LinearLayout) {
         val density = pillList.resources.displayMetrics.density
@@ -43,7 +42,8 @@ object NavPillCustomizer {
     }
 
     fun applyToPillPreview(preview: View) {
-        val density = preview.resources.displayMetrics.density
+        val group = preview as? ViewGroup ?: return
+        val density = group.resources.displayMetrics.density
         val width = getWidthDp()
         val height = getHeightDp()
         val spacing = getSpacingDp()
@@ -51,14 +51,14 @@ object NavPillCustomizer {
         val iconColor = getIconColor()
 
         val previewH = (Math.max(height, 32) + spacing * 2) * density.toInt()
-        val lp = preview.layoutParams
+        val lp = group.layoutParams
         if (lp.height != previewH) {
             lp.height = previewH
-            preview.layoutParams = lp
+            group.layoutParams = lp
         }
 
-        for (i in 0 until (preview as? ViewGroup)?.childCount ?: 0) {
-            val child = (preview as ViewGroup).getChildAt(i)
+        for (i in 0 until group.childCount) {
+            val child = group.getChildAt(i)
             if (child is ImageButton) {
                 val clp = child.layoutParams
                 clp.width = (width * density).toInt()

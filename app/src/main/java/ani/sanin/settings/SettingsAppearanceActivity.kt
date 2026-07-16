@@ -288,25 +288,25 @@ class SettingsAppearanceActivity : AppCompatActivity(),
             }
         }
 
-        binding.appearanceNavPillHeight.value = PrefManager.getVal(PrefName.NavPillHeight).toFloat()
+        binding.appearanceNavPillHeight.value = PrefManager.getVal<Int>(PrefName.NavPillHeight).toFloat()
         binding.appearanceNavPillHeight.addOnChangeListener { _, v, _ ->
             PrefManager.setVal(PrefName.NavPillHeight, v.toInt())
             updateNavPillPreview()
         }
 
-        binding.appearanceNavPillWidth.value = PrefManager.getVal(PrefName.NavPillWidth).toFloat()
+        binding.appearanceNavPillWidth.value = PrefManager.getVal<Int>(PrefName.NavPillWidth).toFloat()
         binding.appearanceNavPillWidth.addOnChangeListener { _, v, _ ->
             PrefManager.setVal(PrefName.NavPillWidth, v.toInt())
             updateNavPillPreview()
         }
 
-        binding.appearanceNavPillSpacing.value = PrefManager.getVal(PrefName.NavPillSpacing).toFloat()
+        binding.appearanceNavPillSpacing.value = PrefManager.getVal<Int>(PrefName.NavPillSpacing).toFloat()
         binding.appearanceNavPillSpacing.addOnChangeListener { _, v, _ ->
             PrefManager.setVal(PrefName.NavPillSpacing, v.toInt())
             updateNavPillPreview()
         }
 
-        binding.appearanceNavPillIconPadding.value = PrefManager.getVal(PrefName.NavPillIconPadding).toFloat()
+        binding.appearanceNavPillIconPadding.value = PrefManager.getVal<Int>(PrefName.NavPillIconPadding).toFloat()
         binding.appearanceNavPillIconPadding.addOnChangeListener { _, v, _ ->
             PrefManager.setVal(PrefName.NavPillIconPadding, v.toInt())
             updateNavPillPreview()
