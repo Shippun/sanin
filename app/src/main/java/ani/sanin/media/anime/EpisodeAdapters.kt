@@ -1,5 +1,7 @@
 package ani.sanin.media.anime
 
+import android.graphics.ColorMatrix
+import android.graphics.ColorMatrixColorFilter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -181,12 +183,48 @@ class EpisodeAdapter(
                 }
 
                 if (media.userProgress != null) {
-                    if ((ep.number.toFloatOrNull() ?: 9999f) <= media.userProgress!!.toFloat()) {
+                    val isWatched = (ep.number.toFloatOrNull() ?: 9999f) <= media.userProgress!!.toFloat()
+                    val blurUnwatched = PrefManager.getVal<Boolean>(PrefName.BlurUnwatchedEpisodes)
+                    val greyWatched = PrefManager.getVal<Boolean>(PrefName.GreyWatchedEpisodes)
+
+                    if (isWatched) {
                         binding.itemEpisodeViewedCover.visibility = View.VISIBLE
                         binding.itemEpisodeViewed.visibility = View.VISIBLE
+                        if (greyWatched) {
+                            val cm = ColorMatrix().apply { setSaturation(0f) }
+                            binding.itemMediaImage.colorFilter = ColorMatrixColorFilter(cm)
+                            binding.itemEpisodeTitle.alpha = 0.5f
+                            binding.itemEpisodeDesc.alpha = 0.5f
+                            binding.itemEpisodeDate.alpha = 0.5f
+                            binding.itemEpisodeNumber.alpha = 0.5f
+                            binding.itemEpisodeDivider?.alpha = 0.5f
+                        } else {
+                            binding.itemMediaImage.colorFilter = null
+                            binding.itemEpisodeTitle.alpha = 1f
+                            binding.itemEpisodeDesc.alpha = 1f
+                            binding.itemEpisodeDate.alpha = 1f
+                            binding.itemEpisodeNumber.alpha = 1f
+                            binding.itemEpisodeDivider?.alpha = 1f
+                        }
                     } else {
                         binding.itemEpisodeViewedCover.visibility = View.GONE
                         binding.itemEpisodeViewed.visibility = View.GONE
+                        if (blurUnwatched) {
+                            val cm = ColorMatrix().apply { setSaturation(0.3f) }
+                            binding.itemMediaImage.colorFilter = ColorMatrixColorFilter(cm)
+                            binding.itemEpisodeTitle.alpha = 0.5f
+                            binding.itemEpisodeDesc.alpha = 0.5f
+                            binding.itemEpisodeDate.alpha = 0.5f
+                            binding.itemEpisodeNumber.alpha = 0.5f
+                            binding.itemEpisodeDivider?.alpha = 0.5f
+                        } else {
+                            binding.itemMediaImage.colorFilter = null
+                            binding.itemEpisodeTitle.alpha = 1f
+                            binding.itemEpisodeDesc.alpha = 1f
+                            binding.itemEpisodeDate.alpha = 1f
+                            binding.itemEpisodeNumber.alpha = 1f
+                            binding.itemEpisodeDivider?.alpha = 1f
+                        }
                         binding.itemEpisodeCont.setOnLongClickListener {
                             updateProgress(media, ep.number)
                             true
@@ -260,12 +298,40 @@ class EpisodeAdapter(
                     binding.itemEpisodeFillerView.visibility = View.GONE
                 }
                 if (media.userProgress != null) {
-                    if ((ep.number.toFloatOrNull() ?: 9999f) <= media.userProgress!!.toFloat()) {
+                    val isWatched = (ep.number.toFloatOrNull() ?: 9999f) <= media.userProgress!!.toFloat()
+                    val blurUnwatched = PrefManager.getVal<Boolean>(PrefName.BlurUnwatchedEpisodes)
+                    val greyWatched = PrefManager.getVal<Boolean>(PrefName.GreyWatchedEpisodes)
+
+                    if (isWatched) {
                         binding.itemEpisodeViewedCover.visibility = View.VISIBLE
                         binding.itemEpisodeViewed.visibility = View.VISIBLE
+                        if (greyWatched) {
+                            val cm = ColorMatrix().apply { setSaturation(0f) }
+                            binding.itemMediaImage.colorFilter = ColorMatrixColorFilter(cm)
+                            binding.itemEpisodeTitle.alpha = 0.5f
+                            binding.itemEpisodeDate?.alpha = 0.5f
+                            binding.itemEpisodeDivider?.alpha = 0.5f
+                        } else {
+                            binding.itemMediaImage.colorFilter = null
+                            binding.itemEpisodeTitle.alpha = 1f
+                            binding.itemEpisodeDate?.alpha = 1f
+                            binding.itemEpisodeDivider?.alpha = 1f
+                        }
                     } else {
                         binding.itemEpisodeViewedCover.visibility = View.GONE
                         binding.itemEpisodeViewed.visibility = View.GONE
+                        if (blurUnwatched) {
+                            val cm = ColorMatrix().apply { setSaturation(0.3f) }
+                            binding.itemMediaImage.colorFilter = ColorMatrixColorFilter(cm)
+                            binding.itemEpisodeTitle.alpha = 0.5f
+                            binding.itemEpisodeDate?.alpha = 0.5f
+                            binding.itemEpisodeDivider?.alpha = 0.5f
+                        } else {
+                            binding.itemMediaImage.colorFilter = null
+                            binding.itemEpisodeTitle.alpha = 1f
+                            binding.itemEpisodeDate?.alpha = 1f
+                            binding.itemEpisodeDivider?.alpha = 1f
+                        }
                         binding.itemEpisodeCont.setOnLongClickListener {
                             updateProgress(media, ep.number)
                             true
@@ -292,10 +358,24 @@ class EpisodeAdapter(
                 binding.itemEpisodeNumber.text = ep.number
                 binding.itemEpisodeFillerView.isVisible = ep.filler
                 if (media.userProgress != null) {
-                    if ((ep.number.toFloatOrNull() ?: 9999f) <= media.userProgress!!.toFloat())
+                    val isWatched = (ep.number.toFloatOrNull() ?: 9999f) <= media.userProgress!!.toFloat()
+                    val blurUnwatched = PrefManager.getVal<Boolean>(PrefName.BlurUnwatchedEpisodes)
+                    val greyWatched = PrefManager.getVal<Boolean>(PrefName.GreyWatchedEpisodes)
+
+                    if (isWatched) {
                         binding.itemEpisodeViewedCover.visibility = View.VISIBLE
-                    else {
+                        if (greyWatched) {
+                            binding.itemEpisodeNumber.alpha = 0.5f
+                        } else {
+                            binding.itemEpisodeNumber.alpha = 1f
+                        }
+                    } else {
                         binding.itemEpisodeViewedCover.visibility = View.GONE
+                        if (blurUnwatched) {
+                            binding.itemEpisodeNumber.alpha = 0.5f
+                        } else {
+                            binding.itemEpisodeNumber.alpha = 1f
+                        }
                         binding.itemEpisodeCont.setOnLongClickListener {
                             updateProgress(media, ep.number)
                             true

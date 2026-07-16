@@ -329,6 +329,16 @@ class SettingsAppearanceActivity : AppCompatActivity(),
                 updateNavPillPreview()
             }
         }
+
+        binding.appearanceBlurUnwatched.isChecked = PrefManager.getVal(PrefName.BlurUnwatchedEpisodes)
+        binding.appearanceBlurUnwatched.setOnCheckedChangeListener { _, isChecked ->
+            PrefManager.setVal(PrefName.BlurUnwatchedEpisodes, isChecked)
+        }
+        binding.appearanceGreyWatched.isChecked = PrefManager.getVal(PrefName.GreyWatchedEpisodes)
+        binding.appearanceGreyWatched.setOnCheckedChangeListener { _, isChecked ->
+            PrefManager.setVal(PrefName.GreyWatchedEpisodes, isChecked)
+        }
+
         updateNavPillPreview()
     }
 

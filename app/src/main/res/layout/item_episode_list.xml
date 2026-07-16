@@ -224,7 +224,14 @@
                     android:text="@string/empty"
                     android:textColor="@android:color/white"
                     app:lineHeight="15sp" />
-                
+
+                <View
+                    android:id="@+id/itemEpisodeDivider"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="4dp"
+                    android:background="?attr/colorOnBackground" />
+
                 <TextView
                     android:id="@+id/itemEpisodeDate"
                     android:layout_width="match_parent"

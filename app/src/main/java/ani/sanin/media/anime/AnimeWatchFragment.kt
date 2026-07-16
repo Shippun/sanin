@@ -161,12 +161,16 @@ class AnimeWatchFragment : Fragment() {
                 val scrollOffset = recyclerView.computeVerticalScrollOffset().toFloat()
                 val logo = binding.mediaWatchLogo
                 val title = binding.mediaWatchTitle
+                val addToList = binding.mediaWatchAddToList
                 val maxTranslate = 200f.px.toFloat()
                 val translation = -minOf(scrollOffset, maxTranslate)
+                val alpha = 1f - (translation / -maxTranslate)
                 logo.translationY = translation
-                logo.alpha = 1f - (translation / -maxTranslate)
+                logo.alpha = alpha
                 title.translationY = translation
-                title.alpha = 1f - (translation / -maxTranslate)
+                title.alpha = alpha
+                addToList.translationY = translation
+                addToList.alpha = alpha
 
                 val position = gridLayoutManager.findFirstVisibleItemPosition()
                 if (position > 2) {

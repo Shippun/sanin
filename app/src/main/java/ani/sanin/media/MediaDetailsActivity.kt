@@ -278,19 +278,16 @@ class MediaDetailsActivity : AppCompatActivity() {
                 0 -> {
                     binding.mediaInfoFragmentContainer!!.visibility = View.VISIBLE
                     binding.mediaRightPanel!!.visibility = View.GONE
-                    binding.mediaInfoAddToListBtn!!.visibility = View.GONE
                 }
                 1 -> {
                     binding.mediaInfoFragmentContainer!!.visibility = View.GONE
                     binding.mediaRightPanel!!.visibility = View.VISIBLE
-                    binding.mediaInfoAddToListBtn!!.visibility = View.VISIBLE
                     showWatchTab(tabContent, animate)
                     tabContent.requestFocus()
                 }
                 2 -> {
                     binding.mediaInfoFragmentContainer!!.visibility = View.GONE
                     binding.mediaRightPanel!!.visibility = View.VISIBLE
-                    binding.mediaInfoAddToListBtn!!.visibility = View.VISIBLE
                     showCommentsTab(tabContent, animate)
                     tabContent.requestFocus()
                 }

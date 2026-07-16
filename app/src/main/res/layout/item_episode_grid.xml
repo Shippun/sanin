@@ -83,6 +83,14 @@
             android:textSize="14sp"
             app:lineHeight="14sp" />
 
+        <View
+            android:id="@+id/itemEpisodeDivider"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="2sp"
+            android:background="?attr/colorOnBackground"
+            android:alpha="0.15" />
+
         <TextView
             android:id="@+id/itemEpisodeDate"
             android:layout_width="match_parent"
