@@ -311,7 +311,9 @@ class SettingsAppearanceActivity : AppCompatActivity() {
             updateNavPillPreview()
         }
 
-        binding.appearanceNavPillCornerRadius.value = PrefManager.getVal<Int>(PrefName.NavPillCornerRadius).toFloat()
+        val cornerRadius = PrefManager.getVal<Int>(PrefName.NavPillCornerRadius).coerceIn(0, 48)
+        PrefManager.setVal(PrefName.NavPillCornerRadius, cornerRadius)
+        binding.appearanceNavPillCornerRadius.value = cornerRadius.toFloat()
         binding.appearanceNavPillCornerRadius.addOnChangeListener { _, v, _ ->
             PrefManager.setVal(PrefName.NavPillCornerRadius, v.toInt())
             updateNavPillPreview()

@@ -273,7 +273,6 @@ class MediaDetailsActivity : AppCompatActivity() {
             selected = idx
             updateMediaNavIconTints(selected)
             binding.commentInputLayout.isVisible = selected == 2
-            val tabContent = binding.mediaTabContent ?: return
             when (idx) {
                 0 -> {
                     binding.mediaInfoFragmentContainer!!.visibility = View.VISIBLE
@@ -282,14 +281,18 @@ class MediaDetailsActivity : AppCompatActivity() {
                 1 -> {
                     binding.mediaInfoFragmentContainer!!.visibility = View.GONE
                     binding.mediaRightPanel!!.visibility = View.VISIBLE
-                    showWatchTab(tabContent, animate)
-                    tabContent.requestFocus()
+                    binding.mediaTabContent?.let {
+                        showWatchTab(it, animate)
+                        it.requestFocus()
+                    }
                 }
                 2 -> {
                     binding.mediaInfoFragmentContainer!!.visibility = View.GONE
                     binding.mediaRightPanel!!.visibility = View.VISIBLE
-                    showCommentsTab(tabContent, animate)
-                    tabContent.requestFocus()
+                    binding.mediaTabContent?.let {
+                        showCommentsTab(it, animate)
+                        it.requestFocus()
+                    }
                 }
             }
             val sel = model.loadSelected(media, isDownload)
@@ -429,7 +432,9 @@ class MediaDetailsActivity : AppCompatActivity() {
     private fun hideNavPills() {
         if (PrefManager.getVal<Boolean>(PrefName.SideRailPersist)) return
         binding.mediaNavPills?.visibility = View.GONE
-        binding.mediaTabContent?.requestFocus()
+        val focusTarget = binding.mediaTabContent
+            ?: if (selected == 0) binding.mediaInfoFragmentContainer else binding.mediaRightPanel
+        focusTarget?.requestFocus()
     }
 
     private fun updateMediaNavIconTints(selectedIdx: Int) {
