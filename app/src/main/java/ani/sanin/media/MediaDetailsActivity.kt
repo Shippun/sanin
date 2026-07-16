@@ -396,6 +396,7 @@ class MediaDetailsActivity : AppCompatActivity() {
                 KeyEvent.KEYCODE_DPAD_RIGHT -> {
                     val focusedId = currentFocus?.id
                     if (focusedId == R.id.navPillInfo || focusedId == R.id.navPillWatch || focusedId == R.id.navPillComments) {
+                        if (PrefManager.getVal<Boolean>(PrefName.SideRailPersist)) return false
                         hideNavPills()
                         return true
                     }
