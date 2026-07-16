@@ -43,6 +43,8 @@ import ani.sanin.settings.saving.PrefName
 import ani.sanin.snackString
 import ani.sanin.themes.ThemeManager
 import ani.sanin.util.FocusEffectUtil
+import ani.sanin.util.GlassComponent
+import ani.sanin.util.GlassEffectManager
 import ani.sanin.util.LauncherWrapper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -171,6 +173,9 @@ class MediaDetailsActivity : AppCompatActivity() {
         allNav.forEach { FocusEffectUtil.applyFocusListener(it) }
 
         binding.navPillBg?.live = PrefManager.getVal(PrefName.LiveSideRail)
+        binding.navPillBg?.setGlassEnabled(
+            GlassEffectManager.isComponentEnabled(GlassComponent.SideRail)
+        )
         binding.navPillBg?.doOnLayout { updateMediaNavIconTints(selected) }
 
         fun showWatchTab(container: FrameLayout, animate: Boolean) {

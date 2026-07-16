@@ -22,6 +22,8 @@ import ani.sanin.parsers.HAnimeSources
 import ani.sanin.px
 import ani.sanin.tryWithSuspend
 import ani.sanin.util.FocusEffectUtil
+import ani.sanin.util.GlassComponent
+import ani.sanin.util.GlassEffectManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -49,6 +51,7 @@ class SourceSearchDialogFragment : BottomSheetDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding.mediaListContainer.updateLayoutParams<ViewGroup.MarginLayoutParams> { bottomMargin += navBarHeight }
+        GlassEffectManager.applyGlassToSheet(binding.mediaListContainer, GlassComponent.SourceSelector, 16f)
 
         val scope = requireActivity().lifecycleScope
         val imm =

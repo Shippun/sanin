@@ -22,6 +22,8 @@ import ani.sanin.settings.saving.PrefName
 import ani.sanin.statusBarHeight
 import ani.sanin.themes.ThemeManager
 import ani.sanin.util.FocusEffectUtil
+import ani.sanin.util.GlassComponent
+import ani.sanin.util.GlassEffectManager
 
 class FeedActivity : AppCompatActivity() {
     private lateinit var binding: ActivityNotificationBinding
@@ -40,6 +42,9 @@ class FeedActivity : AppCompatActivity() {
             topMargin = statusBarHeight
         }
         binding.notificationNavRailBg.live = PrefManager.getVal(PrefName.LiveSideRail)
+        binding.notificationNavRailBg.setGlassEnabled(
+            GlassEffectManager.isComponentEnabled(GlassComponent.SideRail)
+        )
         FocusEffectUtil.applyFocusListener(binding.notificationBack)
 
         val navButtons = listOf(
