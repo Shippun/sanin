@@ -173,37 +173,6 @@ class MediaDetailsActivity : AppCompatActivity() {
         binding.navPillBg?.live = PrefManager.getVal(PrefName.LiveSideRail)
         binding.navPillBg?.doOnLayout { updateMediaNavIconTints(selected) }
 
-        fun selectTab(idx: Int, animate: Boolean = true) {
-            selected = idx
-            updateMediaNavIconTints(selected)
-            binding.commentInputLayout.isVisible = selected == 2
-            val tabContent = binding.mediaTabContent ?: return
-            when (idx) {
-                0 -> {
-                    binding.mediaInfoFragmentContainer!!.visibility = View.VISIBLE
-                    binding.mediaRightPanel!!.visibility = View.GONE
-                    binding.mediaInfoAddToListBtn!!.visibility = View.GONE
-                }
-                1 -> {
-                    binding.mediaInfoFragmentContainer!!.visibility = View.GONE
-                    binding.mediaRightPanel!!.visibility = View.VISIBLE
-                    binding.mediaInfoAddToListBtn!!.visibility = View.VISIBLE
-                    showWatchTab(tabContent, animate)
-                    tabContent.requestFocus()
-                }
-                2 -> {
-                    binding.mediaInfoFragmentContainer!!.visibility = View.GONE
-                    binding.mediaRightPanel!!.visibility = View.VISIBLE
-                    binding.mediaInfoAddToListBtn!!.visibility = View.VISIBLE
-                    showCommentsTab(tabContent, animate)
-                    tabContent.requestFocus()
-                }
-            }
-            val sel = model.loadSelected(media, isDownload)
-            sel.window = idx
-            model.saveSelected(media.id, sel)
-        }
-
         fun showWatchTab(container: FrameLayout, animate: Boolean) {
             val ft = supportFragmentManager.beginTransaction()
             if (::watchFragment.isInitialized && watchFragment.isAdded) {
@@ -252,7 +221,7 @@ class MediaDetailsActivity : AppCompatActivity() {
                 ft.add(R.id.mediaTabContent, commentsFragment, "comments")
                 ft.commit()
                 if (animate) {
-                    tabContent.post {
+                    container.post {
                         val commentsView = commentsFragment.requireView()
                         commentsView.alpha = 0f
                         commentsView.scaleX = 0.92f
@@ -287,6 +256,37 @@ class MediaDetailsActivity : AppCompatActivity() {
                     ft.commit()
                 }
             }
+        }
+
+        fun selectTab(idx: Int, animate: Boolean = true) {
+            selected = idx
+            updateMediaNavIconTints(selected)
+            binding.commentInputLayout.isVisible = selected == 2
+            val tabContent = binding.mediaTabContent ?: return
+            when (idx) {
+                0 -> {
+                    binding.mediaInfoFragmentContainer!!.visibility = View.VISIBLE
+                    binding.mediaRightPanel!!.visibility = View.GONE
+                    binding.mediaInfoAddToListBtn!!.visibility = View.GONE
+                }
+                1 -> {
+                    binding.mediaInfoFragmentContainer!!.visibility = View.GONE
+                    binding.mediaRightPanel!!.visibility = View.VISIBLE
+                    binding.mediaInfoAddToListBtn!!.visibility = View.VISIBLE
+                    showWatchTab(tabContent, animate)
+                    tabContent.requestFocus()
+                }
+                2 -> {
+                    binding.mediaInfoFragmentContainer!!.visibility = View.GONE
+                    binding.mediaRightPanel!!.visibility = View.VISIBLE
+                    binding.mediaInfoAddToListBtn!!.visibility = View.VISIBLE
+                    showCommentsTab(tabContent, animate)
+                    tabContent.requestFocus()
+                }
+            }
+            val sel = model.loadSelected(media, isDownload)
+            sel.window = idx
+            model.saveSelected(media.id, sel)
         }
 
         navInfo?.setOnClickListener { selectTab(0); hideNavPills() }

@@ -3,6 +3,7 @@ package ani.sanin.profile.notification
 import android.animation.ObjectAnimator
 import android.content.res.ColorStateList
 import android.content.res.TypedArray
+import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.view.Gravity
@@ -146,7 +147,7 @@ class NotificationActivity : AppCompatActivity() {
             layoutParams = FrameLayout.LayoutParams(s, s).apply { this.gravity = grav }
             setAnimation(R.raw.tomoe)
             this.speed = speed
-            repeatCount = LottieAnimationView.INFINITE
+            repeatCount = Int.MAX_VALUE
             playAnimation()
             rotation = rot
         }
@@ -297,7 +298,7 @@ class NotificationActivity : AppCompatActivity() {
         }
     }
 
-    private fun fetchNotificationsForTab(idx: Int, page: Int): List<Notification> {
+    private suspend fun fetchNotificationsForTab(idx: Int, page: Int): List<Notification> {
         val uid = Anilist.userid ?: PrefManager.getVal<String>(PrefName.AnilistUserId).toIntOrNull() ?: 0
         return when (TabType.entries[idx]) {
             TabType.USER -> Anilist.query.getNotifications(uid, page, true, null)

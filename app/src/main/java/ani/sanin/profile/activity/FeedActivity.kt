@@ -12,11 +12,7 @@ import android.view.animation.DecelerateInterpolator
 import android.view.animation.OvershootInterpolator
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.updateLayoutParams
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
-import androidx.lifecycle.Lifecycle
 import androidx.recyclerview.widget.RecyclerView
-import androidx.viewpager2.adapter.FragmentStateAdapter
 import ani.sanin.R
 import ani.sanin.databinding.ActivityNotificationBinding
 import ani.sanin.initActivity
@@ -30,6 +26,8 @@ import ani.sanin.util.FocusEffectUtil
 class FeedActivity : AppCompatActivity() {
     private lateinit var binding: ActivityNotificationBinding
     private var selected: Int = 0
+    private var userFragmentAdded = false
+    private var globalFragmentAdded = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,32 +50,67 @@ class FeedActivity : AppCompatActivity() {
         binding.notificationNavComment.visibility = View.GONE
         binding.notificationNavMedia.setImageResource(R.drawable.ic_globe_24)
 
+        val getOne = intent.getIntExtra("activityId", -1)
+        showFragment(if (getOne != -1) 0 else selected, getOne)
+        if (getOne != -1) {
+            navButtons.forEach { it.visibility = View.GONE }
+        }
+
         navButtons.forEach { btn ->
             btn.setOnClickListener {
                 val idx = navButtons.indexOf(btn)
                 selected = idx
-                binding.notificationViewPager.setCurrentItem(selected, false)
+                showFragment(idx, getOne)
                 updateNavTints(navButtons, selected)
             }
             FocusEffectUtil.applyFocusListener(btn)
         }
 
         binding.notificationBack.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
-        val getOne = intent.getIntExtra("activityId", -1)
-        if (getOne != -1) {
-            navButtons.forEach { it.visibility = View.GONE }
-        }
-        binding.notificationViewPager.isUserInputEnabled = false
-        binding.notificationViewPager.adapter =
-            ViewPagerAdapter(supportFragmentManager, lifecycle, getOne)
-        binding.notificationViewPager.setOffscreenPageLimit(4)
-        binding.notificationViewPager.setCurrentItem(selected, false)
         updateNavTints(navButtons, selected)
         if (PrefManager.getVal<Boolean>(PrefName.SideRailPersist)) {
             showNotificationNavRail()
         } else {
             binding.notificationNavRail.visibility = View.GONE
         }
+    }
+
+    private fun showFragment(position: Int, activityId: Int) {
+        val ft = supportFragmentManager.beginTransaction()
+        when (position) {
+            0 -> {
+                val tag = "user"
+                var frag = supportFragmentManager.findFragmentByTag(tag)
+                if (frag == null) {
+                    userFragmentAdded = true
+                    frag = ActivityFragment.newInstance(
+                        if (activityId != -1) ActivityType.ONE else ActivityType.USER,
+                        activityId = activityId
+                    )
+                    ft.add(R.id.notificationContent, frag, tag)
+                } else {
+                    ft.show(frag)
+                }
+                if (globalFragmentAdded) {
+                    supportFragmentManager.findFragmentByTag("global")?.let { ft.hide(it) }
+                }
+            }
+            1 -> {
+                val tag = "global"
+                var frag = supportFragmentManager.findFragmentByTag(tag)
+                if (frag == null) {
+                    globalFragmentAdded = true
+                    frag = ActivityFragment.newInstance(ActivityType.GLOBAL)
+                    ft.add(R.id.notificationContent, frag, tag)
+                } else {
+                    ft.show(frag)
+                }
+                if (userFragmentAdded) {
+                    supportFragmentManager.findFragmentByTag("user")?.let { ft.hide(it) }
+                }
+            }
+        }
+        ft.commit()
     }
 
     override fun dispatchKeyEvent(event: KeyEvent): Boolean {
@@ -191,22 +224,4 @@ class FeedActivity : AppCompatActivity() {
         }
     }
 
-    private class ViewPagerAdapter(
-        fragmentManager: FragmentManager,
-        lifecycle: Lifecycle,
-        private val activityId: Int
-    ) : FragmentStateAdapter(fragmentManager, lifecycle) {
-        override fun getItemCount(): Int = if (activityId != -1) 1 else 2
-
-        override fun createFragment(position: Int): Fragment {
-            return when (position) {
-                0 -> ActivityFragment.newInstance(
-                    if (activityId != -1) ActivityType.ONE else ActivityType.USER,
-                    activityId = activityId
-                )
-
-                else -> ActivityFragment.newInstance(ActivityType.GLOBAL)
-            }
-        }
-    }
 }
