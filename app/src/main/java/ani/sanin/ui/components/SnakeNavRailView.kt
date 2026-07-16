@@ -1,13 +1,10 @@
 package ani.sanin.ui.components
 
 import android.content.Context
-import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.LinearGradient
 import android.graphics.Paint
-import android.graphics.Path
-import android.graphics.RectF
 import android.graphics.Shader
 import android.util.AttributeSet
 import android.view.View
@@ -21,17 +18,13 @@ class SnakeNavRailView @JvmOverloads constructor(
 ) : View(context, attrs, defStyleAttr) {
 
     private val bgPaint = Paint(Paint.ANTI_ALIAS_FLAG)
-    private val tintPaint = Paint(Paint.ANTI_ALIAS_FLAG)
     private var cachedWidth = -1f
     private var cachedHeight = -1f
 
-    private var glassBlur: Bitmap? = null
-    private val clipPath = Path()
-    private val clipRect = RectF()
+    private var glassDrawable: GlassEffectDrawable? = null
 
     init {
         setWillNotDraw(false)
-        tintPaint.color = GlassEffectManager.getTintColor()
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -58,14 +51,46 @@ class SnakeNavRailView @JvmOverloads constructor(
         }
 
     private var _glassEnabled: Boolean = false
-    private var isDrawingGlass = false
     fun setGlassEnabled(enabled: Boolean) {
-        _glassEnabled = enabled && GlassEffectManager.isComponentEnabled(GlassComponent.SideRail)
-        if (!_glassEnabled) {
-            glassBlur?.recycle()
-            glassBlur = null
+        _glassEnabled = enabled && GlassEffectManager.isComponentEnabled(GlassComponent.NavPills)
+        if (_glassEnabled) {
+            if (glassDrawable == null) {
+                val cornerPx = NavPillCustomizer.getCornerRadiusDp() * resources.displayMetrics.density
+                glassDrawable = GlassEffectDrawable.applyToView(
+                    view = this,
+                    cornerRadiusDp = NavPillCustomizer.getCornerRadiusDp(),
+                    blurRadius = GlassEffectManager.getBlurRadius(),
+                    tintColor = GlassEffectManager.getTintColor()
+                ).also { d ->
+                    d.setVibrancy(GlassEffectManager.getVibrancy())
+                    d.setChromaticAberration(GlassEffectManager.getChromaticAberration())
+                    d.setRefractionHeight(GlassEffectManager.getRefractionHeight())
+                    d.setRefractionAmount(GlassEffectManager.getRefractionAmount())
+                    d.setDepthEnabled(GlassEffectManager.isDepthEnabled())
+                }
+            }
+            setWillNotDraw(false)
+        } else {
+            glassDrawable?.destroy()
+            glassDrawable = null
+            background = null
         }
         invalidate()
+    }
+
+    fun updateGlassParams() {
+        if (!_glassEnabled) return
+        glassDrawable?.let { d ->
+            d.setTintColor(GlassEffectManager.getTintColor())
+            d.setCornerRadius(NavPillCustomizer.getCornerRadiusDp() * resources.displayMetrics.density)
+            d.setVibrancy(GlassEffectManager.getVibrancy())
+            d.setChromaticAberration(GlassEffectManager.getChromaticAberration())
+            d.setRefractionHeight(GlassEffectManager.getRefractionHeight())
+            d.setRefractionAmount(GlassEffectManager.getRefractionAmount())
+            d.setDepthEnabled(GlassEffectManager.isDepthEnabled())
+            d.invalidateCache()
+            d.invalidateSelf()
+        }
     }
 
     fun getColorAtFraction(fraction: Float): Int {
@@ -77,15 +102,10 @@ class SnakeNavRailView @JvmOverloads constructor(
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-        if (isDrawingGlass) return
+        if (_glassEnabled) return
         val w = width.toFloat().coerceAtLeast(1f)
         val h = height.toFloat().coerceAtLeast(1f)
-
-        if (_glassEnabled) {
-            drawGlass(canvas, w, h)
-        } else {
-            drawGradient(canvas, w, h)
-        }
+        drawGradient(canvas, w, h)
     }
 
     private fun drawGradient(canvas: Canvas, w: Float, h: Float) {
@@ -111,60 +131,8 @@ class SnakeNavRailView @JvmOverloads constructor(
         canvas.drawRect(0f, 0f, w, h, bgPaint)
     }
 
-    private fun drawGlass(canvas: Canvas, w: Float, h: Float) {
-        val iw = w.toInt()
-        val ih = h.toInt()
-        if (iw <= 0 || ih <= 0) return
-
-        if (glassBlur == null || cachedWidth != w || cachedHeight != h) {
-            cachedWidth = w
-            cachedHeight = h
-
-            val ds = 0.25f
-            val sw = ((iw * ds).toInt()).coerceAtLeast(1)
-            val sh = ((ih * ds).toInt()).coerceAtLeast(1)
-
-            val root = rootView
-            val bitmap = try {
-                Bitmap.createBitmap(sw, sh, Bitmap.Config.ARGB_8888)
-            } catch (e: OutOfMemoryError) {
-                return
-            }
-            val c = Canvas(bitmap)
-            c.scale(ds, ds)
-            val pos = IntArray(2)
-            getLocationInWindow(pos)
-            c.translate(-pos[0].toFloat(), -pos[1].toFloat())
-            isDrawingGlass = true
-            try {
-                root.draw(c)
-            } catch (e: Exception) {
-                isDrawingGlass = false
-                bitmap.recycle()
-                return
-            }
-            isDrawingGlass = false
-
-            glassBlur?.recycle()
-            glassBlur = GlassEffectDrawable.fastBlur(bitmap, 25)
-        }
-
-        val blur = glassBlur ?: return
-
-        val cornerPx = NavPillCustomizer.getCornerRadiusDp() * resources.displayMetrics.density
-        clipPath.rewind()
-        clipRect.set(0f, 0f, w, h)
-        clipPath.addRoundRect(clipRect, cornerPx, cornerPx, Path.Direction.CW)
-        canvas.save()
-        canvas.clipPath(clipPath)
-        canvas.drawBitmap(blur, null, RectF(0f, 0f, w, h), Paint(Paint.FILTER_BITMAP_FLAG))
-        canvas.drawRect(0f, 0f, w, h, tintPaint)
-        canvas.restore()
-    }
-
     fun invalidateGlass() {
-        glassBlur?.recycle()
-        glassBlur = null
+        glassDrawable?.invalidateCache()
         invalidate()
     }
 
