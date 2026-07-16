@@ -22,7 +22,7 @@
             android:src="@drawable/ic_round_arrow_back_ios_new_24"
             app:tint="?attr/colorOnBackground"
             android:focusable="true"
-            android:nextFocusDown="@id/notificationRecyclerView"
+            android:nextFocusDown="@id/notificationContent"
             tools:ignore="ContentDescription" />
 
         <TextView
