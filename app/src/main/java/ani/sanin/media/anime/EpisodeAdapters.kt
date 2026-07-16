@@ -28,6 +28,7 @@ import ani.sanin.util.SizeFormatter
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.model.GlideUrl
+import jp.wasabeef.glide.transformations.BlurTransformation
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import android.widget.NumberPicker
@@ -141,8 +142,16 @@ class EpisodeAdapter(
                             }
                         } else null
                     }
-                    Glide.with(binding.itemMediaImage).load(thumb ?: media.cover).override(400, 0)
-                        .diskCacheStrategy(DiskCacheStrategy.ALL).into(binding.itemMediaImage)
+                    val isWatched = media.userProgress != null &&
+                        (ep.number.toFloatOrNull() ?: 9999f) <= media.userProgress!!.toFloat()
+                    val blurEnabled = !isWatched && PrefManager.getVal<Boolean>(PrefName.BlurUnwatchedEpisodes)
+                    val glideRequest = Glide.with(binding.itemMediaImage).load(thumb ?: media.cover)
+                        .override(400, 0).diskCacheStrategy(DiskCacheStrategy.ALL)
+                    if (blurEnabled) {
+                        glideRequest.transform(BlurTransformation(25, 3)).into(binding.itemMediaImage)
+                    } else {
+                        glideRequest.into(binding.itemMediaImage)
+                    }
                 }
                 binding.itemEpisodeDesc.isVisible = !ep.desc.isNullOrBlank()
                 binding.itemEpisodeDesc.text = ep.desc ?: ""
@@ -217,7 +226,7 @@ class EpisodeAdapter(
                             binding.itemEpisodeDesc.alpha = 0.5f
                             binding.itemEpisodeDate.alpha = 0.5f
                             binding.itemEpisodeNumber.alpha = 0.5f
-                            binding.itemEpisodeDivider?.alpha = 0.5f
+                            binding.itemEpisodeDivider?.alpha = 1f
                         } else {
                             binding.itemMediaImage.colorFilter = null
                             binding.itemEpisodeTitle.alpha = 1f
@@ -259,8 +268,16 @@ class EpisodeAdapter(
                             }
                         } else null
                     }
-                    Glide.with(binding.itemMediaImage).load(thumb ?: media.cover).override(400, 0)
-                        .diskCacheStrategy(DiskCacheStrategy.ALL).into(binding.itemMediaImage)
+                    val isWatched = media.userProgress != null &&
+                        (ep.number.toFloatOrNull() ?: 9999f) <= media.userProgress!!.toFloat()
+                    val blurEnabled = !isWatched && PrefManager.getVal<Boolean>(PrefName.BlurUnwatchedEpisodes)
+                    val glideRequest = Glide.with(binding.itemMediaImage).load(thumb ?: media.cover)
+                        .override(400, 0).diskCacheStrategy(DiskCacheStrategy.ALL)
+                    if (blurEnabled) {
+                        glideRequest.transform(BlurTransformation(25, 3)).into(binding.itemMediaImage)
+                    } else {
+                        glideRequest.into(binding.itemMediaImage)
+                    }
                 }
 
                 binding.itemEpisodeNumber.text = ep.number
@@ -326,7 +343,7 @@ class EpisodeAdapter(
                             binding.itemMediaImage.colorFilter = ColorMatrixColorFilter(cm)
                             binding.itemEpisodeTitle.alpha = 0.5f
                             binding.itemEpisodeDate?.alpha = 0.5f
-                            binding.itemEpisodeDivider?.alpha = 0.5f
+                            binding.itemEpisodeDivider?.alpha = 1f
                         } else {
                             binding.itemMediaImage.colorFilter = null
                             binding.itemEpisodeTitle.alpha = 1f

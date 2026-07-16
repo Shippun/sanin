@@ -62,11 +62,7 @@ class SnakeNavRailView @JvmOverloads constructor(
                     blurRadius = GlassEffectManager.getBlurRadius(),
                     tintColor = GlassEffectManager.getTintColor()
                 ).also { d ->
-                    d.setVibrancy(GlassEffectManager.getVibrancy())
-                    d.setChromaticAberration(GlassEffectManager.getChromaticAberration())
-                    d.setRefractionHeight(GlassEffectManager.getRefractionHeight())
-                    d.setRefractionAmount(GlassEffectManager.getRefractionAmount())
-                    d.setDepthEnabled(GlassEffectManager.isDepthEnabled())
+                    GlassEffectManager.applyParams(d)
                 }
             }
             setWillNotDraw(false)
@@ -83,11 +79,7 @@ class SnakeNavRailView @JvmOverloads constructor(
         glassDrawable?.let { d ->
             d.setTintColor(GlassEffectManager.getTintColor())
             d.setCornerRadius(NavPillCustomizer.getCornerRadiusDp() * resources.displayMetrics.density)
-            d.setVibrancy(GlassEffectManager.getVibrancy())
-            d.setChromaticAberration(GlassEffectManager.getChromaticAberration())
-            d.setRefractionHeight(GlassEffectManager.getRefractionHeight())
-            d.setRefractionAmount(GlassEffectManager.getRefractionAmount())
-            d.setDepthEnabled(GlassEffectManager.isDepthEnabled())
+            GlassEffectManager.applyParams(d)
             d.invalidateCache()
             d.invalidateSelf()
         }

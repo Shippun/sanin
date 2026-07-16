@@ -54,12 +54,21 @@ object GlassEffectManager {
         return Color.argb(alpha, Color.red(base), Color.green(base), Color.blue(base))
     }
 
-    private fun applyParams(drawable: GlassEffectDrawable) {
+    fun applyParams(drawable: GlassEffectDrawable) {
         drawable.setVibrancy(getVibrancy())
         drawable.setChromaticAberration(getChromaticAberration())
         drawable.setRefractionHeight(getRefractionHeight())
         drawable.setRefractionAmount(getRefractionAmount())
         drawable.setDepthEnabled(isDepthEnabled())
+    }
+
+    fun refreshAll() {
+        for ((view, drawable) in activeDrawables) {
+            drawable.setTintColor(getTintColor())
+            applyParams(drawable)
+            drawable.invalidateCache()
+            drawable.invalidateSelf()
+        }
     }
 
     fun applyGlass(
