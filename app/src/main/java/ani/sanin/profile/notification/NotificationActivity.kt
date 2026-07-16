@@ -15,6 +15,7 @@ import android.view.animation.OvershootInterpolator
 import android.widget.FrameLayout
 import android.widget.ImageButton
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -38,6 +39,7 @@ import ani.sanin.settings.saving.PrefName
 import ani.sanin.statusBarHeight
 import ani.sanin.themes.ThemeManager
 import ani.sanin.util.FocusEffectUtil
+import ani.sanin.util.NavPillCustomizer
 import com.airbnb.lottie.LottieAnimationView
 import com.xwray.groupie.GroupieAdapter
 import kotlinx.coroutines.CoroutineScope
@@ -95,6 +97,11 @@ class NotificationActivity : AppCompatActivity() {
         }
         binding.notificationNavRail.elevation = 10f
         binding.notificationNavRail.clipToOutline = true
+        binding.notificationNavRail.let { frame ->
+            if (frame.childCount > 1 && frame.getChildAt(1) is LinearLayout) {
+                NavPillCustomizer.applyToPillList(frame.getChildAt(1) as LinearLayout)
+            }
+        }
 
         setupContent()
 

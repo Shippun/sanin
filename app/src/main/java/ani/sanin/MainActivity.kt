@@ -44,6 +44,8 @@ import ani.sanin.connections.anilist.Anilist
 import ani.sanin.connections.anilist.AnilistHomeViewModel
 import ani.sanin.connections.mal.MAL
 import ani.sanin.util.FocusEffectUtil
+import ani.sanin.util.NavPillCustomizer
+import android.widget.LinearLayout
 import ani.sanin.util.GlassComponent
 import ani.sanin.util.GlassEffectManager
 import ani.sanin.databinding.ActivityMainBinding
@@ -556,7 +558,7 @@ class MainActivity : AppCompatActivity() {
         loadAvatar()
         binding.homeNavRailBg.live = PrefManager.getVal(PrefName.LiveSideRail)
         binding.homeNavRailBg.setGlassEnabled(
-            GlassEffectManager.isComponentEnabled(GlassComponent.SideRail)
+            GlassEffectManager.isComponentEnabled(GlassComponent.NavPills)
         )
         updateSideRailGlass()
         val persist = PrefManager.getVal<Boolean>(PrefName.SideRailPersist)
@@ -697,7 +699,7 @@ class MainActivity : AppCompatActivity() {
 
         binding.homeNavRailBg.live = PrefManager.getVal(PrefName.LiveSideRail)
         binding.homeNavRailBg.setGlassEnabled(
-            GlassEffectManager.isComponentEnabled(GlassComponent.SideRail)
+            GlassEffectManager.isComponentEnabled(GlassComponent.NavPills)
         )
 
         binding.homeNavRailBg.addOnLayoutChangeListener { _, _, _, _, _, _, _, _, _ ->
@@ -714,6 +716,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         updateNavPillFocusChains()
+        NavPillCustomizer.applyToPillList(binding.homeNavRail.getChildAt(1) as LinearLayout)
     }
 
     private fun updateNavPillFocusChains() {

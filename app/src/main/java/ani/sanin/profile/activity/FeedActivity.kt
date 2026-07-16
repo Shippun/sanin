@@ -43,7 +43,7 @@ class FeedActivity : AppCompatActivity() {
         }
         binding.notificationNavRailBg.live = PrefManager.getVal(PrefName.LiveSideRail)
         binding.notificationNavRailBg.setGlassEnabled(
-            GlassEffectManager.isComponentEnabled(GlassComponent.SideRail)
+            GlassEffectManager.isComponentEnabled(GlassComponent.NavPills)
         )
         FocusEffectUtil.applyFocusListener(binding.notificationBack)
 

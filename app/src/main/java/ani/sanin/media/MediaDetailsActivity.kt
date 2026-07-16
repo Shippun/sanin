@@ -13,6 +13,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.ImageView
+import android.widget.LinearLayout
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -46,6 +47,7 @@ import ani.sanin.util.FocusEffectUtil
 import ani.sanin.util.GlassComponent
 import ani.sanin.util.GlassEffectManager
 import ani.sanin.util.LauncherWrapper
+import ani.sanin.util.NavPillCustomizer
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -174,9 +176,14 @@ class MediaDetailsActivity : AppCompatActivity() {
 
         binding.navPillBg?.live = PrefManager.getVal(PrefName.LiveSideRail)
         binding.navPillBg?.setGlassEnabled(
-            GlassEffectManager.isComponentEnabled(GlassComponent.SideRail)
+            GlassEffectManager.isComponentEnabled(GlassComponent.NavPills)
         )
         binding.navPillBg?.doOnLayout { updateMediaNavIconTints(selected) }
+        binding.mediaNavPills?.let { frame ->
+            if (frame.childCount > 1 && frame.getChildAt(1) is LinearLayout) {
+                NavPillCustomizer.applyToPillList(frame.getChildAt(1) as LinearLayout)
+            }
+        }
 
         fun showWatchTab(container: FrameLayout, animate: Boolean) {
             val ft = supportFragmentManager.beginTransaction()

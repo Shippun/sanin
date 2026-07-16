@@ -16,6 +16,7 @@ import ani.sanin.statusBarHeight
 import ani.sanin.themes.ThemeManager
 import ani.sanin.util.FocusEffectUtil
 import ani.sanin.util.customAlertDialog
+import ani.sanin.util.NavPillCustomizer
 import eltos.simpledialogfragment.SimpleDialog
 import eltos.simpledialogfragment.color.SimpleColorWheelDialog
 
@@ -75,6 +76,11 @@ class SettingsAppearanceActivity : AppCompatActivity(),
             binding.appearanceGlassDepth,
             binding.appearanceGlassSurfaceTint,
             binding.appearanceGlassTextColor,
+            binding.appearanceNavPillHeight,
+            binding.appearanceNavPillWidth,
+            binding.appearanceNavPillSpacing,
+            binding.appearanceNavPillIconPadding,
+            binding.appearanceNavPillIconColor,
         )
 
         binding.appearanceCardSize.isFocusable = true
@@ -281,6 +287,46 @@ class SettingsAppearanceActivity : AppCompatActivity(),
                 PrefManager.setVal(PrefName.GlassEffectTextColor, color)
             }
         }
+
+        binding.appearanceNavPillHeight.value = PrefManager.getVal(PrefName.NavPillHeight).toFloat()
+        binding.appearanceNavPillHeight.addOnChangeListener { _, v, _ ->
+            PrefManager.setVal(PrefName.NavPillHeight, v.toInt())
+            updateNavPillPreview()
+        }
+
+        binding.appearanceNavPillWidth.value = PrefManager.getVal(PrefName.NavPillWidth).toFloat()
+        binding.appearanceNavPillWidth.addOnChangeListener { _, v, _ ->
+            PrefManager.setVal(PrefName.NavPillWidth, v.toInt())
+            updateNavPillPreview()
+        }
+
+        binding.appearanceNavPillSpacing.value = PrefManager.getVal(PrefName.NavPillSpacing).toFloat()
+        binding.appearanceNavPillSpacing.addOnChangeListener { _, v, _ ->
+            PrefManager.setVal(PrefName.NavPillSpacing, v.toInt())
+            updateNavPillPreview()
+        }
+
+        binding.appearanceNavPillIconPadding.value = PrefManager.getVal(PrefName.NavPillIconPadding).toFloat()
+        binding.appearanceNavPillIconPadding.addOnChangeListener { _, v, _ ->
+            PrefManager.setVal(PrefName.NavPillIconPadding, v.toInt())
+            updateNavPillPreview()
+        }
+
+        binding.appearanceNavPillIconColor.isFocusable = true
+        binding.appearanceNavPillIconColor.setOnClickListener {
+            showColorPicker(
+                originalColor = PrefManager.getVal(PrefName.NavPillIconColor),
+                title = "NavPill Icon Color"
+            ) { color: Int ->
+                PrefManager.setVal(PrefName.NavPillIconColor, color)
+                updateNavPillPreview()
+            }
+        }
+        updateNavPillPreview()
+    }
+
+    private fun updateNavPillPreview() {
+        NavPillCustomizer.applyToPillPreview(binding.appearanceNavPillPreview)
     }
 
     private fun showColorPicker(
