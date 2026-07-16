@@ -57,6 +57,7 @@ class SnakeNavRailView @JvmOverloads constructor(
         }
 
     private var _glassEnabled: Boolean = false
+    private var isDrawingGlass = false
     fun setGlassEnabled(enabled: Boolean) {
         _glassEnabled = enabled && GlassEffectManager.isComponentEnabled(GlassComponent.SideRail)
         if (!_glassEnabled) {
@@ -75,6 +76,7 @@ class SnakeNavRailView @JvmOverloads constructor(
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
+        if (isDrawingGlass) return
         val w = width.toFloat().coerceAtLeast(1f)
         val h = height.toFloat().coerceAtLeast(1f)
 
@@ -132,7 +134,9 @@ class SnakeNavRailView @JvmOverloads constructor(
             val pos = IntArray(2)
             getLocationInWindow(pos)
             c.translate(-pos[0].toFloat(), -pos[1].toFloat())
+            isDrawingGlass = true
             root.draw(c)
+            isDrawingGlass = false
 
             glassBlur?.recycle()
             glassBlur = GlassEffectDrawable.fastBlur(bitmap, 25)

@@ -209,8 +209,8 @@ class GlassEffectDrawable(
                 }
             }
 
-            yi = 0
             for (x in 0 until w) {
+                yi = x
                 var sumR = 0; var sumG = 0; var sumB = 0; var sumA = 0
                 for (i in -r..r) {
                     val col = pix[yi + (hm.coerceAtMost(i.coerceAtLeast(0))) * w]
