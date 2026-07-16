@@ -22,7 +22,7 @@ import eltos.simpledialogfragment.color.SimpleColorWheelDialog
 class SettingsAppearanceActivity : AppCompatActivity(),
     SimpleDialog.OnDialogResultListener {
 
-    interface ColorPickerCallback {
+    fun interface ColorPickerCallback {
         fun onColorSelected(color: Int)
     }
 
@@ -267,7 +267,7 @@ class SettingsAppearanceActivity : AppCompatActivity(),
             showColorPicker(
                 originalColor = PrefManager.getVal(PrefName.GlassEffectSurfaceTint),
                 title = "Surface Tint Color"
-            ) { color ->
+            ) { color: Int ->
                 PrefManager.setVal(PrefName.GlassEffectSurfaceTint, color)
             }
         }
@@ -277,7 +277,7 @@ class SettingsAppearanceActivity : AppCompatActivity(),
             showColorPicker(
                 originalColor = PrefManager.getVal(PrefName.GlassEffectTextColor),
                 title = "Glass Text Color"
-            ) { color ->
+            ) { color: Int ->
                 PrefManager.setVal(PrefName.GlassEffectTextColor, color)
             }
         }
