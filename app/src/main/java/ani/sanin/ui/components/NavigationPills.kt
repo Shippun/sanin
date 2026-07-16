@@ -74,6 +74,18 @@ fun NavigationPills(
 
     val view = LocalView.current
     val glassEnabled = remember { GlassEffectManager.isComponentEnabled(GlassComponent.NavPills) }
+    val textColor = if (glassEnabled) {
+        val brightness = GlassEffectManager.getAverageBrightness(GlassComponent.NavPills)
+        if (brightness > 0.5f) Color(0xFF1A1A1A) else Color.White.copy(alpha = 0.9f)
+    } else Color.White.copy(alpha = 0.9f)
+    val activeTint = if (glassEnabled) {
+        val brightness = GlassEffectManager.getAverageBrightness(GlassComponent.NavPills)
+        if (brightness > 0.5f) Color(0xFF1A6BFF) else Color(0xFF87CEEB)
+    } else Color(0xFF87CEEB)
+    val inactiveTint = if (glassEnabled) {
+        val brightness = GlassEffectManager.getAverageBrightness(GlassComponent.NavPills)
+        if (brightness > 0.5f) textColor.copy(alpha = 0.6f) else Color.White.copy(alpha = 0.7f)
+    } else Color.White.copy(alpha = 0.7f)
 
     Box(
         modifier = modifier
@@ -163,7 +175,10 @@ fun NavigationPills(
                     tab = tab,
                     label = TAB_LABELS[tab] ?: tab,
                     isActive = isActive,
-                    isExpanded = isExpanded
+                    isExpanded = isExpanded,
+                    textColor = textColor,
+                    activeTint = activeTint,
+                    inactiveTint = inactiveTint
                 )
             }
         }
@@ -175,7 +190,10 @@ fun NavigationPill(
     tab: String,
     label: String,
     isActive: Boolean,
-    isExpanded: Boolean
+    isExpanded: Boolean,
+    textColor: Color = Color.White,
+    activeTint: Color = Color(0xFF87CEEB),
+    inactiveTint: Color = Color.White.copy(alpha = 0.7f)
 ) {
     val iconRes = TAB_ICONS[tab] ?: R.drawable.ic_round_home_24
 
@@ -203,12 +221,12 @@ fun NavigationPill(
                 Icon(
                     painter = painterResource(id = iconRes),
                     contentDescription = label,
-                    tint = if (isActive) Color(0xFF87CEEB) else Color.White.copy(alpha = 0.7f),
+                    tint = if (isActive) activeTint else inactiveTint,
                     modifier = Modifier.size(22.dp)
                 )
                 Text(
                     text = label,
-                    color = if (isActive) Color.White else Color.White.copy(alpha = 0.6f),
+                    color = if (isActive) textColor else textColor.copy(alpha = 0.7f),
                     fontSize = 12.sp,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
@@ -218,7 +236,7 @@ fun NavigationPill(
             Icon(
                 painter = painterResource(id = iconRes),
                 contentDescription = label,
-                tint = if (isActive) Color(0xFF87CEEB) else Color.White.copy(alpha = 0.7f),
+                tint = if (isActive) activeTint else inactiveTint,
                 modifier = Modifier.size(20.dp)
             )
         }

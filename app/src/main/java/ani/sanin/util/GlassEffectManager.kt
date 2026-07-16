@@ -8,6 +8,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalView
 import ani.sanin.settings.saving.PrefManager
 import ani.sanin.settings.saving.PrefName
+
 enum class GlassComponent {
     NavPills, SideRail, ServerSheet, ListEditor, SourceSelector, EpisodeDrawer
 }
@@ -32,11 +33,33 @@ object GlassEffectManager {
 
     fun getBlurRadius(): Float = PrefManager.getVal(PrefName.GlassEffectBlurRadius)
     fun getTintAlpha(): Float = PrefManager.getVal(PrefName.GlassEffectTintOpacity)
+    fun getVibrancy(): Float = PrefManager.getVal(PrefName.GlassEffectVibrancy)
+    fun getChromaticAberration(): Float = PrefManager.getVal(PrefName.GlassEffectChromaticAberration)
+    fun getRefractionHeight(): Float = PrefManager.getVal(PrefName.GlassEffectRefractionHeight)
+    fun getRefractionAmount(): Float = PrefManager.getVal(PrefName.GlassEffectRefractionAmount)
+    fun isDepthEnabled(): Boolean = PrefManager.getVal(PrefName.GlassEffectDepth)
+    fun getSurfaceTintColor(): Int = PrefManager.getVal(PrefName.GlassEffectSurfaceTint)
+    fun getGlassTextColor(): Int = PrefManager.getVal(PrefName.GlassEffectTextColor)
 
-    fun getTintColor(surfaceColor: Int = Color.TRANSPARENT): Int {
+    fun getAverageBrightness(component: GlassComponent): Float {
+        for ((view, drawable) in activeDrawables) {
+            if (view.tag == component) return drawable.averageBrightness
+        }
+        return 0.5f
+    }
+
+    fun getTintColor(): Int {
         val alpha = (getTintAlpha() * 255).toInt().coerceIn(0, 255)
-        val base = if (surfaceColor != Color.TRANSPARENT) surfaceColor else Color.BLACK
+        val base = getSurfaceTintColor()
         return Color.argb(alpha, Color.red(base), Color.green(base), Color.blue(base))
+    }
+
+    private fun applyParams(drawable: GlassEffectDrawable) {
+        drawable.setVibrancy(getVibrancy())
+        drawable.setChromaticAberration(getChromaticAberration())
+        drawable.setRefractionHeight(getRefractionHeight())
+        drawable.setRefractionAmount(getRefractionAmount())
+        drawable.setDepthEnabled(isDepthEnabled())
     }
 
     fun applyGlass(
@@ -50,12 +73,14 @@ object GlassEffectManager {
             return null
         }
         removeGlass(view)
+        view.tag = component
         val drawable = GlassEffectDrawable.applyToView(
             view = view,
             cornerRadiusDp = cornerRadiusDp,
             blurRadius = getBlurRadius(),
             tintColor = tintColor
         )
+        applyParams(drawable)
         activeDrawables[view] = drawable
         return drawable
     }

@@ -148,6 +148,13 @@ enum class PrefName(val data: Pref) {
     GlassEffectEpisodeDrawer(Pref(Location.UI, Boolean::class, true)),
     GlassEffectBlurRadius(Pref(Location.UI, Float::class, 25f)),
     GlassEffectTintOpacity(Pref(Location.UI, Float::class, 0.4f)),
+    GlassEffectVibrancy(Pref(Location.UI, Float::class, 1.0f)),
+    GlassEffectRefractionHeight(Pref(Location.UI, Float::class, 0.0f)),
+    GlassEffectRefractionAmount(Pref(Location.UI, Float::class, 0.0f)),
+    GlassEffectChromaticAberration(Pref(Location.UI, Float::class, 0.0f)),
+    GlassEffectDepth(Pref(Location.UI, Boolean::class, false)),
+    GlassEffectSurfaceTint(Pref(Location.UI, Int::class, Color.parseColor("#000000"))),
+    GlassEffectTextColor(Pref(Location.UI, Int::class, Color.WHITE)),
 
     //Home
     HomeBannerMode(Pref(Location.UI, Int::class, 2)),

@@ -1,5 +1,6 @@
 package ani.sanin.settings
 
+import android.graphics.Color
 import android.os.Bundle
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
@@ -15,9 +16,19 @@ import ani.sanin.statusBarHeight
 import ani.sanin.themes.ThemeManager
 import ani.sanin.util.FocusEffectUtil
 import ani.sanin.util.customAlertDialog
+import eltos.simpledialogfragment.SimpleDialog
+import eltos.simpledialogfragment.color.SimpleColorWheelDialog
 
-class SettingsAppearanceActivity : AppCompatActivity() {
+class SettingsAppearanceActivity : AppCompatActivity(),
+    SimpleDialog.OnDialogResultListener {
+
+    interface ColorPickerCallback {
+        fun onColorSelected(color: Int)
+    }
+
+    private var colorPickerCallback: ColorPickerCallback? = null
     lateinit var binding: ActivitySettingsAppearanceBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         ThemeManager(this).applyTheme()
@@ -57,6 +68,13 @@ class SettingsAppearanceActivity : AppCompatActivity() {
             binding.appearanceGlassEpisodeDrawer,
             binding.appearanceGlassBlurRadius,
             binding.appearanceGlassTintOpacity,
+            binding.appearanceGlassVibrancy,
+            binding.appearanceGlassChromaticAberration,
+            binding.appearanceGlassRefractionHeight,
+            binding.appearanceGlassRefractionAmount,
+            binding.appearanceGlassDepth,
+            binding.appearanceGlassSurfaceTint,
+            binding.appearanceGlassTextColor,
         )
 
         binding.appearanceCardSize.isFocusable = true
@@ -214,5 +232,82 @@ class SettingsAppearanceActivity : AppCompatActivity() {
         binding.appearanceGlassTintOpacity.addOnChangeListener { _, value, _ ->
             PrefManager.setVal(PrefName.GlassEffectTintOpacity, value)
         }
+
+        binding.appearanceGlassVibrancy.isFocusable = true
+        binding.appearanceGlassVibrancy.value = PrefManager.getVal(PrefName.GlassEffectVibrancy) as Float
+        binding.appearanceGlassVibrancy.addOnChangeListener { _, value, _ ->
+            PrefManager.setVal(PrefName.GlassEffectVibrancy, value)
+        }
+
+        binding.appearanceGlassChromaticAberration.isFocusable = true
+        binding.appearanceGlassChromaticAberration.value = PrefManager.getVal(PrefName.GlassEffectChromaticAberration) as Float
+        binding.appearanceGlassChromaticAberration.addOnChangeListener { _, value, _ ->
+            PrefManager.setVal(PrefName.GlassEffectChromaticAberration, value)
+        }
+
+        binding.appearanceGlassRefractionHeight.isFocusable = true
+        binding.appearanceGlassRefractionHeight.value = PrefManager.getVal(PrefName.GlassEffectRefractionHeight) as Float
+        binding.appearanceGlassRefractionHeight.addOnChangeListener { _, value, _ ->
+            PrefManager.setVal(PrefName.GlassEffectRefractionHeight, value)
+        }
+
+        binding.appearanceGlassRefractionAmount.isFocusable = true
+        binding.appearanceGlassRefractionAmount.value = PrefManager.getVal(PrefName.GlassEffectRefractionAmount) as Float
+        binding.appearanceGlassRefractionAmount.addOnChangeListener { _, value, _ ->
+            PrefManager.setVal(PrefName.GlassEffectRefractionAmount, value)
+        }
+
+        binding.appearanceGlassDepth.isChecked = PrefManager.getVal(PrefName.GlassEffectDepth)
+        binding.appearanceGlassDepth.setOnCheckedChangeListener { _, isChecked ->
+            PrefManager.setVal(PrefName.GlassEffectDepth, isChecked)
+        }
+
+        binding.appearanceGlassSurfaceTint.isFocusable = true
+        binding.appearanceGlassSurfaceTint.setOnClickListener {
+            showColorPicker(
+                originalColor = PrefManager.getVal(PrefName.GlassEffectSurfaceTint),
+                title = "Surface Tint Color"
+            ) { color ->
+                PrefManager.setVal(PrefName.GlassEffectSurfaceTint, color)
+            }
+        }
+
+        binding.appearanceGlassTextColor.isFocusable = true
+        binding.appearanceGlassTextColor.setOnClickListener {
+            showColorPicker(
+                originalColor = PrefManager.getVal(PrefName.GlassEffectTextColor),
+                title = "Glass Text Color"
+            ) { color ->
+                PrefManager.setVal(PrefName.GlassEffectTextColor, color)
+            }
+        }
+    }
+
+    private fun showColorPicker(
+        originalColor: Int,
+        title: String,
+        callback: ColorPickerCallback,
+    ) {
+        colorPickerCallback = callback
+        SimpleColorWheelDialog()
+            .title(title)
+            .color(originalColor)
+            .alpha(true)
+            .neg()
+            .theme(R.style.MyPopup)
+            .show(this, "glassColorPicker")
+    }
+
+    override fun onResult(
+        dialogTag: String,
+        which: Int,
+        extras: Bundle,
+    ): Boolean {
+        if (dialogTag == "glassColorPicker" && which == SimpleDialog.OnDialogResultListener.BUTTON_POSITIVE) {
+            val color = extras.getInt(SimpleColorWheelDialog.COLOR)
+            colorPickerCallback?.onColorSelected(color)
+            return true
+        }
+        return false
     }
 }
