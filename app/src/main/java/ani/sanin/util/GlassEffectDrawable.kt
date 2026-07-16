@@ -203,7 +203,7 @@ class GlassEffectDrawable(
                     sumB += (col2 and 0xFF) - (col1 and 0xFF)
                     sumA += ((col2 shr 24) and 0xFF) - ((col1 shr 24) and 0xFF)
                     s.copyInto(s, 0, 1, ds)
-                    val nextCol = if (x + r + 1 < w) pix[yi + r + 1] else pix[yi + wm]
+                    val nextCol = if (x + r + 1 < w) pix[yi + r + 1] else pix[yi + (wm - x)]
                     s[ds - 1] = nextCol
                     yi++
                 }
@@ -233,7 +233,7 @@ class GlassEffectDrawable(
                     sumB += (col2 and 0xFF) - (col1 and 0xFF)
                     sumA += ((col2 shr 24) and 0xFF) - ((col1 shr 24) and 0xFF)
                     s.copyInto(s, 0, 1, ds)
-                    val nextCol = if (y + r + 1 < h) pix[yi + (r + 1) * w] else pix[yi + hm * w]
+                    val nextCol = if (y + r + 1 < h) pix[yi + (r + 1) * w] else pix[yi + (hm - y) * w]
                     s[ds - 1] = nextCol
                     yi += w
                 }
