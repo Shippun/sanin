@@ -136,7 +136,13 @@ class SnakeNavRailView @JvmOverloads constructor(
             getLocationInWindow(pos)
             c.translate(-pos[0].toFloat(), -pos[1].toFloat())
             isDrawingGlass = true
-            root.draw(c)
+            try {
+                root.draw(c)
+            } catch (e: Exception) {
+                isDrawingGlass = false
+                bitmap.recycle()
+                return
+            }
             isDrawingGlass = false
 
             glassBlur?.recycle()

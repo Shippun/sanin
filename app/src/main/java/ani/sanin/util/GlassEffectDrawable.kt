@@ -282,7 +282,13 @@ class GlassEffectDrawable(
         target.getLocationInWindow(pos)
         c.translate(-pos[0].toFloat(), -pos[1].toFloat())
         isCapturing = true
-        root.draw(c)
+        try {
+            root.draw(c)
+        } catch (e: Exception) {
+            isCapturing = false
+            bitmap.recycle()
+            return
+        }
         isCapturing = false
 
         backdropCache = bitmap
