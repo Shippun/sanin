@@ -118,8 +118,8 @@ class SnakeNavRailView @JvmOverloads constructor(
             cachedHeight = h
 
             val ds = 0.25f
-            val sw = (iw * ds).coerceAtLeast(1)
-            val sh = (ih * ds).coerceAtLeast(1)
+            val sw = ((iw * ds).toInt()).coerceAtLeast(1)
+            val sh = ((ih * ds).toInt()).coerceAtLeast(1)
 
             val root = rootView
             val bitmap = try {
