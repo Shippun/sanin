@@ -63,6 +63,8 @@ import ani.sanin.tryWith
 import ani.sanin.util.Logger
 import ani.sanin.util.customAlertDialog
 import ani.sanin.util.FocusEffectUtil
+import ani.sanin.util.GlassComponent
+import ani.sanin.util.GlassEffectManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.DelicateCoroutinesApi
@@ -115,6 +117,7 @@ class SelectorDialogFragment : DialogFragment() {
             w.navigationBarColor =
                 requireContext().getThemeColor(com.google.android.material.R.attr.colorSurface)
         }
+        GlassEffectManager.applyGlassToSheet(binding.selectorContainer, GlassComponent.ServerSheet, 16f)
         animateEntry()
     }
 

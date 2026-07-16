@@ -1,6 +1,7 @@
 package ani.sanin.ui.components
 
 import android.view.View
+import android.view.ViewGroup
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.spring
@@ -22,6 +23,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.foundation.focusable
@@ -37,7 +39,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.viewinterop.AndroidView
 import ani.sanin.R
+import ani.sanin.util.GlassComponent
+import ani.sanin.util.GlassEffectManager
 
 private val TAB_ORDER = listOf("home", "anime", "discovery", "library")
 private val TAB_ICONS = mapOf(
@@ -68,6 +73,7 @@ fun NavigationPills(
     )
 
     val view = LocalView.current
+    val glassEnabled = remember { GlassEffectManager.isComponentEnabled(GlassComponent.NavPills) }
 
     Box(
         modifier = modifier
@@ -76,11 +82,32 @@ fun NavigationPills(
             .padding(horizontal = 16.dp, vertical = 8.dp),
         contentAlignment = Alignment.Center
     ) {
+        if (glassEnabled) {
+            AndroidView(
+                factory = { ctx ->
+                    View(ctx).apply {
+                        layoutParams = ViewGroup.LayoutParams(
+                            ViewGroup.LayoutParams.MATCH_PARENT,
+                            ViewGroup.LayoutParams.MATCH_PARENT
+                        )
+                        post {
+                            GlassEffectManager.applyGlass(this, GlassComponent.NavPills, 50f)
+                        }
+                    }
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(pillHeight)
+                    .focusable(false)
+            )
+        }
         Row(
             modifier = Modifier
                 .height(pillHeight)
                 .background(
-                    brush = Brush.linearGradient(
+                    brush = if (glassEnabled) Brush.linearGradient(
+                        colors = listOf(Color.Transparent, Color.Transparent)
+                    ) else Brush.linearGradient(
                         colors = listOf(
                             Color.White.copy(alpha = 0.08f),
                             Color.White.copy(alpha = 0.04f)

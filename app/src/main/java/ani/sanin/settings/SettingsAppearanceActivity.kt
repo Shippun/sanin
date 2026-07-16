@@ -48,6 +48,15 @@ class SettingsAppearanceActivity : AppCompatActivity() {
             binding.appearanceBlurRadius,
             binding.appearanceBlurSampling,
             binding.appearanceUiScale,
+            binding.appearanceGlassMaster,
+            binding.appearanceGlassNavPills,
+            binding.appearanceGlassSideRail,
+            binding.appearanceGlassServerSheet,
+            binding.appearanceGlassListEditor,
+            binding.appearanceGlassSourceSelector,
+            binding.appearanceGlassEpisodeDrawer,
+            binding.appearanceGlassBlurRadius,
+            binding.appearanceGlassTintOpacity,
         )
 
         binding.appearanceCardSize.isFocusable = true
@@ -163,6 +172,47 @@ class SettingsAppearanceActivity : AppCompatActivity() {
         binding.appearancePersistSideRail.isChecked = PrefManager.getVal(PrefName.SideRailPersist)
         binding.appearancePersistSideRail.setOnCheckedChangeListener { _, isChecked ->
             PrefManager.setVal(PrefName.SideRailPersist, isChecked)
+        }
+
+        binding.appearanceGlassMaster.isChecked = PrefManager.getVal(PrefName.GlassEffectEnabled)
+        binding.appearanceGlassMaster.setOnCheckedChangeListener { _, isChecked ->
+            PrefManager.setVal(PrefName.GlassEffectEnabled, isChecked)
+        }
+        binding.appearanceGlassNavPills.isChecked = PrefManager.getVal(PrefName.GlassEffectNavPills)
+        binding.appearanceGlassNavPills.setOnCheckedChangeListener { _, isChecked ->
+            PrefManager.setVal(PrefName.GlassEffectNavPills, isChecked)
+        }
+        binding.appearanceGlassSideRail.isChecked = PrefManager.getVal(PrefName.GlassEffectSideRail)
+        binding.appearanceGlassSideRail.setOnCheckedChangeListener { _, isChecked ->
+            PrefManager.setVal(PrefName.GlassEffectSideRail, isChecked)
+        }
+        binding.appearanceGlassServerSheet.isChecked = PrefManager.getVal(PrefName.GlassEffectServerSheet)
+        binding.appearanceGlassServerSheet.setOnCheckedChangeListener { _, isChecked ->
+            PrefManager.setVal(PrefName.GlassEffectServerSheet, isChecked)
+        }
+        binding.appearanceGlassListEditor.isChecked = PrefManager.getVal(PrefName.GlassEffectListEditor)
+        binding.appearanceGlassListEditor.setOnCheckedChangeListener { _, isChecked ->
+            PrefManager.setVal(PrefName.GlassEffectListEditor, isChecked)
+        }
+        binding.appearanceGlassSourceSelector.isChecked = PrefManager.getVal(PrefName.GlassEffectSourceSelector)
+        binding.appearanceGlassSourceSelector.setOnCheckedChangeListener { _, isChecked ->
+            PrefManager.setVal(PrefName.GlassEffectSourceSelector, isChecked)
+        }
+        binding.appearanceGlassEpisodeDrawer.isChecked = PrefManager.getVal(PrefName.GlassEffectEpisodeDrawer)
+        binding.appearanceGlassEpisodeDrawer.setOnCheckedChangeListener { _, isChecked ->
+            PrefManager.setVal(PrefName.GlassEffectEpisodeDrawer, isChecked)
+        }
+
+        binding.appearanceGlassBlurRadius.isFocusable = true
+        binding.appearanceGlassBlurRadius.value = PrefManager.getVal(PrefName.GlassEffectBlurRadius) as Float
+        binding.appearanceGlassBlurRadius.addOnChangeListener { _, value, _ ->
+            PrefManager.setVal(PrefName.GlassEffectBlurRadius, value)
+        }
+
+        binding.appearanceGlassTintOpacity.isFocusable = true
+        binding.appearanceGlassTintOpacity.value = PrefManager.getVal(PrefName.GlassEffectTintOpacity) as Float
+        binding.appearanceGlassTintOpacity.addOnChangeListener { _, value, _ ->
+            PrefManager.setVal(PrefName.GlassEffectTintOpacity, value)
         }
     }
 }

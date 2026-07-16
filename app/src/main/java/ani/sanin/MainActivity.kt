@@ -44,6 +44,8 @@ import ani.sanin.connections.anilist.Anilist
 import ani.sanin.connections.anilist.AnilistHomeViewModel
 import ani.sanin.connections.mal.MAL
 import ani.sanin.util.FocusEffectUtil
+import ani.sanin.util.GlassComponent
+import ani.sanin.util.GlassEffectManager
 import ani.sanin.databinding.ActivityMainBinding
 import ani.sanin.databinding.DialogUserAgentBinding
 import ani.sanin.databinding.SplashScreenBinding
@@ -553,11 +555,22 @@ class MainActivity : AppCompatActivity() {
         super.onResume()
         loadAvatar()
         binding.homeNavRailBg.live = PrefManager.getVal(PrefName.LiveSideRail)
+        binding.homeNavRailBg.setGlassEnabled(
+            GlassEffectManager.isComponentEnabled(GlassComponent.SideRail)
+        )
+        updateSideRailGlass()
         val persist = PrefManager.getVal<Boolean>(PrefName.SideRailPersist)
         if (persist && ::navPillsViewModel.isInitialized) {
             showHomeNavRail()
         }
         updateNavPillFocusChains()
+    }
+
+    private fun updateSideRailGlass() {
+        if (!GlassEffectManager.isComponentEnabled(GlassComponent.SideRail)) return
+        findViewById<View>(R.id.rightRailContainer)?.let { container ->
+            GlassEffectManager.applyGlass(container, GlassComponent.SideRail, 0f)
+        }
     }
 
     private fun handleViewIntent(intent: Intent) {
@@ -683,6 +696,9 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.homeNavRailBg.live = PrefManager.getVal(PrefName.LiveSideRail)
+        binding.homeNavRailBg.setGlassEnabled(
+            GlassEffectManager.isComponentEnabled(GlassComponent.SideRail)
+        )
 
         binding.homeNavRailBg.addOnLayoutChangeListener { _, _, _, _, _, _, _, _, _ ->
             updateHomeNavIconTints()
@@ -846,8 +862,19 @@ class MainActivity : AppCompatActivity() {
             override fun onDrawerStateChanged(newState: Int) {}
             override fun onDrawerOpened(drawerView: View) {
                 findViewById<View>(R.id.rightRailNotifications).requestFocus()
+                if (GlassEffectManager.isComponentEnabled(GlassComponent.SideRail)) {
+                    findViewById<View>(R.id.rightRailContainer)?.let { container ->
+                        container.post {
+                            GlassEffectManager.applyGlass(container, GlassComponent.SideRail, 0f)
+                        }
+                    }
+                }
             }
-            override fun onDrawerClosed(drawerView: View) {}
+            override fun onDrawerClosed(drawerView: View) {
+                findViewById<View>(R.id.rightRailContainer)?.let {
+                    GlassEffectManager.removeGlass(it)
+                }
+            }
         })
     }
 

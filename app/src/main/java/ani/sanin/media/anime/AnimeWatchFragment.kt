@@ -55,6 +55,8 @@ import ani.sanin.settings.saving.PrefName
 import ani.sanin.snackString
 import ani.sanin.toast
 import ani.sanin.util.FocusEffectUtil
+import ani.sanin.util.GlassComponent
+import ani.sanin.util.GlassEffectManager
 import ani.sanin.util.Logger
 import ani.sanin.util.StoragePermissions.Companion.accessAlertDialog
 import ani.sanin.util.StoragePermissions.Companion.hasDirAccess
@@ -109,6 +111,11 @@ class AnimeWatchFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        view.post {
+            if (isAdded) {
+                GlassEffectManager.applyGlass(view, GlassComponent.EpisodeDrawer, 0f)
+            }
+        }
         // download receiver removed
 
 

@@ -38,6 +38,8 @@ import ani.sanin.settings.saving.PrefName
 import ani.sanin.snackString
 import ani.sanin.tryWith
 import ani.sanin.util.FocusEffectUtil
+import ani.sanin.util.GlassComponent
+import ani.sanin.util.GlassEffectManager
 import com.google.android.material.materialswitch.MaterialSwitch
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -68,6 +70,7 @@ class MediaListDialogFragment : DialogFragment() {
             val controller = androidx.core.view.WindowInsetsControllerCompat(w, w.decorView)
             controller.isAppearanceLightNavigationBars = ColorUtils.calculateLuminance(surfaceColor) > 0.5
         }
+        GlassEffectManager.applyGlassToSheet(binding.mediaListContainer, GlassComponent.ListEditor, 16f)
         if (!animated) animateEntry()
     }
 

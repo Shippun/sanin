@@ -18,6 +18,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import ani.sanin.databinding.BottomSheetSelectorBinding
 import ani.sanin.getThemeColor
+import ani.sanin.util.GlassComponent
+import ani.sanin.util.GlassEffectManager
 
 class SheetSourceSelector : DialogFragment() {
     private var _binding: BottomSheetSelectorBinding? = null
@@ -43,6 +45,7 @@ class SheetSourceSelector : DialogFragment() {
             w.navigationBarColor =
                 requireContext().getThemeColor(com.google.android.material.R.attr.colorSurface)
         }
+        GlassEffectManager.applyGlassToSheet(binding.selectorContainer, GlassComponent.SourceSelector, 16f)
         animateEntry()
     }
 

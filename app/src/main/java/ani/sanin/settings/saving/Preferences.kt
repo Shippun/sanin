@@ -138,6 +138,17 @@ enum class PrefName(val data: Pref) {
     ShowReleasingIndicator(Pref(Location.UI, Boolean::class, true)),
     CardGradientIntensity(Pref(Location.UI, Float::class, 0.7f)),
 
+    // Glass Effect
+    GlassEffectEnabled(Pref(Location.UI, Boolean::class, false)),
+    GlassEffectNavPills(Pref(Location.UI, Boolean::class, true)),
+    GlassEffectSideRail(Pref(Location.UI, Boolean::class, true)),
+    GlassEffectServerSheet(Pref(Location.UI, Boolean::class, true)),
+    GlassEffectListEditor(Pref(Location.UI, Boolean::class, true)),
+    GlassEffectSourceSelector(Pref(Location.UI, Boolean::class, true)),
+    GlassEffectEpisodeDrawer(Pref(Location.UI, Boolean::class, true)),
+    GlassEffectBlurRadius(Pref(Location.UI, Float::class, 25f)),
+    GlassEffectTintOpacity(Pref(Location.UI, Float::class, 0.4f)),
+
     //Home
     HomeBannerMode(Pref(Location.UI, Int::class, 2)),
     HeroCardImage(Pref(Location.UI, Boolean::class, false)),
