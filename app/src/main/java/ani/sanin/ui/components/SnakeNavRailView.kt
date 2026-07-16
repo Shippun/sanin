@@ -58,7 +58,7 @@ class SnakeNavRailView @JvmOverloads constructor(
                 val cornerPx = NavPillCustomizer.getCornerRadiusDp() * resources.displayMetrics.density
                 glassDrawable = GlassEffectDrawable.applyToView(
                     view = this,
-                    cornerRadiusDp = NavPillCustomizer.getCornerRadiusDp(),
+                    cornerRadiusDp = NavPillCustomizer.getCornerRadiusDp().toFloat(),
                     blurRadius = GlassEffectManager.getBlurRadius(),
                     tintColor = GlassEffectManager.getTintColor()
                 ).also { d ->
