@@ -89,7 +89,7 @@ class NotificationActivity : AppCompatActivity() {
         }
         binding.notificationNavRailBg.live = PrefManager.getVal(PrefName.LiveSideRail)
         FocusEffectUtil.applyFocusListener(binding.notificationBack)
-        val cornerPx = 16f * resources.displayMetrics.density
+        val cornerPx = NavPillCustomizer.getCornerRadiusDp() * resources.displayMetrics.density
         binding.notificationNavRail.outlineProvider = object : android.view.ViewOutlineProvider() {
             override fun getOutline(view: View, outline: android.graphics.Outline) {
                 outline.setRoundRect(0, 0, view.width, view.height, cornerPx)
@@ -496,11 +496,9 @@ class NotificationActivity : AppCompatActivity() {
     }
 
     private fun updateNavTints(buttons: List<ImageButton>, selectedIndex: Int) {
-        val ta = theme.obtainStyledAttributes(intArrayOf(com.google.android.material.R.attr.colorPrimary))
-        val primary = ta.getColor(0, Color.WHITE)
-        ta.recycle()
+        val customColor = NavPillCustomizer.getIconColor()
         buttons.forEachIndexed { i, btn ->
-            btn.imageTintList = ColorStateList.valueOf(if (i == selectedIndex) primary else Color.WHITE)
+            btn.imageTintList = ColorStateList.valueOf(customColor)
             btn.alpha = 1f
         }
     }

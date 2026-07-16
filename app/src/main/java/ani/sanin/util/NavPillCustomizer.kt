@@ -1,5 +1,6 @@
 package ani.sanin.util
 
+import android.content.res.ColorStateList
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
@@ -12,19 +13,30 @@ object NavPillCustomizer {
     fun getHeightDp(): Int = PrefManager.getVal<Int>(PrefName.NavPillHeight).coerceIn(32, 72)
     fun getWidthDp(): Int = PrefManager.getVal<Int>(PrefName.NavPillWidth).coerceIn(32, 72)
     fun getSpacingDp(): Int = PrefManager.getVal<Int>(PrefName.NavPillSpacing).coerceIn(0, 24)
-    fun getIconPaddingDp(): Int = PrefManager.getVal<Int>(PrefName.NavPillIconPadding).coerceIn(4, 28)
+    fun getIconSizeDp(): Int = PrefManager.getVal<Int>(PrefName.NavPillIconSize).coerceIn(8, 28)
     fun getIconColor(): Int = PrefManager.getVal<Int>(PrefName.NavPillIconColor)
+    fun getCornerRadiusDp(): Int = PrefManager.getVal<Int>(PrefName.NavPillCornerRadius).coerceIn(0, 48)
+
+    private fun computeIconPadding(pillSizeDp: Int, iconSizeDp: Int): Int {
+        return ((pillSizeDp - iconSizeDp) / 2).coerceIn(2, pillSizeDp / 2 - 2)
+    }
 
     fun applyToPillList(pillList: LinearLayout) {
         val density = pillList.resources.displayMetrics.density
-        val pillWidthPx = (getWidthDp() * density).toInt()
-        val pillHeightPx = (getHeightDp() * density).toInt()
-        val iconPaddingPx = (getIconPaddingDp() * density).toInt()
-        val spacingPx = (getSpacingDp() * density).toInt()
+        val width = getWidthDp()
+        val height = getHeightDp()
+        val spacing = getSpacingDp()
+        val iconSize = getIconSizeDp()
         val iconColor = getIconColor()
+
+        val pillWidthPx = (width * density).toInt()
+        val pillHeightPx = (height * density).toInt()
+        val iconPaddingPx = (computeIconPadding(width, iconSize) * density).toInt()
+        val spacingPx = (spacing * density).toInt()
 
         pillList.setPadding(pillList.paddingLeft, spacingPx, pillList.paddingRight, spacingPx)
 
+        val iconTint = ColorStateList.valueOf(iconColor)
         for (i in 0 until pillList.childCount) {
             val child = pillList.getChildAt(i)
             if (child is ImageButton) {
@@ -33,10 +45,7 @@ object NavPillCustomizer {
                 lp.height = pillHeightPx
                 child.layoutParams = lp
                 child.setPadding(iconPaddingPx, iconPaddingPx, iconPaddingPx, iconPaddingPx)
-                val d = child.drawable
-                if (d != null) {
-                    d.setTint(iconColor)
-                }
+                child.imageTintList = iconTint
             }
         }
     }
@@ -47,8 +56,11 @@ object NavPillCustomizer {
         val width = getWidthDp()
         val height = getHeightDp()
         val spacing = getSpacingDp()
-        val iconPadding = getIconPaddingDp()
+        val iconSize = getIconSizeDp()
         val iconColor = getIconColor()
+
+        val iconPaddingPx = (computeIconPadding(width, iconSize) * density).toInt()
+        val spacingPx = (spacing * density).toInt()
 
         val previewH = (Math.max(height, 32) + spacing * 2) * density.toInt()
         val lp = group.layoutParams
@@ -57,6 +69,7 @@ object NavPillCustomizer {
             group.layoutParams = lp
         }
 
+        val iconTint = ColorStateList.valueOf(iconColor)
         for (i in 0 until group.childCount) {
             val child = group.getChildAt(i)
             if (child is ImageButton) {
@@ -64,16 +77,8 @@ object NavPillCustomizer {
                 clp.width = (width * density).toInt()
                 clp.height = (height * density).toInt()
                 child.layoutParams = clp
-                child.setPadding(
-                    (iconPadding * density).toInt(),
-                    (iconPadding * density).toInt(),
-                    (iconPadding * density).toInt(),
-                    (iconPadding * density).toInt()
-                )
-                val d = child.drawable
-                if (d != null) {
-                    d.setTint(iconColor)
-                }
+                child.setPadding(iconPaddingPx, iconPaddingPx, iconPaddingPx, iconPaddingPx)
+                child.imageTintList = iconTint
             }
         }
     }

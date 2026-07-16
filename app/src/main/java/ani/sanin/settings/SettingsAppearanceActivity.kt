@@ -79,8 +79,9 @@ class SettingsAppearanceActivity : AppCompatActivity(),
             binding.appearanceNavPillHeight,
             binding.appearanceNavPillWidth,
             binding.appearanceNavPillSpacing,
-            binding.appearanceNavPillIconPadding,
+            binding.appearanceNavPillIconSize,
             binding.appearanceNavPillIconColor,
+            binding.appearanceNavPillCornerRadius,
         )
 
         binding.appearanceCardSize.isFocusable = true
@@ -306,9 +307,15 @@ class SettingsAppearanceActivity : AppCompatActivity(),
             updateNavPillPreview()
         }
 
-        binding.appearanceNavPillIconPadding.value = PrefManager.getVal<Int>(PrefName.NavPillIconPadding).toFloat()
-        binding.appearanceNavPillIconPadding.addOnChangeListener { _, v, _ ->
-            PrefManager.setVal(PrefName.NavPillIconPadding, v.toInt())
+        binding.appearanceNavPillIconSize.value = PrefManager.getVal<Int>(PrefName.NavPillIconSize).toFloat()
+        binding.appearanceNavPillIconSize.addOnChangeListener { _, v, _ ->
+            PrefManager.setVal(PrefName.NavPillIconSize, v.toInt())
+            updateNavPillPreview()
+        }
+
+        binding.appearanceNavPillCornerRadius.value = PrefManager.getVal<Int>(PrefName.NavPillCornerRadius).toFloat()
+        binding.appearanceNavPillCornerRadius.addOnChangeListener { _, v, _ ->
+            PrefManager.setVal(PrefName.NavPillCornerRadius, v.toInt())
             updateNavPillPreview()
         }
 

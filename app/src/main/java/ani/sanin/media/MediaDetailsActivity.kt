@@ -4,7 +4,6 @@ import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.res.ColorStateList
-import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.view.GestureDetector
@@ -157,7 +156,7 @@ class MediaDetailsActivity : AppCompatActivity() {
 
         // Native nav pills (info/watch/comments — info now focuses the left panel)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            val cornerPx = 16f * resources.displayMetrics.density
+            val cornerPx = NavPillCustomizer.getCornerRadiusDp() * resources.displayMetrics.density
             binding.mediaNavPills?.outlineProvider = object : android.view.ViewOutlineProvider() {
                 override fun getOutline(view: View, outline: android.graphics.Outline) {
                     outline.setRoundRect(0, 0, view.width, view.height, cornerPx)
@@ -448,14 +447,10 @@ class MediaDetailsActivity : AppCompatActivity() {
     }
 
     private fun updateMediaNavIconTints(selectedIdx: Int) {
-        val primaryColor = getThemeColor(com.google.android.material.R.attr.colorPrimary)
+        val customColor = NavPillCustomizer.getIconColor()
         val pills = listOfNotNull(binding.navPillInfo, binding.navPillWatch, binding.navPillComments)
         pills.forEachIndexed { i, pill ->
-            if (i == selectedIdx) {
-                pill.imageTintList = ColorStateList.valueOf(primaryColor)
-            } else {
-                pill.imageTintList = ColorStateList.valueOf(if (i == 0) Color.WHITE else Color.BLACK)
-            }
+            pill.imageTintList = ColorStateList.valueOf(customColor)
             pill.alpha = 1f
         }
     }

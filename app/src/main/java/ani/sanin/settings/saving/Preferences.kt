@@ -122,8 +122,9 @@ enum class PrefName(val data: Pref) {
     NavPillHeight(Pref(Location.UI, Int::class, 44)),
     NavPillWidth(Pref(Location.UI, Int::class, 44)),
     NavPillSpacing(Pref(Location.UI, Int::class, 6)),
-    NavPillIconPadding(Pref(Location.UI, Int::class, 12)),
+    NavPillIconSize(Pref(Location.UI, Int::class, 18)),
     NavPillIconColor(Pref(Location.UI, Int::class, 0xFFFFFFFF.toInt())),
+    NavPillCornerRadius(Pref(Location.UI, Int::class, 16)),
     FocusEffect(Pref(Location.UI, Int::class, 0)),
     CardStyle(Pref(Location.UI, Int::class, 0)),
 

@@ -14,6 +14,7 @@ import android.view.View
 import ani.sanin.util.GlassComponent
 import ani.sanin.util.GlassEffectDrawable
 import ani.sanin.util.GlassEffectManager
+import ani.sanin.util.NavPillCustomizer
 
 class SnakeNavRailView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
@@ -144,7 +145,7 @@ class SnakeNavRailView @JvmOverloads constructor(
 
         val blur = glassBlur ?: return
 
-        val cornerPx = 16f * resources.displayMetrics.density
+        val cornerPx = NavPillCustomizer.getCornerRadiusDp() * resources.displayMetrics.density
         clipPath.rewind()
         clipRect.set(0f, 0f, w, h)
         clipPath.addRoundRect(clipRect, cornerPx, cornerPx, Path.Direction.CW)

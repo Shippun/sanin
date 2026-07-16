@@ -7,8 +7,6 @@ import kotlin.math.cos
 import kotlin.math.exp
 import android.content.Intent
 import android.content.res.Configuration
-import android.graphics.Color
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -687,7 +685,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupHomeNavRail() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            val cornerPx = 16f * resources.displayMetrics.density
+            val cornerPx = NavPillCustomizer.getCornerRadiusDp() * resources.displayMetrics.density
             binding.homeNavRail.outlineProvider = object : android.view.ViewOutlineProvider() {
                 override fun getOutline(view: View, outline: android.graphics.Outline) {
                     outline.setRoundRect(0, 0, view.width, view.height, cornerPx)
@@ -731,8 +729,9 @@ class MainActivity : AppCompatActivity() {
         val bg = binding.homeNavRailBg
         if (bg.height <= 0) return
         val pills = listOf(binding.homeNavHome, binding.homeNavAnime, binding.homeNavDiscovery, binding.homeNavLibrary)
+        val customColor = NavPillCustomizer.getIconColor()
         pills.forEachIndexed { i, pill ->
-            pill.imageTintList = android.content.res.ColorStateList.valueOf(if (i == 0) Color.WHITE else Color.BLACK)
+            pill.imageTintList = android.content.res.ColorStateList.valueOf(customColor)
             pill.alpha = 1f
         }
     }
