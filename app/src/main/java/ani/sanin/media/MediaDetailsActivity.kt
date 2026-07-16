@@ -429,7 +429,7 @@ class MediaDetailsActivity : AppCompatActivity() {
     private fun hideNavPills() {
         if (PrefManager.getVal<Boolean>(PrefName.SideRailPersist)) return
         binding.mediaNavPills?.visibility = View.GONE
-        binding.mediaTabContent!!.requestFocus()
+        binding.mediaTabContent?.requestFocus()
     }
 
     private fun updateMediaNavIconTints(selectedIdx: Int) {

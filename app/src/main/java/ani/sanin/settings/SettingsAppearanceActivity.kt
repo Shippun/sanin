@@ -303,7 +303,9 @@ class SettingsAppearanceActivity : AppCompatActivity() {
             updateNavPillPreview()
         }
 
-        binding.appearanceNavPillIconSize.value = PrefManager.getVal<Int>(PrefName.NavPillIconSize).toFloat()
+        val iconSize = PrefManager.getVal<Int>(PrefName.NavPillIconSize).coerceIn(8, 28)
+        PrefManager.setVal(PrefName.NavPillIconSize, iconSize)
+        binding.appearanceNavPillIconSize.value = iconSize.toFloat()
         binding.appearanceNavPillIconSize.addOnChangeListener { _, v, _ ->
             PrefManager.setVal(PrefName.NavPillIconSize, v.toInt())
             updateNavPillPreview()
