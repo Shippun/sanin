@@ -37,6 +37,8 @@ class GlassEffectDrawable(
     private var lastHeight = -1
     private var lastBlurRadius = blurRadius.roundToInt().coerceIn(1, 100)
 
+    private var isCapturing = false
+
     private val layoutListener = ViewTreeObserver.OnGlobalLayoutListener {
         invalidateCache()
         targetRef.get()?.invalidate()
@@ -66,6 +68,7 @@ class GlassEffectDrawable(
     }
 
     override fun draw(canvas: Canvas) {
+        if (isCapturing) return
         val w = bounds.width()
         val h = bounds.height()
         if (w <= 0 || h <= 0) return
@@ -76,6 +79,7 @@ class GlassEffectDrawable(
             lastWidth = w
             lastHeight = h
             captureAndBlur(target, w, h)
+            if (blurCache == null) return
         }
 
         val blur = blurCache ?: return
@@ -107,7 +111,9 @@ class GlassEffectDrawable(
         val pos = IntArray(2)
         target.getLocationInWindow(pos)
         c.translate(-pos[0].toFloat(), -pos[1].toFloat())
+        isCapturing = true
         root.draw(c)
+        isCapturing = false
 
         backdropCache = bitmap
         blurCache = fastBlur(bitmap, lastBlurRadius)
