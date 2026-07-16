@@ -8,6 +8,12 @@
     android:paddingMode="stack"
     android:tint="?attr/colorSecondary">
 
+    <item>
+        <shape android:shape="rectangle">
+            <corners android:radius="32dp" />
+        </shape>
+    </item>
+
     <item
         android:width="48dp"
         android:drawable="@drawable/control_background_40dp"

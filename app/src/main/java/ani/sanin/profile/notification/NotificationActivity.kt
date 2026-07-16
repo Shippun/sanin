@@ -39,6 +39,8 @@ import ani.sanin.settings.saving.PrefName
 import ani.sanin.statusBarHeight
 import ani.sanin.themes.ThemeManager
 import ani.sanin.util.FocusEffectUtil
+import ani.sanin.util.GlassComponent
+import ani.sanin.util.GlassEffectManager
 import ani.sanin.util.NavPillCustomizer
 import com.airbnb.lottie.LottieAnimationView
 import com.xwray.groupie.GroupieAdapter
@@ -88,6 +90,9 @@ class NotificationActivity : AppCompatActivity() {
             topMargin = statusBarHeight
         }
         binding.notificationNavRailBg.live = PrefManager.getVal(PrefName.LiveSideRail)
+        binding.notificationNavRailBg.setGlassEnabled(
+            GlassEffectManager.isComponentEnabled(GlassComponent.NavPills)
+        )
         FocusEffectUtil.applyFocusListener(binding.notificationBack)
         val cornerPx = NavPillCustomizer.getCornerRadiusDp() * resources.displayMetrics.density
         binding.notificationNavRail.outlineProvider = object : android.view.ViewOutlineProvider() {
@@ -422,6 +427,7 @@ class NotificationActivity : AppCompatActivity() {
                 KeyEvent.KEYCODE_DPAD_RIGHT -> {
                     if (currentFocus?.id in setOf(R.id.notificationNavUser, R.id.notificationNavMedia,
                             R.id.notificationNavSubs, R.id.notificationNavComment)) {
+                        if (PrefManager.getVal<Boolean>(PrefName.SideRailPersist)) return false
                         hideNotificationNavRail()
                         return true
                     }

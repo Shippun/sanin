@@ -23,6 +23,7 @@ import ani.sanin.setAnimation
 import ani.sanin.settings.saving.PrefManager
 import ani.sanin.settings.saving.PrefName
 import ani.sanin.util.customAlertDialog
+import ani.sanin.getThemeColor
 import ani.sanin.util.FocusEffectUtil
 import ani.sanin.util.SizeFormatter
 import com.bumptech.glide.Glide
@@ -200,6 +201,9 @@ class EpisodeAdapter(
                     if (isWatched) {
                         binding.itemEpisodeViewedCover.visibility = View.VISIBLE
                         binding.itemEpisodeViewed.visibility = View.VISIBLE
+                        binding.itemEpisodeDivider?.setBackgroundColor(
+                            fragment.requireContext().getThemeColor(com.google.android.material.R.attr.colorOnBackground)
+                        )
                         if (greyWatched) {
                             val cm = ColorMatrix().apply { setSaturation(0f) }
                             binding.itemMediaImage.colorFilter = ColorMatrixColorFilter(cm)
@@ -219,6 +223,9 @@ class EpisodeAdapter(
                     } else {
                         binding.itemEpisodeViewedCover.visibility = View.GONE
                         binding.itemEpisodeViewed.visibility = View.GONE
+                        binding.itemEpisodeDivider?.setBackgroundColor(
+                            fragment.requireContext().getThemeColor(com.google.android.material.R.attr.colorPrimary)
+                        )
                         if (blurUnwatched) {
                             val cm = ColorMatrix().apply { setSaturation(0.3f) }
                             binding.itemMediaImage.colorFilter = ColorMatrixColorFilter(cm)
@@ -323,6 +330,9 @@ class EpisodeAdapter(
                     if (isWatched) {
                         binding.itemEpisodeViewedCover.visibility = View.VISIBLE
                         binding.itemEpisodeViewed.visibility = View.VISIBLE
+                        binding.itemEpisodeDivider?.setBackgroundColor(
+                            fragment.requireContext().getThemeColor(com.google.android.material.R.attr.colorOnBackground)
+                        )
                         if (greyWatched) {
                             val cm = ColorMatrix().apply { setSaturation(0f) }
                             binding.itemMediaImage.colorFilter = ColorMatrixColorFilter(cm)
@@ -338,6 +348,9 @@ class EpisodeAdapter(
                     } else {
                         binding.itemEpisodeViewedCover.visibility = View.GONE
                         binding.itemEpisodeViewed.visibility = View.GONE
+                        binding.itemEpisodeDivider?.setBackgroundColor(
+                            fragment.requireContext().getThemeColor(com.google.android.material.R.attr.colorPrimary)
+                        )
                         if (blurUnwatched) {
                             val cm = ColorMatrix().apply { setSaturation(0.3f) }
                             binding.itemMediaImage.colorFilter = ColorMatrixColorFilter(cm)
