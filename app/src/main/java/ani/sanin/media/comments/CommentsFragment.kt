@@ -18,7 +18,13 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import ani.sanin.R
+import android.widget.Button
+import ani.sanin.connections.anilist.Anilist
+import ani.sanin.connections.mal.MAL
+import ani.sanin.media.MediaListDialogFragment
+import ani.sanin.settings.saving.PrefManager
+import ani.sanin.settings.saving.PrefName
+import ani.sanin.util.FocusEffectUtil
 import ani.sanin.buildMarkwon
 import ani.sanin.connections.LogoApi
 import ani.sanin.connections.anilist.Anilist
@@ -153,6 +159,36 @@ class CommentsFragment : Fragment() {
                         binding.commentsTitle.text = newMedia.userPreferredName ?: newMedia.name
                     }
                 }
+
+                // Add to List button
+                val rescueMode: Boolean = PrefManager.getVal(PrefName.RescueMode)
+                fun updateAddToList() {
+                    val statuses: Array<String> = resources.getStringArray(R.array.status)
+                    val statusStrings = resources.getStringArray(R.array.status_anime)
+                    val userStatus =
+                        if (newMedia.userStatus != null) statusStrings[statuses.indexOf(newMedia.userStatus).coerceAtLeast(0)] else statusStrings[0]
+                    if (newMedia.userStatus != null) {
+                        binding.commentsAddToList.visibility = View.VISIBLE
+                        binding.commentsAddToList.text = userStatus
+                    } else {
+                        binding.commentsAddToList.setText(R.string.add_list)
+                    }
+                }
+                updateAddToList()
+                val fm = requireActivity().supportFragmentManager
+                binding.commentsAddToList.setOnClickListener {
+                    if (rescueMode) {
+                        if (MAL.token != null) {
+                            if (fm.findFragmentByTag("dialog") == null)
+                                MediaListDialogFragment().show(fm, "dialog")
+                        } else snackString("Please login to MAL")
+                    } else if (Anilist.userid != null) {
+                        if (fm.findFragmentByTag("dialog") == null)
+                            MediaListDialogFragment().show(fm, "dialog")
+                    } else snackString(getString(R.string.please_login_anilist))
+                }
+                FocusEffectUtil.applyFocusListener(binding.commentsAddToList)
+
                 isAnime = newMedia.anime != null
                 userProgress = newMedia.userProgress
                 totalEpisodesOrChapters = newMedia.anime?.totalEpisodes

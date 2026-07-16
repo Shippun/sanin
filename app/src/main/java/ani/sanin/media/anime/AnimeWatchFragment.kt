@@ -26,7 +26,13 @@ import androidx.media3.common.util.UnstableApi
 import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import android.widget.Button
 import ani.sanin.R
+import ani.sanin.connections.anilist.Anilist
+import ani.sanin.connections.mal.MAL
+import ani.sanin.media.MediaListDialogFragment
+import ani.sanin.settings.saving.PrefManager
+import ani.sanin.settings.saving.PrefName
 import ani.sanin.px
 import ani.sanin.connections.LogoApi
 import ani.sanin.databinding.FragmentMediaSourceBinding
@@ -198,6 +204,36 @@ class AnimeWatchFragment : Fragment() {
                         binding.mediaWatchTitle.text = media.userPreferredName ?: media.name
                     }
                 }
+
+                // Add to List button
+                val rescueMode: Boolean = PrefManager.getVal(PrefName.RescueMode)
+                fun updateAddToList() {
+                    val statuses: Array<String> = resources.getStringArray(R.array.status)
+                    val statusStrings = resources.getStringArray(R.array.status_anime)
+                    val userStatus =
+                        if (media.userStatus != null) statusStrings[statuses.indexOf(media.userStatus).coerceAtLeast(0)] else statusStrings[0]
+                    if (media.userStatus != null) {
+                        binding.mediaWatchAddToList.visibility = View.VISIBLE
+                        binding.mediaWatchAddToList.text = userStatus
+                    } else {
+                        binding.mediaWatchAddToList.setText(R.string.add_list)
+                    }
+                }
+                updateAddToList()
+                val fm = requireActivity().supportFragmentManager
+                binding.mediaWatchAddToList.setOnClickListener {
+                    if (rescueMode) {
+                        if (MAL.token != null) {
+                            if (fm.findFragmentByTag("dialog") == null)
+                                MediaListDialogFragment().show(fm, "dialog")
+                        } else snackString("Please login to MAL")
+                    } else if (Anilist.userid != null) {
+                        if (fm.findFragmentByTag("dialog") == null)
+                            MediaListDialogFragment().show(fm, "dialog")
+                    } else snackString(getString(R.string.please_login_anilist))
+                }
+                FocusEffectUtil.applyFocusListener(binding.mediaWatchAddToList)
+
                 if (!PrefManager.getVal<Boolean>(PrefName.SmartSourcePersistence)) {
                     if (media.selected != null) {
                         media.selected!!.sourceIndex = 0

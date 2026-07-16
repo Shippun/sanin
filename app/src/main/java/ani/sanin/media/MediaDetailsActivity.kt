@@ -307,18 +307,7 @@ class MediaDetailsActivity : AppCompatActivity() {
             navComments?.setOnClickListener { selectTab(2); hideNavPills() }
         }
 
-        // Add-to-List button for Watch & Comments tabs
-        binding.mediaInfoAddToListBtn?.setOnClickListener {
-            if (rescueMode) {
-                if (MAL.token != null) {
-                    if (supportFragmentManager.findFragmentByTag("dialog") == null)
-                        MediaListDialogFragment().show(supportFragmentManager, "dialog")
-                } else snackString("Please login to MAL")
-            } else if (Anilist.userid != null) {
-                if (supportFragmentManager.findFragmentByTag("dialog") == null)
-                    MediaListDialogFragment().show(supportFragmentManager, "dialog")
-            } else snackString(getString(R.string.please_login_anilist))
-        }
+
 
         // Restore last selected tab (0=Info, 1=Watch, 2=Comments)
         val savedWindow = media.selected!!.window

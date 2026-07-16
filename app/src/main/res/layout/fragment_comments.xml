@@ -49,6 +49,26 @@
                 android:visibility="gone"
                 tools:visibility="visible" />
 
+            <Button
+                android:id="@+id/commentsAddToList"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="12dp"
+                android:ellipsize="marquee"
+                android:fontFamily="@font/poppins_bold"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                android:marqueeRepeatLimit="marquee_forever"
+                android:paddingStart="24dp"
+                android:paddingEnd="24dp"
+                android:text="@string/add_list"
+                android:textAllCaps="false"
+                android:textColor="?attr/colorOnBackground"
+                android:visibility="gone"
+                tools:visibility="visible" />
+
             <LinearLayout
                 android:id="@+id/commentSourceBar"
                 android:layout_width="match_parent"
