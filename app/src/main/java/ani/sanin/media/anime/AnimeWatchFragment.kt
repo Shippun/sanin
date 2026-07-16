@@ -31,8 +31,6 @@ import ani.sanin.R
 import ani.sanin.connections.anilist.Anilist
 import ani.sanin.connections.mal.MAL
 import ani.sanin.media.MediaListDialogFragment
-import ani.sanin.settings.saving.PrefManager
-import ani.sanin.settings.saving.PrefName
 import ani.sanin.px
 import ani.sanin.connections.LogoApi
 import ani.sanin.databinding.FragmentMediaSourceBinding

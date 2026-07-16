@@ -19,12 +19,9 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import android.widget.Button
-import ani.sanin.connections.anilist.Anilist
+import ani.sanin.R
 import ani.sanin.connections.mal.MAL
 import ani.sanin.media.MediaListDialogFragment
-import ani.sanin.settings.saving.PrefManager
-import ani.sanin.settings.saving.PrefName
-import ani.sanin.util.FocusEffectUtil
 import ani.sanin.buildMarkwon
 import ani.sanin.connections.LogoApi
 import ani.sanin.connections.anilist.Anilist
