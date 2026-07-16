@@ -1,8 +1,12 @@
 package ani.sanin.settings
 
+import android.app.AlertDialog
 import android.graphics.Color
+import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.view.ViewGroup
+import android.widget.GridLayout
+import android.widget.ImageButton
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.updateLayoutParams
 import ani.sanin.R
@@ -17,17 +21,9 @@ import ani.sanin.themes.ThemeManager
 import ani.sanin.util.FocusEffectUtil
 import ani.sanin.util.customAlertDialog
 import ani.sanin.util.NavPillCustomizer
-import eltos.simpledialogfragment.SimpleDialog
-import eltos.simpledialogfragment.color.SimpleColorWheelDialog
 
-class SettingsAppearanceActivity : AppCompatActivity(),
-    SimpleDialog.OnDialogResultListener {
+class SettingsAppearanceActivity : AppCompatActivity() {
 
-    fun interface ColorPickerCallback {
-        fun onColorSelected(color: Int)
-    }
-
-    private var colorPickerCallback: ColorPickerCallback? = null
     lateinit var binding: ActivitySettingsAppearanceBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -349,28 +345,70 @@ class SettingsAppearanceActivity : AppCompatActivity(),
     private fun showColorPicker(
         originalColor: Int,
         title: String,
-        callback: ColorPickerCallback,
+        callback: (Int) -> Unit,
     ) {
-        colorPickerCallback = callback
-        SimpleColorWheelDialog()
-            .title(title)
-            .color(originalColor)
-            .alpha(true)
-            .neg()
-            .theme(R.style.MyPopup)
-            .show(this, "glassColorPicker")
-    }
+        val colors = intArrayOf(
+            Color.WHITE, Color.BLACK, Color.RED, Color.parseColor("#FF9800"),
+            Color.YELLOW, Color.GREEN, Color.CYAN, Color.BLUE,
+            Color.parseColor("#9C27B0"), Color.parseColor("#E91E63"),
+            Color.GRAY, Color.parseColor("#607D8B"), Color.parseColor("#795548"),
+            Color.parseColor("#4CAF50"), Color.parseColor("#03A9F4"),
+            Color.parseColor("#FF5722"), originalColor
+        )
+        val names = arrayOf(
+            "White", "Black", "Red", "Orange",
+            "Yellow", "Green", "Cyan", "Blue",
+            "Purple", "Pink",
+            "Grey", "Blue Grey", "Brown",
+            "Green 500", "Light Blue",
+            "Deep Orange", "Current"
+        )
 
-    override fun onResult(
-        dialogTag: String,
-        which: Int,
-        extras: Bundle,
-    ): Boolean {
-        if (dialogTag == "glassColorPicker" && which == SimpleDialog.OnDialogResultListener.BUTTON_POSITIVE) {
-            val color = extras.getInt(SimpleColorWheelDialog.COLOR)
-            colorPickerCallback?.onColorSelected(color)
-            return true
+        val cols = 4
+        val rows = (colors.size + cols - 1) / cols
+        val dp = resources.displayMetrics.density
+        val chipSize = (48 * dp).toInt()
+        val margin = (4 * dp).toInt()
+
+        val grid = GridLayout(this).apply {
+            columnCount = cols
+            rowCount = rows
+            setPadding(margin, margin, margin, margin)
         }
-        return false
+
+        for (i in colors.indices) {
+            val chip = ImageButton(this).apply {
+                val gd = GradientDrawable().apply {
+                    shape = GradientDrawable.OVAL
+                    setColor(colors[i])
+                    setStroke(if (colors[i] == Color.BLACK) 2 else 0,
+                        if (colors[i] == Color.BLACK) Color.GRAY else Color.TRANSPARENT)
+                    setSize(chipSize, chipSize)
+                }
+                background = gd
+                layoutParams = GridLayout.LayoutParams().apply {
+                    width = chipSize
+                    height = chipSize
+                    setMargins(margin, margin, margin, margin)
+                }
+                contentDescription = names[i]
+                isFocusable = true
+            }
+            grid.addView(chip)
+        }
+
+        AlertDialog.Builder(this)
+            .setTitle(title)
+            .setView(grid)
+            .setNegativeButton("Cancel", null)
+            .show()
+            .also { dialog ->
+                for (i in 0 until grid.childCount) {
+                    grid.getChildAt(i).setOnClickListener {
+                        callback(colors[i])
+                        dialog.dismiss()
+                    }
+                }
+            }
     }
 }
