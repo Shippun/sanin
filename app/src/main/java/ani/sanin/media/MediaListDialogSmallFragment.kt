@@ -151,7 +151,7 @@ class MediaListDialogSmallFragment : DialogFragment() {
                 isCheckable = true
                 isClickable = true
                 isFocusable = true
-                setTextAppearance(R.style.TextAppearance_Material3_TitleSmall)
+                setTextAppearance(com.google.android.material.R.style.TextAppearance_Material3_TitleSmall)
             }
             binding.mediaListStatusGroup.addView(chip)
             if (label == userStatus) chip.isChecked = true
@@ -221,16 +221,17 @@ class MediaListDialogSmallFragment : DialogFragment() {
         binding.mediaListSave.setOnClickListener {
             val progressText = binding.mediaListProgress.text.toString()
             val scoreText = binding.mediaListScore.text.toString()
+            val newCheckedStatus = _binding?.mediaListStatusGroup?.let { group ->
+                val gId = group.checkedChipId
+                if (gId != -1) (group.findViewById<com.google.android.material.chip.Chip>(gId)?.text?.toString() ?: statusStrings[0]) else statusStrings[0]
+            } ?: statusStrings[0]
+            val newStatus = statuses[statusStrings.indexOf(newCheckedStatus).coerceAtLeast(0)]
             scope.launch {
                 withContext(Dispatchers.IO) {
                     val progress = _binding?.mediaListProgress?.text.toString().toIntOrNull()
                     val progressVolumes = media.userProgressVolumes
                     val score = (_binding?.mediaListScore?.text.toString().toDoubleOrNull()?.times(10))?.toInt()
-                    val checkedStatus = _binding?.mediaListStatusGroup?.let { group ->
-                        val gId = group.checkedChipId
-                        if (gId != -1) (group.findViewById<com.google.android.material.chip.Chip>(gId)?.text?.toString() ?: statusStrings[0]) else statusStrings[0]
-                    } ?: statusStrings[0]
-                    val status = statuses[statusStrings.indexOf(checkedStatus).coerceAtLeast(0)]
+                    val status = newStatus
                     val startD = media.userStartedAt
                     val endD = media.userCompletedAt
                     val rescueMode: Boolean = PrefManager.getVal(PrefName.RescueMode)
@@ -276,10 +277,9 @@ class MediaListDialogSmallFragment : DialogFragment() {
                     PrefManager.setCustomVal("removeList", removeList.minus(media.id))
                 }
                 Refresh.all()
-                if (PrefManager.getVal<Boolean>(PrefName.ListStatusNotification) && media.userStatus != status) {
+                if (PrefManager.getVal<Boolean>(PrefName.ListStatusNotification) && media.userStatus != newStatus) {
                     val oldDisp = statusStrings[statuses.indexOf(media.userStatus).coerceAtLeast(0)]
-                    val newDisp = statusStrings[statuses.indexOf(status).coerceAtLeast(0)]
-                    snackString("$oldDisp → $newDisp")
+                    snackString("$oldDisp → $newCheckedStatus")
                 } else {
                     snackString(getString(R.string.list_updated))
                 }

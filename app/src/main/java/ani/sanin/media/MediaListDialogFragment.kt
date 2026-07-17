@@ -152,7 +152,7 @@ class MediaListDialogFragment : DialogFragment() {
                     if (label == userStatus) chip.isChecked = true
                 }
                 FocusEffectUtil.applyFocusListener(
-                    *binding.mediaListStatusGroup.children.filterIsInstance<View>().toList().toTypedArray()
+                    *(0 until binding.mediaListStatusGroup.childCount).map { binding.mediaListStatusGroup.getChildAt(it) }.toTypedArray()
                 )
 
                 var total: Int? = null
@@ -161,7 +161,7 @@ class MediaListDialogFragment : DialogFragment() {
                     total = media!!.anime!!.totalEpisodes!!
                     binding.mediaListProgress.filters =
                         arrayOf(
-                            InputFilterMinMax(0.0, total.toDouble(), binding.mediaListStatus),
+                            InputFilterMinMax(0.0, total.toDouble(), binding.mediaListStatusGroup),
                             LengthFilter(total.toString().length)
                         )
                 }
@@ -318,6 +318,8 @@ class MediaListDialogFragment : DialogFragment() {
                     else statusStrings[0]
                     val rewatchText = binding.mediaListRewatch.text?.toString()
                     val notesText = binding.mediaListNotes.text?.toString()
+                    val newStatus =
+                        statuses[statusStrings.indexOf(statusText).coerceAtLeast(0)]
                     scope.launch {
                         withContext(Dispatchers.IO) {
                             if (media != null) {
@@ -328,8 +330,7 @@ class MediaListDialogFragment : DialogFragment() {
                                         ?.times(10))?.toInt()
                                 val progressVolumes =
                                     _binding?.mediaListVolumeProgress?.text.toString().toIntOrNull()
-                                val status =
-                                    statuses[statusStrings.indexOf(statusText).coerceAtLeast(0)]
+                                val status = newStatus
                                 val rewatch = rewatchText?.toIntOrNull()
                                 val notes = notesText
                                 val startD = start.date
@@ -388,7 +389,7 @@ class MediaListDialogFragment : DialogFragment() {
                             PrefManager.setCustomVal("removeList", removeList.minus(media!!.id))
                         }
                         Refresh.all()
-                        if (PrefManager.getVal<Boolean>(PrefName.ListStatusNotification) && media!!.userStatus != status) {
+                        if (PrefManager.getVal<Boolean>(PrefName.ListStatusNotification) && media!!.userStatus != newStatus) {
                             val oldDisp = statusStrings[statuses.indexOf(media!!.userStatus).coerceAtLeast(0)]
                             snackString("$oldDisp → $statusText")
                         } else {
