@@ -154,21 +154,6 @@ class SettingsCommonActivity : AppCompatActivity() {
                     arrayListOf(
                         Settings(
                             type = 1,
-                            name = getString(R.string.ui_settings),
-                            desc = getString(R.string.ui_settings_desc),
-                            icon = R.drawable.ic_round_auto_awesome_24,
-                            onClick = {
-                                startActivity(
-                                    Intent(
-                                        context,
-                                        UserInterfaceSettingsActivity::class.java,
-                                    ),
-                                )
-                            },
-                            isActivity = true,
-                        ),
-                        Settings(
-                            type = 1,
                             name = "Startup Tab",
                             desc = "Default tab on app launch",
                             icon = R.drawable.ic_round_home_24,

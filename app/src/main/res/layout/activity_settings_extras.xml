@@ -153,6 +153,134 @@
                 app:iconSize="24dp"
                 app:iconTint="?attr/colorPrimary" />
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                android:background="?android:attr/listDivider" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:fontFamily="@font/poppins_bold"
+                android:paddingStart="32dp"
+                android:paddingEnd="32dp"
+                android:text="UI"
+                android:textColor="?attr/colorSecondary"
+                tools:ignore="TextContrastCheck" />
+
+            <com.google.android.material.materialswitch.MaterialSwitch
+                android:id="@+id/extrasImmersive"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:checked="true"
+                android:drawableStart="@drawable/ic_round_fullscreen_24"
+                android:drawablePadding="16dp"
+                android:elegantTextHeight="true"
+                android:focusable="true"
+                android:fontFamily="@font/poppins_bold"
+                android:minHeight="64dp"
+                android:paddingStart="32dp"
+                android:paddingEnd="32dp"
+                android:text="@string/immersive_mode"
+                android:textAlignment="viewStart"
+                android:textColor="?attr/colorOnBackground"
+                app:cornerRadius="0dp"
+                app:drawableTint="?attr/colorPrimary"
+                app:showText="false"
+                app:thumbTint="@color/button_switch_track" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                android:background="?android:attr/listDivider" />
+
+            <Button
+                android:id="@+id/extrasHomeLayout"
+                android:layout_width="match_parent"
+                android:layout_height="64dp"
+                android:background="@drawable/ui_bg"
+                android:focusable="true"
+                android:fontFamily="@font/poppins_bold"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                android:paddingStart="32dp"
+                android:paddingEnd="32dp"
+                android:text="@string/home_layout_show"
+                android:textAlignment="viewStart"
+                android:textAllCaps="false"
+                android:textColor="?attr/colorOnBackground"
+                app:cornerRadius="0dp"
+                app:icon="@drawable/ic_round_playlist_add_24"
+                app:iconPadding="16dp"
+                app:iconSize="24dp"
+                app:iconTint="?attr/colorPrimary" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="16dp"
+                android:background="?android:attr/listDivider" />
+
+            <com.google.android.material.materialswitch.MaterialSwitch
+                android:id="@+id/extrasSmallView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:focusable="true"
+                android:drawableStart="@drawable/ic_round_art_track_24"
+                android:drawablePadding="16dp"
+                android:elegantTextHeight="true"
+                android:fontFamily="@font/poppins_bold"
+                android:minHeight="64dp"
+                android:paddingStart="32dp"
+                android:paddingEnd="32dp"
+                android:text="@string/small_view"
+                android:textAlignment="viewStart"
+                android:textColor="?attr/colorOnBackground"
+                app:cornerRadius="0dp"
+                app:drawableTint="?attr/colorPrimary"
+                app:showText="false"
+                app:thumbTint="@color/button_switch_track" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                android:background="?android:attr/listDivider" />
+
+            <com.google.android.material.materialswitch.MaterialSwitch
+                android:id="@+id/extrasEmoji"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:focusable="true"
+                android:drawableStart="@drawable/ic_round_favorite_24"
+                android:drawablePadding="16dp"
+                android:elegantTextHeight="true"
+                android:fontFamily="@font/poppins_bold"
+                android:minHeight="64dp"
+                android:paddingStart="32dp"
+                android:paddingEnd="32dp"
+                android:text="Emoji"
+                android:textAlignment="viewStart"
+                android:textColor="?attr/colorOnBackground"
+                app:cornerRadius="0dp"
+                app:drawableTint="?attr/colorPrimary"
+                app:showText="false"
+                app:thumbTint="@color/button_switch_track" />
+
         </LinearLayout>
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>
