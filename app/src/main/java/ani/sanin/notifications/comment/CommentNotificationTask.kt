@@ -74,125 +74,121 @@ class CommentNotificationTask : Task {
                         CommentNotificationWorker.NotificationType.COMMENT_REPLY -> commentCount++
                         CommentNotificationWorker.NotificationType.COMMENT_WARNING -> warningCount++
                         CommentNotificationWorker.NotificationType.SANIN_UPDATE -> updateCount++
-                        else -> {}
-                    }
-                    val notification = when (type) {
-                        CommentNotificationWorker.NotificationType.COMMENT_WARNING -> {
-                            val title = "You received a warning"
-                            val message = it.content ?: "Be more thoughtful with your comments"
-
-                            val commentStore = CommentStore(
-                                title,
-                                message,
-                                CommentNotificationWorker.NotificationType.COMMENT_WARNING,
-                                it.mediaId,
-                                it.commentId
-                            )
-                            addNotificationToStore(commentStore)
-
-                            createNotification(
-                                context,
-                                CommentNotificationWorker.NotificationType.COMMENT_WARNING,
-                                message,
-                                title,
-                                it.mediaId,
-                                it.commentId,
-                                "",
-                                ""
-                            )
+                            else -> {}
                         }
+                        val notification = when (type) {
+                            CommentNotificationWorker.NotificationType.COMMENT_WARNING -> {
+                                val title = "You received a warning"
+                                val message = it.content ?: "Be more thoughtful with your comments"
 
-                        CommentNotificationWorker.NotificationType.COMMENT_REPLY -> {
-                            val title = "New Comment Reply"
-                            val mediaName = names[it.mediaId]?.title ?: "Unknown"
-                            val message = "${it.username} replied to your comment in $mediaName"
-
-                            val commentStore = CommentStore(
-                                title,
-                                message,
-                                CommentNotificationWorker.NotificationType.COMMENT_REPLY,
-                                it.mediaId,
-                                it.commentId
-                            )
-                            addNotificationToStore(commentStore)
-
-                            createNotification(
-                                context,
-                                CommentNotificationWorker.NotificationType.COMMENT_REPLY,
-                                message,
-                                title,
-                                it.mediaId,
-                                it.commentId,
-                                names[it.mediaId]?.color ?: "#222222",
-                                names[it.mediaId]?.coverImage ?: ""
-                            )
-                        }
-
-                        CommentNotificationWorker.NotificationType.SANIN_UPDATE -> {
-                            val title = "Update from Sanin"
-                            val message = it.content ?: "New feature available"
-
-                            val commentStore = CommentStore(
-                                title,
-                                message,
-                                CommentNotificationWorker.NotificationType.SANIN_UPDATE,
-                                null,
-                                null
-                            )
-                            addNotificationToStore(commentStore)
-
-                            createNotification(
-                                context,
-                                CommentNotificationWorker.NotificationType.SANIN_UPDATE,
-                                message,
-                                title,
-                                0,
-                                0,
-                                "",
-                                ""
-                            )
-                        }
-
-                        CommentNotificationWorker.NotificationType.NO_NOTIFICATION -> {
-                            PrefManager.removeCustomVal("genre_thumb")
-                            PrefManager.removeCustomVal("banner_ANIME_time")
-                            PrefManager.removeCustomVal("banner_MANGA_time")
-                            PrefManager.setVal(PrefName.ImageUrl, it.content ?: "")
-                            null
-                        }
-
-                        CommentNotificationWorker.NotificationType.UNKNOWN -> {
-                            null
-                        }
-                    }
-
-                    if (ActivityCompat.checkSelfPermission(
-                            context,
-                            Manifest.permission.POST_NOTIFICATIONS
-                        ) == PackageManager.PERMISSION_GRANTED
-                    ) {
-                        if (notification != null) {
-                            NotificationManagerCompat.from(context)
-                                .notify(
-                                    type.id,
-                                    System.currentTimeMillis().toInt(),
-                                    notification
+                                val commentStore = CommentStore(
+                                    title,
+                                    message,
+                                    CommentNotificationWorker.NotificationType.COMMENT_WARNING,
+                                    it.mediaId,
+                                    it.commentId
                                 )
-                        }
-                    }
-                    if (PrefManager.getVal<Boolean>(PrefName.NotificationPopup) && type != CommentNotificationWorker.NotificationType.NO_NOTIFICATION) {
-                        App.currentActivity()?.let { activity ->
-                            val popupIntent = Intent(context, NotificationPopupActivity::class.java).apply {
-                                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_NO_USER_ACTION
-                                putExtra("title", title)
-                                putExtra("text", (message?.take(120) ?: ""))
+                                addNotificationToStore(commentStore)
+
+                                showPopup(context, title, message)
+
+                                createNotification(
+                                    context,
+                                    CommentNotificationWorker.NotificationType.COMMENT_WARNING,
+                                    message,
+                                    title,
+                                    it.mediaId,
+                                    it.commentId,
+                                    "",
+                                    ""
+                                )
                             }
-                            context.startActivity(popupIntent)
+
+                            CommentNotificationWorker.NotificationType.COMMENT_REPLY -> {
+                                val title = "New Comment Reply"
+                                val mediaName = names[it.mediaId]?.title ?: "Unknown"
+                                val message = "${it.username} replied to your comment in $mediaName"
+
+                                val commentStore = CommentStore(
+                                    title,
+                                    message,
+                                    CommentNotificationWorker.NotificationType.COMMENT_REPLY,
+                                    it.mediaId,
+                                    it.commentId
+                                )
+                                addNotificationToStore(commentStore)
+
+                                showPopup(context, title, message)
+
+                                createNotification(
+                                    context,
+                                    CommentNotificationWorker.NotificationType.COMMENT_REPLY,
+                                    message,
+                                    title,
+                                    it.mediaId,
+                                    it.commentId,
+                                    names[it.mediaId]?.color ?: "#222222",
+                                    names[it.mediaId]?.coverImage ?: ""
+                                )
+                            }
+
+                            CommentNotificationWorker.NotificationType.SANIN_UPDATE -> {
+                                val title = "Update from Sanin"
+                                val message = it.content ?: "New feature available"
+
+                                val commentStore = CommentStore(
+                                    title,
+                                    message,
+                                    CommentNotificationWorker.NotificationType.SANIN_UPDATE,
+                                    null,
+                                    null
+                                )
+                                addNotificationToStore(commentStore)
+
+                                showPopup(context, title, message)
+
+                                createNotification(
+                                    context,
+                                    CommentNotificationWorker.NotificationType.SANIN_UPDATE,
+                                    message,
+                                    title,
+                                    0,
+                                    0,
+                                    "",
+                                    ""
+                                )
+                            }
+
+                            CommentNotificationWorker.NotificationType.NO_NOTIFICATION -> {
+                                PrefManager.removeCustomVal("genre_thumb")
+                                PrefManager.removeCustomVal("banner_ANIME_time")
+                                PrefManager.removeCustomVal("banner_MANGA_time")
+                                PrefManager.setVal(PrefName.ImageUrl, it.content ?: "")
+                                null
+                            }
+
+                            CommentNotificationWorker.NotificationType.UNKNOWN -> {
+                                null
+                            }
+                        }
+
+                        if (ActivityCompat.checkSelfPermission(
+                                context,
+                                Manifest.permission.POST_NOTIFICATIONS
+                            ) == PackageManager.PERMISSION_GRANTED
+                        ) {
+                            if (notification != null) {
+                                NotificationManagerCompat.from(context)
+                                    .notify(
+                                        type.id,
+                                        System.currentTimeMillis().toInt(),
+                                        notification
+                                    )
+                            }
                         }
                     }
-                }
-                
-                // Update comment notification count (combining replies and warnings as they appear in the Comments section)
+                    
+                    // Update comment notification count (combining replies and warnings as they appear in the Comments section)
                 val totalNewComments = commentCount + warningCount
                 if (totalNewComments > 0) {
                     val currentCommentCount = PrefManager.getVal<Int>(PrefName.UnreadCommentNotifications)
@@ -339,6 +335,19 @@ class CommentNotificationTask : Task {
             BitmapFactory.decodeStream(inputStream)
         } catch (e: Exception) {
             null
+        }
+    }
+
+    private fun showPopup(context: Context, title: String, message: String) {
+        if (PrefManager.getVal<Boolean>(PrefName.NotificationPopup)) {
+            App.currentActivity()?.let {
+                val popupIntent = Intent(context, NotificationPopupActivity::class.java).apply {
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_NO_USER_ACTION
+                    putExtra("title", title)
+                    putExtra("text", message.take(120))
+                }
+                context.startActivity(popupIntent)
+            }
         }
     }
 

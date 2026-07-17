@@ -96,7 +96,7 @@ class AnilistNotificationTask : Task {
                                         )
                                 }
                                 if (PrefManager.getVal<Boolean>(PrefName.NotificationPopup)) {
-                                    val coverUrl = it.media?.image?.large
+                                    val coverUrl = it.media?.coverImage?.large ?: it.image
                                     App.currentActivity()?.let { activity ->
                                         val popupIntent = Intent(context, NotificationPopupActivity::class.java).apply {
                                             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_NO_USER_ACTION
