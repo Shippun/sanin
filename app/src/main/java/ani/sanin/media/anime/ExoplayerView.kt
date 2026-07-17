@@ -254,6 +254,8 @@ class ExoplayerView :
 
     private var hasExtSubtitles = false
     private var audioLanguages = mutableListOf<Pair<String, String>>()
+    private val storedSyncCues = mutableListOf<SyncCue>()
+    private val seenCueTexts = mutableSetOf<String>()
 
     companion object {
         var initialized = false
@@ -2057,12 +2059,45 @@ class ExoplayerView :
                         return
                     }
 
+                    val newCueTexts = cueGroup.cues.map { it.text.toString() ?: "" }
+                    val currentPosition = exoPlayer.currentPosition
+
+                    // Store cues for sync dialog with timestamps
+                    synchronized(storedSyncCues) {
+                        for (cueText in newCueTexts) {
+                            if (cueText.isNotBlank() && cueText !in seenCueTexts) {
+                                seenCueTexts.add(cueText)
+                                storedSyncCues.add(
+                                    SyncCue(
+                                        text = cueText,
+                                        startTimeMs = currentPosition
+                                    )
+                                )
+                            }
+                        }
+                    }
+
+                    val subtitleOffset = PrefManager.getVal<Long>(PrefName.SubtitleDelay)
+                    val syncEnabled = PrefManager.getVal<Boolean>(PrefName.SubtitleSyncEnabled)
+
                     if (PrefManager.getVal<Boolean>(PrefName.TextviewSubtitles)) {
                         exoSubtitleView.visibility = View.GONE
                         customSubtitleView.visibility = View.VISIBLE
-                        val newCues = cueGroup.cues.map { it.text.toString() ?: "" }
 
-                        if (newCues.isEmpty()) {
+                        if (syncEnabled && subtitleOffset != 0L && storedSyncCues.isNotEmpty()) {
+                            val adjustedPos = currentPosition - subtitleOffset
+                            val matchingCue = synchronized(storedSyncCues) {
+                                storedSyncCues.lastOrNull { adjustedPos >= it.startTimeMs }
+                            }
+                            if (matchingCue != null) {
+                                customSubtitleView.text = matchingCue.text
+                            } else {
+                                customSubtitleView.text = ""
+                            }
+                            return
+                        }
+
+                        if (newCueTexts.isEmpty()) {
                             customSubtitleView.text = ""
                             activeSubtitles.clear()
                             lastSubtitle = null
@@ -2070,15 +2105,13 @@ class ExoplayerView :
                             return
                         }
 
-                        val currentPosition = exoPlayer.currentPosition
-
                         if ((lastSubtitle?.length
                                 ?: 0) < 20 || (lastPosition != 0L && currentPosition - lastPosition > 1500)
                         ) {
                             activeSubtitles.clear()
                         }
 
-                        for (newCue in newCues) {
+                        for (newCue in newCueTexts) {
                             if (newCue !in activeSubtitles) {
                                 if (activeSubtitles.size >= 2) {
                                     activeSubtitles.removeLast()
@@ -2171,6 +2204,21 @@ class ExoplayerView :
             this.supportFragmentManager,
             launch = false,
         )
+    }
+
+    fun getSyncCues(): List<SyncCue> {
+        synchronized(storedSyncCues) {
+            return storedSyncCues.toList()
+        }
+    }
+
+    fun getPlayerPosition(): Long {
+        return if (::exoPlayer.isInitialized) exoPlayer.currentPosition else 0L
+    }
+
+    fun applySubtitleOffset(offsetMs: Long) {
+        PrefManager.setVal(PrefName.SubtitleDelay, offsetMs)
+        PrefManager.setVal(PrefName.SubtitleSyncEnabled, offsetMs != 0L)
     }
 
     private fun subClick() {

@@ -34,6 +34,7 @@ import ani.sanin.util.FocusEffectUtil
 class SubtitleDialogFragment : BottomSheetDialogFragment() {
     data class AddLocalSubtitle(val text: String)
     data class SearchOnlineSubtitles(var text: String)
+    data class OpenSubtitleSync(val text: String)
     private var _binding: BottomSheetSubtitlesBinding? = null
     private val binding get() = _binding!!
     val model: MediaDetailsViewModel by activityViewModels()
@@ -130,6 +131,8 @@ class SubtitleDialogFragment : BottomSheetDialogFragment() {
                 }
 
                 allSubtitles.addAll(currentExtractor.subtitles)
+
+                allSubtitles.add(OpenSubtitleSync("Subtitle Sync"))
 
                 if (_binding != null) {
                      binding.subtitlesRecycler.adapter = SubtitleAdapter(allSubtitles)
@@ -300,6 +303,17 @@ class SubtitleDialogFragment : BottomSheetDialogFragment() {
                     // Prevent double clicks
                     if (item.text == "Searching...") return@setOnClickListener
                     fetchOnlineSubtitles(this@SubtitleAdapter, item, adjustedPosition)
+                }
+                return
+            }
+
+            // --- SUBTITLE SYNC ---
+            if (item is OpenSubtitleSync) {
+                binding.subtitleTitle.text = item.text
+                binding.root.setCardBackgroundColor(TRANSPARENT)
+                binding.root.setOnClickListener {
+                    val syncDialog = SubtitleSyncDialogFragment()
+                    syncDialog.show(parentFragmentManager, "subtitle_sync")
                 }
                 return
             }

@@ -183,6 +183,8 @@ enum class PrefName(val data: Pref) {
     OnlineSubtitleProviders(Pref(Location.Player, Set::class, setOf("Wyzie", "Stremio"))),
     OnlineSubtitleLanguages(Pref(Location.Player, Set::class, setOf("English"))),
     TextviewSubtitles(Pref(Location.Player, Boolean::class, false)),
+    SubtitleDelay(Pref(Location.Player, Long::class, 0L)),
+    SubtitleSyncEnabled(Pref(Location.Player, Boolean::class, false)),
     SubLanguage(Pref(Location.Player, Int::class, 9)),
     PrimaryColor(Pref(Location.Player, Int::class, Color.WHITE)),
     SecondaryColor(Pref(Location.Player, Int::class, Color.BLACK)),

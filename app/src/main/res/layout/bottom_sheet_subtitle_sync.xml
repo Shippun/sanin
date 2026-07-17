@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bottom_sheet_background"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/syncTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:fontFamily="@font/poppins_semi_bold"
+        android:gravity="center"
+        android:text="Subtitle Sync"
+        android:textSize="22sp" />
+
+    <TextView
+        android:id="@+id/syncStatusText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginBottom="8dp"
+        android:fontFamily="@font/poppins"
+        android:gravity="center"
+        android:textColor="#AAAAAA"
+        android:textSize="14sp"
+        tools:text="Offset: 0ms - In sync" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <TextView
+            android:id="@+id/noSubtitlesNotice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:alpha="0.7"
+            android:text="No subtitles loaded"
+            android:textSize="18sp"
+            android:textStyle="italic"
+            android:visibility="gone" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/subtitleSyncRecycler"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:paddingVertical="4dp"
+            tools:listitem="@layout/item_subtitle_sync" />
+    </FrameLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginVertical="8dp"
+        android:background="#33FFFFFF" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:paddingHorizontal="12dp"
+        android:paddingBottom="8dp">
+
+        <Button
+            android:id="@+id/syncSubtractMore"
+            android:layout_width="64dp"
+            android:layout_height="52dp"
+            android:focusable="true"
+            android:gravity="center"
+            android:nextFocusRight="@id/syncSubtract"
+            android:text="-1s"
+            android:textSize="16sp" />
+
+        <Button
+            android:id="@+id/syncSubtract"
+            android:layout_width="56dp"
+            android:layout_height="52dp"
+            android:layout_marginEnd="8dp"
+            android:focusable="true"
+            android:gravity="center"
+            android:nextFocusLeft="@id/syncSubtractMore"
+            android:nextFocusRight="@id/syncOffsetInput"
+            android:text="-100ms"
+            android:textSize="14sp" />
+
+        <EditText
+            android:id="@+id/syncOffsetInput"
+            android:layout_width="0dp"
+            android:layout_height="52dp"
+            android:layout_weight="1"
+            android:autofillHints="no"
+            android:focusable="true"
+            android:gravity="center"
+            android:hint="ms"
+            android:inputType="numberSigned"
+            android:nextFocusLeft="@id/syncSubtract"
+            android:nextFocusRight="@id/syncAdd"
+            android:padding="8dp"
+            android:textColor="@android:color/white"
+            android:textSize="20sp" />
+
+        <Button
+            android:id="@+id/syncAdd"
+            android:layout_width="56dp"
+            android:layout_height="52dp"
+            android:layout_marginStart="8dp"
+            android:focusable="true"
+            android:gravity="center"
+            android:nextFocusLeft="@id/syncOffsetInput"
+            android:nextFocusRight="@id/syncAddMore"
+            android:text="+100ms"
+            android:textSize="14sp" />
+
+        <Button
+            android:id="@+id/syncAddMore"
+            android:layout_width="64dp"
+            android:layout_height="52dp"
+            android:focusable="true"
+            android:gravity="center"
+            android:nextFocusLeft="@id/syncAdd"
+            android:nextFocusDown="@id/syncApply"
+            android:text="+1s"
+            android:textSize="16sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:padding="16dp">
+
+        <Button
+            android:id="@+id/syncCancel"
+            android:layout_width="wrap_content"
+            android:layout_height="52dp"
+            android:layout_marginEnd="8dp"
+            android:focusable="true"
+            android:nextFocusLeft="@id/syncAddMore"
+            android:nextFocusRight="@id/syncReset"
+            android:text="Cancel" />
+
+        <Button
+            android:id="@+id/syncReset"
+            android:layout_width="wrap_content"
+            android:layout_height="52dp"
+            android:layout_marginEnd="8dp"
+            android:focusable="true"
+            android:nextFocusLeft="@id/syncCancel"
+            android:nextFocusRight="@id/syncApply"
+            android:text="Reset" />
+
+        <Button
+            android:id="@+id/syncApply"
+            android:layout_width="wrap_content"
+            android:layout_height="52dp"
+            android:focusable="true"
+            android:nextFocusLeft="@id/syncReset"
+            android:text="Apply" />
+    </LinearLayout>
+
+</LinearLayout>
