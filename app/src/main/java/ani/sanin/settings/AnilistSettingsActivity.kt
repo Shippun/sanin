@@ -1,7 +1,9 @@
 package ani.sanin.settings
 
+import android.content.Context
 import android.os.Bundle
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.ArrayAdapter
 import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
@@ -267,6 +269,12 @@ class AnilistSettingsActivity : AppCompatActivity() {
         val textInputLayout = customListItemView.findViewById<TextInputLayout>(R.id.customListItem)
         val editText = textInputLayout.editText as? TextInputEditText
         editText?.setText(listName)
+        editText?.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
+                val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                imm.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT)
+            }
+        }
         textInputLayout.setEndIconOnClickListener {
             val name = editText?.text.toString()
             if (name.isNotEmpty()) {

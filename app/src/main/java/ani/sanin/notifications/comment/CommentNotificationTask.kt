@@ -13,10 +13,12 @@ import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
+import ani.sanin.App
 import ani.sanin.MainActivity
 import ani.sanin.R
 import ani.sanin.connections.comments.CommentsAPI
 import ani.sanin.notifications.Task
+import ani.sanin.notifications.subscription.NotificationPopupActivity
 import ani.sanin.settings.saving.PrefManager
 import ani.sanin.settings.saving.PrefName
 import ani.sanin.util.Logger
@@ -176,6 +178,16 @@ class CommentNotificationTask : Task {
                                     System.currentTimeMillis().toInt(),
                                     notification
                                 )
+                        }
+                    }
+                    if (PrefManager.getVal<Boolean>(PrefName.NotificationPopup) && type != CommentNotificationWorker.NotificationType.NO_NOTIFICATION) {
+                        App.currentActivity()?.let { activity ->
+                            val popupIntent = Intent(context, NotificationPopupActivity::class.java).apply {
+                                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_NO_USER_ACTION
+                                putExtra("title", title)
+                                putExtra("text", (message?.take(120) ?: ""))
+                            }
+                            context.startActivity(popupIntent)
                         }
                     }
                 }

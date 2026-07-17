@@ -1,12 +1,14 @@
 package ani.sanin.settings
 
 import android.app.AlertDialog
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
 import android.widget.ArrayAdapter
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -137,6 +139,12 @@ class SettingsCommonActivity : AppCompatActivity() {
                 PrefManager.setVal(PrefName.DohProvider, i)
                 settingsExtensionDns.clearFocus()
                 restartApp()
+            }
+            settingsExtensionDns.setOnFocusChangeListener { _, hasFocus ->
+                if (hasFocus) {
+                    val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                    imm.showSoftInput(settingsExtensionDns, InputMethodManager.SHOW_IMPLICIT)
+                }
             }
 
             val startUpTabs = arrayOf("Home", "Anime")
@@ -398,6 +406,11 @@ class SettingsCommonActivity : AppCompatActivity() {
         dialog.window?.apply {
             setDimAmount(0.8f)
             attributes.windowAnimations = android.R.style.Animation_Dialog
+        }
+        dialog.setOnShowListener {
+            dialogView.userAgentTextBox.requestFocus()
+            val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.showSoftInput(dialogView.userAgentTextBox, InputMethodManager.SHOW_IMPLICIT)
         }
         dialog.show()
 

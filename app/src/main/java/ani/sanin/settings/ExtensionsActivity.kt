@@ -1,10 +1,12 @@
 package ani.sanin.settings
 
+import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.AutoCompleteTextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.updateLayoutParams
@@ -137,6 +139,12 @@ class ExtensionsActivity : AppCompatActivity() {
         })
 
         FocusEffectUtil.applyFocusListener(binding.searchViewText)
+        binding.searchViewText.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
+                val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                imm.showSoftInput(binding.searchViewText, InputMethodManager.SHOW_IMPLICIT)
+            }
+        }
 
         initActivity(this)
         binding.languageselect.setOnClickListener {

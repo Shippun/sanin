@@ -12,6 +12,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.view.inputmethod.InputMethodManager
 import android.view.animation.DecelerateInterpolator
 import android.view.animation.OvershootInterpolator
 import android.widget.Button
@@ -149,6 +150,13 @@ class SubtitleSyncDialogFragment : DialogFragment() {
         applySyncFocus(binding.syncCancel)
         applySyncFocus(binding.syncReset)
         applySyncFocus(binding.syncApply)
+
+        binding.syncOffsetInput.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
+                val imm = requireContext().getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                imm.showSoftInput(binding.syncOffsetInput, InputMethodManager.SHOW_IMPLICIT)
+            }
+        }
 
         binding.syncSubtractMore.setOnClickListener { changeBy(-1000L) }
         binding.syncSubtract.setOnClickListener { changeBy(-100L) }

@@ -5,8 +5,10 @@ import android.view.animation.DecelerateInterpolator
 import android.annotation.SuppressLint
 import kotlin.math.cos
 import kotlin.math.exp
+import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
+import android.view.inputmethod.InputMethodManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -666,6 +668,11 @@ class MainActivity : AppCompatActivity() {
             setNegButton(R.string.cancel) {
                 password.fill('0')
                 callback(null)
+            }
+            setOnShowListener {
+                dialogView.userAgentTextBox.requestFocus()
+                val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                imm.showSoftInput(dialogView.userAgentTextBox, InputMethodManager.SHOW_IMPLICIT)
             }
             show()
         }

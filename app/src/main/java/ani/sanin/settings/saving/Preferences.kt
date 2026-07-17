@@ -22,6 +22,11 @@ enum class PrefName(val data: Pref) {
 
     SubscriptionCheckingNotifications(Pref(Location.General, Boolean::class, true)),
     NotificationPopup(Pref(Location.General, Boolean::class, true)),
+    NotificationEpisodeAiring(Pref(Location.General, Boolean::class, true)),
+    NotificationNewComment(Pref(Location.General, Boolean::class, true)),
+    NotificationCompletedEpisode(Pref(Location.General, Boolean::class, true)),
+    NotificationCompletedAnime(Pref(Location.General, Boolean::class, true)),
+    NotificationNewFollower(Pref(Location.General, Boolean::class, true)),
     SubscriptionPromptAtEnd(Pref(Location.General, Boolean::class, true)),
     CheckUpdate(Pref(Location.General, Boolean::class, true)),
     VerboseLogging(Pref(Location.General, Boolean::class, false)),

@@ -8,11 +8,13 @@ import android.content.pm.PackageManager
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import ani.sanin.App
 import ani.sanin.MainActivity
 import ani.sanin.R
 import ani.sanin.connections.anilist.Anilist
 import ani.sanin.connections.anilist.api.NotificationType
 import ani.sanin.notifications.Task
+import ani.sanin.notifications.subscription.NotificationPopupActivity
 import ani.sanin.profile.activity.ActivityItemBuilder
 import ani.sanin.settings.saving.PrefManager
 import ani.sanin.settings.saving.PrefName
@@ -49,12 +51,36 @@ class AnilistNotificationTask : Task {
                             NotificationType.MEDIA_DATA_CHANGE.value,
                             NotificationType.RELATED_MEDIA_ADDITION.value
                         )
-                        
+
+                        val notificationEpisodeAiring = PrefManager.getVal<Boolean>(PrefName.NotificationEpisodeAiring)
+                        val notificationNewComment = PrefManager.getVal<Boolean>(PrefName.NotificationNewComment)
+                        val notificationCompletedEpisode = PrefManager.getVal<Boolean>(PrefName.NotificationCompletedEpisode)
+                        val notificationCompletedAnime = PrefManager.getVal<Boolean>(PrefName.NotificationCompletedAnime)
+                        val notificationNewFollower = PrefManager.getVal<Boolean>(PrefName.NotificationNewFollower)
+
                         var userCount = 0
                         var mediaCount = 0
-                        
+
                         newNotifications?.forEach {
                             if (!filteredTypes.contains(it.notificationType)) {
+                                val allowed = when (it.notificationType) {
+                                    NotificationType.AIRING.value -> notificationEpisodeAiring
+                                    NotificationType.ACTIVITY_REPLY.value,
+                                    NotificationType.ACTIVITY_MESSAGE.value,
+                                    NotificationType.THREAD_COMMENT_REPLY.value,
+                                    NotificationType.THREAD_SUBSCRIBED.value,
+                                    NotificationType.THREAD_COMMENT_MENTION.value,
+                                    NotificationType.ACTIVITY_MENTION.value,
+                                    NotificationType.ACTIVITY_REPLY_SUBSCRIBED.value -> notificationNewComment
+                                    NotificationType.MEDIA_DATA_CHANGE.value -> notificationCompletedEpisode
+                                    NotificationType.MEDIA_MERGE.value,
+                                    NotificationType.MEDIA_DELETION.value,
+                                    NotificationType.RELATED_MEDIA_ADDITION.value -> notificationCompletedAnime
+                                    NotificationType.FOLLOWING.value -> notificationNewFollower
+                                    else -> true
+                                }
+                                if (!allowed) return@forEach
+
                                 val content = ActivityItemBuilder.getContent(it)
                                 val notification = createNotification(context, content, it.id)
                                 if (ActivityCompat.checkSelfPermission(
@@ -69,11 +95,22 @@ class AnilistNotificationTask : Task {
                                             notification
                                         )
                                 }
+                                if (PrefManager.getVal<Boolean>(PrefName.NotificationPopup)) {
+                                    val coverUrl = it.media?.image?.large
+                                    App.currentActivity()?.let { activity ->
+                                        val popupIntent = Intent(context, NotificationPopupActivity::class.java).apply {
+                                            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_NO_USER_ACTION
+                                            putExtra("title", content)
+                                            putExtra("text", it.context?.take(120) ?: content.take(120))
+                                            putExtra("coverUrl", coverUrl)
+                                        }
+                                        context.startActivity(popupIntent)
+                                    }
+                                }
                                 // Track counts per section
                                 if (it.notificationType in mediaSectionTypes) {
                                     mediaCount++
                                 } else {
-                                    // User section displays all notifications that are not in the media section.
                                     userCount++
                                 }
                             }

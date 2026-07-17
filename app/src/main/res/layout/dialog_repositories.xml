@@ -16,6 +16,7 @@
         android:id="@+id/repositoryTextBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:inputType="textUri"
         android:imeOptions="actionDone"
         app:boxCornerRadiusBottomEnd="8dp"
         app:boxCornerRadiusBottomStart="8dp"

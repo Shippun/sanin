@@ -1,11 +1,13 @@
 package ani.sanin.media.comments
 
+import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import ani.sanin.BottomSheetDialogFragment
@@ -67,6 +69,13 @@ class GifPickerBottomDialog : BottomSheetDialogFragment() {
                 }
             }
         })
+
+        binding.gifSearchInput.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
+                val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                imm.showSoftInput(binding.gifSearchInput, InputMethodManager.SHOW_IMPLICIT)
+            }
+        }
 
         loadTrending()
     }

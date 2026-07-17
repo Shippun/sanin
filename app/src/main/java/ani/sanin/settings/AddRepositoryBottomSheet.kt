@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import ani.sanin.R
@@ -96,6 +97,12 @@ class AddRepositoryBottomSheet : DialogFragment() {
         adapter.addAll(repositories.map { RepoItem(it, mediaType, ::onRepositoryRemoved) })
 
         binding.repositoryInput.hint = getString(R.string.anime_add_repository)
+        binding.repositoryInput.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
+                val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                imm.showSoftInput(binding.repositoryInput, InputMethodManager.SHOW_IMPLICIT)
+            }
+        }
 
         binding.addButton.setOnClickListener {
             val input = binding.repositoryInput.text.toString()

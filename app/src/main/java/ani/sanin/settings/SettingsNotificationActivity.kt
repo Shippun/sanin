@@ -441,6 +441,56 @@ class SettingsNotificationActivity : AppCompatActivity() {
                     ),
                     Settings(
                         type = 2,
+                        name = "New Episode Airing",
+                        desc = "Show popup when a new episode airs",
+                        icon = R.drawable.ic_round_smart_button_24,
+                        isChecked = PrefManager.getVal(PrefName.NotificationEpisodeAiring),
+                        switch = { isChecked, _ ->
+                            PrefManager.setVal(PrefName.NotificationEpisodeAiring, isChecked)
+                        }
+                    ),
+                    Settings(
+                        type = 2,
+                        name = "New Comment Reply",
+                        desc = "Show popup when someone replies to your comment or activity",
+                        icon = R.drawable.ic_round_smart_button_24,
+                        isChecked = PrefManager.getVal(PrefName.NotificationNewComment),
+                        switch = { isChecked, _ ->
+                            PrefManager.setVal(PrefName.NotificationNewComment, isChecked)
+                        }
+                    ),
+                    Settings(
+                        type = 2,
+                        name = "Completed Episode",
+                        desc = "Show popup when an episode is marked complete",
+                        icon = R.drawable.ic_round_smart_button_24,
+                        isChecked = PrefManager.getVal(PrefName.NotificationCompletedEpisode),
+                        switch = { isChecked, _ ->
+                            PrefManager.setVal(PrefName.NotificationCompletedEpisode, isChecked)
+                        }
+                    ),
+                    Settings(
+                        type = 2,
+                        name = "Completed Anime",
+                        desc = "Show popup when an anime is marked complete",
+                        icon = R.drawable.ic_round_smart_button_24,
+                        isChecked = PrefManager.getVal(PrefName.NotificationCompletedAnime),
+                        switch = { isChecked, _ ->
+                            PrefManager.setVal(PrefName.NotificationCompletedAnime, isChecked)
+                        }
+                    ),
+                    Settings(
+                        type = 2,
+                        name = "New Follower",
+                        desc = "Show popup when someone follows you",
+                        icon = R.drawable.ic_round_smart_button_24,
+                        isChecked = PrefManager.getVal(PrefName.NotificationNewFollower),
+                        switch = { isChecked, _ ->
+                            PrefManager.setVal(PrefName.NotificationNewFollower, isChecked)
+                        }
+                    ),
+                    Settings(
+                        type = 2,
                         name = getString(R.string.use_alarm_manager_reliable),
                         desc = getString(R.string.use_alarm_manager_reliable_desc),
                         icon = R.drawable.ic_anilist,

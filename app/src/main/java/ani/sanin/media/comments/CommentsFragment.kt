@@ -307,6 +307,11 @@ class CommentsFragment : Fragment() {
                     }
                 }
                 setNegButton("Cancel") {}
+                setOnShowListener {
+                    customView.dialogEditText.requestFocus()
+                    val imm = activity?.getSystemService(INPUT_METHOD_SERVICE) as? InputMethodManager
+                    imm?.showSoftInput(customView.dialogEditText, InputMethodManager.SHOW_IMPLICIT)
+                }
                 show()
             }
         }
@@ -467,6 +472,8 @@ class CommentsFragment : Fragment() {
 
         activity.binding.commentInput.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus) {
+                val imm = activity.getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+                imm.showSoftInput(activity.binding.commentInput, InputMethodManager.SHOW_IMPLICIT)
                 val targetWidth = activity.binding.commentInputLayout.width -
                         activity.binding.commentLabel.width -
                         activity.binding.commentSend.width -
@@ -527,6 +534,11 @@ class CommentsFragment : Fragment() {
                             R.drawable.ic_label_off_24,
                             null
                         )
+                    }
+                    setOnShowListener {
+                        customView.dialogEditText.requestFocus()
+                        val imm = activity?.getSystemService(INPUT_METHOD_SERVICE) as? InputMethodManager
+                        imm?.showSoftInput(customView.dialogEditText, InputMethodManager.SHOW_IMPLICIT)
                     }
                     show()
                 }
@@ -767,6 +779,11 @@ class CommentsFragment : Fragment() {
                 processComment()
             }
             setNegButton(R.string.cancel) {}
+            setOnShowListener {
+                customView.dialogEditText.requestFocus()
+                val imm = activity?.getSystemService(INPUT_METHOD_SERVICE) as? InputMethodManager
+                imm?.showSoftInput(customView.dialogEditText, InputMethodManager.SHOW_IMPLICIT)
+            }
             show()
         }
     }

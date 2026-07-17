@@ -1523,6 +1523,12 @@ class ExoplayerView :
                 touched()
                 false
             }
+            playerView.setOnClickListener { touched() }
+            playerView.isFocusable = true
+            playerView.setOnKeyListener { _, _, _ ->
+                touched()
+                false
+            }
         }
 
         isFullscreen = PrefManager.getVal(PrefName.Resize)

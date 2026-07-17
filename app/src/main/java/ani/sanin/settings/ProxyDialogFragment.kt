@@ -1,9 +1,11 @@
 package ani.sanin.settings
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import ani.sanin.BottomSheetDialogFragment
 import ani.sanin.databinding.BottomSheetProxyBinding
 import ani.sanin.restartApp
@@ -42,6 +44,15 @@ class ProxyDialogFragment : BottomSheetDialogFragment() {
         binding.proxyUsername.setText(proxyUsername)
         binding.proxyPassword.setText(proxyPassword)
         binding.proxyAuthentication.isChecked = authEnabled
+
+        listOf(binding.proxyHost, binding.proxyPort, binding.proxyUsername, binding.proxyPassword).forEach { input ->
+            input.setOnFocusChangeListener { _, hasFocus ->
+                if (hasFocus) {
+                    val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                    imm.showSoftInput(input, InputMethodManager.SHOW_IMPLICIT)
+                }
+            }
+        }
 
         toggleAuthentication(authEnabled)
 
