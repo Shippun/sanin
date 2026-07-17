@@ -22,6 +22,7 @@ import ani.sanin.settings.saving.internal.PreferenceKeystore
 import ani.sanin.settings.saving.internal.PreferencePackager
 import ani.sanin.toast
 import ani.sanin.util.Logger
+import ani.sanin.util.TvKeyboardUtil
 import ani.sanin.util.customAlertDialog
 
 class LoginFragment : Fragment() {
@@ -69,8 +70,7 @@ class LoginFragment : Fragment() {
 
         binding.loginTokenEditText.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus) {
-                val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                imm.showSoftInput(binding.loginTokenEditText, InputMethodManager.SHOW_IMPLICIT)
+                TvKeyboardUtil.showKeyboardDelayed(binding.loginTokenEditText)
             }
         }
 

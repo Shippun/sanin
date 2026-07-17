@@ -29,6 +29,7 @@ import ani.sanin.openLinkInBrowser
 import ani.sanin.others.imagesearch.ImageSearchActivity
 import ani.sanin.settings.saving.PrefManager
 import ani.sanin.settings.saving.PrefName
+import ani.sanin.util.TvKeyboardUtil
 import com.google.android.material.checkbox.MaterialCheckBox.STATE_CHECKED
 import com.google.android.material.checkbox.MaterialCheckBox.STATE_INDETERMINATE
 import com.google.android.material.checkbox.MaterialCheckBox.STATE_UNCHECKED
@@ -281,6 +282,9 @@ class SearchAdapter(private val activity: SearchActivity, private val type: Sear
             } else visibility = View.GONE
         }
 
+        binding.searchBarText.setOnFocusChangeListener { v, hasFocus ->
+            if (hasFocus) TvKeyboardUtil.showKeyboardDelayed(v)
+        }
         search = Runnable { searchTitle() }
         requestFocus = Runnable { binding.searchBarText.requestFocus() }
     }

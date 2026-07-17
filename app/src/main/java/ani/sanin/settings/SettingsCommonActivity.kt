@@ -26,6 +26,7 @@ import ani.sanin.savePrefsToDownloads
 import ani.sanin.restartApp
 import ani.sanin.settings.saving.PrefManager
 import ani.sanin.settings.saving.PrefName
+import ani.sanin.util.TvKeyboardUtil
 import ani.sanin.settings.saving.internal.Location
 import ani.sanin.settings.saving.internal.PreferenceKeystore
 import ani.sanin.settings.saving.internal.PreferencePackager
@@ -140,11 +141,8 @@ class SettingsCommonActivity : AppCompatActivity() {
                 settingsExtensionDns.clearFocus()
                 restartApp()
             }
-            settingsExtensionDns.setOnFocusChangeListener { _, hasFocus ->
-                if (hasFocus) {
-                    val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                    imm.showSoftInput(settingsExtensionDns, InputMethodManager.SHOW_IMPLICIT)
-                }
+            settingsExtensionDns.setOnFocusChangeListener { v, hasFocus ->
+                if (hasFocus) TvKeyboardUtil.showKeyboardDelayed(v)
             }
 
             val startUpTabs = arrayOf("Home", "Anime")
@@ -394,8 +392,7 @@ class SettingsCommonActivity : AppCompatActivity() {
         }
         dialog.setOnShowListener {
             dialogView.userAgentTextBox.requestFocus()
-            val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-            imm.showSoftInput(dialogView.userAgentTextBox, InputMethodManager.SHOW_IMPLICIT)
+            TvKeyboardUtil.showKeyboardDelayed(dialogView.userAgentTextBox)
         }
         dialog.show()
 

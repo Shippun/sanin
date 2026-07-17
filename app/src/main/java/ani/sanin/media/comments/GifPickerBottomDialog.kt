@@ -16,6 +16,7 @@ import ani.sanin.databinding.BottomSheetGifPickerBinding
 import ani.sanin.databinding.ItemGifBinding
 import ani.sanin.loadImage
 import ani.sanin.util.FocusEffectUtil
+import ani.sanin.util.TvKeyboardUtil
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -72,8 +73,7 @@ class GifPickerBottomDialog : BottomSheetDialogFragment() {
 
         binding.gifSearchInput.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus) {
-                val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                imm.showSoftInput(binding.gifSearchInput, InputMethodManager.SHOW_IMPLICIT)
+                TvKeyboardUtil.showKeyboardDelayed(binding.gifSearchInput)
             }
         }
 

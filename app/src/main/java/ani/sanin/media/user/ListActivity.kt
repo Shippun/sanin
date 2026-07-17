@@ -23,6 +23,7 @@ import ani.sanin.settings.saving.PrefManager
 import ani.sanin.settings.saving.PrefName
 import ani.sanin.statusBarHeight
 import ani.sanin.themes.ThemeManager
+import ani.sanin.util.TvKeyboardUtil
 import ani.sanin.util.FocusEffectUtil
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
@@ -207,8 +208,7 @@ class ListActivity : AppCompatActivity() {
         } else {
             binding.searchView.visibility = View.VISIBLE
             binding.searchViewText.requestFocus()
-            val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
-            imm.showSoftInput(binding.searchViewText, InputMethodManager.SHOW_IMPLICIT)
+            TvKeyboardUtil.showKeyboardDelayed(binding.searchViewText)
         }
     }
 }

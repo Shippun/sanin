@@ -25,6 +25,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import ani.sanin.databinding.BottomSheetSubtitleSyncBinding
+import ani.sanin.util.TvKeyboardUtil
 import ani.sanin.databinding.ItemSubtitleSyncBinding
 import ani.sanin.media.MediaDetailsViewModel
 import ani.sanin.settings.saving.PrefManager
@@ -153,8 +154,7 @@ class SubtitleSyncDialogFragment : DialogFragment() {
 
         binding.syncOffsetInput.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus) {
-                val imm = requireContext().getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                imm.showSoftInput(binding.syncOffsetInput, InputMethodManager.SHOW_IMPLICIT)
+                TvKeyboardUtil.showKeyboardDelayed(binding.syncOffsetInput)
             }
         }
 

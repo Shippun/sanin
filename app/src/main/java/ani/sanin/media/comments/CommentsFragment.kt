@@ -44,6 +44,7 @@ import ani.sanin.settings.saving.PrefManager
 import ani.sanin.settings.saving.PrefName
 import ani.sanin.snackString
 import ani.sanin.util.FocusEffectUtil
+import ani.sanin.util.TvKeyboardUtil
 import ani.sanin.util.Logger
 import ani.sanin.util.customAlertDialog
 import com.xwray.groupie.GroupieAdapter
@@ -311,8 +312,7 @@ class CommentsFragment : Fragment() {
                 setNegButton("Cancel") {}
                 setOnShowListener {
                     customView.dialogEditText.requestFocus()
-                    val imm = activity?.getSystemService(INPUT_METHOD_SERVICE) as? InputMethodManager
-                    imm?.showSoftInput(customView.dialogEditText, InputMethodManager.SHOW_IMPLICIT)
+                    TvKeyboardUtil.showKeyboardDelayed(customView.dialogEditText)
                 }
                 show()
             }
@@ -474,8 +474,7 @@ class CommentsFragment : Fragment() {
 
         activity.binding.commentInput.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus) {
-                val imm = activity.getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
-                imm.showSoftInput(activity.binding.commentInput, InputMethodManager.SHOW_IMPLICIT)
+                TvKeyboardUtil.showKeyboardDelayed(activity.binding.commentInput)
                 val targetWidth = activity.binding.commentInputLayout.width -
                         activity.binding.commentLabel.width -
                         activity.binding.commentSend.width -
@@ -540,7 +539,7 @@ class CommentsFragment : Fragment() {
                     setOnShowListener {
                         customView.dialogEditText.requestFocus()
                         val imm = activity?.getSystemService(INPUT_METHOD_SERVICE) as? InputMethodManager
-                        imm?.showSoftInput(customView.dialogEditText, InputMethodManager.SHOW_IMPLICIT)
+                        TvKeyboardUtil.showKeyboardDelayed(customView.dialogEditText)
                     }
                     show()
                 }
@@ -784,7 +783,7 @@ class CommentsFragment : Fragment() {
             setOnShowListener {
                 customView.dialogEditText.requestFocus()
                 val imm = activity?.getSystemService(INPUT_METHOD_SERVICE) as? InputMethodManager
-                imm?.showSoftInput(customView.dialogEditText, InputMethodManager.SHOW_IMPLICIT)
+                TvKeyboardUtil.showKeyboardDelayed(customView.dialogEditText)
             }
             show()
         }
@@ -965,8 +964,7 @@ class CommentsFragment : Fragment() {
         activity.binding.commentInput.setText(comment.comment.content)
         activity.binding.commentInput.requestFocus()
         activity.binding.commentInput.setSelection(activity.binding.commentInput.text.length)
-        val imm = activity.getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.showSoftInput(activity.binding.commentInput, InputMethodManager.SHOW_IMPLICIT)
+        TvKeyboardUtil.showKeyboardDelayed(activity.binding.commentInput)
         interactionState = InteractionState.EDIT
     }
 
@@ -976,8 +974,7 @@ class CommentsFragment : Fragment() {
         activity.binding.commentReplyToContainer.visibility = View.VISIBLE
         activity.binding.commentInput.requestFocus()
         activity.binding.commentInput.setSelection(activity.binding.commentInput.text.length)
-        val imm = activity.getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.showSoftInput(activity.binding.commentInput, InputMethodManager.SHOW_IMPLICIT)
+        TvKeyboardUtil.showKeyboardDelayed(activity.binding.commentInput)
         interactionState = InteractionState.REPLY
     }
 

@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import ani.sanin.BottomSheetDialogFragment
 import ani.sanin.databinding.BottomSheetProxyBinding
+import ani.sanin.util.TvKeyboardUtil
 import ani.sanin.restartApp
 import ani.sanin.settings.saving.PrefManager
 import ani.sanin.settings.saving.PrefName
@@ -48,8 +49,7 @@ class ProxyDialogFragment : BottomSheetDialogFragment() {
         listOf(binding.proxyHost, binding.proxyPort, binding.proxyUsername, binding.proxyPassword).forEach { input ->
             input.setOnFocusChangeListener { _, hasFocus ->
                 if (hasFocus) {
-                    val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                    imm.showSoftInput(input, InputMethodManager.SHOW_IMPLICIT)
+                    TvKeyboardUtil.showKeyboardDelayed(input)
                 }
             }
         }

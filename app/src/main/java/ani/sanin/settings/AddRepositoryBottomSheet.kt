@@ -19,6 +19,7 @@ import ani.sanin.databinding.ItemRepoBinding
 import ani.sanin.media.MediaType
 import ani.sanin.settings.saving.PrefManager
 import ani.sanin.settings.saving.PrefName
+import ani.sanin.util.TvKeyboardUtil
 import ani.sanin.util.customAlertDialog
 import ani.sanin.util.FocusEffectUtil
 import com.xwray.groupie.GroupieAdapter
@@ -99,8 +100,7 @@ class AddRepositoryBottomSheet : DialogFragment() {
         binding.repositoryInput.hint = getString(R.string.anime_add_repository)
         binding.repositoryInput.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus) {
-                val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                imm.showSoftInput(binding.repositoryInput, InputMethodManager.SHOW_IMPLICIT)
+                TvKeyboardUtil.showKeyboardDelayed(binding.repositoryInput)
             }
         }
 

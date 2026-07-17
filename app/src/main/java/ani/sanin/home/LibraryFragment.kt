@@ -28,6 +28,7 @@ import ani.sanin.media.user.ListViewPagerAdapter
 import ani.sanin.media.user.ListViewModel
 import ani.sanin.settings.saving.PrefManager
 import ani.sanin.settings.saving.PrefName
+import ani.sanin.util.TvKeyboardUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -169,8 +170,7 @@ class LibraryFragment : Fragment() {
         } else {
             binding.searchView.visibility = View.VISIBLE
             binding.searchViewText.requestFocus()
-            val imm = requireContext().getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
-            imm.showSoftInput(binding.searchViewText, InputMethodManager.SHOW_IMPLICIT)
+            TvKeyboardUtil.showKeyboardDelayed(binding.searchViewText)
         }
     }
 

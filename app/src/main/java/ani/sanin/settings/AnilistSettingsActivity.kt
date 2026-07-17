@@ -29,6 +29,7 @@ import ani.sanin.restartApp
 import ani.sanin.statusBarHeight
 import ani.sanin.themes.ThemeManager
 import ani.sanin.toast
+import ani.sanin.util.TvKeyboardUtil
 import ani.sanin.util.customAlertDialog
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
@@ -271,8 +272,7 @@ class AnilistSettingsActivity : AppCompatActivity() {
         editText?.setText(listName)
         editText?.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus) {
-                val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                imm.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT)
+                TvKeyboardUtil.showKeyboardDelayed(editText)
             }
         }
         textInputLayout.setEndIconOnClickListener {

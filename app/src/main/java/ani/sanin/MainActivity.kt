@@ -74,6 +74,7 @@ import ani.sanin.settings.saving.SharedPreferenceBooleanLiveData
 import ani.sanin.settings.saving.internal.PreferenceKeystore
 import ani.sanin.settings.saving.internal.PreferencePackager
 import ani.sanin.themes.ThemeManager
+import ani.sanin.util.TvKeyboardUtil
 import ani.sanin.ui.components.NavigationPillsViewModel
 import ani.sanin.util.AudioHelper
 import ani.sanin.util.Logger
@@ -672,8 +673,7 @@ class MainActivity : AppCompatActivity() {
             }
             setOnShowListener {
                 dialogView.userAgentTextBox.requestFocus()
-                val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                imm.showSoftInput(dialogView.userAgentTextBox, InputMethodManager.SHOW_IMPLICIT)
+                TvKeyboardUtil.showKeyboardDelayed(dialogView.userAgentTextBox)
             }
             show()
         }
