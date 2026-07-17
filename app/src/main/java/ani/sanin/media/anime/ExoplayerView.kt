@@ -2261,11 +2261,12 @@ class ExoplayerView :
     // ── Subtitle file parsing for full-cue sync ───────────────
 
     private fun parseSubtitleContent(content: String, detectedFormat: String? = null): List<SyncCue> {
-        val format = detectedFormat ?: detectSubtitleFormat(content)
+        val normalized = content.replace("\r\n", "\n").replace("\r", "\n")
+        val format = detectedFormat ?: detectSubtitleFormat(normalized)
         return when (format) {
-            "VTT" -> parseVTT(content)
-            "ASS" -> parseASS(content)
-            "SRT" -> parseSRT(content)
+            "VTT" -> parseVTT(normalized)
+            "ASS" -> parseASS(normalized)
+            "SRT" -> parseSRT(normalized)
             else -> emptyList()
         }
     }
@@ -2295,7 +2296,7 @@ class ExoplayerView :
         for (match in blockRegex.findAll(content)) {
             val start = parseSRTTime(match.groupValues[2])
             val end = parseSRTTime(match.groupValues[3])
-            val text = match.groupValues[4].trimEnd('\r', '\n')
+            val text = cleanSubtitleText(match.groupValues[4])
             if (text.isNotBlank()) {
                 cues.add(SyncCue(text = text, startTimeMs = start, durationMs = (end - start).coerceAtLeast(1000)))
             }
@@ -2332,7 +2333,7 @@ class ExoplayerView :
             val start = parts.getOrNull(startIdx)?.trim() ?: continue
             val end = parts.getOrNull(endIdx)?.trim() ?: continue
             val rawText = parts.getOrNull(textIdx)?.trim() ?: continue
-            val cleanText = rawText.replace(Regex("""\{[^}]*}"""), "").replace("\\N", "\n").replace("\\n", "\n").trim()
+            val cleanText = cleanSubtitleText(rawText.replace(Regex("""\{[^}]*}"""), "").replace("\\N", "\n").replace("\\n", "\n"))
             if (cleanText.isBlank()) continue
             cues.add(SyncCue(
                 text = cleanText,
@@ -2360,6 +2361,20 @@ class ExoplayerView :
             seenCueTexts.clear()
             seenCueTexts.addAll(cues.map { it.text })
         }
+    }
+
+    private fun cleanSubtitleText(text: String): String {
+        return text
+            .replace(Regex("<[^>]+>"), "")
+            .replace(Regex("\\{[^}]*}"), "")
+            .replace(Regex("\\\\[Nn]"), "\n")
+            .replace("\\h", " ")
+            .replace(Regex("&amp;"), "&")
+            .replace(Regex("&lt;"), "<")
+            .replace(Regex("&gt;"), ">")
+            .replace(Regex("&quot;"), "\"")
+            .replace(Regex("&apos;"), "'")
+            .trim()
     }
 
     private fun subClick() {
@@ -2722,9 +2737,11 @@ class ExoplayerView :
 
                 val parsedCues = parseSubtitleContent(subtitleContent, detectedFormat)
 
+                val label = "${subtitle.source}:${subtitle.lang}"
+
                 withContext(Dispatchers.Main) {
                     storeParsedCues(parsedCues)
-                    applySubtitleFromFile(subtitleFile, subtitle.lang, mimeType)
+                    applySubtitleFromFile(subtitleFile, subtitle.lang, mimeType, label)
                 }
 
             } catch (e: Exception) {
@@ -2736,9 +2753,8 @@ class ExoplayerView :
         }
     }
 
-    private fun applySubtitleFromFile(file: File, lang: String, mimeType: String) {
+    private fun applySubtitleFromFile(file: File, lang: String, mimeType: String, label: String = "Online: $lang") {
         try {
-            val label = "Online: $lang"
             val subUri = android.net.Uri.fromFile(file)
 
             android.util.Log.d("ExoplayerView", "applySubtitleFromFile: URI=$subUri, MIME=$mimeType, label=$label")

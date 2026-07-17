@@ -427,9 +427,10 @@ class SubtitleDialogFragment : BottomSheetDialogFragment() {
 
                             // Convert WyzieSub to StremioSub for compatibility
                             val stremioSub = StremioSub(
-                                id = item.url, // Use URL as ID
+                                id = item.url,
                                 url = item.url,
-                                lang = item.language
+                                lang = item.language,
+                                source = "wyzie"
                             )
                             activity.applyOnlineSubtitle(stremioSub)
                         }

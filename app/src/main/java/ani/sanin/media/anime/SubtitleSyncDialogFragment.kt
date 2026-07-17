@@ -122,6 +122,12 @@ class SubtitleSyncDialogFragment : DialogFragment() {
         startUpdateLoop()
     }
 
+    private fun onCueClicked(cue: SyncCue) {
+        val playerPos = getPlayerPosition()
+        currentOffset = playerPos - cue.startTimeMs
+        binding.syncOffsetInput.setText(currentOffset.toString())
+    }
+
     private fun setupViews() {
         binding.syncOffsetInput.setText(currentOffset.toString())
         binding.syncOffsetInput.addTextChangedListener(object : TextWatcher {
@@ -162,7 +168,7 @@ class SubtitleSyncDialogFragment : DialogFragment() {
         } else {
             binding.noSubtitlesNotice.isVisible = false
             binding.subtitleSyncRecycler.isVisible = true
-            adapter = SyncAdapter(cues, getPlayerPosition())
+            adapter = SyncAdapter(cues, getPlayerPosition(), onCueClick = ::onCueClicked)
             binding.subtitleSyncRecycler.adapter = adapter
             scrollToCurrentCue()
         }
@@ -265,7 +271,8 @@ class SubtitleSyncDialogFragment : DialogFragment() {
 
     inner class SyncAdapter(
         private val cues: List<SyncCue>,
-        initialPosition: Long
+        initialPosition: Long,
+        private val onCueClick: (SyncCue) -> Unit = {}
     ) : RecyclerView.Adapter<CueViewHolder>() {
         private var playerPositionMs: Long = initialPosition
 
@@ -315,6 +322,7 @@ class SubtitleSyncDialogFragment : DialogFragment() {
             }
 
             holder.cardView.setCardBackgroundColor(if (isPlaying) -0x33000001 else 0)
+            holder.cardView.setOnClickListener { onCueClick(cue) }
         }
 
         override fun getItemCount(): Int = cues.size

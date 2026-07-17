@@ -37,7 +37,8 @@ object StremioSubtitles {
                                 StremioSub(
                                     id = it.id,
                                     url = it.url,
-                                    lang = it.displayLabel // Use display label for nicer UI
+                                    lang = it.displayLabel,
+                                    source = "wyzie"
                                 )
                             }
                             allSubs.addAll(mapped)
@@ -91,5 +92,6 @@ data class StremioResponse(
 data class StremioSub(
     val id: String,
     val url: String,
-    val lang: String
+    val lang: String,
+    val source: String = "online"
 )
