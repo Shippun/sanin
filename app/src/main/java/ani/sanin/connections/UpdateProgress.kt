@@ -64,6 +64,19 @@ fun updateProgress(media: Media, number: String) {
                         a, null,
                         if (media.userStatus == "REPEATING") media.userStatus!! else "CURRENT"
                     )
+                    if (PrefManager.getVal<Boolean>(PrefName.ListStatusNotification)) {
+                        val ctx = currContext()
+                        if (ctx != null) {
+                            val statusStrings = ctx.resources.getStringArray(R.array.status_anime)
+                            val statuses = ctx.resources.getStringArray(R.array.status)
+                            val oldIdx = statuses.indexOf(media.userStatus).coerceAtLeast(0)
+                            val oldDisp = statusStrings[oldIdx]
+                            val newStatus = if (media.userStatus == "REPEATING") "REPEATING" else "CURRENT"
+                            val newIdx = statuses.indexOf(newStatus).coerceAtLeast(0)
+                            val newDisp = statusStrings[newIdx]
+                            toast("$oldDisp → $newDisp")
+                        }
+                    }
                     toast(currContext()?.getString(R.string.setting_progress, a))
                 }
                 media.userProgress = a

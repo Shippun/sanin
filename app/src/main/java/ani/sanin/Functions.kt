@@ -521,7 +521,7 @@ class DatePickerFragment(activity: Activity, var date: FuzzyDate = FuzzyDate().g
 class InputFilterMinMax(
     private val min: Double,
     private val max: Double,
-    private val status: AutoCompleteTextView? = null
+    private val statusView: View? = null
 ) :
     InputFilter {
     override fun filter(
@@ -542,11 +542,21 @@ class InputFilterMinMax(
     }
 
     private fun isInRange(a: Double, b: Double, c: Double): Boolean {
-        val statusStrings = currContext()!!.resources.getStringArray(R.array.status_manga)[2]
+        val ctx = currContext() ?: return c in (minOf(a, b)..maxOf(a, b))
 
         if (c == b) {
-            status?.setText(statusStrings, false)
-            status?.parent?.requestLayout()
+            when (statusView) {
+                is AutoCompleteTextView -> {
+                    val labels = ctx.resources.getStringArray(R.array.status_manga)
+                    statusView.setText(labels[2], false)
+                    statusView.parent?.requestLayout()
+                }
+                is com.google.android.material.chip.ChipGroup -> {
+                    val labels = ctx.resources.getStringArray(R.array.status_manga)
+                    val chip = statusView.findViewWithTag<com.google.android.material.chip.Chip>(labels[2])
+                    chip?.isChecked = true
+                }
+            }
         }
         return if (b > a) c in a..b else c in b..a
     }

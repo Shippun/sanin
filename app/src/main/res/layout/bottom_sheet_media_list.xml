@@ -99,35 +99,28 @@
                     android:textSize="18sp"
                     android:textStyle="bold" />
 
-                <com.google.android.material.textfield.TextInputLayout
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:background="@drawable/snake_input_bg"
-                    android:hint="@string/status"
-                    app:boxCornerRadiusBottomEnd="12dp"
-                    app:boxCornerRadiusBottomStart="12dp"
-                    app:boxCornerRadiusTopEnd="12dp"
-                    app:boxCornerRadiusTopStart="12dp"
-                    app:boxStrokeColor="@color/text_input_layout_stroke_color"
-                    app:hintAnimationEnabled="true"
-                    app:startIconDrawable="@drawable/ic_round_playlist_play_24">
+                <TextView
+                    android:id="@+id/mediaListStatusLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="4dp"
+                    android:fontFamily="@font/poppins"
+                    android:text="@string/status"
+                    android:textColor="?android:attr/textColorPrimary"
+                    android:textSize="12sp" />
 
-                    <AutoCompleteTextView
-                        android:id="@+id/mediaListStatus"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:fontFamily="@font/poppins_bold"
-                        android:freezesText="false"
-                        android:inputType="none"
-                        android:padding="6dp"
-                        android:text="@string/watch"
-                        android:textAllCaps="true"
-                        android:textColor="?android:attr/textColorSecondary"
-                        android:textSize="12sp"
-                        tools:ignore="LabelFor,TextContrastCheck,DuplicateSpeakableTextCheck" />
-                </com.google.android.material.textfield.TextInputLayout>
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/mediaListStatusGroup"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/snake_input_bg"
+                    android:padding="8dp"
+                    app:chipSpacingHorizontal="6dp"
+                    app:chipSpacingVertical="4dp"
+                    app:selectionRequired="false"
+                     app:singleSelection="true">
+
+                </com.google.android.material.chip.ChipGroup>
 
                 <View
                     android:layout_width="match_parent"

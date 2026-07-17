@@ -19,6 +19,7 @@ import ani.sanin.profile.activity.ActivityItemBuilder
 import ani.sanin.settings.saving.PrefManager
 import ani.sanin.settings.saving.PrefName
 import ani.sanin.util.Logger
+import ani.sanin.util.TvKeyboardUtil
 import eu.kanade.tachiyomi.data.notification.Notifications
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -95,7 +96,7 @@ class AnilistNotificationTask : Task {
                                             notification
                                         )
                                 }
-                                if (PrefManager.getVal<Boolean>(PrefName.NotificationPopup)) {
+                                if (PrefManager.getVal<Boolean>(PrefName.NotificationPopup) && !TvKeyboardUtil.isTv(context)) {
                                     val coverUrl = it.media?.coverImage?.large ?: it.image
                                     App.currentActivity()?.let { activity ->
                                         val popupIntent = Intent(context, NotificationPopupActivity::class.java).apply {

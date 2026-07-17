@@ -13,7 +13,6 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import android.view.animation.DecelerateInterpolator
 import android.view.animation.OvershootInterpolator
-import android.widget.ArrayAdapter
 import androidx.core.graphics.ColorUtils
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsControllerCompat
@@ -144,21 +143,26 @@ class MediaListDialogSmallFragment : DialogFragment() {
         val userStatus =
             if (media.userStatus != null) statusStrings[statuses.indexOf(media.userStatus).coerceAtLeast(0)] else statusStrings[0]
 
-        binding.mediaListStatus.setText(userStatus)
-        binding.mediaListStatus.setAdapter(
-            ArrayAdapter(
-                requireContext(),
-                R.layout.item_dropdown,
-                statusStrings
-            )
-        )
+        binding.mediaListStatusGroup.removeAllViews()
+        statusStrings.forEachIndexed { _, label ->
+            val chip = com.google.android.material.chip.Chip(requireContext()).apply {
+                text = label
+                tag = label
+                isCheckable = true
+                isClickable = true
+                isFocusable = true
+                setTextAppearance(R.style.TextAppearance_Material3_TitleSmall)
+            }
+            binding.mediaListStatusGroup.addView(chip)
+            if (label == userStatus) chip.isChecked = true
+        }
 
         var total: Int? = null
         binding.mediaListProgress.setText(if (media.userProgress != null) media.userProgress.toString() else "")
         if (media.anime != null) if (media.anime!!.totalEpisodes != null) {
             total = media.anime!!.totalEpisodes!!;binding.mediaListProgress.filters =
                 arrayOf(
-                    InputFilterMinMax(0.0, total.toDouble(), binding.mediaListStatus),
+                    InputFilterMinMax(0.0, total.toDouble(), binding.mediaListStatusGroup),
                     LengthFilter(total.toString().length)
                 )
         }
@@ -181,10 +185,11 @@ class MediaListDialogSmallFragment : DialogFragment() {
         binding.mediaListScoreLayout.suffixTextView.gravity = Gravity.CENTER
 
         binding.mediaListIncrement.setOnClickListener {
-            if (binding.mediaListStatus.text.toString() == statusStrings[0]) binding.mediaListStatus.setText(
-                statusStrings[1],
-                false
-            )
+            val checkedId = binding.mediaListStatusGroup.checkedChipId
+            val currentChip = if (checkedId != -1) binding.mediaListStatusGroup.findViewById<com.google.android.material.chip.Chip>(checkedId) else null
+            if (currentChip?.text?.toString() == statusStrings[0]) {
+                binding.mediaListStatusGroup.findViewWithTag<com.google.android.material.chip.Chip>(statusStrings[1])?.isChecked = true
+            }
             val init =
                 if (binding.mediaListProgress.text.toString() != "") binding.mediaListProgress.text.toString()
                     .toInt() else 0
@@ -193,7 +198,7 @@ class MediaListDialogSmallFragment : DialogFragment() {
                 binding.mediaListProgress.setText(progressText)
             }
             if (init + 1 == (total ?: 5000)) {
-                binding.mediaListStatus.setText(statusStrings[2], false)
+                binding.mediaListStatusGroup.findViewWithTag<com.google.android.material.chip.Chip>(statusStrings[2])?.isChecked = true
             }
         }
 
@@ -216,14 +221,16 @@ class MediaListDialogSmallFragment : DialogFragment() {
         binding.mediaListSave.setOnClickListener {
             val progressText = binding.mediaListProgress.text.toString()
             val scoreText = binding.mediaListScore.text.toString()
-            val statusText = binding.mediaListStatus.text.toString()
             scope.launch {
                 withContext(Dispatchers.IO) {
                     val progress = _binding?.mediaListProgress?.text.toString().toIntOrNull()
                     val progressVolumes = media.userProgressVolumes
                     val score = (_binding?.mediaListScore?.text.toString().toDoubleOrNull()?.times(10))?.toInt()
-                    val statusText = _binding?.mediaListStatus?.text.toString()
-                    val status = statuses[statusStrings.indexOf(statusText).coerceAtLeast(0)]
+                    val checkedStatus = _binding?.mediaListStatusGroup?.let { group ->
+                        val gId = group.checkedChipId
+                        if (gId != -1) (group.findViewById<com.google.android.material.chip.Chip>(gId)?.text?.toString() ?: statusStrings[0]) else statusStrings[0]
+                    } ?: statusStrings[0]
+                    val status = statuses[statusStrings.indexOf(checkedStatus).coerceAtLeast(0)]
                     val startD = media.userStartedAt
                     val endD = media.userCompletedAt
                     val rescueMode: Boolean = PrefManager.getVal(PrefName.RescueMode)
@@ -269,7 +276,13 @@ class MediaListDialogSmallFragment : DialogFragment() {
                     PrefManager.setCustomVal("removeList", removeList.minus(media.id))
                 }
                 Refresh.all()
-                snackString(getString(R.string.list_updated))
+                if (PrefManager.getVal<Boolean>(PrefName.ListStatusNotification) && media.userStatus != status) {
+                    val oldDisp = statusStrings[statuses.indexOf(media.userStatus).coerceAtLeast(0)]
+                    val newDisp = statusStrings[statuses.indexOf(status).coerceAtLeast(0)]
+                    snackString("$oldDisp → $newDisp")
+                } else {
+                    snackString(getString(R.string.list_updated))
+                }
                 dismissAllowingStateLoss()
             }
         }

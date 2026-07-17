@@ -138,13 +138,21 @@ class MediaListDialogFragment : DialogFragment() {
                 val userStatus =
                     if (media!!.userStatus != null) statusStrings[statuses.indexOf(media!!.userStatus).coerceAtLeast(0)] else statusStrings[0]
 
-                binding.mediaListStatus.setText(userStatus)
-                binding.mediaListStatus.setAdapter(
-                    ArrayAdapter(
-                        requireContext(),
-                        R.layout.item_dropdown,
-                        statusStrings
-                    )
+                binding.mediaListStatusGroup.removeAllViews()
+                statusStrings.forEachIndexed { index, label ->
+                    val chip = com.google.android.material.chip.Chip(requireContext()).apply {
+                        text = label
+                        tag = label
+                        isCheckable = true
+                        isClickable = true
+                        isFocusable = true
+                        setTextAppearance(R.style.TextAppearance_Material3_TitleSmall)
+                    }
+                    binding.mediaListStatusGroup.addView(chip)
+                    if (label == userStatus) chip.isChecked = true
+                }
+                FocusEffectUtil.applyFocusListener(
+                    *binding.mediaListStatusGroup.children.filterIsInstance<View>().toList().toTypedArray()
                 )
 
                 var total: Int? = null
@@ -217,30 +225,35 @@ class MediaListDialogFragment : DialogFragment() {
                 var startBackupDate: FuzzyDate? = null
                 var endBackupDate: FuzzyDate? = null
                 var progressBackup: String? = null
-                binding.mediaListStatus.setOnItemClickListener { _, _, i, _ ->
-                    if (i == 2 && total != null) {
-                        startBackupDate = start.date
-                        endBackupDate = end.date
-                        progressBackup = binding.mediaListProgress.text.toString()
-                        onComplete()
-                    } else {
-                        if (progressBackup != null) binding.mediaListProgress.setText(progressBackup)
-                        if (startBackupDate != null) {
-                            binding.mediaListStart.setText(startBackupDate.toStringOrEmpty())
-                            start.date = startBackupDate
-                        }
-                        if (endBackupDate != null) {
-                            binding.mediaListEnd.setText(endBackupDate.toStringOrEmpty())
-                            end.date = endBackupDate
+                binding.mediaListStatusGroup.setOnCheckedStateChangeListener { group, _ ->
+                    val checkedId = group.checkedChipId
+                    if (checkedId != -1) {
+                        val chip = group.findViewById<com.google.android.material.chip.Chip>(checkedId)
+                        val i = statusStrings.indexOf(chip?.text?.toString())
+                        if (i == 2 && total != null) {
+                            startBackupDate = start.date
+                            endBackupDate = end.date
+                            progressBackup = binding.mediaListProgress.text.toString()
+                            onComplete()
+                        } else {
+                            if (progressBackup != null) binding.mediaListProgress.setText(progressBackup)
+                            if (startBackupDate != null) {
+                                binding.mediaListStart.setText(startBackupDate.toStringOrEmpty())
+                                start.date = startBackupDate
+                            }
+                            if (endBackupDate != null) {
+                                binding.mediaListEnd.setText(endBackupDate.toStringOrEmpty())
+                                end.date = endBackupDate
+                            }
                         }
                     }
                 }
-
                 binding.mediaListIncrement.setOnClickListener {
-                    if (binding.mediaListStatus.text.toString() == statusStrings[0]) binding.mediaListStatus.setText(
-                        statusStrings[1],
-                        false
-                    )
+                    val checkedId = binding.mediaListStatusGroup.checkedChipId
+                    val currentChip = if (checkedId != -1) binding.mediaListStatusGroup.findViewById<com.google.android.material.chip.Chip>(checkedId) else null
+                    if (currentChip?.text?.toString() == statusStrings[0]) {
+                        binding.mediaListStatusGroup.findViewWithTag<com.google.android.material.chip.Chip>(statusStrings[1])?.isChecked = true
+                    }
                     val init =
                         if (binding.mediaListProgress.text.toString() != "") binding.mediaListProgress.text.toString()
                             .toInt() else 0
@@ -249,7 +262,7 @@ class MediaListDialogFragment : DialogFragment() {
                         binding.mediaListProgress.setText(progressText)
                     }
                     if (total != null && init + 1 == total) {
-                        binding.mediaListStatus.setText(statusStrings[2], false)
+                        binding.mediaListStatusGroup.findViewWithTag<com.google.android.material.chip.Chip>(statusStrings[2])?.isChecked = true
                         onComplete()
                     }
                 }
@@ -299,7 +312,10 @@ class MediaListDialogFragment : DialogFragment() {
                 binding.mediaListSave.setOnClickListener {
                     val progressText = binding.mediaListProgress.text.toString()
                     val scoreText = binding.mediaListScore.text.toString()
-                    val statusText = binding.mediaListStatus.text.toString()
+                    val checkedId = binding.mediaListStatusGroup.checkedChipId
+                    val statusText = if (checkedId != -1)
+                        (binding.mediaListStatusGroup.findViewById<com.google.android.material.chip.Chip>(checkedId)?.text?.toString() ?: statusStrings[0])
+                    else statusStrings[0]
                     val rewatchText = binding.mediaListRewatch.text?.toString()
                     val notesText = binding.mediaListNotes.text?.toString()
                     scope.launch {
@@ -372,7 +388,12 @@ class MediaListDialogFragment : DialogFragment() {
                             PrefManager.setCustomVal("removeList", removeList.minus(media!!.id))
                         }
                         Refresh.all()
-                        snackString(getString(R.string.list_updated))
+                        if (PrefManager.getVal<Boolean>(PrefName.ListStatusNotification) && media!!.userStatus != status) {
+                            val oldDisp = statusStrings[statuses.indexOf(media!!.userStatus).coerceAtLeast(0)]
+                            snackString("$oldDisp → $statusText")
+                        } else {
+                            snackString(getString(R.string.list_updated))
+                        }
                         dismissAllowingStateLoss()
                     }
                 }

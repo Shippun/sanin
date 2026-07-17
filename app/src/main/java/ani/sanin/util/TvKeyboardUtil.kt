@@ -1,6 +1,8 @@
 package ani.sanin.util
 
 import android.content.Context
+import android.content.res.Configuration
+import android.app.UiModeManager
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
@@ -42,5 +44,10 @@ object TvKeyboardUtil {
                 showKeyboardDelayed(v)
             }
         }
+    }
+
+    fun isTv(context: Context): Boolean {
+        val uiModeManager = context.getSystemService(Context.UI_MODE_SERVICE) as? UiModeManager
+        return uiModeManager?.currentModeType == Configuration.UI_MODE_TYPE_TELEVISION
     }
 }

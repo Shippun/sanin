@@ -22,6 +22,7 @@ import ani.sanin.parsers.MangaSources
 import ani.sanin.settings.saving.PrefManager
 import ani.sanin.settings.saving.PrefName
 import ani.sanin.util.Logger
+import ani.sanin.util.TvKeyboardUtil
 import eu.kanade.tachiyomi.data.notification.Notifications.CHANNEL_SUBSCRIPTION_CHECK
 import eu.kanade.tachiyomi.data.notification.Notifications.CHANNEL_SUBSCRIPTION_CHECK_PROGRESS
 import eu.kanade.tachiyomi.data.notification.Notifications.ID_SUBSCRIPTION_CHECK_PROGRESS
@@ -143,7 +144,7 @@ class SubscriptionNotificationTask : Task {
                                     notification
                                 )
                         }
-                        if (PrefManager.getVal<Boolean>(PrefName.NotificationPopup)) {
+                        if (PrefManager.getVal<Boolean>(PrefName.NotificationPopup) && !TvKeyboardUtil.isTv(context)) {
                             App.currentActivity()?.let {
                                 val popupIntent = Intent(
                                     context.applicationContext,

@@ -491,6 +491,16 @@ class SettingsNotificationActivity : AppCompatActivity() {
                     ),
                     Settings(
                         type = 2,
+                        name = "List Status Notification",
+                        desc = "Show a popup when anime list status changes (e.g. Watching -> Completed)",
+                        icon = R.drawable.ic_round_playlist_play_24,
+                        isChecked = PrefManager.getVal(PrefName.ListStatusNotification),
+                        switch = { isChecked, _ ->
+                            PrefManager.setVal(PrefName.ListStatusNotification, isChecked)
+                        }
+                    ),
+                    Settings(
+                        type = 2,
                         name = getString(R.string.use_alarm_manager_reliable),
                         desc = getString(R.string.use_alarm_manager_reliable_desc),
                         icon = R.drawable.ic_anilist,
