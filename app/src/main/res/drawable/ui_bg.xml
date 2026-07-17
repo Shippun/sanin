@@ -6,7 +6,7 @@
     android:paddingEnd="32dp"
     android:paddingRight="0dp"
     android:paddingMode="stack"
-    android:tint="?attr/colorSecondary">
+    android:tint="?attr/colorSurfaceVariant">
 
     <item>
         <shape android:shape="rectangle">
