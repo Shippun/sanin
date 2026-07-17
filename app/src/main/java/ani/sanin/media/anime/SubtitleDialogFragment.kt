@@ -312,6 +312,7 @@ class SubtitleDialogFragment : BottomSheetDialogFragment() {
                 binding.subtitleTitle.text = item.text
                 binding.root.setCardBackgroundColor(TRANSPARENT)
                 binding.root.setOnClickListener {
+                    dismiss()
                     val syncDialog = SubtitleSyncDialogFragment()
                     syncDialog.show(parentFragmentManager, "subtitle_sync")
                 }

@@ -1,29 +1,36 @@
 package ani.sanin.media.anime
 
+import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
+import android.app.Dialog
+import android.graphics.Color
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.view.animation.DecelerateInterpolator
+import android.view.animation.OvershootInterpolator
 import android.widget.Button
-import android.widget.EditText
 import android.widget.ProgressBar
 import android.widget.TextView
-import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import ani.sanin.BottomSheetDialogFragment
+import ani.sanin.databinding.BottomSheetSubtitleSyncBinding
 import ani.sanin.databinding.ItemSubtitleSyncBinding
 import ani.sanin.media.MediaDetailsViewModel
 import ani.sanin.settings.saving.PrefManager
 import ani.sanin.settings.saving.PrefName
 import ani.sanin.util.FocusEffectUtil
+import ani.sanin.util.GlassComponent
+import ani.sanin.util.GlassEffectManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -37,21 +44,74 @@ data class SyncCue(
     val durationMs: Long = 3000L
 )
 
-class SubtitleSyncDialogFragment : BottomSheetDialogFragment() {
-    private var _binding: ani.sanin.databinding.BottomSheetSubtitleSyncBinding? = null
+class SubtitleSyncDialogFragment : DialogFragment() {
+    private var _binding: BottomSheetSubtitleSyncBinding? = null
     private val binding get() = _binding!!
     val model: MediaDetailsViewModel by activityViewModels()
     private var currentOffset: Long = 0L
     private var updateJob: Job? = null
-    private lateinit var adapter: SyncAdapter
+    private var adapter: SyncAdapter? = null
+    private var prevPlayingIndex: Int = -1
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setStyle(STYLE_NO_FRAME, android.R.style.Theme_Translucent_NoTitleBar)
+    }
+
+    override fun onStart() {
+        super.onStart()
+        dialog?.window?.let { w ->
+            w.setBackgroundDrawableResource(android.R.color.transparent)
+            val widthPx = (resources.displayMetrics.widthPixels * 0.92f).toInt()
+            w.setLayout(widthPx, WindowManager.LayoutParams.WRAP_CONTENT)
+            w.setGravity(Gravity.CENTER)
+            w.setDimAmount(0.5f)
+            w.statusBarColor = Color.TRANSPARENT
+            w.navigationBarColor = Color.TRANSPARENT
+        }
+        GlassEffectManager.applyGlassToSheet(binding.syncRoot, GlassComponent.SubtitleSync, 16f)
+        animateEntry()
+    }
+
+    private fun animateEntry() {
+        val density = resources.displayMetrics.density
+        binding.syncRoot.apply {
+            pivotY = 0f
+            pivotX = width / 2f
+            rotationX = 10f
+            translationY = 40f * density
+            scaleY = 0.96f
+            alpha = 0.8f
+        }
+        binding.syncRoot.post {
+            val lift = ObjectAnimator.ofFloat(binding.syncRoot, View.TRANSLATION_Y, 0f).apply {
+                duration = 180
+                interpolator = DecelerateInterpolator()
+            }
+            val tilt = ObjectAnimator.ofFloat(binding.syncRoot, View.ROTATION_X, 0f).apply {
+                duration = 220
+                interpolator = DecelerateInterpolator()
+            }
+            val scale = ObjectAnimator.ofFloat(binding.syncRoot, View.SCALE_Y, 1f).apply {
+                duration = 280
+                interpolator = OvershootInterpolator(1.5f)
+            }
+            val fade = ObjectAnimator.ofFloat(binding.syncRoot, View.ALPHA, 1f).apply {
+                duration = 200
+            }
+            AnimatorSet().apply {
+                playTogether(lift, tilt, scale, fade)
+                start()
+            }
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = ani.sanin.databinding.BottomSheetSubtitleSyncBinding.inflate(inflater, container, false)
-        FocusEffectUtil.applyFocusListener(binding.root)
+        _binding = BottomSheetSubtitleSyncBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -71,29 +131,23 @@ class SubtitleSyncDialogFragment : BottomSheetDialogFragment() {
                 s?.toString()?.toLongOrNull()?.let { offset ->
                     currentOffset = offset
                     updateStatusText()
-                    if (::adapter.isInitialized) {
-                        adapter.updatePlayerPosition(getPlayerPosition())
-                    }
                 }
             }
         })
 
-        applySyncButtonFocus(binding.syncSubtractMore)
-        applySyncButtonFocus(binding.syncSubtract)
-        applySyncButtonFocus(binding.syncOffsetInput)
-        applySyncButtonFocus(binding.syncAdd)
-        applySyncButtonFocus(binding.syncAddMore)
-        applySyncButtonFocus(binding.syncCancel)
-        applySyncButtonFocus(binding.syncReset)
-        applySyncButtonFocus(binding.syncApply)
+        applySyncFocus(binding.syncSubtractMore)
+        applySyncFocus(binding.syncSubtract)
+        applySyncFocus(binding.syncOffsetInput)
+        applySyncFocus(binding.syncAdd)
+        applySyncFocus(binding.syncAddMore)
+        applySyncFocus(binding.syncCancel)
+        applySyncFocus(binding.syncReset)
+        applySyncFocus(binding.syncApply)
 
-        val buttonChange = 100L
-        val buttonChangeMore = 1000L
-
-        binding.syncSubtractMore.setOnClickListener { changeBy(-buttonChangeMore) }
-        binding.syncSubtract.setOnClickListener { changeBy(-buttonChange) }
-        binding.syncAdd.setOnClickListener { changeBy(buttonChange) }
-        binding.syncAddMore.setOnClickListener { changeBy(buttonChangeMore) }
+        binding.syncSubtractMore.setOnClickListener { changeBy(-1000L) }
+        binding.syncSubtract.setOnClickListener { changeBy(-100L) }
+        binding.syncAdd.setOnClickListener { changeBy(100L) }
+        binding.syncAddMore.setOnClickListener { changeBy(1000L) }
         binding.syncApply.setOnClickListener { applyOffset() }
         binding.syncReset.setOnClickListener { resetOffset() }
         binding.syncCancel.setOnClickListener { dismiss() }
@@ -116,14 +170,15 @@ class SubtitleSyncDialogFragment : BottomSheetDialogFragment() {
         updateStatusText()
     }
 
-    private fun applySyncButtonFocus(button: View) {
+    private fun applySyncFocus(view: View) {
         val borderWidthPx = 3f
-        button.setOnFocusChangeListener { v, hasFocus ->
+        val savedFg = mutableMapOf<View, android.graphics.drawable.Drawable?>()
+        view.setOnFocusChangeListener { v, hasFocus ->
             if (hasFocus) {
                 val primaryColor = FocusEffectUtil.getPrimaryColor(v.context)
-                val borderDrawable = android.graphics.drawable.GradientDrawable().apply {
+                val border = android.graphics.drawable.GradientDrawable().apply {
                     setShape(android.graphics.drawable.GradientDrawable.RECTANGLE)
-                    setColor(android.graphics.Color.TRANSPARENT)
+                    setColor(Color.TRANSPARENT)
                     setStroke(
                         android.util.TypedValue.applyDimension(
                             android.util.TypedValue.COMPLEX_UNIT_DIP, borderWidthPx,
@@ -134,20 +189,18 @@ class SubtitleSyncDialogFragment : BottomSheetDialogFragment() {
                     setCornerRadius(16f * v.resources.displayMetrics.density)
                 }
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-                    buttonSavedForegrounds[v] = v.foreground
-                    v.foreground = borderDrawable
+                    savedFg[v] = v.foreground
+                    v.foreground = border
                 }
                 v.animate().scaleX(1.08f).scaleY(1.08f).setDuration(150).start()
             } else {
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-                    v.foreground = buttonSavedForegrounds.remove(v)
+                    v.foreground = savedFg.remove(v)
                 }
                 v.animate().scaleX(1f).scaleY(1f).setDuration(150).start()
             }
         }
     }
-
-    private val buttonSavedForegrounds = mutableMapOf<View, android.graphics.drawable.Drawable?>()
 
     private fun changeBy(delta: Long) {
         val current = (binding.syncOffsetInput.text?.toString()?.toLongOrNull() ?: 0) + delta
@@ -198,10 +251,8 @@ class SubtitleSyncDialogFragment : BottomSheetDialogFragment() {
         updateJob?.cancel()
         updateJob = viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
             while (isActive) {
-                if (::adapter.isInitialized) {
-                    adapter.updatePlayerPosition(getPlayerPosition())
-                }
-                delay(250)
+                adapter?.updatePlayerPosition(getPlayerPosition())
+                delay(500)
             }
         }
     }
@@ -223,24 +274,23 @@ class SubtitleSyncDialogFragment : BottomSheetDialogFragment() {
             playerPositionMs = pos
             val adjustedPos = pos - currentOffset
 
+            var newPlayingIndex = -1
             cues.forEachIndexed { index, cue ->
-                val wasPlaying = oldPos - currentOffset in cue.startTimeMs..<(cue.startTimeMs + cue.durationMs)
                 val isPlaying = adjustedPos in cue.startTimeMs..<(cue.startTimeMs + cue.durationMs)
-                if (wasPlaying != isPlaying || index == getLatestActiveIndex()) {
-                    notifyItemChanged(index)
-                }
+                if (isPlaying) newPlayingIndex = index
             }
-        }
 
-        private fun getLatestActiveIndex(): Int {
-            val adjustedPos = playerPositionMs - currentOffset
-            return cues.indexOfLast { adjustedPos >= it.startTimeMs }.coerceAtLeast(0)
+            if (prevPlayingIndex != newPlayingIndex) {
+                if (prevPlayingIndex >= 0) notifyItemChanged(prevPlayingIndex)
+                if (newPlayingIndex >= 0) notifyItemChanged(newPlayingIndex)
+                prevPlayingIndex = newPlayingIndex
+            }
         }
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CueViewHolder {
             val inflater = LayoutInflater.from(parent.context)
             val itemBinding = ItemSubtitleSyncBinding.inflate(inflater, parent, false)
-            applySyncCardFocus(itemBinding.root)
+            applyCardFocus(itemBinding.root)
             return CueViewHolder(itemBinding)
         }
 
@@ -250,24 +300,21 @@ class SubtitleSyncDialogFragment : BottomSheetDialogFragment() {
             val isPlaying = adjustedPos in cue.startTimeMs..<(cue.startTimeMs + cue.durationMs)
 
             holder.textView.text = cue.text
-            holder.textView.setTextColor(if (isPlaying) -0x1 else -0x555556)
+            holder.textView.setTextColor(if (isPlaying) Color.WHITE else -0x555556)
 
-            val showProgress = isPlaying
-            holder.progressBar.isInvisible = !showProgress
+            val showProgress = isPlaying && isPlaying
+            holder.progressBar.isVisible = showProgress
             if (showProgress) {
                 val progressValue = ((adjustedPos - cue.startTimeMs) * 1000f / cue.durationMs).roundToInt()
                     .coerceIn(0, 1000)
-                ObjectAnimator.ofInt(
-                    holder.progressBar, "progress",
-                    holder.progressBar.progress, progressValue
-                ).apply {
-                    interpolator = DecelerateInterpolator()
-                }.start()
+                if (holder.progressBar.progress != progressValue) {
+                    holder.progressBar.progress = progressValue
+                }
             } else {
                 holder.progressBar.progress = 0
             }
 
-            holder.cardView.setCardBackgroundColor(if (isPlaying) -0x22000001 else 0)
+            holder.cardView.setCardBackgroundColor(if (isPlaying) -0x33000001 else 0)
         }
 
         override fun getItemCount(): Int = cues.size
@@ -280,15 +327,16 @@ class SubtitleSyncDialogFragment : BottomSheetDialogFragment() {
         val cardView: androidx.cardview.widget.CardView = itemBinding.root
     }
 
-    private fun applySyncCardFocus(cardView: View) {
+    private fun applyCardFocus(cardView: View) {
         val defaultRadius = 18f
         val borderWidthPx = 3f
+        val savedFg = mutableMapOf<View, android.graphics.drawable.Drawable?>()
         cardView.setOnFocusChangeListener { v, hasFocus ->
             if (hasFocus) {
                 val primaryColor = FocusEffectUtil.getPrimaryColor(v.context)
-                val borderDrawable = android.graphics.drawable.GradientDrawable().apply {
+                val border = android.graphics.drawable.GradientDrawable().apply {
                     setShape(android.graphics.drawable.GradientDrawable.RECTANGLE)
-                    setColor(android.graphics.Color.TRANSPARENT)
+                    setColor(Color.TRANSPARENT)
                     setStroke(
                         android.util.TypedValue.applyDimension(
                             android.util.TypedValue.COMPLEX_UNIT_DIP, borderWidthPx,
@@ -299,21 +347,16 @@ class SubtitleSyncDialogFragment : BottomSheetDialogFragment() {
                     setCornerRadius(defaultRadius * v.resources.displayMetrics.density)
                 }
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-                    savedForegrounds[v] = v.foreground
-                    v.foreground = borderDrawable
+                    savedFg[v] = v.foreground
+                    v.foreground = border
                 }
                 v.animate().scaleX(1.05f).scaleY(1.05f).setDuration(150).start()
             } else {
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-                    v.foreground = savedForegrounds.remove(v)
+                    v.foreground = savedFg.remove(v)
                 }
                 v.animate().scaleX(1f).scaleY(1f).setDuration(150).start()
             }
         }
-        if (cardView.isFocused) {
-            cardView.onFocusChangeListener?.onFocusChange(cardView, true)
-        }
     }
-
-    private val savedForegrounds = mutableMapOf<View, android.graphics.drawable.Drawable?>()
 }

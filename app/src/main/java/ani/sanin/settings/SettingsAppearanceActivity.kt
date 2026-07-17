@@ -223,6 +223,10 @@ class SettingsAppearanceActivity : AppCompatActivity() {
         binding.appearanceGlassEpisodeDrawer.setOnCheckedChangeListener { _, isChecked ->
             PrefManager.setVal(PrefName.GlassEffectEpisodeDrawer, isChecked)
         }
+        binding.appearanceGlassSubtitleSync.isChecked = PrefManager.getVal(PrefName.GlassEffectSubtitleSync)
+        binding.appearanceGlassSubtitleSync.setOnCheckedChangeListener { _, isChecked ->
+            PrefManager.setVal(PrefName.GlassEffectSubtitleSync, isChecked)
+        }
 
         binding.appearanceGlassBlurRadius.isFocusable = true
         binding.appearanceGlassBlurRadius.value = PrefManager.getVal(PrefName.GlassEffectBlurRadius) as Float

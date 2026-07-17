@@ -14,7 +14,7 @@ import ani.sanin.settings.saving.PrefManager
 import ani.sanin.settings.saving.PrefName
 
 enum class GlassComponent {
-    NavPills, SideRail, ServerSheet, ListEditor, SourceSelector, EpisodeDrawer
+    NavPills, SideRail, ServerSheet, ListEditor, SourceSelector, EpisodeDrawer, SubtitleSync
 }
 
 object GlassEffectManager {
@@ -32,6 +32,7 @@ object GlassEffectManager {
             GlassComponent.ListEditor -> PrefManager.getVal(PrefName.GlassEffectListEditor)
             GlassComponent.SourceSelector -> PrefManager.getVal(PrefName.GlassEffectSourceSelector)
             GlassComponent.EpisodeDrawer -> PrefManager.getVal(PrefName.GlassEffectEpisodeDrawer)
+            GlassComponent.SubtitleSync -> PrefManager.getVal(PrefName.GlassEffectSubtitleSync)
         }
     }
 
