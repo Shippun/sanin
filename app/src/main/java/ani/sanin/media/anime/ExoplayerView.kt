@@ -1607,6 +1607,11 @@ class ExoplayerView :
     private fun initPlayer() {
         checkNotch()
 
+        synchronized(storedSyncCues) {
+            storedSyncCues.clear()
+            seenCueTexts.clear()
+        }
+
         PrefManager.setCustomVal(
             "${media.id}_current_ep",
             media.anime!!.selectedEpisode!!,
@@ -1745,6 +1750,38 @@ class ExoplayerView :
             emptyList<MediaItem.SubtitleConfiguration>().toMutableList()
         val currentVideoUrl = video!!.file.url
         val embedUrl = ext.server.embed.url
+
+        if (subtitle != null && hasExtSubtitles) {
+            val extSubUrl = resolveSubtitleUrl(subtitle!!.file.url, embedUrl, currentVideoUrl)
+            if (extSubUrl.isNotBlank()) {
+                val extSubType = subtitle!!.type
+                val fmt = when (extSubType) {
+                    SubtitleType.VTT -> "VTT"
+                    SubtitleType.ASS -> "ASS"
+                    SubtitleType.SRT -> "SRT"
+                    SubtitleType.UNKNOWN -> null
+                }
+                if (fmt != null) {
+                    lifecycleScope.launch(Dispatchers.IO) {
+                        try {
+                            val client = okhttp3.OkHttpClient()
+                            val request = okhttp3.Request.Builder().url(extSubUrl).build()
+                            val response = client.newCall(request).execute()
+                            if (response.isSuccessful) {
+                                val content = response.body?.string()
+                                if (!content.isNullOrEmpty()) {
+                                    val parsedCues = parseSubtitleContent(content, fmt)
+                                    withContext(Dispatchers.Main) { storeParsedCues(parsedCues) }
+                                }
+                            }
+                        } catch (e: Exception) {
+                            android.util.Log.e("ExoplayerView", "Failed to load extractor subtitle cues: ${e.message}")
+                        }
+                    }
+                }
+            }
+        }
+
         ext.subtitles.forEachIndexed { index, subtitle ->
             val subtitleUrl = if (!hasExtSubtitles) currentVideoUrl else subtitle.file.url
             val resolvedSubtitleUrl = resolveSubtitleUrl(subtitleUrl, embedUrl, currentVideoUrl)
@@ -2221,6 +2258,110 @@ class ExoplayerView :
         PrefManager.setVal(PrefName.SubtitleSyncEnabled, offsetMs != 0L)
     }
 
+    // ── Subtitle file parsing for full-cue sync ───────────────
+
+    private fun parseSubtitleContent(content: String, detectedFormat: String? = null): List<SyncCue> {
+        val format = detectedFormat ?: detectSubtitleFormat(content)
+        return when (format) {
+            "VTT" -> parseVTT(content)
+            "ASS" -> parseASS(content)
+            "SRT" -> parseSRT(content)
+            else -> emptyList()
+        }
+    }
+
+    private fun detectSubtitleFormat(content: String): String = when {
+        content.trimStart().startsWith("WEBVTT") -> "VTT"
+        content.contains("[Script Info]") || content.contains("[Events]") -> "ASS"
+        content.contains("<tt ") || content.contains("<tt>") -> "TTML"
+        else -> "SRT"
+    }
+
+    private fun parseSRTTime(time: String): Long {
+        val t = time.replace(",", ".")
+        val parts = t.split(":", ".")
+        val h = parts.getOrNull(0)?.toLongOrNull() ?: 0L
+        val m = parts.getOrNull(1)?.toLongOrNull() ?: 0L
+        val s = parts.getOrNull(2)?.toLongOrNull() ?: 0L
+        val ms = parts.getOrNull(3)?.toLongOrNull() ?: 0L
+        return h * 3600000 + m * 60000 + s * 1000 + ms
+    }
+
+    private fun parseSRT(content: String): List<SyncCue> {
+        val cues = mutableListOf<SyncCue>()
+        val blockRegex = Regex(
+            """(\d+)\s*\n(\d{2}:\d{2}:\d{2}[,\.]\d{3})\s*-->\s*(\d{2}:\d{2}:\d{2}[,\.]\d{3})\s*\n([\s\S]*?)(?=\n\n|\n*\z)"""
+        )
+        for (match in blockRegex.findAll(content)) {
+            val start = parseSRTTime(match.groupValues[2])
+            val end = parseSRTTime(match.groupValues[3])
+            val text = match.groupValues[4].trimEnd('\r', '\n')
+            if (text.isNotBlank()) {
+                cues.add(SyncCue(text = text, startTimeMs = start, durationMs = (end - start).coerceAtLeast(1000)))
+            }
+        }
+        return cues
+    }
+
+    private fun parseVTT(content: String): List<SyncCue> {
+        val normalized = content.replace(Regex("""(\d{2}:\d{2}:\d{2})\.(\d{3})""")) { m ->
+            "${m.groupValues[1]},${m.groupValues[2]}"
+        }
+        return parseSRT(normalized)
+    }
+
+    private fun parseASS(content: String): List<SyncCue> {
+        val cues = mutableListOf<SyncCue>()
+        val eventSection = content.substringAfter("[Events]", "")
+            .substringBefore("\n[")
+
+        val formatLine = eventSection.lines()
+            .firstOrNull { it.trimStart().startsWith("Format:", ignoreCase = true) }
+            ?: return cues
+        val formatParts = formatLine.substringAfter("Format:").split(",").map { it.trim() }
+        val startIdx = formatParts.indexOf("Start")
+        val endIdx = formatParts.indexOf("End")
+        val textIdx = formatParts.indexOf("Text")
+        if (startIdx == -1 || endIdx == -1 || textIdx == -1) return cues
+
+        for (line in eventSection.lines()) {
+            val trimmed = line.trimStart()
+            if (!trimmed.startsWith("Dialogue:", ignoreCase = true)) continue
+            val parts = trimmed.substringAfter("Dialogue:").split(",", textIdx + 1)
+            if (parts.size < 3) continue
+            val start = parts.getOrNull(startIdx)?.trim() ?: continue
+            val end = parts.getOrNull(endIdx)?.trim() ?: continue
+            val rawText = parts.getOrNull(textIdx)?.trim() ?: continue
+            val cleanText = rawText.replace(Regex("""\{[^}]*}"""), "").replace("\\N", "\n").replace("\\n", "\n").trim()
+            if (cleanText.isBlank()) continue
+            cues.add(SyncCue(
+                text = cleanText,
+                startTimeMs = parseASSTime(start),
+                durationMs = (parseASSTime(end) - parseASSTime(start)).coerceAtLeast(1000)
+            ))
+        }
+        return cues
+    }
+
+    private fun parseASSTime(time: String): Long {
+        val parts = time.split(":", ".")
+        val h = parts.getOrNull(0)?.toLongOrNull() ?: 0L
+        val m = parts.getOrNull(1)?.toLongOrNull() ?: 0L
+        val s = parts.getOrNull(2)?.toLongOrNull() ?: 0L
+        val frac = parts.getOrNull(3)?.toLongOrNull() ?: 0L
+        val ms = if (frac > 99) frac else frac * 10
+        return h * 3600000 + m * 60000 + s * 1000 + ms
+    }
+
+    private fun storeParsedCues(cues: List<SyncCue>) {
+        synchronized(storedSyncCues) {
+            storedSyncCues.clear()
+            storedSyncCues.addAll(cues)
+            seenCueTexts.clear()
+            seenCueTexts.addAll(cues.map { it.text })
+        }
+    }
+
     private fun subClick() {
         Logger.log("subClick: Opening subtitle dialog")
         PrefManager.setCustomVal(
@@ -2316,6 +2457,18 @@ class ExoplayerView :
                 cacheFile.writeText(cleaned)
             } else {
                 cacheFile.writeBytes(subtitleBytes)
+            }
+
+            val formatForParse = when (finalMimeType) {
+                MimeTypes.TEXT_VTT -> "VTT"
+                MimeTypes.TEXT_SSA -> "ASS"
+                MimeTypes.APPLICATION_SUBRIP -> "SRT"
+                else -> null
+            }
+            if (formatForParse != null) {
+                val contentString = subtitleBytes.toString(Charsets.UTF_8)
+                val parsedCues = parseSubtitleContent(contentString, formatForParse)
+                storeParsedCues(parsedCues)
             }
 
             val finalSubUri = android.net.Uri.fromFile(cacheFile)
@@ -2567,8 +2720,10 @@ class ExoplayerView :
 
                 android.util.Log.d("ExoplayerView", "applyOnlineSubtitle: Saved to ${subtitleFile.absolutePath}")
 
-                // Apply on main thread
+                val parsedCues = parseSubtitleContent(subtitleContent, detectedFormat)
+
                 withContext(Dispatchers.Main) {
+                    storeParsedCues(parsedCues)
                     applySubtitleFromFile(subtitleFile, subtitle.lang, mimeType)
                 }
 
@@ -3333,10 +3488,14 @@ class ExoplayerView :
 
         if (isInitialized) {
             updateAniProgress()
-            // Clear transient subtitle caches (online + local) on player exit
+            // Clear transient subtitle caches and sync cues on player exit
             val episodeId = "${media.id}-${media.anime?.selectedEpisode ?: ""}"
             clearTransientSubtitleCache(episodeId)
-            
+            synchronized(storedSyncCues) {
+                storedSyncCues.clear()
+                seenCueTexts.clear()
+            }
+
             disappeared = false
             functionstarted = false
             releasePlayer()
