@@ -793,10 +793,6 @@ class MainActivity : AppCompatActivity() {
             R.id.rightRailExtensions to {
                 startActivity(Intent(this, ExtensionsActivity::class.java))
             },
-            R.id.rightRailProfile to {
-                ContextCompat.startActivity(this, Intent(this, ProfileActivity::class.java)
-                    .putExtra("userId", Anilist.userid), null)
-            },
             R.id.rightRailAnimeList to {
                 ContextCompat.startActivity(this, Intent(this, ani.sanin.media.user.ListActivity::class.java)
                     .putExtra("anime", true)
@@ -859,6 +855,23 @@ class MainActivity : AppCompatActivity() {
             }
             FocusEffectUtil.applyFocusListener(view)
         }
+
+        findViewById<View>(R.id.rightRailAvatarCard).setOnClickListener {
+            binding.mainDrawer.closeDrawer(Gravity.END)
+            ContextCompat.startActivity(this, Intent(this, ProfileActivity::class.java)
+                .putExtra("userId", Anilist.userid), null)
+        }
+        findViewById<View>(R.id.rightRailAvatarCard).setOnKeyListener { v, keyCode, event ->
+            if (event.action == KeyEvent.ACTION_UP &&
+                (keyCode == KeyEvent.KEYCODE_DPAD_CENTER || keyCode == KeyEvent.KEYCODE_ENTER)
+            ) {
+                binding.mainDrawer.closeDrawer(Gravity.END)
+                ContextCompat.startActivity(this, Intent(this, ProfileActivity::class.java)
+                    .putExtra("userId", Anilist.userid), null)
+                true
+            } else false
+        }
+        FocusEffectUtil.applyFocusListener(findViewById(R.id.rightRailAvatarCard))
 
         binding.mainDrawer.addDrawerListener(object : DrawerLayout.DrawerListener {
             override fun onDrawerSlide(drawerView: View, slideOffset: Float) {}

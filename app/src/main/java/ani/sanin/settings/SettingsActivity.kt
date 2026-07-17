@@ -90,16 +90,6 @@ class SettingsActivity : AppCompatActivity() {
                     ),
                     Settings(
                         type = 1,
-                        name = getString(R.string.theme),
-                        desc = getString(R.string.theme_desc),
-                        icon = R.drawable.ic_palette,
-                        onClick = {
-                            startActivity(Intent(context, SettingsThemeActivity::class.java))
-                        },
-                        isActivity = true
-                    ),
-                    Settings(
-                        type = 1,
                         name = getString(R.string.appearance),
                         desc = getString(R.string.appearance_desc),
                         icon = R.drawable.ic_round_auto_awesome_24,
@@ -140,51 +130,11 @@ class SettingsActivity : AppCompatActivity() {
                     ),
                     Settings(
                         type = 1,
-                        name = getString(R.string.home),
-                        desc = getString(R.string.home_settings),
-                        icon = R.drawable.ic_round_home_24,
+                        name = getString(R.string.extras),
+                        desc = "Extension settings, addons, notifications & logs",
+                        icon = R.drawable.ic_round_settings_24,
                         onClick = {
-                            startActivity(Intent(context, SettingsHomeActivity::class.java))
-                        },
-                        isActivity = true
-                    ),
-                    Settings(
-                        type = 1,
-                        name = getString(R.string.extensions),
-                        desc = getString(R.string.extensions_desc),
-                        icon = R.drawable.ic_extension,
-                        onClick = {
-                            startActivity(Intent(context, SettingsExtensionsActivity::class.java))
-                        },
-                        isActivity = true
-                    ),
-                    Settings(
-                        type = 1,
-                        name = getString(R.string.addons),
-                        desc = getString(R.string.addons_desc),
-                        icon = R.drawable.ic_round_restaurant_24,
-                        onClick = {
-                            startActivity(Intent(context, SettingsAddonActivity::class.java))
-                        },
-                        isActivity = true
-                    ),
-                    Settings(
-                        type = 1,
-                        name = getString(R.string.notifications),
-                        desc = getString(R.string.notifications_desc),
-                        icon = R.drawable.ic_round_notifications_none_24,
-                        onClick = {
-                            startActivity(Intent(context, SettingsNotificationActivity::class.java))
-                        },
-                        isActivity = true
-                    ),
-                    Settings(
-                        type = 1,
-                        name = "Log Capture",
-                        desc = "Manage app logs and logcat capture",
-                        icon = R.drawable.ic_round_view_list_24,
-                        onClick = {
-                            startActivity(Intent(context, SettingsLogActivity::class.java))
+                            startActivity(Intent(context, SettingsExtrasActivity::class.java))
                         },
                         isActivity = true
                     )

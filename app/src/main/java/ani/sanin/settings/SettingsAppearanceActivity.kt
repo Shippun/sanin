@@ -4,10 +4,12 @@ import android.app.AlertDialog
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
+import android.view.View
 import android.view.ViewGroup
 import android.widget.GridLayout
 import android.widget.ImageButton
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.updateLayoutParams
 import ani.sanin.R
 import ani.sanin.databinding.ActivitySettingsAppearanceBinding
@@ -78,6 +80,26 @@ class SettingsAppearanceActivity : AppCompatActivity() {
             binding.appearanceNavPillIconSize,
             binding.appearanceNavPillIconColor,
             binding.appearanceNavPillCornerRadius,
+            binding.appearanceThemeMode,
+            binding.appearanceAccentColor,
+            binding.appearanceOledMode,
+            binding.appearanceSwapColors,
+            binding.appearanceHomeBannerMode,
+            binding.appearanceHeroCardImage,
+            binding.appearanceShowContinueWatching,
+            binding.appearanceShowPlanned,
+            binding.appearanceShowRecommendations,
+            binding.appearanceShowTrending,
+            binding.appearanceShowPopular,
+            binding.appearanceShowRecent,
+            binding.appearanceFocusEffect,
+            binding.themeSectionHeader,
+            binding.homeSectionHeader,
+            binding.displaySectionHeader,
+            binding.blurSectionHeader,
+            binding.bannerSectionHeader,
+            binding.sideRailSectionHeader,
+            binding.glassSectionHeader,
         )
 
         binding.appearanceCardSize.isFocusable = true
@@ -334,16 +356,143 @@ class SettingsAppearanceActivity : AppCompatActivity() {
             }
         }
 
-        binding.appearanceBlurUnwatched.isChecked = PrefManager.getVal(PrefName.BlurUnwatchedEpisodes)
-        binding.appearanceBlurUnwatched.setOnCheckedChangeListener { _, isChecked ->
-            PrefManager.setVal(PrefName.BlurUnwatchedEpisodes, isChecked)
+        binding.appearanceThemeMode.isFocusable = true
+        binding.appearanceThemeMode.setOnClickListener {
+            customAlertDialog().apply {
+                setTitle("Theme Mode")
+                val themeModes = arrayOf("Light", "Dark")
+                singleChoiceItems(themeModes, PrefManager.getVal<Int>(PrefName.DarkMode)) { index ->
+                    PrefManager.setVal(PrefName.DarkMode, index)
+                    AppCompatDelegate.setDefaultNightMode(
+                        if (index == 1) AppCompatDelegate.MODE_NIGHT_YES
+                        else AppCompatDelegate.MODE_NIGHT_NO
+                    )
+                    recreate()
+                }
+                show()
+            }
         }
-        binding.appearanceGreyWatched.isChecked = PrefManager.getVal(PrefName.GreyWatchedEpisodes)
-        binding.appearanceGreyWatched.setOnCheckedChangeListener { _, isChecked ->
-            PrefManager.setVal(PrefName.GreyWatchedEpisodes, isChecked)
+
+        binding.appearanceAccentColor.isFocusable = true
+        binding.appearanceAccentColor.setOnClickListener {
+            val accentColors = arrayOf(
+                0 to "Default", 1 to "Red", 2 to "Pink", 3 to "Purple",
+                4 to "Deep Purple", 5 to "Indigo", 6 to "Blue", 7 to "Light Blue",
+                8 to "Cyan", 9 to "Teal", 10 to "Green", 11 to "Light Green",
+                12 to "Lime", 13 to "Yellow", 14 to "Amber", 15 to "Orange",
+                16 to "Deep Orange"
+            )
+            customAlertDialog().apply {
+                setTitle("Accent Color")
+                val labels = accentColors.map { it.second }.toTypedArray()
+                singleChoiceItems(labels, PrefManager.getVal<Int>(PrefName.AccentColor)) { index ->
+                    PrefManager.setVal(PrefName.AccentColor, accentColors[index].first)
+                    restartApp()
+                }
+                show()
+            }
+        }
+
+        binding.appearanceOledMode.isFocusable = true
+        binding.appearanceOledMode.setOnClickListener {
+            customAlertDialog().apply {
+                setTitle("OLED Background Mode")
+                val labels = arrayOf(
+                    "Off\nNormal theme background",
+                    "Pure AMOLED\nPure black background",
+                    "Glow Spots\nBlack + radial glow orbs",
+                    "Gradient\nBlack + primary color gradient",
+                    "Vignette\nColored vignette from edges"
+                )
+                singleChoiceItems(labels, PrefManager.getVal<Int>(PrefName.OledMode)) { index ->
+                    PrefManager.setVal(PrefName.OledMode, index)
+                    restartApp()
+                }
+                show()
+            }
+        }
+
+        binding.appearanceSwapColors.isChecked = PrefManager.getVal(PrefName.SwapColors)
+        binding.appearanceSwapColors.setOnCheckedChangeListener { _, isChecked ->
+            PrefManager.setVal(PrefName.SwapColors, isChecked)
+            restartApp()
+        }
+
+        binding.appearanceHomeBannerMode.isFocusable = true
+        binding.appearanceHomeBannerMode.setOnClickListener {
+            val homeBannerModes = arrayOf(
+                getString(R.string.home_banner_carousel),
+                getString(R.string.home_banner_profile),
+                getString(R.string.home_banner_navigating),
+                getString(R.string.home_banner_off)
+            )
+            customAlertDialog().apply {
+                setTitle(getString(R.string.home_banner_mode))
+                singleChoiceItems(
+                    homeBannerModes,
+                    PrefManager.getVal<Int>(PrefName.HomeBannerMode)
+                ) { index ->
+                    PrefManager.setVal(PrefName.HomeBannerMode, index)
+                }
+                show()
+            }
+        }
+
+        binding.appearanceHeroCardImage.isChecked = PrefManager.getVal(PrefName.HeroCardImage)
+        binding.appearanceHeroCardImage.setOnCheckedChangeListener { _, isChecked ->
+            PrefManager.setVal(PrefName.HeroCardImage, isChecked)
+        }
+
+        binding.appearanceShowContinueWatching.isChecked = PrefManager.getVal(PrefName.ShowContinueWatching)
+        binding.appearanceShowContinueWatching.setOnCheckedChangeListener { _, isChecked ->
+            PrefManager.setVal(PrefName.ShowContinueWatching, isChecked)
+            restartApp()
+        }
+
+        binding.appearanceShowPlanned.isChecked = PrefManager.getVal(PrefName.ShowPlanned)
+        binding.appearanceShowPlanned.setOnCheckedChangeListener { _, isChecked ->
+            PrefManager.setVal(PrefName.ShowPlanned, isChecked)
+            restartApp()
+        }
+
+        binding.appearanceShowRecommendations.isChecked = PrefManager.getVal(PrefName.ShowRecommendations)
+        binding.appearanceShowRecommendations.setOnCheckedChangeListener { _, isChecked ->
+            PrefManager.setVal(PrefName.ShowRecommendations, isChecked)
+            restartApp()
+        }
+
+        binding.appearanceShowTrending.isChecked = PrefManager.getVal(PrefName.ShowTrending)
+        binding.appearanceShowTrending.setOnCheckedChangeListener { _, isChecked ->
+            PrefManager.setVal(PrefName.ShowTrending, isChecked)
+            restartApp()
+        }
+
+        binding.appearanceShowPopular.isChecked = PrefManager.getVal(PrefName.ShowPopular)
+        binding.appearanceShowPopular.setOnCheckedChangeListener { _, isChecked ->
+            PrefManager.setVal(PrefName.ShowPopular, isChecked)
+            restartApp()
+        }
+
+        binding.appearanceShowRecent.isChecked = PrefManager.getVal(PrefName.ShowRecent)
+        binding.appearanceShowRecent.setOnCheckedChangeListener { _, isChecked ->
+            PrefManager.setVal(PrefName.ShowRecent, isChecked)
+            restartApp()
+        }
+
+        binding.appearanceFocusEffect.isFocusable = true
+        binding.appearanceFocusEffect.setOnClickListener {
+            customAlertDialog().apply {
+                setTitle("Focus Effect")
+                val labels = arrayOf("Glow", "Breathing", "Pulse", "Shaking", "None")
+                singleChoiceItems(labels, PrefManager.getVal<Int>(PrefName.FocusEffect)) { index ->
+                    PrefManager.setVal(PrefName.FocusEffect, index)
+                }
+                show()
+            }
         }
 
         updateNavPillPreview()
+        setupCollapsibleSections()
     }
 
     private fun updateNavPillPreview() {
@@ -418,5 +567,24 @@ class SettingsAppearanceActivity : AppCompatActivity() {
                     }
                 }
             }
+    }
+
+    private fun setupCollapsibleSections() {
+        val sections = listOf(
+            binding.themeSectionHeader to binding.themeSectionBody,
+            binding.homeSectionHeader to binding.homeSectionBody,
+            binding.displaySectionHeader to binding.displaySectionBody,
+            binding.blurSectionHeader to binding.blurSectionBody,
+            binding.bannerSectionHeader to binding.bannerSectionBody,
+            binding.sideRailSectionHeader to binding.sideRailSectionBody,
+            binding.glassSectionHeader to binding.glassSectionBody,
+        )
+        for ((header, body) in sections) {
+            header.isFocusable = true
+            header.setOnClickListener {
+                body.visibility = if (body.visibility == View.VISIBLE) View.GONE else View.VISIBLE
+            }
+            FocusEffectUtil.applyFocusListener(header)
+        }
     }
 }

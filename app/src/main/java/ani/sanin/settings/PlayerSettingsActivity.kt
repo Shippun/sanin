@@ -144,6 +144,8 @@ class PlayerSettingsActivity :
             binding.playerSettingsDpadEpisodeSkip,
             binding.playerSettingsPiP,
             binding.playerSettingsAdditionalCodec,
+            binding.playerBlurUnwatched,
+            binding.playerGreyWatched,
             binding.exoSkip,
         )
 
@@ -367,6 +369,15 @@ class PlayerSettingsActivity :
                 }
                 show()
             }
+        }
+
+        binding.playerBlurUnwatched.isChecked = PrefManager.getVal(PrefName.BlurUnwatchedEpisodes)
+        binding.playerBlurUnwatched.setOnCheckedChangeListener { _, isChecked ->
+            PrefManager.setVal(PrefName.BlurUnwatchedEpisodes, isChecked)
+        }
+        binding.playerGreyWatched.isChecked = PrefManager.getVal(PrefName.GreyWatchedEpisodes)
+        binding.playerGreyWatched.setOnCheckedChangeListener { _, isChecked ->
+            PrefManager.setVal(PrefName.GreyWatchedEpisodes, isChecked)
         }
 
         // Online Subtitles
