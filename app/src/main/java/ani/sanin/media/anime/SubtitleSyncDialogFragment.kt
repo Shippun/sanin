@@ -215,7 +215,7 @@ class SubtitleSyncDialogFragment : BottomSheetDialogFragment() {
     inner class SyncAdapter(
         private val cues: List<SyncCue>,
         initialPosition: Long
-    ) : RecyclerView.Adapter<SyncAdapter.CueViewHolder>() {
+    ) : RecyclerView.Adapter<CueViewHolder>() {
         private var playerPositionMs: Long = initialPosition
 
         fun updatePlayerPosition(pos: Long) {
