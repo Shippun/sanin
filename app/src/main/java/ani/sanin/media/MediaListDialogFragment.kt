@@ -146,7 +146,7 @@ class MediaListDialogFragment : DialogFragment() {
                         isCheckable = true
                         isClickable = true
                         isFocusable = true
-                        setTextAppearance(R.style.TextAppearance_Material3_TitleSmall)
+                        setTextAppearance(com.google.android.material.R.style.TextAppearance_Material3_TitleSmall)
                     }
                     binding.mediaListStatusGroup.addView(chip)
                     if (label == userStatus) chip.isChecked = true
