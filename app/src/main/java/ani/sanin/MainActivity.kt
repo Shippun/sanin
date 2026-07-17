@@ -117,6 +117,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun switchTab(index: Int) {
+        if (supportFragmentManager.isStateSaved) return
         val tag = tabFragments[index] ?: "home"
         if (tag == currentFragmentTag) return
         currentFragmentTag = tag
