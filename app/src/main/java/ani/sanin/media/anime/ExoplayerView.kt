@@ -2288,27 +2288,28 @@ class ExoplayerView :
         return h * 3600000 + m * 60000 + s * 1000 + ms
     }
 
+    private val timeLineRegex = Regex("""(\d{2}:\d{2}:\d{2})[,\.](\d{3})\s*-->\s*(\d{2}:\d{2}:\d{2})[,\.](\d{3})""")
+
     private fun parseSRT(content: String): List<SyncCue> {
         val cues = mutableListOf<SyncCue>()
-        val blockRegex = Regex(
-            """(\d+)\s*\n(\d{2}:\d{2}:\d{2}[,\.]\d{3})\s*-->\s*(\d{2}:\d{2}:\d{2}[,\.]\d{3})\s*\n([\s\S]*?)(?=\n\n|\n*\z)"""
-        )
-        for (match in blockRegex.findAll(content)) {
-            val start = parseSRTTime(match.groupValues[2])
-            val end = parseSRTTime(match.groupValues[3])
-            val text = cleanSubtitleText(match.groupValues[4])
+        for (block in content.split(Regex("\n\n+"))) {
+            val lines = block.trim().lines()
+            if (lines.size < 2) continue
+            val timeIdx = lines.indexOfFirst { it.trim().matches(Regex("""\d{2}:\d{2}:\d{2}[,\.]\d{3}\s*-->\s*\d{2}:\d{2}:\d{2}[,\.]\d{3}""")) }
+            if (timeIdx == -1) continue
+            val m = timeLineRegex.find(lines[timeIdx]) ?: continue
+            val start = parseSRTTime("${m.groupValues[1]},${m.groupValues[2]}")
+            val end = parseSRTTime("${m.groupValues[3]},${m.groupValues[4]}")
+            val text = lines.drop(timeIdx + 1).joinToString("\n").trim()
             if (text.isNotBlank()) {
-                cues.add(SyncCue(text = text, startTimeMs = start, durationMs = (end - start).coerceAtLeast(1000)))
+                cues.add(SyncCue(text = cleanSubtitleText(text), startTimeMs = start, durationMs = (end - start).coerceAtLeast(1000)))
             }
         }
         return cues
     }
 
     private fun parseVTT(content: String): List<SyncCue> {
-        val normalized = content.replace(Regex("""(\d{2}:\d{2}:\d{2})\.(\d{3})""")) { m ->
-            "${m.groupValues[1]},${m.groupValues[2]}"
-        }
-        return parseSRT(normalized)
+        return parseSRT(content)
     }
 
     private fun parseASS(content: String): List<SyncCue> {
@@ -2333,7 +2334,7 @@ class ExoplayerView :
             val start = parts.getOrNull(startIdx)?.trim() ?: continue
             val end = parts.getOrNull(endIdx)?.trim() ?: continue
             val rawText = parts.getOrNull(textIdx)?.trim() ?: continue
-            val cleanText = cleanSubtitleText(rawText.replace(Regex("""\{[^}]*}"""), "").replace("\\N", "\n").replace("\\n", "\n"))
+            val cleanText = cleanSubtitleText(rawText.replace(Regex("[{][^}]*}"), "").replace("\\N", "\n").replace("\\n", "\n"))
             if (cleanText.isBlank()) continue
             cues.add(SyncCue(
                 text = cleanText,
@@ -2366,7 +2367,7 @@ class ExoplayerView :
     private fun cleanSubtitleText(text: String): String {
         return text
             .replace(Regex("<[^>]+>"), "")
-            .replace(Regex("\\{[^}]*}"), "")
+            .replace(Regex("[{][^}]*}"), "")
             .replace(Regex("\\\\[Nn]"), "\n")
             .replace("\\h", " ")
             .replace(Regex("&amp;"), "&")
