@@ -5,11 +5,11 @@
     android:paddingLeft="0dp"
     android:paddingEnd="32dp"
     android:paddingRight="0dp"
-    android:paddingMode="stack"
-    android:tint="?attr/colorSurfaceVariant">
+    android:paddingMode="stack">
 
     <item>
         <shape android:shape="rectangle">
+            <solid android:color="?attr/colorSurfaceVariant" />
             <corners android:radius="32dp" />
         </shape>
     </item>
