@@ -141,6 +141,8 @@ class CommentsFragment : Fragment() {
 
         binding.commentsList.adapter = adapter
         binding.commentsList.layoutManager = LinearLayoutManager(activity)
+        binding.commentsList.itemAnimator = null
+        binding.commentsList.isFocusable = false
         adapter.add(section)
 
         val model: MediaDetailsViewModel by activityViewModels()
@@ -790,7 +792,7 @@ class CommentsFragment : Fragment() {
 
     private suspend fun loadAndDisplayComments() {
         binding.commentsProgressBar.visibility = View.VISIBLE
-        binding.commentsList.visibility = View.GONE
+        val savedFocusPosition = (binding.commentsList.layoutManager as? LinearLayoutManager)?.findFirstVisibleItemPosition()?.coerceAtLeast(0)
         section.clear()
         pagesLoaded = 1
         updateUiForSource()
@@ -801,7 +803,13 @@ class CommentsFragment : Fragment() {
         }
 
         binding.commentsProgressBar.visibility = View.GONE
-        binding.commentsList.visibility = View.VISIBLE
+        if (savedFocusPosition != null && section.itemCount > 0) {
+            (binding.commentsList.layoutManager as? LinearLayoutManager)?.scrollToPosition(savedFocusPosition.coerceAtMost(section.itemCount - 1))
+            binding.commentsList.post {
+                val target = binding.commentsList.findViewHolderForAdapterPosition(savedFocusPosition.coerceAtMost(section.itemCount - 1))
+                target?.itemView?.requestFocus()
+            }
+        }
     }
 
     private suspend fun loadSaninComments() {

@@ -130,9 +130,9 @@ class SubtitleDialogFragment : BottomSheetDialogFragment() {
                     }
                 }
 
-                allSubtitles.addAll(currentExtractor.subtitles)
+                allSubtitles.add(0, OpenSubtitleSync("Subtitle Sync"))
 
-                allSubtitles.add(OpenSubtitleSync("Subtitle Sync"))
+                allSubtitles.addAll(currentExtractor.subtitles)
 
                 if (_binding != null) {
                      binding.subtitlesRecycler.adapter = SubtitleAdapter(allSubtitles)
