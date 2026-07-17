@@ -2327,7 +2327,7 @@ class ExoplayerView :
         for (line in eventSection.lines()) {
             val trimmed = line.trimStart()
             if (!trimmed.startsWith("Dialogue:", ignoreCase = true)) continue
-            val parts = trimmed.substringAfter("Dialogue:").split(",", textIdx + 1)
+            val parts = trimmed.substringAfter("Dialogue:").split(',', limit = textIdx + 1)
             if (parts.size < 3) continue
             val start = parts.getOrNull(startIdx)?.trim() ?: continue
             val end = parts.getOrNull(endIdx)?.trim() ?: continue
