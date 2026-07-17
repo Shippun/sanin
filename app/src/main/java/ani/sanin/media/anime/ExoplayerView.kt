@@ -2334,7 +2334,7 @@ class ExoplayerView :
             val start = parts.getOrNull(startIdx)?.trim() ?: continue
             val end = parts.getOrNull(endIdx)?.trim() ?: continue
             val rawText = parts.getOrNull(textIdx)?.trim() ?: continue
-            val cleanText = cleanSubtitleText(rawText.replace(Regex("[{][^}]*}"), "").replace("\\N", "\n").replace("\\n", "\n"))
+            val cleanText = cleanSubtitleText(rawText)
             if (cleanText.isBlank()) continue
             cues.add(SyncCue(
                 text = cleanText,
@@ -2365,17 +2365,7 @@ class ExoplayerView :
     }
 
     private fun cleanSubtitleText(text: String): String {
-        return text
-            .replace(Regex("<[^>]+>"), "")
-            .replace(Regex("[{][^}]*}"), "")
-            .replace(Regex("\\\\[Nn]"), "\n")
-            .replace("\\h", " ")
-            .replace(Regex("&amp;"), "&")
-            .replace(Regex("&lt;"), "<")
-            .replace(Regex("&gt;"), ">")
-            .replace(Regex("&quot;"), "\"")
-            .replace(Regex("&apos;"), "'")
-            .trim()
+        return text.replace(Regex("<[^>]+>"), "").trim()
     }
 
     private fun subClick() {
