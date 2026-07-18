@@ -81,8 +81,11 @@ object TvKeyboardUtil {
                     return@setOnKeyListener false
                 }
                 backHandled[v] = true
-                val imm = v.context.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
-                imm?.hideSoftInputFromWindow(v.windowToken, 0)
+                (v.context.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager)?.let { imm ->
+                    imm.hideSoftInputFromWindow(v.windowToken, 0)
+                    imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0)
+                }
+                v.clearFocus()
                 return@setOnKeyListener true
             }
             false
