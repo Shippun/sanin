@@ -1767,22 +1767,20 @@ class ExoplayerView :
                     SubtitleType.SRT -> "SRT"
                     SubtitleType.UNKNOWN -> null
                 }
-                if (fmt != null) {
-                    lifecycleScope.launch(Dispatchers.IO) {
-                        try {
-                            val client = okhttp3.OkHttpClient()
-                            val request = okhttp3.Request.Builder().url(extSubUrl).build()
-                            val response = client.newCall(request).execute()
-                            if (response.isSuccessful) {
-                                val content = response.body?.string()
-                                if (!content.isNullOrEmpty()) {
-                                    val parsedCues = parseSubtitleContent(content, fmt)
-                                    withContext(Dispatchers.Main) { storeParsedCues(parsedCues) }
-                                }
+                lifecycleScope.launch(Dispatchers.IO) {
+                    try {
+                        val client = okhttp3.OkHttpClient()
+                        val request = okhttp3.Request.Builder().url(extSubUrl).build()
+                        val response = client.newCall(request).execute()
+                        if (response.isSuccessful) {
+                            val content = response.body?.string()
+                            if (!content.isNullOrEmpty()) {
+                                val parsedCues = parseSubtitleContent(content, fmt)
+                                withContext(Dispatchers.Main) { storeParsedCues(parsedCues) }
                             }
-                        } catch (e: Exception) {
-                            android.util.Log.e("ExoplayerView", "Failed to load extractor subtitle cues: ${e.message}")
                         }
+                    } catch (e: Exception) {
+                        android.util.Log.e("ExoplayerView", "Failed to load extractor subtitle cues: ${e.message}")
                     }
                 }
             }
