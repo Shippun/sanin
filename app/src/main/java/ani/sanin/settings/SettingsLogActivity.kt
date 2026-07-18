@@ -42,7 +42,7 @@ class SettingsLogActivity : AppCompatActivity() {
             }
             FocusEffectUtil.applyFocusListener(logSettingsBack)
 
-            val loggingEnabled = PrefManager.getVal(PrefName.LoggingEnabled)
+            val loggingEnabled = PrefManager.getVal<Boolean>(PrefName.LoggingEnabled)
 
             settingsRecyclerView.adapter = SettingsAdapter(
                 arrayListOf(
@@ -82,7 +82,7 @@ class SettingsLogActivity : AppCompatActivity() {
                         desc = "Read logcat entries from the past 2 minutes",
                         icon = R.drawable.ic_round_history_24,
                         onClick = {
-                            if (!PrefManager.getVal(PrefName.LoggingEnabled)) {
+                            if (!PrefManager.getVal<Boolean>(PrefName.LoggingEnabled)) {
                                 toast("Enable Logging first")
                             } else {
                                 val logs = Logger.readLogcatLastMinutes(2)
