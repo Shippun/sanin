@@ -86,6 +86,9 @@ class ThemeManager(private val context: Activity) {
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
         window.statusBarColor = 0x00000000
         context.setTheme(themeToApply)
+        if (PrefManager.getVal(PrefName.SwapColors)) {
+            context.theme.applyStyle(R.style.ThemeOverlay_SwapColors, true)
+        }
         window.decorView.layoutDirection = View.LAYOUT_DIRECTION_LTR
 
         if (oledMode == 2 || oledMode == 3 || oledMode == 4) {
