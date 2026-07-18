@@ -81,7 +81,7 @@ Go to **Settings > Player** and toggle "Use MPV Engine". The first time you enab
 - **Rich Presence**: Show what you're watching on your Discord profile.
 - **Community**: Join the server for updates and discussion.
 
-[Join the Discord](https://discord.gg/URnPQKCb)
+[Join the Discord](https://discord.gg/7Jn5m8rmz)
 
 ### Extensions
 - Tachiyomi-compatible addon system
@@ -120,7 +120,7 @@ Output: `app/build/outputs/apk/debug/`
 ## Discord
 
 <div align="center">
-  <a href="https://discord.gg/URnPQKCb"><img src="https://img.shields.io/badge/Join-Discord-5865F2?style=for-the-badge&logo=discord&logoColor=white" alt="Discord"></a>
+  <a href="https://discord.gg/7Jn5m8rmz"><img src="https://img.shields.io/badge/Join-Discord-5865F2?style=for-the-badge&logo=discord&logoColor=white" alt="Discord"></a>
 </div>
 
 ---
