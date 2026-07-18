@@ -19,27 +19,19 @@ object TvKeyboardUtil {
     fun setupTvInput(view: View) {
         view.setOnFocusChangeListener { v, hasFocus ->
             if (hasFocus) {
+                backHandled[v] = false
                 showKeyboardDelayed(v)
                 applyFocusBorder(v)
             } else {
                 removeFocusBorder(v)
             }
         }
-        view.setOnKeyListener { v, keyCode, event ->
-            if (keyCode == KeyEvent.KEYCODE_BACK && event.action == KeyEvent.ACTION_DOWN) {
-                val imm = v.context.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
-                if (imm != null && imm.isActive(v)) {
-                    imm.hideSoftInputFromWindow(v.windowToken, 0)
-                    return@setOnKeyListener true
-                }
-            }
-            false
-        }
     }
 
     fun ensureKeyboardOnFocus(editText: EditText) {
         editText.setOnFocusChangeListener { v, hasFocus ->
             if (hasFocus) {
+                backHandled[v] = false
                 showKeyboardDelayed(v)
             }
         }
@@ -73,19 +65,25 @@ object TvKeyboardUtil {
     fun TextView.setupTvKeyboard() {
         setOnFocusChangeListener { v, hasFocus ->
             if (hasFocus) {
+                backHandled[v] = false
                 showKeyboardDelayed(v)
             }
         }
     }
 
+    private val backHandled = mutableMapOf<View, Boolean>()
+
     fun setupBackDismiss(view: View) {
         view.setOnKeyListener { v, keyCode, event ->
             if (keyCode == KeyEvent.KEYCODE_BACK && event.action == KeyEvent.ACTION_DOWN) {
-                val imm = v.context.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
-                if (imm != null && imm.isActive(v)) {
-                    imm.hideSoftInputFromWindow(v.windowToken, 0)
-                    return@setOnKeyListener true
+                if (backHandled[v] == true) {
+                    backHandled[v] = false
+                    return@setOnKeyListener false
                 }
+                backHandled[v] = true
+                val imm = v.context.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+                imm?.hideSoftInputFromWindow(v.windowToken, 0)
+                return@setOnKeyListener true
             }
             false
         }
