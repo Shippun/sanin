@@ -128,6 +128,7 @@ class SubtitleSyncDialogFragment : DialogFragment() {
         val playerPos = getPlayerPosition()
         currentOffset = playerPos - cue.startTimeMs
         binding.syncOffsetInput.setText(currentOffset.toString())
+        applyOffset()
     }
 
     private fun setupViews() {
@@ -301,7 +302,7 @@ class SubtitleSyncDialogFragment : DialogFragment() {
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CueViewHolder {
             val inflater = LayoutInflater.from(parent.context)
             val itemBinding = ItemSubtitleSyncBinding.inflate(inflater, parent, false)
-            applyCardFocus(itemBinding.root)
+            applyCardFocus(itemBinding.root, itemBinding.subtitleSyncCard)
             return CueViewHolder(itemBinding)
         }
 
@@ -348,35 +349,35 @@ class SubtitleSyncDialogFragment : DialogFragment() {
         val playingBorder: View = itemBinding.subtitlePlayingBorder
     }
 
-    private fun applyCardFocus(cardView: View) {
+    private fun applyCardFocus(focusView: View, borderView: View) {
         val defaultRadius = 18f
         val borderWidthPx = 3f
         val savedFg = mutableMapOf<View, android.graphics.drawable.Drawable?>()
-        cardView.setOnFocusChangeListener { v, hasFocus ->
+        focusView.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus) {
-                val primaryColor = FocusEffectUtil.getPrimaryColor(v.context)
+                val primaryColor = FocusEffectUtil.getPrimaryColor(borderView.context)
                 val border = android.graphics.drawable.GradientDrawable().apply {
                     setShape(android.graphics.drawable.GradientDrawable.RECTANGLE)
                     setColor(Color.TRANSPARENT)
                     setStroke(
                         android.util.TypedValue.applyDimension(
                             android.util.TypedValue.COMPLEX_UNIT_DIP, borderWidthPx,
-                            v.resources.displayMetrics
+                            borderView.resources.displayMetrics
                         ).toInt(),
                         primaryColor
                     )
-                    setCornerRadius(defaultRadius * v.resources.displayMetrics.density)
+                    setCornerRadius(defaultRadius * borderView.resources.displayMetrics.density)
                 }
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-                    savedFg[v] = v.foreground
-                    v.foreground = border
+                    savedFg[borderView] = borderView.foreground
+                    borderView.foreground = border
                 }
-                v.animate().scaleX(1.05f).scaleY(1.05f).setDuration(150).start()
+                focusView.animate().scaleX(1.05f).scaleY(1.05f).setDuration(150).start()
             } else {
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-                    v.foreground = savedFg.remove(v)
+                    borderView.foreground = savedFg.remove(borderView)
                 }
-                v.animate().scaleX(1f).scaleY(1f).setDuration(150).start()
+                focusView.animate().scaleX(1f).scaleY(1f).setDuration(150).start()
             }
         }
     }
