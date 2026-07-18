@@ -48,7 +48,7 @@ class SettingsLogActivity : AppCompatActivity() {
                         desc = "Open a screen showing live logcat output",
                         icon = R.drawable.ic_round_view_list_24,
                         onClick = {
-                            startActivity(Intent(this, LiveLogcatActivity::class.java))
+                            startActivity(Intent(this@SettingsLogActivity, LiveLogcatActivity::class.java))
                         },
                     ),
                     Settings(
