@@ -112,9 +112,6 @@
                         android:layout_width="44dp"
                         android:layout_height="44dp"
                         android:scaleType="centerCrop"
-                        android:src="@drawable/ic_round_person_24"
-                        app:tint="@color/bg_white"
-                        android:background="@color/nav_bg_inv"
                         tools:ignore="ContentDescription" />
                 </com.google.android.material.card.MaterialCardView>
 
