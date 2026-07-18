@@ -27,6 +27,10 @@ import ani.sanin.parsers.Subtitle
 import ani.sanin.settings.saving.PrefManager
 import ani.sanin.settings.saving.PrefName
 import androidx.core.graphics.ColorUtils
+import androidx.core.content.ContextCompat
+import android.text.SpannableString
+import android.text.style.ForegroundColorSpan
+import ani.sanin.getThemeColor
 import kotlinx.coroutines.launch
 import ani.sanin.others.IdMappers
 import ani.sanin.util.FocusEffectUtil
@@ -309,7 +313,17 @@ class SubtitleDialogFragment : BottomSheetDialogFragment() {
 
             // --- SUBTITLE SYNC ---
             if (item is OpenSubtitleSync) {
-                binding.subtitleTitle.text = item.text
+                val ctx = binding.root.context
+                val primary = ctx.getThemeColor(com.google.android.material.R.attr.colorPrimary)
+                val gray = ContextCompat.getColor(ctx, android.R.color.darker_gray)
+                val full = "Subtitle Sync (online subtitles only)"
+                val ss = SpannableString(full)
+                val openIdx = full.indexOf('(')
+                val closeIdx = full.indexOf(')')
+                ss.setSpan(ForegroundColorSpan(primary), openIdx, openIdx + 1, 0)
+                ss.setSpan(ForegroundColorSpan(gray), openIdx + 1, closeIdx, 0)
+                ss.setSpan(ForegroundColorSpan(primary), closeIdx, closeIdx + 1, 0)
+                binding.subtitleTitle.text = ss
                 binding.root.setCardBackgroundColor(TRANSPARENT)
                 binding.root.setOnClickListener {
                     dismiss()
