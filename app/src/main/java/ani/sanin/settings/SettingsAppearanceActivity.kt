@@ -83,7 +83,6 @@ class SettingsAppearanceActivity : AppCompatActivity() {
             binding.appearanceThemeMode,
             binding.appearanceAccentColor,
             binding.appearanceOledMode,
-            binding.appearanceSwapColors,
             binding.appearanceHomeBannerMode,
             binding.appearanceHeroCardImage,
             binding.appearanceShowContinueWatching,
@@ -408,12 +407,6 @@ class SettingsAppearanceActivity : AppCompatActivity() {
                 }
                 show()
             }
-        }
-
-        binding.appearanceSwapColors.isChecked = PrefManager.getVal(PrefName.SwapColors)
-        binding.appearanceSwapColors.setOnCheckedChangeListener { _, isChecked ->
-            PrefManager.setVal(PrefName.SwapColors, isChecked)
-            restartApp()
         }
 
         binding.appearanceHomeBannerMode.isFocusable = true

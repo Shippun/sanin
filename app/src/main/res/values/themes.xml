@@ -340,17 +340,6 @@
         <item name="appWidgetPadding">16dp</item>
     </style>
 
-    <style name="ThemeOverlay.SwapColors" parent="">
-        <item name="colorPrimary">?attr/colorSecondary</item>
-        <item name="colorOnPrimary">?attr/colorOnSecondary</item>
-        <item name="colorPrimaryContainer">?attr/colorSecondaryContainer</item>
-        <item name="colorOnPrimaryContainer">?attr/colorOnSecondaryContainer</item>
-        <item name="colorSecondary">?attr/colorPrimary</item>
-        <item name="colorOnSecondary">?attr/colorOnPrimary</item>
-        <item name="colorSecondaryContainer">?attr/colorPrimaryContainer</item>
-        <item name="colorOnSecondaryContainer">?attr/colorOnPrimaryContainer</item>
-    </style>
-
     <style name="Theme.Sanin.Dialog" parent="Theme.Base">
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:windowIsTranslucent">true</item>

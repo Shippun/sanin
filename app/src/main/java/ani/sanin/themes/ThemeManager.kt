@@ -86,9 +86,6 @@ class ThemeManager(private val context: Activity) {
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
         window.statusBarColor = 0x00000000
         context.setTheme(themeToApply)
-        if (PrefManager.getVal(PrefName.SwapColors)) {
-            context.theme.applyStyle(R.style.ThemeOverlay_SwapColors, true)
-        }
         window.decorView.layoutDirection = View.LAYOUT_DIRECTION_LTR
 
         if (oledMode == 2 || oledMode == 3 || oledMode == 4) {
@@ -163,10 +160,10 @@ class ThemeManager(private val context: Activity) {
         fun accentColorToInt(index: Int): Int = when (index) {
             0 -> Color.parseColor("#005B96")
             1 -> Color.parseColor("#00BCD4")
-            2 -> Color.parseColor("#CC0000")
+            2 -> Color.parseColor("#8B0000")
             3 -> Color.parseColor("#8BC34A")
             4 -> Color.parseColor("#FFD700")
-            5 -> Color.parseColor("#FF6600")
+            5 -> Color.parseColor("#FF4D00")
             6 -> Color.parseColor("#FF007F")
             7 -> Color.parseColor("#4B0082")
             else -> Color.parseColor("#005B96")

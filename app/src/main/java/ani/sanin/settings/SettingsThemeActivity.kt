@@ -111,17 +111,6 @@ class SettingsThemeActivity : AppCompatActivity() {
                             }
                         },
                     ),
-                    Settings(
-                        type = 2,
-                        name = "Swap Colors",
-                        desc = "Swap primary and secondary theme colors",
-                        icon = R.drawable.swap_horizontal_circle_24,
-                        isChecked = PrefManager.getVal(PrefName.SwapColors),
-                        switch = { isChecked, _ ->
-                            PrefManager.setVal(PrefName.SwapColors, isChecked)
-                            restartApp()
-                        },
-                    ),
                 )
             )
             settingsRecyclerView.apply {
