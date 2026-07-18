@@ -325,8 +325,16 @@ class SubtitleSyncDialogFragment : DialogFragment() {
                 holder.progressBar.progress = 0
             }
 
-            holder.cardView.setCardBackgroundColor(if (isPlaying) -0x33000001 else 0)
+            holder.cardView.setCardBackgroundColor(0)
             holder.cardView.setOnClickListener { onCueClick(cue) }
+
+            holder.playingBorder.isVisible = isPlaying
+            val root = holder.itemBinding.root
+            if (isPlaying) {
+                root.animate().scaleX(1.05f).scaleY(1.05f).setDuration(200).start()
+            } else {
+                root.animate().scaleX(1f).scaleY(1f).setDuration(200).start()
+            }
         }
 
         override fun getItemCount(): Int = cues.size
@@ -336,7 +344,8 @@ class SubtitleSyncDialogFragment : DialogFragment() {
         RecyclerView.ViewHolder(itemBinding.root) {
         val textView: TextView = itemBinding.subtitleSyncText
         val progressBar: ProgressBar = itemBinding.subtitleSyncProgress
-        val cardView: androidx.cardview.widget.CardView = itemBinding.root
+        val cardView: androidx.cardview.widget.CardView = itemBinding.subtitleSyncCard
+        val playingBorder: View = itemBinding.subtitlePlayingBorder
     }
 
     private fun applyCardFocus(cardView: View) {

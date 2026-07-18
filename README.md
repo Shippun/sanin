@@ -2,114 +2,96 @@
   <img src="https://raw.githubusercontent.com/n4237074-creator/psycho/main/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png" alt="Psycho" width="128">
 </div>
 
-# Sanin — Anime Streaming app created mostly for Android tv but also works perfectly for phone
+# Sanin — Anime streaming app for Android TV and Phone
 
-An Android app for tracking, discovering, and watching anime through AniList and MyAnimeList. Fork of Sanin with an optional MPV video engine, improved OAuth reliability, and a focus on D-pad/TV navigation.
-
----
-
-## How It Works
-
-1. **Sign in** with your AniList or MyAnimeList account to sync your watchlist.
-2. **Install extensions** (Tachiyomi-compatible addons) to add streaming sources.
-3. **Watch** any episode in the built-in player with gesture controls, subtitles, and speed adjustment.
-
-The app handles tracking (marking episodes as watched, updating progress) automatically.
+Anime tracking, discovery, and streaming app with AniList/MyAnimeList sync, extension-based sources, dual video engines, and full D-pad/TV navigation.
 
 ---
 
 ## Getting Started
 
-### First Launch
+1. **Sign in** with AniList or MyAnimeList to sync your watchlist.
+2. **Install extensions** from **Settings > Extensions > +** to add streaming sources.
+3. **Tap an episode** to pick a source and start playback.
 
-1. Tap **Login** on the welcome screen.
-2. Choose **AniList** or **MyAnimeList** (tap the login button to switch).
-3. Authorize the app in your browser. You'll be redirected back automatically.
+---
 
-### Installing Extensions
+## Features
 
-Extensions add streaming sources. Without them, the app is a tracker only.
+### Player
+- Dual engine: ExoPlayer (default) or **MPV** — toggle mid-playback without losing position
+- Gesture controls: swipe for seek, brightness, volume; double-tap sides to skip
+- Subtitle styling: font, color, outline, background, position, size
+- Online subtitles from Wyzie and Stremio
+- Skip OP/ED buttons, Picture-in-Picture (Android N+)
+- Resize modes: Fit, Zoom, Stretch
+- Auto-hide controls with configurable delay
+- Playback speed up to 50x (cursed speeds)
 
-1. Go to **Settings > Extensions**.
-2. Tap the **+** button to browse the repository.
-3. Install an extension (e.g. "Gogoanime", "Zoro", etc.).
-4. Go back to an anime page and tap an episode — sources from your extensions will appear.
+### Tracking
+- AniList and MyAnimeList OAuth with reliable redirects
+- Auto-update episode progress
+- Auto-skip intros, outros, recaps, fillers
+- Multiple tracking modes: ask per episode, always update, chapter zero handling
+- List status change notifications
 
-### Playing a Video
+### Navigation
+- Full D-pad/remote support with visible focus borders
+- Auto-focus on first interactive element
+- Keyboard back-dismiss: back button hides keyboard before navigating
+- Contextual side rail with glass effect backdrop
 
-- Tap any episode number to see available sources.
-- Pick a source to start playback.
-- Use the on-screen controls or gestures:
+### Display
+- **Accent colors**: 9 themes — Sanin (default deep icy blue), Ocean, Blood, Lime, Sun, Kurama, Saikou, Indigo, Monochrome
+- **Swap Colors**: toggle to swap primary/secondary role pairs
+- **Glass effect**: frosted blur on nav rail and pills with real-time scroll capture
+- Light, dark, and OLED variants for each theme
+- Landscape anime cards with AniZip banner backdrop images
+- Animation master switch with per-category toggles (Display, Navigation, Player)
+
+### Extensions
+- Tachiyomi-compatible addon system
+- Built-in repository browser
+- Community-maintained sources
+
+### Logging & Debug
+- Background log capture with circular buffer (50K lines)
+- Live logcat viewer with pause/play
+- Master logging switch (default off)
+- Cache clearing covers app cache, Glide disk cache, LogoApi cache, subtitle files
+
+### Other
+- Discord Rich Presence (shows what you're watching)
+- Subtitle sync dialog with cue viewer
+- Notification popups (works on phone; disabled on TV)
+- Proxy support for timestamp loading
+
+---
+
+## Player Controls
 
 | Action | How |
 |---|---|
 | Seek | Swipe left/right on bottom half, or double-tap sides |
 | Brightness | Swipe up/down on left edge |
 | Volume | Swipe up/down on right edge |
-| Toggle play/pause | Tap center or press D-pad center |
-| Fullscreen | Tap the fullscreen button (bottom-right) |
-| Switch player | Tap the sync icon button (far right) — toggles between ExoPlayer and MPV |
+| Play/pause | Tap center or press D-pad center |
+| Fullscreen | Tap fullscreen button (bottom-right) |
+| Switch player | Tap sync icon (far right) — ExoPlayer ↔ MPV |
 
 ---
 
-## Features
+## MPV Engine
 
-### Tracking
-- AniList OAuth login (fixed `redirect_url` parameter for reliable redirects)
-- MyAnimeList OAuth login (uses standard browser intent, no Chrome CustomTabs)
-- Auto-update episode progress
-- Auto-skip intros, outros, recaps, and fillers (when timestamps available)
-- Multiple tracking options (ask per episode, always update, chapter zero handling)
-
-### Player
-- **Dual engine**: ExoPlayer (default) or **MPV** (download native .so libs on demand — no app size increase)
-- Gesture controls (brightness, volume, seek)
-- D-pad navigation with visible focus borders for TV/remote use
-- Playback speed (normal, cursed speeds up to 50x)
-- Subtitle styling (font, color, outline, background, position, size)
-- Online subtitles from Wyzie and Stremio
-- Skip OP/ED buttons
-- Picture-in-Picture (Android N+)
-- Resize modes: Fit, Zoom, Stretch
-- Auto-hide controls
-
-### MPV Engine
-
-Go to **Settings > Player** and toggle "Use MPV Engine". The first time you enable it, the app downloads ~16MB of native libraries for your device's architecture. Once downloaded, you can switch between ExoPlayer and MPV at any time using the **sync icon button** in the player controls. Switching preserves your current playback position.
-
-### Discord
-- **Rich Presence**: Show what you're watching on your Discord profile.
-- **Community**: Join the server for updates and discussion.
-
-[Join the Discord](https://discord.gg/7Jn5m8rmz)
-
-### Extensions
-- Tachiyomi-compatible addon system
-- Browse and install from the built-in repo
-- Each extension provides its own sources and scrapers
-- Community-maintained
-
----
-
-## Settings Overview
-
-| Category | What you can change |
-|---|---|
-| Video | Default playback speed, cursed speeds on/off, resize mode |
-| Online Subtitles | Enable/disable, choose providers (Wyzie, Stremio), language filter |
-| Subtitles | Font, size, primary/secondary colors, outline type, background, window, alpha, stroke, bottom margin, language |
-| Timestamps | Timestamp loading, proxy, auto-hide, skip OP/ED, recap, fillers, auto-play next |
-| Behavior | Gestures on/off, double-tap seek, fast-forward, seek time, D-pad episode skip, pause on focus loss |
-| Player | Additional codec, **MPV Engine toggle** |
-| Discord | Rich Presence, button display mode, icon service (AniList, MAL, Sanin) |
+Go to **Settings > Player** and toggle "Use MPV Engine". On first enable, the app downloads native libraries (~16MB). Switch between engines at any time using the sync icon — position is preserved.
 
 ---
 
 ## Building
 
 ```bash
-git clone https://github.com/n4237074-creator/psycho.git
-cd psycho
+git clone https://github.com/Shippun/sanin.git
+cd sanin
 ./gradlew assembleDebug
 ```
 

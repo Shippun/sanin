@@ -511,7 +511,7 @@ class EpisodeAdapter(
         RecyclerView.ViewHolder(binding.root) {
         init {
             itemView.isFocusable = true
-            FocusEffectUtil.applyFocusListener(itemView)
+            FocusEffectUtil.applyFocusListener(itemView, borderDp = 5f)
             itemView.nextFocusRightId = R.id.itemEpisodeCont
             itemView.setOnClickListener {
                 if (bindingAdapterPosition < arr.size && bindingAdapterPosition >= 0)
@@ -524,7 +524,7 @@ class EpisodeAdapter(
         RecyclerView.ViewHolder(binding.root) {
         init {
             itemView.isFocusable = true
-            FocusEffectUtil.applyFocusListener(itemView)
+            FocusEffectUtil.applyFocusListener(itemView, borderDp = 5f)
             itemView.nextFocusRightId = R.id.itemEpisodeCont
             itemView.setOnClickListener {
                 if (bindingAdapterPosition < arr.size && bindingAdapterPosition >= 0)
@@ -537,7 +537,7 @@ class EpisodeAdapter(
         RecyclerView.ViewHolder(binding.root) {
         init {
             itemView.isFocusable = true
-            FocusEffectUtil.applyFocusListener(itemView)
+            FocusEffectUtil.applyFocusListener(itemView, borderDp = 5f)
             itemView.nextFocusRightId = R.id.itemEpisodeCont
             itemView.setOnClickListener {
                 if (bindingAdapterPosition < arr.size && bindingAdapterPosition >= 0)

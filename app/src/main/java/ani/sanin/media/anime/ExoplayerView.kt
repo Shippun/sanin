@@ -3853,7 +3853,7 @@ private class EpisodeRailViewHolder(val card: CardView) : ViewHolder(card) {
     private val rating = card.findViewById<TextView>(R.id.episodeRailRating)
 
     init {
-        FocusEffectUtil.applyFocusListener(card)
+        FocusEffectUtil.applyFocusListener(card, borderDp = 5f)
     }
 
     fun bind(epKey: String, ep: Episode) {
