@@ -70,265 +70,236 @@
         <item name="colorPrimaryInverse">@color/bg_black</item>
     </style>
 
-    <style name="Theme.Sanin.Blue" parent="Theme.Base">
-        <item name="colorPrimary">@color/md_theme_light_1_primary</item>
-        <item name="colorOnPrimary">@color/md_theme_light_1_onPrimary</item>
-        <item name="colorPrimaryContainer">@color/md_theme_light_1_primaryContainer</item>
-        <item name="colorOnPrimaryContainer">@color/md_theme_light_1_onPrimaryContainer</item>
-        <item name="colorSecondary">@color/md_theme_light_1_secondary</item>
-        <item name="colorOnSecondary">@color/md_theme_light_1_onSecondary</item>
-        <item name="colorSecondaryContainer">@color/md_theme_light_1_secondaryContainer</item>
-        <item name="colorOnSecondaryContainer">@color/md_theme_light_1_onSecondaryContainer</item>
-        <item name="colorTertiary">@color/md_theme_light_1_tertiary</item>
-        <item name="colorOnTertiary">@color/md_theme_light_1_onTertiary</item>
-        <item name="colorTertiaryContainer">@color/md_theme_light_1_tertiaryContainer</item>
-        <item name="colorOnTertiaryContainer">@color/md_theme_light_1_onTertiaryContainer</item>
-        <item name="colorError">@color/md_theme_light_1_error</item>
-        <item name="colorErrorContainer">@color/md_theme_light_1_errorContainer</item>
-        <item name="colorOnError">@color/md_theme_light_1_onError</item>
-        <item name="colorOnErrorContainer">@color/md_theme_light_1_onErrorContainer</item>
-        <item name="android:colorBackground">@color/md_theme_light_1_background</item>
-        <item name="colorOnBackground">@color/md_theme_light_1_onBackground</item>
-        <item name="colorSurface">@color/md_theme_light_1_surface</item>
-        <item name="colorOnSurface">@color/md_theme_light_1_onSurface</item>
-        <item name="colorSurfaceVariant">@color/md_theme_light_1_surfaceVariant</item>
-        <item name="colorOnSurfaceVariant">@color/md_theme_light_1_onSurfaceVariant</item>
-        <item name="colorOutline">@color/md_theme_light_1_outline</item>
-        <item name="colorOnSurfaceInverse">@color/md_theme_light_1_inverseOnSurface</item>
-        <item name="colorSurfaceInverse">@color/md_theme_light_1_inverseSurface</item>
-        <item name="colorPrimaryInverse">@color/md_theme_light_1_inversePrimary</item>
+    <style name="Theme.Sanin.Sanin" parent="Theme.Base">
+        <item name="colorPrimary">@color/md_theme_light_sanin_primary</item>
+        <item name="colorOnPrimary">@color/md_theme_light_sanin_onPrimary</item>
+        <item name="colorPrimaryContainer">@color/md_theme_light_sanin_primaryContainer</item>
+        <item name="colorOnPrimaryContainer">@color/md_theme_light_sanin_onPrimaryContainer</item>
+        <item name="colorSecondary">@color/md_theme_light_sanin_secondary</item>
+        <item name="colorOnSecondary">@color/md_theme_light_sanin_onSecondary</item>
+        <item name="colorSecondaryContainer">@color/md_theme_light_sanin_secondaryContainer</item>
+        <item name="colorOnSecondaryContainer">@color/md_theme_light_sanin_onSecondaryContainer</item>
+        <item name="colorTertiary">@color/md_theme_light_sanin_tertiary</item>
+        <item name="colorOnTertiary">@color/md_theme_light_sanin_onTertiary</item>
+        <item name="colorTertiaryContainer">@color/md_theme_light_sanin_tertiaryContainer</item>
+        <item name="colorOnTertiaryContainer">@color/md_theme_light_sanin_onTertiaryContainer</item>
+        <item name="colorError">@color/md_theme_light_sanin_error</item>
+        <item name="colorErrorContainer">@color/md_theme_light_sanin_errorContainer</item>
+        <item name="colorOnError">@color/md_theme_light_sanin_onError</item>
+        <item name="colorOnErrorContainer">@color/md_theme_light_sanin_onErrorContainer</item>
+        <item name="android:colorBackground">@color/md_theme_light_sanin_background</item>
+        <item name="colorOnBackground">@color/md_theme_light_sanin_onBackground</item>
+        <item name="colorSurface">@color/md_theme_light_sanin_surface</item>
+        <item name="colorOnSurface">@color/md_theme_light_sanin_onSurface</item>
+        <item name="colorSurfaceVariant">@color/md_theme_light_sanin_surfaceVariant</item>
+        <item name="colorOnSurfaceVariant">@color/md_theme_light_sanin_onSurfaceVariant</item>
+        <item name="colorOutline">@color/md_theme_light_sanin_outline</item>
+        <item name="colorOnSurfaceInverse">@color/md_theme_light_sanin_inverseOnSurface</item>
+        <item name="colorSurfaceInverse">@color/md_theme_light_sanin_inverseSurface</item>
+        <item name="colorPrimaryInverse">@color/md_theme_light_sanin_inversePrimary</item>
     </style>
 
-    <style name="Theme.Sanin.Green" parent="Theme.Base">
-        <item name="colorPrimary">@color/md_theme_light_2_primary</item>
-        <item name="colorOnPrimary">@color/md_theme_light_2_onPrimary</item>
-        <item name="colorPrimaryContainer">@color/md_theme_light_2_primaryContainer</item>
-        <item name="colorOnPrimaryContainer">@color/md_theme_light_2_onPrimaryContainer</item>
-        <item name="colorSecondary">@color/md_theme_light_2_secondary</item>
-        <item name="colorOnSecondary">@color/md_theme_light_2_onSecondary</item>
-        <item name="colorSecondaryContainer">@color/md_theme_light_2_secondaryContainer</item>
-        <item name="colorOnSecondaryContainer">@color/md_theme_light_2_onSecondaryContainer</item>
-        <item name="colorTertiary">@color/md_theme_light_2_tertiary</item>
-        <item name="colorOnTertiary">@color/md_theme_light_2_onTertiary</item>
-        <item name="colorTertiaryContainer">@color/md_theme_light_2_tertiaryContainer</item>
-        <item name="colorOnTertiaryContainer">@color/md_theme_light_2_onTertiaryContainer</item>
-        <item name="colorError">@color/md_theme_light_2_error</item>
-        <item name="colorErrorContainer">@color/md_theme_light_2_errorContainer</item>
-        <item name="colorOnError">@color/md_theme_light_2_onError</item>
-        <item name="colorOnErrorContainer">@color/md_theme_light_2_onErrorContainer</item>
-        <item name="android:colorBackground">@color/md_theme_light_2_background</item>
-        <item name="colorOnBackground">@color/md_theme_light_2_onBackground</item>
-        <item name="colorSurface">@color/md_theme_light_2_surface</item>
-        <item name="colorOnSurface">@color/md_theme_light_2_onSurface</item>
-        <item name="colorSurfaceVariant">@color/md_theme_light_2_surfaceVariant</item>
-        <item name="colorOnSurfaceVariant">@color/md_theme_light_2_onSurfaceVariant</item>
-        <item name="colorOutline">@color/md_theme_light_2_outline</item>
-        <item name="colorOnSurfaceInverse">@color/md_theme_light_2_inverseOnSurface</item>
-        <item name="colorSurfaceInverse">@color/md_theme_light_2_inverseSurface</item>
-        <item name="colorPrimaryInverse">@color/md_theme_light_2_inversePrimary</item>
+    <style name="Theme.Sanin.Lime" parent="Theme.Base">
+        <item name="colorPrimary">@color/md_theme_light_lime_primary</item>
+        <item name="colorOnPrimary">@color/md_theme_light_lime_onPrimary</item>
+        <item name="colorPrimaryContainer">@color/md_theme_light_lime_primaryContainer</item>
+        <item name="colorOnPrimaryContainer">@color/md_theme_light_lime_onPrimaryContainer</item>
+        <item name="colorSecondary">@color/md_theme_light_lime_secondary</item>
+        <item name="colorOnSecondary">@color/md_theme_light_lime_onSecondary</item>
+        <item name="colorSecondaryContainer">@color/md_theme_light_lime_secondaryContainer</item>
+        <item name="colorOnSecondaryContainer">@color/md_theme_light_lime_onSecondaryContainer</item>
+        <item name="colorTertiary">@color/md_theme_light_lime_tertiary</item>
+        <item name="colorOnTertiary">@color/md_theme_light_lime_onTertiary</item>
+        <item name="colorTertiaryContainer">@color/md_theme_light_lime_tertiaryContainer</item>
+        <item name="colorOnTertiaryContainer">@color/md_theme_light_lime_onTertiaryContainer</item>
+        <item name="colorError">@color/md_theme_light_lime_error</item>
+        <item name="colorErrorContainer">@color/md_theme_light_lime_errorContainer</item>
+        <item name="colorOnError">@color/md_theme_light_lime_onError</item>
+        <item name="colorOnErrorContainer">@color/md_theme_light_lime_onErrorContainer</item>
+        <item name="android:colorBackground">@color/md_theme_light_lime_background</item>
+        <item name="colorOnBackground">@color/md_theme_light_lime_onBackground</item>
+        <item name="colorSurface">@color/md_theme_light_lime_surface</item>
+        <item name="colorOnSurface">@color/md_theme_light_lime_onSurface</item>
+        <item name="colorSurfaceVariant">@color/md_theme_light_lime_surfaceVariant</item>
+        <item name="colorOnSurfaceVariant">@color/md_theme_light_lime_onSurfaceVariant</item>
+        <item name="colorOutline">@color/md_theme_light_lime_outline</item>
+        <item name="colorOnSurfaceInverse">@color/md_theme_light_lime_inverseOnSurface</item>
+        <item name="colorSurfaceInverse">@color/md_theme_light_lime_inverseSurface</item>
+        <item name="colorPrimaryInverse">@color/md_theme_light_lime_inversePrimary</item>
     </style>
 
-    <style name="Theme.Sanin.Purple" parent="Theme.Base">
-        <item name="colorPrimary">@color/md_theme_light_3_primary</item>
-        <item name="colorOnPrimary">@color/md_theme_light_3_onPrimary</item>
-        <item name="colorPrimaryContainer">@color/md_theme_light_3_primaryContainer</item>
-        <item name="colorOnPrimaryContainer">@color/md_theme_light_3_onPrimaryContainer</item>
-        <item name="colorSecondary">@color/md_theme_light_3_secondary</item>
-        <item name="colorOnSecondary">@color/md_theme_light_3_onSecondary</item>
-        <item name="colorSecondaryContainer">@color/md_theme_light_3_secondaryContainer</item>
-        <item name="colorOnSecondaryContainer">@color/md_theme_light_3_onSecondaryContainer</item>
-        <item name="colorTertiary">@color/md_theme_light_3_tertiary</item>
-        <item name="colorOnTertiary">@color/md_theme_light_3_onTertiary</item>
-        <item name="colorTertiaryContainer">@color/md_theme_light_3_tertiaryContainer</item>
-        <item name="colorOnTertiaryContainer">@color/md_theme_light_3_onTertiaryContainer</item>
-        <item name="colorError">@color/md_theme_light_3_error</item>
-        <item name="colorErrorContainer">@color/md_theme_light_3_errorContainer</item>
-        <item name="colorOnError">@color/md_theme_light_3_onError</item>
-        <item name="colorOnErrorContainer">@color/md_theme_light_3_onErrorContainer</item>
-        <item name="android:colorBackground">@color/md_theme_light_3_background</item>
-        <item name="colorOnBackground">@color/md_theme_light_3_onBackground</item>
-        <item name="colorSurface">@color/md_theme_light_3_surface</item>
-        <item name="colorOnSurface">@color/md_theme_light_3_onSurface</item>
-        <item name="colorSurfaceVariant">@color/md_theme_light_3_surfaceVariant</item>
-        <item name="colorOnSurfaceVariant">@color/md_theme_light_3_onSurfaceVariant</item>
-        <item name="colorOutline">@color/md_theme_light_3_outline</item>
-        <item name="colorOnSurfaceInverse">@color/md_theme_light_3_inverseOnSurface</item>
-        <item name="colorSurfaceInverse">@color/md_theme_light_3_inverseSurface</item>
-        <item name="colorPrimaryInverse">@color/md_theme_light_3_inversePrimary</item>
-    </style>
-
-    <style name="Theme.Sanin.Pink" parent="Theme.Base">
-        <item name="colorPrimary">@color/md_theme_light_4_primary</item>
-        <item name="colorOnPrimary">@color/md_theme_light_4_onPrimary</item>
-        <item name="colorPrimaryContainer">@color/md_theme_light_4_primaryContainer</item>
-        <item name="colorOnPrimaryContainer">@color/md_theme_light_4_onPrimaryContainer</item>
-        <item name="colorSecondary">@color/md_theme_light_4_secondary</item>
-        <item name="colorOnSecondary">@color/md_theme_light_4_onSecondary</item>
-        <item name="colorSecondaryContainer">@color/md_theme_light_4_secondaryContainer</item>
-        <item name="colorOnSecondaryContainer">@color/md_theme_light_4_onSecondaryContainer</item>
-        <item name="colorTertiary">@color/md_theme_light_4_tertiary</item>
-        <item name="colorOnTertiary">@color/md_theme_light_4_onTertiary</item>
-        <item name="colorTertiaryContainer">@color/md_theme_light_4_tertiaryContainer</item>
-        <item name="colorOnTertiaryContainer">@color/md_theme_light_4_onTertiaryContainer</item>
-        <item name="colorError">@color/md_theme_light_4_error</item>
-        <item name="colorErrorContainer">@color/md_theme_light_4_errorContainer</item>
-        <item name="colorOnError">@color/md_theme_light_4_onError</item>
-        <item name="colorOnErrorContainer">@color/md_theme_light_4_onErrorContainer</item>
-        <item name="android:colorBackground">@color/md_theme_light_4_background</item>
-        <item name="colorOnBackground">@color/md_theme_light_4_onBackground</item>
-        <item name="colorSurface">@color/md_theme_light_4_surface</item>
-        <item name="colorOnSurface">@color/md_theme_light_4_onSurface</item>
-        <item name="colorSurfaceVariant">@color/md_theme_light_4_surfaceVariant</item>
-        <item name="colorOnSurfaceVariant">@color/md_theme_light_4_onSurfaceVariant</item>
-        <item name="colorOutline">@color/md_theme_light_4_outline</item>
-        <item name="colorOnSurfaceInverse">@color/md_theme_light_4_inverseOnSurface</item>
-        <item name="colorSurfaceInverse">@color/md_theme_light_4_inverseSurface</item>
-        <item name="colorPrimaryInverse">@color/md_theme_light_4_inversePrimary</item>
+    <style name="Theme.Sanin.Indigo" parent="Theme.Base">
+        <item name="colorPrimary">@color/md_theme_light_indigo_primary</item>
+        <item name="colorOnPrimary">@color/md_theme_light_indigo_onPrimary</item>
+        <item name="colorPrimaryContainer">@color/md_theme_light_indigo_primaryContainer</item>
+        <item name="colorOnPrimaryContainer">@color/md_theme_light_indigo_onPrimaryContainer</item>
+        <item name="colorSecondary">@color/md_theme_light_indigo_secondary</item>
+        <item name="colorOnSecondary">@color/md_theme_light_indigo_onSecondary</item>
+        <item name="colorSecondaryContainer">@color/md_theme_light_indigo_secondaryContainer</item>
+        <item name="colorOnSecondaryContainer">@color/md_theme_light_indigo_onSecondaryContainer</item>
+        <item name="colorTertiary">@color/md_theme_light_indigo_tertiary</item>
+        <item name="colorOnTertiary">@color/md_theme_light_indigo_onTertiary</item>
+        <item name="colorTertiaryContainer">@color/md_theme_light_indigo_tertiaryContainer</item>
+        <item name="colorOnTertiaryContainer">@color/md_theme_light_indigo_onTertiaryContainer</item>
+        <item name="colorError">@color/md_theme_light_indigo_error</item>
+        <item name="colorErrorContainer">@color/md_theme_light_indigo_errorContainer</item>
+        <item name="colorOnError">@color/md_theme_light_indigo_onError</item>
+        <item name="colorOnErrorContainer">@color/md_theme_light_indigo_onErrorContainer</item>
+        <item name="android:colorBackground">@color/md_theme_light_indigo_background</item>
+        <item name="colorOnBackground">@color/md_theme_light_indigo_onBackground</item>
+        <item name="colorSurface">@color/md_theme_light_indigo_surface</item>
+        <item name="colorOnSurface">@color/md_theme_light_indigo_onSurface</item>
+        <item name="colorSurfaceVariant">@color/md_theme_light_indigo_surfaceVariant</item>
+        <item name="colorOnSurfaceVariant">@color/md_theme_light_indigo_onSurfaceVariant</item>
+        <item name="colorOutline">@color/md_theme_light_indigo_outline</item>
+        <item name="colorOnSurfaceInverse">@color/md_theme_light_indigo_inverseOnSurface</item>
+        <item name="colorSurfaceInverse">@color/md_theme_light_indigo_inverseSurface</item>
+        <item name="colorPrimaryInverse">@color/md_theme_light_indigo_inversePrimary</item>
     </style>
 
     <style name="Theme.Sanin.Saikou" parent="Theme.Base">
-        <item name="colorPrimary">@color/md_theme_light_5_primary</item>
-        <item name="colorOnPrimary">@color/md_theme_light_5_onPrimary</item>
-        <item name="colorPrimaryContainer">@color/md_theme_light_5_primaryContainer</item>
-        <item name="colorOnPrimaryContainer">@color/md_theme_light_5_onPrimaryContainer</item>
-        <item name="colorSecondary">@color/md_theme_light_5_secondary</item>
-        <item name="colorOnSecondary">@color/md_theme_light_5_onSecondary</item>
-        <item name="colorSecondaryContainer">@color/md_theme_light_5_secondaryContainer</item>
-        <item name="colorOnSecondaryContainer">@color/md_theme_light_5_onSecondaryContainer</item>
-        <item name="colorTertiary">@color/md_theme_light_5_tertiary</item>
-        <item name="colorOnTertiary">@color/md_theme_light_5_onTertiary</item>
-        <item name="colorTertiaryContainer">@color/md_theme_light_5_tertiaryContainer</item>
-        <item name="colorOnTertiaryContainer">@color/md_theme_light_5_onTertiaryContainer</item>
-        <item name="colorError">@color/md_theme_light_5_error</item>
-        <item name="colorErrorContainer">@color/md_theme_light_5_errorContainer</item>
-        <item name="colorOnError">@color/md_theme_light_5_onError</item>
-        <item name="colorOnErrorContainer">@color/md_theme_light_5_onErrorContainer</item>
-        <item name="android:colorBackground">@color/md_theme_light_5_background</item>
-        <item name="colorOnBackground">@color/md_theme_light_5_onBackground</item>
-        <item name="colorSurface">@color/md_theme_light_5_surface</item>
-        <item name="colorOnSurface">@color/md_theme_light_5_onSurface</item>
-        <item name="colorSurfaceVariant">@color/md_theme_light_5_surfaceVariant</item>
-        <item name="colorOnSurfaceVariant">@color/md_theme_light_5_onSurfaceVariant</item>
-        <item name="colorOutline">@color/md_theme_light_5_outline</item>
-        <item name="colorOnSurfaceInverse">@color/md_theme_light_5_surface</item>
-        <item name="colorSurfaceInverse">@color/md_theme_light_5_inverseSurface</item>
-        <item name="colorPrimaryInverse">@color/md_theme_light_5_inversePrimary</item>
+        <item name="colorPrimary">@color/md_theme_light_saikou_primary</item>
+        <item name="colorOnPrimary">@color/md_theme_light_saikou_onPrimary</item>
+        <item name="colorPrimaryContainer">@color/md_theme_light_saikou_primaryContainer</item>
+        <item name="colorOnPrimaryContainer">@color/md_theme_light_saikou_onPrimaryContainer</item>
+        <item name="colorSecondary">@color/md_theme_light_saikou_secondary</item>
+        <item name="colorOnSecondary">@color/md_theme_light_saikou_onSecondary</item>
+        <item name="colorSecondaryContainer">@color/md_theme_light_saikou_secondaryContainer</item>
+        <item name="colorOnSecondaryContainer">@color/md_theme_light_saikou_onSecondaryContainer</item>
+        <item name="colorTertiary">@color/md_theme_light_saikou_tertiary</item>
+        <item name="colorOnTertiary">@color/md_theme_light_saikou_onTertiary</item>
+        <item name="colorTertiaryContainer">@color/md_theme_light_saikou_tertiaryContainer</item>
+        <item name="colorOnTertiaryContainer">@color/md_theme_light_saikou_onTertiaryContainer</item>
+        <item name="colorError">@color/md_theme_light_saikou_error</item>
+        <item name="colorErrorContainer">@color/md_theme_light_saikou_errorContainer</item>
+        <item name="colorOnError">@color/md_theme_light_saikou_onError</item>
+        <item name="colorOnErrorContainer">@color/md_theme_light_saikou_onErrorContainer</item>
+        <item name="android:colorBackground">@color/md_theme_light_saikou_background</item>
+        <item name="colorOnBackground">@color/md_theme_light_saikou_onBackground</item>
+        <item name="colorSurface">@color/md_theme_light_saikou_surface</item>
+        <item name="colorOnSurface">@color/md_theme_light_saikou_onSurface</item>
+        <item name="colorSurfaceVariant">@color/md_theme_light_saikou_surfaceVariant</item>
+        <item name="colorOnSurfaceVariant">@color/md_theme_light_saikou_onSurfaceVariant</item>
+        <item name="colorOutline">@color/md_theme_light_saikou_outline</item>
+        <item name="colorOnSurfaceInverse">@color/md_theme_light_saikou_inverseOnSurface</item>
+        <item name="colorSurfaceInverse">@color/md_theme_light_saikou_inverseSurface</item>
+        <item name="colorPrimaryInverse">@color/md_theme_light_saikou_inversePrimary</item>
     </style>
 
-    <style name="Theme.Sanin.Red" parent="Theme.Base">
-        <item name="colorPrimary">@color/md_theme_light_6_primary</item>
-        <item name="colorOnPrimary">@color/md_theme_light_6_onPrimary</item>
-        <item name="colorPrimaryContainer">@color/md_theme_light_6_primaryContainer</item>
-        <item name="colorOnPrimaryContainer">@color/md_theme_light_6_onPrimaryContainer</item>
-        <item name="colorSecondary">@color/md_theme_light_6_secondary</item>
-        <item name="colorOnSecondary">@color/md_theme_light_6_onSecondary</item>
-        <item name="colorSecondaryContainer">@color/md_theme_light_6_secondaryContainer</item>
-        <item name="colorOnSecondaryContainer">@color/md_theme_light_6_onSecondaryContainer</item>
-        <item name="colorTertiary">@color/md_theme_light_6_tertiary</item>
-        <item name="colorOnTertiary">@color/md_theme_light_6_onTertiary</item>
-        <item name="colorTertiaryContainer">@color/md_theme_light_6_tertiaryContainer</item>
-        <item name="colorOnTertiaryContainer">@color/md_theme_light_6_onTertiaryContainer</item>
-        <item name="colorError">@color/md_theme_light_6_error</item>
-        <item name="colorErrorContainer">@color/md_theme_light_6_errorContainer</item>
-        <item name="colorOnError">@color/md_theme_light_6_onError</item>
-        <item name="colorOnErrorContainer">@color/md_theme_light_6_onErrorContainer</item>
-        <item name="android:colorBackground">@color/md_theme_light_6_background</item>
-        <item name="colorOnBackground">@color/md_theme_light_6_onBackground</item>
-        <item name="colorSurface">@color/md_theme_light_6_surface</item>
-        <item name="colorOnSurface">@color/md_theme_light_6_onSurface</item>
-        <item name="colorSurfaceVariant">@color/md_theme_light_6_surfaceVariant</item>
-        <item name="colorOnSurfaceVariant">@color/md_theme_light_6_onSurfaceVariant</item>
-        <item name="colorOutline">@color/md_theme_light_6_outline</item>
-        <item name="colorOnSurfaceInverse">@color/md_theme_light_6_inverseOnSurface</item>
-        <item name="colorSurfaceInverse">@color/md_theme_light_6_inverseSurface</item>
-        <item name="colorPrimaryInverse">@color/md_theme_light_6_inversePrimary</item>
+    <style name="Theme.Sanin.Sun" parent="Theme.Base">
+        <item name="colorPrimary">@color/md_theme_light_sun_primary</item>
+        <item name="colorOnPrimary">@color/md_theme_light_sun_onPrimary</item>
+        <item name="colorPrimaryContainer">@color/md_theme_light_sun_primaryContainer</item>
+        <item name="colorOnPrimaryContainer">@color/md_theme_light_sun_onPrimaryContainer</item>
+        <item name="colorSecondary">@color/md_theme_light_sun_secondary</item>
+        <item name="colorOnSecondary">@color/md_theme_light_sun_onSecondary</item>
+        <item name="colorSecondaryContainer">@color/md_theme_light_sun_secondaryContainer</item>
+        <item name="colorOnSecondaryContainer">@color/md_theme_light_sun_onSecondaryContainer</item>
+        <item name="colorTertiary">@color/md_theme_light_sun_tertiary</item>
+        <item name="colorOnTertiary">@color/md_theme_light_sun_onTertiary</item>
+        <item name="colorTertiaryContainer">@color/md_theme_light_sun_tertiaryContainer</item>
+        <item name="colorOnTertiaryContainer">@color/md_theme_light_sun_onTertiaryContainer</item>
+        <item name="colorError">@color/md_theme_light_sun_error</item>
+        <item name="colorErrorContainer">@color/md_theme_light_sun_errorContainer</item>
+        <item name="colorOnError">@color/md_theme_light_sun_onError</item>
+        <item name="colorOnErrorContainer">@color/md_theme_light_sun_onErrorContainer</item>
+        <item name="android:colorBackground">@color/md_theme_light_sun_background</item>
+        <item name="colorOnBackground">@color/md_theme_light_sun_onBackground</item>
+        <item name="colorSurface">@color/md_theme_light_sun_surface</item>
+        <item name="colorOnSurface">@color/md_theme_light_sun_onSurface</item>
+        <item name="colorSurfaceVariant">@color/md_theme_light_sun_surfaceVariant</item>
+        <item name="colorOnSurfaceVariant">@color/md_theme_light_sun_onSurfaceVariant</item>
+        <item name="colorOutline">@color/md_theme_light_sun_outline</item>
+        <item name="colorOnSurfaceInverse">@color/md_theme_light_sun_inverseOnSurface</item>
+        <item name="colorSurfaceInverse">@color/md_theme_light_sun_inverseSurface</item>
+        <item name="colorPrimaryInverse">@color/md_theme_light_sun_inversePrimary</item>
     </style>
 
-    <style name="Theme.Sanin.Lavender" parent="Theme.Base">
-        <item name="colorPrimary">@color/md_theme_light_7_primary</item>
-        <item name="colorOnPrimary">@color/md_theme_light_7_onPrimary</item>
-        <item name="colorPrimaryContainer">@color/md_theme_light_7_primaryContainer</item>
-        <item name="colorOnPrimaryContainer">@color/md_theme_light_7_onPrimaryContainer</item>
-        <item name="colorSecondary">@color/md_theme_light_7_secondary</item>
-        <item name="colorOnSecondary">@color/md_theme_light_7_onSecondary</item>
-        <item name="colorSecondaryContainer">@color/md_theme_light_7_secondaryContainer</item>
-        <item name="colorOnSecondaryContainer">@color/md_theme_light_7_onSecondaryContainer</item>
-        <item name="colorTertiary">@color/md_theme_light_7_tertiary</item>
-        <item name="colorOnTertiary">@color/md_theme_light_7_onTertiary</item>
-        <item name="colorTertiaryContainer">@color/md_theme_light_7_tertiaryContainer</item>
-        <item name="colorOnTertiaryContainer">@color/md_theme_light_7_onTertiaryContainer</item>
-        <item name="colorError">@color/md_theme_light_7_error</item>
-        <item name="colorErrorContainer">@color/md_theme_light_7_errorContainer</item>
-        <item name="colorOnError">@color/md_theme_light_7_onError</item>
-        <item name="colorOnErrorContainer">@color/md_theme_light_7_onErrorContainer</item>
-        <item name="android:colorBackground">@color/md_theme_light_7_background</item>
-        <item name="colorOnBackground">@color/md_theme_light_7_onBackground</item>
-        <item name="colorSurface">@color/md_theme_light_7_surface</item>
-        <item name="colorOnSurface">@color/md_theme_light_7_onSurface</item>
-        <item name="colorSurfaceVariant">@color/md_theme_light_7_surfaceVariant</item>
-        <item name="colorOnSurfaceVariant">@color/md_theme_light_7_onSurfaceVariant</item>
-        <item name="colorOutline">@color/md_theme_light_7_outline</item>
-        <item name="colorOnSurfaceInverse">@color/md_theme_light_7_inverseOnSurface</item>
-        <item name="colorSurfaceInverse">@color/md_theme_light_7_inverseSurface</item>
-        <item name="colorPrimaryInverse">@color/md_theme_light_7_inversePrimary</item>
+    <style name="Theme.Sanin.Blood" parent="Theme.Base">
+        <item name="colorPrimary">@color/md_theme_light_blood_primary</item>
+        <item name="colorOnPrimary">@color/md_theme_light_blood_onPrimary</item>
+        <item name="colorPrimaryContainer">@color/md_theme_light_blood_primaryContainer</item>
+        <item name="colorOnPrimaryContainer">@color/md_theme_light_blood_onPrimaryContainer</item>
+        <item name="colorSecondary">@color/md_theme_light_blood_secondary</item>
+        <item name="colorOnSecondary">@color/md_theme_light_blood_onSecondary</item>
+        <item name="colorSecondaryContainer">@color/md_theme_light_blood_secondaryContainer</item>
+        <item name="colorOnSecondaryContainer">@color/md_theme_light_blood_onSecondaryContainer</item>
+        <item name="colorTertiary">@color/md_theme_light_blood_tertiary</item>
+        <item name="colorOnTertiary">@color/md_theme_light_blood_onTertiary</item>
+        <item name="colorTertiaryContainer">@color/md_theme_light_blood_tertiaryContainer</item>
+        <item name="colorOnTertiaryContainer">@color/md_theme_light_blood_onTertiaryContainer</item>
+        <item name="colorError">@color/md_theme_light_blood_error</item>
+        <item name="colorErrorContainer">@color/md_theme_light_blood_errorContainer</item>
+        <item name="colorOnError">@color/md_theme_light_blood_onError</item>
+        <item name="colorOnErrorContainer">@color/md_theme_light_blood_onErrorContainer</item>
+        <item name="android:colorBackground">@color/md_theme_light_blood_background</item>
+        <item name="colorOnBackground">@color/md_theme_light_blood_onBackground</item>
+        <item name="colorSurface">@color/md_theme_light_blood_surface</item>
+        <item name="colorOnSurface">@color/md_theme_light_blood_onSurface</item>
+        <item name="colorSurfaceVariant">@color/md_theme_light_blood_surfaceVariant</item>
+        <item name="colorOnSurfaceVariant">@color/md_theme_light_blood_onSurfaceVariant</item>
+        <item name="colorOutline">@color/md_theme_light_blood_outline</item>
+        <item name="colorOnSurfaceInverse">@color/md_theme_light_blood_inverseOnSurface</item>
+        <item name="colorSurfaceInverse">@color/md_theme_light_blood_inverseSurface</item>
+        <item name="colorPrimaryInverse">@color/md_theme_light_blood_inversePrimary</item>
     </style>
 
     <style name="Theme.Sanin.Ocean" parent="Theme.Base">
-        <item name="colorPrimary">@color/md_theme_light_8_primary</item>
-        <item name="colorOnPrimary">@color/md_theme_light_8_onPrimary</item>
-        <item name="colorPrimaryContainer">@color/md_theme_light_8_primaryContainer</item>
-        <item name="colorOnPrimaryContainer">@color/md_theme_light_8_onPrimaryContainer</item>
-        <item name="colorSecondary">@color/md_theme_light_8_secondary</item>
-        <item name="colorOnSecondary">@color/md_theme_light_8_onSecondary</item>
-        <item name="colorSecondaryContainer">@color/md_theme_light_8_secondaryContainer</item>
-        <item name="colorOnSecondaryContainer">@color/md_theme_light_8_onSecondaryContainer</item>
-        <item name="colorTertiary">@color/md_theme_light_8_tertiary</item>
-        <item name="colorOnTertiary">@color/md_theme_light_8_onTertiary</item>
-        <item name="colorTertiaryContainer">@color/md_theme_light_8_tertiaryContainer</item>
-        <item name="colorOnTertiaryContainer">@color/md_theme_light_8_onTertiaryContainer</item>
-        <item name="colorError">@color/md_theme_light_8_error</item>
-        <item name="colorErrorContainer">@color/md_theme_light_8_errorContainer</item>
-        <item name="colorOnError">@color/md_theme_light_8_onError</item>
-        <item name="colorOnErrorContainer">@color/md_theme_light_8_onErrorContainer</item>
-        <item name="android:colorBackground">@color/md_theme_light_8_background</item>
-        <item name="colorOnBackground">@color/md_theme_light_8_onBackground</item>
-        <item name="colorSurface">@color/md_theme_light_8_surface</item>
-        <item name="colorOnSurface">@color/md_theme_light_8_onSurface</item>
-        <item name="colorSurfaceVariant">@color/md_theme_light_8_surfaceVariant</item>
-        <item name="colorOnSurfaceVariant">@color/md_theme_light_8_onSurfaceVariant</item>
-        <item name="colorOutline">@color/md_theme_light_8_outline</item>
-        <item name="colorOnSurfaceInverse">@color/md_theme_light_8_inverseOnSurface</item>
-        <item name="colorSurfaceInverse">@color/md_theme_light_8_inverseSurface</item>
-        <item name="colorPrimaryInverse">@color/md_theme_light_8_inversePrimary</item>
+        <item name="colorPrimary">@color/md_theme_light_ocean_primary</item>
+        <item name="colorOnPrimary">@color/md_theme_light_ocean_onPrimary</item>
+        <item name="colorPrimaryContainer">@color/md_theme_light_ocean_primaryContainer</item>
+        <item name="colorOnPrimaryContainer">@color/md_theme_light_ocean_onPrimaryContainer</item>
+        <item name="colorSecondary">@color/md_theme_light_ocean_secondary</item>
+        <item name="colorOnSecondary">@color/md_theme_light_ocean_onSecondary</item>
+        <item name="colorSecondaryContainer">@color/md_theme_light_ocean_secondaryContainer</item>
+        <item name="colorOnSecondaryContainer">@color/md_theme_light_ocean_onSecondaryContainer</item>
+        <item name="colorTertiary">@color/md_theme_light_ocean_tertiary</item>
+        <item name="colorOnTertiary">@color/md_theme_light_ocean_onTertiary</item>
+        <item name="colorTertiaryContainer">@color/md_theme_light_ocean_tertiaryContainer</item>
+        <item name="colorOnTertiaryContainer">@color/md_theme_light_ocean_onTertiaryContainer</item>
+        <item name="colorError">@color/md_theme_light_ocean_error</item>
+        <item name="colorErrorContainer">@color/md_theme_light_ocean_errorContainer</item>
+        <item name="colorOnError">@color/md_theme_light_ocean_onError</item>
+        <item name="colorOnErrorContainer">@color/md_theme_light_ocean_onErrorContainer</item>
+        <item name="android:colorBackground">@color/md_theme_light_ocean_background</item>
+        <item name="colorOnBackground">@color/md_theme_light_ocean_onBackground</item>
+        <item name="colorSurface">@color/md_theme_light_ocean_surface</item>
+        <item name="colorOnSurface">@color/md_theme_light_ocean_onSurface</item>
+        <item name="colorSurfaceVariant">@color/md_theme_light_ocean_surfaceVariant</item>
+        <item name="colorOnSurfaceVariant">@color/md_theme_light_ocean_onSurfaceVariant</item>
+        <item name="colorOutline">@color/md_theme_light_ocean_outline</item>
+        <item name="colorOnSurfaceInverse">@color/md_theme_light_ocean_inverseOnSurface</item>
+        <item name="colorSurfaceInverse">@color/md_theme_light_ocean_inverseSurface</item>
+        <item name="colorPrimaryInverse">@color/md_theme_light_ocean_inversePrimary</item>
     </style>
 
-    <style name="Theme.Sanin.Oriax" parent="Theme.Base">
-        <item name="colorPrimary">@color/md_theme_light_9_primary</item>
-        <item name="colorOnPrimary">@color/md_theme_light_9_onPrimary</item>
-        <item name="colorPrimaryContainer">@color/md_theme_light_9_primaryContainer</item>
-        <item name="colorOnPrimaryContainer">@color/md_theme_light_9_onPrimaryContainer</item>
-        <item name="colorSecondary">@color/md_theme_light_9_secondary</item>
-        <item name="colorOnSecondary">@color/md_theme_light_9_onSecondary</item>
-        <item name="colorSecondaryContainer">@color/md_theme_light_9_secondaryContainer</item>
-        <item name="colorOnSecondaryContainer">@color/md_theme_light_9_onSecondaryContainer</item>
-        <item name="colorTertiary">@color/md_theme_light_9_tertiary</item>
-        <item name="colorOnTertiary">@color/md_theme_light_9_onTertiary</item>
-        <item name="colorTertiaryContainer">@color/md_theme_light_9_tertiaryContainer</item>
-        <item name="colorOnTertiaryContainer">@color/md_theme_light_9_onTertiaryContainer</item>
-        <item name="colorError">@color/md_theme_light_9_error</item>
-        <item name="colorErrorContainer">@color/md_theme_light_9_errorContainer</item>
-        <item name="colorOnError">@color/md_theme_light_9_onError</item>
-        <item name="colorOnErrorContainer">@color/md_theme_light_9_onErrorContainer</item>
-        <item name="android:colorBackground">@color/md_theme_light_9_background</item>
-        <item name="colorOnBackground">@color/md_theme_light_9_onBackground</item>
-        <item name="colorSurface">@color/md_theme_light_9_surface</item>
-        <item name="colorOnSurface">@color/md_theme_light_9_onSurface</item>
-        <item name="colorSurfaceVariant">@color/md_theme_light_9_surfaceVariant</item>
-        <item name="colorOnSurfaceVariant">@color/md_theme_light_9_onSurfaceVariant</item>
-        <item name="colorOutline">@color/md_theme_light_9_outline</item>
-        <item name="colorOnSurfaceInverse">@color/md_theme_light_9_inverseOnSurface</item>
-        <item name="colorSurfaceInverse">@color/md_theme_light_9_inverseSurface</item>
-        <item name="colorPrimaryInverse">@color/md_theme_light_9_inversePrimary</item>
+    <style name="Theme.Sanin.Kurama" parent="Theme.Base">
+        <item name="colorPrimary">@color/md_theme_light_kurama_primary</item>
+        <item name="colorOnPrimary">@color/md_theme_light_kurama_onPrimary</item>
+        <item name="colorPrimaryContainer">@color/md_theme_light_kurama_primaryContainer</item>
+        <item name="colorOnPrimaryContainer">@color/md_theme_light_kurama_onPrimaryContainer</item>
+        <item name="colorSecondary">@color/md_theme_light_kurama_secondary</item>
+        <item name="colorOnSecondary">@color/md_theme_light_kurama_onSecondary</item>
+        <item name="colorSecondaryContainer">@color/md_theme_light_kurama_secondaryContainer</item>
+        <item name="colorOnSecondaryContainer">@color/md_theme_light_kurama_onSecondaryContainer</item>
+        <item name="colorTertiary">@color/md_theme_light_kurama_tertiary</item>
+        <item name="colorOnTertiary">@color/md_theme_light_kurama_onTertiary</item>
+        <item name="colorTertiaryContainer">@color/md_theme_light_kurama_tertiaryContainer</item>
+        <item name="colorOnTertiaryContainer">@color/md_theme_light_kurama_onTertiaryContainer</item>
+        <item name="colorError">@color/md_theme_light_kurama_error</item>
+        <item name="colorErrorContainer">@color/md_theme_light_kurama_errorContainer</item>
+        <item name="colorOnError">@color/md_theme_light_kurama_onError</item>
+        <item name="colorOnErrorContainer">@color/md_theme_light_kurama_onErrorContainer</item>
+        <item name="android:colorBackground">@color/md_theme_light_kurama_background</item>
+        <item name="colorOnBackground">@color/md_theme_light_kurama_onBackground</item>
+        <item name="colorSurface">@color/md_theme_light_kurama_surface</item>
+        <item name="colorOnSurface">@color/md_theme_light_kurama_onSurface</item>
+        <item name="colorSurfaceVariant">@color/md_theme_light_kurama_surfaceVariant</item>
+        <item name="colorOnSurfaceVariant">@color/md_theme_light_kurama_onSurfaceVariant</item>
+        <item name="colorOutline">@color/md_theme_light_kurama_outline</item>
+        <item name="colorOnSurfaceInverse">@color/md_theme_light_kurama_inverseOnSurface</item>
+        <item name="colorSurfaceInverse">@color/md_theme_light_kurama_inverseSurface</item>
+        <item name="colorPrimaryInverse">@color/md_theme_light_kurama_inversePrimary</item>
     </style>
 
     <style name="Theme.Sanin.Monochrome" parent="Theme.Base">
@@ -361,17 +332,11 @@
     </style>
 
     <style name="Theme.Sanin.AppWidgetContainerParent" parent="@android:style/Theme.DeviceDefault">
-        <!-- Radius of the outer bound of widgets to make the rounded corners -->
         <item name="appWidgetRadius">16dp</item>
-        <!--
-        Radius of the inner view's bound of widgets to make the rounded corners.
-        It needs to be 8dp or less than the value of appWidgetRadius
-        -->
         <item name="appWidgetInnerRadius">8dp</item>
     </style>
 
     <style name="Theme.Sanin.AppWidgetContainer" parent="Theme.Sanin.AppWidgetContainerParent">
-        <!-- Apply padding to avoid the content of the widget colliding with the rounded corners -->
         <item name="appWidgetPadding">16dp</item>
     </style>
 

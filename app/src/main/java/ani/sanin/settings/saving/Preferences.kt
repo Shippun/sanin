@@ -138,7 +138,7 @@ enum class PrefName(val data: Pref) {
 
     UIScale(Pref(Location.UI, Float::class, 1.0f)),
 
-    AccentColor(Pref(Location.UI, Int::class, 7)),
+    AccentColor(Pref(Location.UI, Int::class, 0)),
     SwapColors(Pref(Location.UI, Boolean::class, false)),
 
     CardOrientation(Pref(Location.UI, Int::class, 1)),

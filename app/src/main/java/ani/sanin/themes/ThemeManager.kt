@@ -66,16 +66,16 @@ class ThemeManager(private val context: Activity) {
         }
 
         val themeToApply = when (theme) {
-            "BLUE" -> if (useOLED) R.style.Theme_Sanin_BlueOLED else R.style.Theme_Sanin_Blue
-            "GREEN" -> if (useOLED) R.style.Theme_Sanin_GreenOLED else R.style.Theme_Sanin_Green
-            "PINK" -> if (useOLED) R.style.Theme_Sanin_PinkOLED else R.style.Theme_Sanin_Pink
-            "ORIAX" -> if (useOLED) R.style.Theme_Sanin_OriaxOLED else R.style.Theme_Sanin_Oriax
-            "SAIKOU" -> if (useOLED) R.style.Theme_Sanin_SaikouOLED else R.style.Theme_Sanin_Saikou
-            "RED" -> if (useOLED) R.style.Theme_Sanin_RedOLED else R.style.Theme_Sanin_Red
-            "LAVENDER" -> if (useOLED) R.style.Theme_Sanin_LavenderOLED else R.style.Theme_Sanin_Lavender
+            "SANIN" -> if (useOLED) R.style.Theme_Sanin_SaninOLED else R.style.Theme_Sanin_Sanin
             "OCEAN" -> if (useOLED) R.style.Theme_Sanin_OceanOLED else R.style.Theme_Sanin_Ocean
-            "MONOCHROME (BETA)" -> if (useOLED) R.style.Theme_Sanin_MonochromeOLED else R.style.Theme_Sanin_Monochrome
-            else -> if (useOLED) R.style.Theme_Sanin_BlueOLED else R.style.Theme_Sanin_Blue
+            "BLOOD" -> if (useOLED) R.style.Theme_Sanin_BloodOLED else R.style.Theme_Sanin_Blood
+            "LIME" -> if (useOLED) R.style.Theme_Sanin_LimeOLED else R.style.Theme_Sanin_Lime
+            "SUN" -> if (useOLED) R.style.Theme_Sanin_SunOLED else R.style.Theme_Sanin_Sun
+            "KURAMA" -> if (useOLED) R.style.Theme_Sanin_KuramaOLED else R.style.Theme_Sanin_Kurama
+            "SAIKOU" -> if (useOLED) R.style.Theme_Sanin_SaikouOLED else R.style.Theme_Sanin_Saikou
+            "INDIGO" -> if (useOLED) R.style.Theme_Sanin_IndigoOLED else R.style.Theme_Sanin_Indigo
+            "MONOCHROME" -> if (useOLED) R.style.Theme_Sanin_MonochromeOLED else R.style.Theme_Sanin_Monochrome
+            else -> if (useOLED) R.style.Theme_Sanin_SaninOLED else R.style.Theme_Sanin_Sanin
         }
 
         val window = context.window
@@ -158,34 +158,28 @@ class ThemeManager(private val context: Activity) {
 
     companion object {
         fun accentColorToInt(index: Int): Int = when (index) {
-            1 -> Color.parseColor("#F44336")
-            2 -> Color.parseColor("#E91E63")
-            3 -> Color.parseColor("#9C27B0")
-            4 -> Color.parseColor("#673AB7")
-            5 -> Color.parseColor("#3F51B5")
-            6 -> Color.parseColor("#2196F3")
-            7 -> Color.parseColor("#03A9F4")
-            8 -> Color.parseColor("#00BCD4")
-            9 -> Color.parseColor("#009688")
-            10 -> Color.parseColor("#4CAF50")
-            11 -> Color.parseColor("#8BC34A")
-            12 -> Color.parseColor("#CDDC39")
-            13 -> Color.parseColor("#FFEB3B")
-            14 -> Color.parseColor("#FFC107")
-            15 -> Color.parseColor("#FF9800")
-            16 -> Color.parseColor("#FF5722")
-            else -> Color.parseColor("#03A9F4")
+            0 -> Color.parseColor("#005B96")
+            1 -> Color.parseColor("#00BCD4")
+            2 -> Color.parseColor("#CC0000")
+            3 -> Color.parseColor("#8BC34A")
+            4 -> Color.parseColor("#FFD700")
+            5 -> Color.parseColor("#FF6600")
+            6 -> Color.parseColor("#FF007F")
+            7 -> Color.parseColor("#4B0082")
+            else -> Color.parseColor("#005B96")
         }
 
         fun accentColorToTheme(index: Int): String = when (index) {
-            1, 16 -> "RED"
-            2 -> "PINK"
-            3, 4 -> "LAVENDER"
-            5, 6, 7 -> "BLUE"
-            8, 9 -> "OCEAN"
-            10, 11, 12 -> "GREEN"
-            13, 14, 15 -> "ORIAX"
-            else -> "BLUE"
+            0 -> "SANIN"
+            1 -> "OCEAN"
+            2 -> "BLOOD"
+            3 -> "LIME"
+            4 -> "SUN"
+            5 -> "KURAMA"
+            6 -> "SAIKOU"
+            7 -> "INDIGO"
+            8 -> "MONOCHROME"
+            else -> "SANIN"
         }
 
         fun applyUIScale(activity: Activity) {
@@ -196,19 +190,19 @@ class ThemeManager(private val context: Activity) {
         }
 
         enum class Theme(val theme: String) {
-            BLUE("BLUE"),
-            GREEN("GREEN"),
-            PINK("PINK"),
-            ORIAX("ORIAX"),
-            SAIKOU("SAIKOU"),
-            RED("RED"),
-            LAVENDER("LAVENDER"),
+            SANIN("SANIN"),
             OCEAN("OCEAN"),
-            MONOCHROME("MONOCHROME (BETA)");
+            BLOOD("BLOOD"),
+            LIME("LIME"),
+            SUN("SUN"),
+            KURAMA("KURAMA"),
+            SAIKOU("SAIKOU"),
+            INDIGO("INDIGO"),
+            MONOCHROME("MONOCHROME");
 
             companion object {
                 fun fromString(value: String): Theme {
-                    return entries.find { it.theme == value } ?: BLUE
+                    return entries.find { it.theme == value } ?: SANIN
                 }
             }
         }

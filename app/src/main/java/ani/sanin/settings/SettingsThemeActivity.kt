@@ -44,11 +44,9 @@ class SettingsThemeActivity : AppCompatActivity() {
 
             val themeModes = arrayOf("Light", "Dark")
             val accentColors = arrayOf(
-                0 to "Default", 1 to "Red", 2 to "Pink", 3 to "Purple",
-                4 to "Deep Purple", 5 to "Indigo", 6 to "Blue", 7 to "Light Blue",
-                8 to "Cyan", 9 to "Teal", 10 to "Green", 11 to "Light Green",
-                12 to "Lime", 13 to "Yellow", 14 to "Amber", 15 to "Orange",
-                16 to "Deep Orange"
+                0 to "Sanin", 1 to "Ocean", 2 to "Blood", 3 to "Lime",
+                4 to "Sun", 5 to "Kurama", 6 to "Saikou", 7 to "Indigo",
+                8 to "Monochrome"
             )
 
             settingsRecyclerView.adapter = SettingsAdapter(
