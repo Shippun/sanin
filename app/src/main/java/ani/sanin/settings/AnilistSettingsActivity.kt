@@ -270,11 +270,7 @@ class AnilistSettingsActivity : AppCompatActivity() {
         val textInputLayout = customListItemView.findViewById<TextInputLayout>(R.id.customListItem)
         val editText = textInputLayout.editText as? TextInputEditText
         editText?.setText(listName)
-        editText?.setOnFocusChangeListener { _, hasFocus ->
-            if (hasFocus) {
-                TvKeyboardUtil.showKeyboardDelayed(editText)
-            }
-        }
+        editText?.let { TvKeyboardUtil.setupTvInput(it) }
         textInputLayout.setEndIconOnClickListener {
             val name = editText?.text.toString()
             if (name.isNotEmpty()) {

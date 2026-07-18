@@ -17,6 +17,7 @@ import ani.sanin.R
 import ani.sanin.databinding.ActivityPlayerSettingsBinding
 import ani.sanin.initActivity
 import ani.sanin.media.Media
+import ani.sanin.util.TvKeyboardUtil
 import ani.sanin.media.anime.VideoCache
 import ani.sanin.navBarHeight
 import ani.sanin.others.Xpandable
@@ -324,6 +325,7 @@ class PlayerSettingsActivity :
                     setText(PrefManager.getVal<Int>(PrefName.SkipTime).toString())
                     inputType = android.text.InputType.TYPE_CLASS_NUMBER
                     selectAll()
+                    TvKeyboardUtil.setupTvInput(this)
                 }
                 setCustomView(input)
                 setPosButton(R.string.ok) {

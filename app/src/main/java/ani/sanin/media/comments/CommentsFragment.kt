@@ -313,6 +313,7 @@ class CommentsFragment : Fragment() {
                 setOnShowListener {
                     customView.dialogEditText.requestFocus()
                     TvKeyboardUtil.showKeyboardDelayed(customView.dialogEditText)
+                    TvKeyboardUtil.applyTvFocusBorder(customView.dialogEditText)
                 }
                 show()
             }
@@ -472,9 +473,10 @@ class CommentsFragment : Fragment() {
             }
         })
 
-        activity.binding.commentInput.setOnFocusChangeListener { _, hasFocus ->
+        activity.binding.commentInput.setOnFocusChangeListener { v, hasFocus ->
             if (hasFocus) {
-                TvKeyboardUtil.showKeyboardDelayed(activity.binding.commentInput)
+                TvKeyboardUtil.showKeyboardDelayed(v)
+                TvKeyboardUtil.applyTvFocusBorder(v)
                 val targetWidth = activity.binding.commentInputLayout.width -
                         activity.binding.commentLabel.width -
                         activity.binding.commentSend.width -
@@ -540,6 +542,7 @@ class CommentsFragment : Fragment() {
                         customView.dialogEditText.requestFocus()
                         val imm = activity?.getSystemService(INPUT_METHOD_SERVICE) as? InputMethodManager
                         TvKeyboardUtil.showKeyboardDelayed(customView.dialogEditText)
+                        TvKeyboardUtil.applyTvFocusBorder(customView.dialogEditText)
                     }
                     show()
                 }
@@ -784,6 +787,7 @@ class CommentsFragment : Fragment() {
                 customView.dialogEditText.requestFocus()
                 val imm = activity?.getSystemService(INPUT_METHOD_SERVICE) as? InputMethodManager
                 TvKeyboardUtil.showKeyboardDelayed(customView.dialogEditText)
+                TvKeyboardUtil.applyTvFocusBorder(customView.dialogEditText)
             }
             show()
         }

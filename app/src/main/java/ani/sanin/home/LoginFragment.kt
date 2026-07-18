@@ -68,11 +68,7 @@ class LoginFragment : Fragment() {
             }
         }
 
-        binding.loginTokenEditText.setOnFocusChangeListener { _, hasFocus ->
-            if (hasFocus) {
-                TvKeyboardUtil.showKeyboardDelayed(binding.loginTokenEditText)
-            }
-        }
+        TvKeyboardUtil.setupTvInput(binding.loginTokenEditText)
 
         val openDocumentLauncher =
             registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->

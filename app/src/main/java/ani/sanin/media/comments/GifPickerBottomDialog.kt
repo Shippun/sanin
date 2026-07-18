@@ -71,11 +71,7 @@ class GifPickerBottomDialog : BottomSheetDialogFragment() {
             }
         })
 
-        binding.gifSearchInput.setOnFocusChangeListener { _, hasFocus ->
-            if (hasFocus) {
-                TvKeyboardUtil.showKeyboardDelayed(binding.gifSearchInput)
-            }
-        }
+        TvKeyboardUtil.setupTvInput(binding.gifSearchInput)
 
         loadTrending()
     }

@@ -18,6 +18,7 @@ import ani.sanin.navBarHeight
 import ani.sanin.openLinkInBrowser
 import ani.sanin.others.AndroidBug5497Workaround
 import ani.sanin.statusBarHeight
+import ani.sanin.util.TvKeyboardUtil
 import ani.sanin.themes.ThemeManager
 import ani.sanin.toast
 import ani.sanin.util.FocusEffectUtil
@@ -241,6 +242,7 @@ class ActivityMarkdownCreator : AppCompatActivity() {
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT
             )
+            TvKeyboardUtil.setupTvInput(this)
         }
 
         inputLayout.addView(inputEditText)

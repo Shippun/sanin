@@ -139,12 +139,7 @@ class ExtensionsActivity : AppCompatActivity() {
             }
         })
 
-        FocusEffectUtil.applyFocusListener(binding.searchViewText)
-        binding.searchViewText.setOnFocusChangeListener { _, hasFocus ->
-            if (hasFocus) {
-                TvKeyboardUtil.showKeyboardDelayed(binding.searchViewText)
-            }
-        }
+        TvKeyboardUtil.setupTvInput(binding.searchViewText)
 
         initActivity(this)
         binding.languageselect.setOnClickListener {

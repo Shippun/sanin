@@ -47,11 +47,7 @@ class ProxyDialogFragment : BottomSheetDialogFragment() {
         binding.proxyAuthentication.isChecked = authEnabled
 
         listOf(binding.proxyHost, binding.proxyPort, binding.proxyUsername, binding.proxyPassword).forEach { input ->
-            input.setOnFocusChangeListener { _, hasFocus ->
-                if (hasFocus) {
-                    TvKeyboardUtil.showKeyboardDelayed(input)
-                }
-            }
+            TvKeyboardUtil.setupTvInput(input)
         }
 
         toggleAuthentication(authEnabled)

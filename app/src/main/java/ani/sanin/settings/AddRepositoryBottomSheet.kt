@@ -98,11 +98,7 @@ class AddRepositoryBottomSheet : DialogFragment() {
         adapter.addAll(repositories.map { RepoItem(it, mediaType, ::onRepositoryRemoved) })
 
         binding.repositoryInput.hint = getString(R.string.anime_add_repository)
-        binding.repositoryInput.setOnFocusChangeListener { _, hasFocus ->
-            if (hasFocus) {
-                TvKeyboardUtil.showKeyboardDelayed(binding.repositoryInput)
-            }
-        }
+        TvKeyboardUtil.setupTvInput(binding.repositoryInput)
 
         binding.addButton.setOnClickListener {
             val input = binding.repositoryInput.text.toString()

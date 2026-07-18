@@ -152,11 +152,7 @@ class SubtitleSyncDialogFragment : DialogFragment() {
         applySyncFocus(binding.syncReset)
         applySyncFocus(binding.syncApply)
 
-        binding.syncOffsetInput.setOnFocusChangeListener { _, hasFocus ->
-            if (hasFocus) {
-                TvKeyboardUtil.showKeyboardDelayed(binding.syncOffsetInput)
-            }
-        }
+        TvKeyboardUtil.setupTvInput(binding.syncOffsetInput)
 
         binding.syncSubtractMore.setOnClickListener { changeBy(-1000L) }
         binding.syncSubtract.setOnClickListener { changeBy(-100L) }

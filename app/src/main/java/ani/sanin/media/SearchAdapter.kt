@@ -282,9 +282,7 @@ class SearchAdapter(private val activity: SearchActivity, private val type: Sear
             } else visibility = View.GONE
         }
 
-        binding.searchBarText.setOnFocusChangeListener { v, hasFocus ->
-            if (hasFocus) TvKeyboardUtil.showKeyboardDelayed(v)
-        }
+        TvKeyboardUtil.setupTvInput(binding.searchBarText)
         search = Runnable { searchTitle() }
         requestFocus = Runnable { binding.searchBarText.requestFocus() }
     }

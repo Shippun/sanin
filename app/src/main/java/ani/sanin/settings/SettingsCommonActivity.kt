@@ -141,9 +141,7 @@ class SettingsCommonActivity : AppCompatActivity() {
                 settingsExtensionDns.clearFocus()
                 restartApp()
             }
-            settingsExtensionDns.setOnFocusChangeListener { v, hasFocus ->
-                if (hasFocus) TvKeyboardUtil.showKeyboardDelayed(v)
-            }
+            TvKeyboardUtil.setupTvInput(settingsExtensionDns)
 
             val startUpTabs = arrayOf("Home", "Anime")
 

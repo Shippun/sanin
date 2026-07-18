@@ -130,6 +130,8 @@ class ListActivity : AppCompatActivity() {
             }
         }
 
+        TvKeyboardUtil.setupTvInput(binding.searchViewText)
+
         if (PrefManager.getVal<Boolean>(PrefName.RescueMode)) {
             binding.listSort.visibility = View.GONE
         }

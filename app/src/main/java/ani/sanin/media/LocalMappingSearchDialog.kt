@@ -107,9 +107,7 @@ class LocalMappingSearchDialog : BottomSheetDialogFragment() {
             }
         }
 
-        binding.searchBarText.setOnFocusChangeListener { v, hasFocus ->
-            if (hasFocus) TvKeyboardUtil.showKeyboardDelayed(v)
-        }
+        TvKeyboardUtil.setupTvInput(binding.searchBarText)
         binding.searchBarText.setOnEditorActionListener { _, actionId, _ ->
             return@setOnEditorActionListener when (actionId) {
                 EditorInfo.IME_ACTION_SEARCH -> {
