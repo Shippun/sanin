@@ -124,7 +124,7 @@ class HomeFragment : Fragment() {
                     binding.homeBannerCarousel.visibility = View.GONE
                     binding.homeUserBg.visibility = View.VISIBLE
                     binding.homeUserBgNoKen.visibility = View.VISIBLE
-                    val bannerAnimations: Boolean = PrefManager.getVal(PrefName.BannerAnimations)
+                    val bannerAnimations: Boolean = PrefManager.getVal<Boolean>(PrefName.AnimationsEnabled) && PrefManager.getVal<Boolean>(PrefName.BannerAnimations)
                     val bannerUrl = if (rescueMode) (Anilist.bg ?: MAL.avatar) else Anilist.bg
                     blurImage(
                         if (bannerAnimations) binding.homeUserBg else binding.homeUserBgNoKen,
@@ -210,7 +210,7 @@ class HomeFragment : Fragment() {
             }
         }
 
-        val duration = ((PrefManager.getVal(PrefName.AnimationSpeed) as Float) * 200).toLong()
+        val duration = if (PrefManager.getVal<Boolean>(PrefName.AnimationsEnabled) && PrefManager.getVal<Boolean>(PrefName.HomeAnimations)) (PrefManager.getVal<Float>(PrefName.AnimationSpeed) * 200).toLong() else 0L
         var height = statusBarHeight
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             val displayCutout = activity?.window?.decorView?.rootWindowInsets?.displayCutout

@@ -226,7 +226,7 @@ class MediaAdaptor(
                 val media = mediaList?.get(position)
                 if (media != null) {
 
-                    val bannerAnimations: Boolean = PrefManager.getVal(PrefName.BannerAnimations)
+                    val bannerAnimations: Boolean = PrefManager.getVal<Boolean>(PrefName.AnimationsEnabled) && PrefManager.getVal<Boolean>(PrefName.BannerAnimations)
                     b.itemCompactImage.loadImage(media.cover)
                     if (bannerAnimations)
                         b.itemCompactBanner.setTransitionGenerator(
@@ -272,7 +272,7 @@ class MediaAdaptor(
                 val b = (holder as MediaPageSmallViewHolder).binding
                 val media = mediaList?.get(position)
                 if (media != null) {
-                    val bannerAnimations: Boolean = PrefManager.getVal(PrefName.BannerAnimations)
+                    val bannerAnimations: Boolean = PrefManager.getVal<Boolean>(PrefName.AnimationsEnabled) && PrefManager.getVal<Boolean>(PrefName.BannerAnimations)
                     b.itemCompactImage.loadImage(media.cover)
                     if (bannerAnimations)
                         b.itemCompactBanner.setTransitionGenerator(

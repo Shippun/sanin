@@ -173,7 +173,7 @@ class MediaDetailsActivity : AppCompatActivity() {
         val allNav = listOfNotNull(navInfo, navWatch, navComments)
         allNav.forEach { FocusEffectUtil.applyFocusListener(it) }
 
-        binding.navPillBg?.live = PrefManager.getVal(PrefName.LiveSideRail)
+        binding.navPillBg?.live = PrefManager.getVal<Boolean>(PrefName.AnimationsEnabled) && PrefManager.getVal<Boolean>(PrefName.LiveSideRail)
         binding.navPillBg?.setGlassEnabled(
             GlassEffectManager.isComponentEnabled(GlassComponent.NavPills)
         )
@@ -377,7 +377,7 @@ class MediaDetailsActivity : AppCompatActivity() {
                 extContainer.visibility = View.GONE
             }
         }
-        binding.navPillBg?.live = PrefManager.getVal(PrefName.LiveSideRail)
+        binding.navPillBg?.live = PrefManager.getVal<Boolean>(PrefName.AnimationsEnabled) && PrefManager.getVal<Boolean>(PrefName.LiveSideRail)
         if (PrefManager.getVal<Boolean>(PrefName.SideRailPersist)) {
             showNavPills()
         }

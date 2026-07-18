@@ -378,7 +378,7 @@ class Stories @JvmOverloads constructor(
                             ""
                         }
                 binding.infoText.text = text
-                val bannerAnimations: Boolean = PrefManager.getVal(PrefName.BannerAnimations)
+                val bannerAnimations: Boolean = PrefManager.getVal<Boolean>(PrefName.AnimationsEnabled) && PrefManager.getVal<Boolean>(PrefName.BannerAnimations)
                 blurImage(
                     if (bannerAnimations) binding.contentImageViewKen else binding.contentImageView,
                     story.media?.bannerImage ?: story.media?.coverImage?.extraLarge

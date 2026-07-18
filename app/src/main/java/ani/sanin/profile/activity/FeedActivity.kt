@@ -41,7 +41,7 @@ class FeedActivity : AppCompatActivity() {
         binding.notificationToolbar.updateLayoutParams<ViewGroup.MarginLayoutParams> {
             topMargin = statusBarHeight
         }
-        binding.notificationNavRailBg.live = PrefManager.getVal(PrefName.LiveSideRail)
+        binding.notificationNavRailBg.live = PrefManager.getVal<Boolean>(PrefName.AnimationsEnabled) && PrefManager.getVal<Boolean>(PrefName.LiveSideRail)
         binding.notificationNavRailBg.setGlassEnabled(
             GlassEffectManager.isComponentEnabled(GlassComponent.NavPills)
         )

@@ -41,6 +41,7 @@ import androidx.media3.common.util.UnstableApi
 import androidx.recyclerview.widget.RecyclerView
 import ani.sanin.blurImage
 import ani.sanin.connections.LogoApi
+import ani.sanin.media.anime.ExoplayerView
 import ani.sanin.connections.anilist.Anilist
 import ani.sanin.connections.anilist.AnilistHomeViewModel
 import ani.sanin.connections.mal.MAL
@@ -559,7 +560,7 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         loadAvatar()
-        binding.homeNavRailBg.live = PrefManager.getVal(PrefName.LiveSideRail)
+        binding.homeNavRailBg.live = PrefManager.getVal<Boolean>(PrefName.AnimationsEnabled) && PrefManager.getVal<Boolean>(PrefName.LiveSideRail)
         binding.homeNavRailBg.setGlassEnabled(
             GlassEffectManager.isComponentEnabled(GlassComponent.NavPills)
         )
@@ -704,7 +705,7 @@ class MainActivity : AppCompatActivity() {
             binding.homeNavRail.clipToOutline = true
         }
 
-        binding.homeNavRailBg.live = PrefManager.getVal(PrefName.LiveSideRail)
+        binding.homeNavRailBg.live = PrefManager.getVal<Boolean>(PrefName.AnimationsEnabled) && PrefManager.getVal<Boolean>(PrefName.LiveSideRail)
         binding.homeNavRailBg.setGlassEnabled(
             GlassEffectManager.isComponentEnabled(GlassComponent.NavPills)
         )
@@ -823,7 +824,11 @@ class MainActivity : AppCompatActivity() {
             R.id.rightRailClearCache to {
                 try {
                     cacheDir.deleteRecursively()
+                    externalCacheDir?.deleteRecursively()
                     Glide.get(this).clearMemory()
+                    Glide.get(this).clearDiskCache()
+                    LogoApi.clearCache()
+                    ExoplayerView.clearAllCaches()
                     snackString("Cache cleared")
                 } catch (e: Exception) {
                     snackString("Failed to clear cache: ${e.message}")

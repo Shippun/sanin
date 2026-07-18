@@ -187,7 +187,7 @@ class ProfileActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedListene
                     }
 
                     val bannerAnimations: ImageView =
-                        if (PrefManager.getVal(PrefName.BannerAnimations)) profileBannerImage else profileBannerImageNoKen
+                        if (PrefManager.getVal<Boolean>(PrefName.AnimationsEnabled) && PrefManager.getVal<Boolean>(PrefName.BannerAnimations)) profileBannerImage else profileBannerImageNoKen
 
                     blurImage(
                         bannerAnimations,
@@ -277,7 +277,7 @@ class ProfileActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedListene
         with(bindingProfileAppBar) {
             profileUserAvatarContainer.visibility =
                 if (profileUserAvatarContainer.scaleX == 0f) View.GONE else View.VISIBLE
-            val duration = (200 * (PrefManager.getVal(PrefName.AnimationSpeed) as Float)).toLong()
+            val duration = if (PrefManager.getVal<Boolean>(PrefName.AnimationsEnabled) && PrefManager.getVal<Boolean>(PrefName.ProfileAnimations)) (200 * PrefManager.getVal<Float>(PrefName.AnimationSpeed)).toLong() else 0L
             if (percentage >= percent && !isCollapsed) {
                 isCollapsed = true
                 ObjectAnimator.ofFloat(profileUserDataContainer, "translationX", screenWidth)
@@ -297,7 +297,7 @@ class ProfileActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedListene
                 ObjectAnimator.ofFloat(profileButtonContainer, "translationX", 0f)
                     .setDuration(duration).start()
 
-                if (PrefManager.getVal(PrefName.BannerAnimations)) profileBannerImage.resume()
+                if (PrefManager.getVal<Boolean>(PrefName.AnimationsEnabled) && PrefManager.getVal<Boolean>(PrefName.BannerAnimations)) profileBannerImage.resume()
             }
         }
     }

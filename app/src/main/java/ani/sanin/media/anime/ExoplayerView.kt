@@ -267,6 +267,20 @@ class ExoplayerView :
         private const val BUFFER_FOR_PLAYBACK_AFTER_REBUFFER_MS = 5000
         private const val BACK_BUFFER_DURATION_MS = 1000 * 60 * 2
         private const val MAX_PLAYER_ERROR_RETRIES = 1
+
+        fun clearAllCaches() {
+            try {
+                val ctx = ani.sanin.App.instance
+                val cacheDir = ctx?.cacheDir
+                if (cacheDir != null) {
+                    cacheDir.listFiles()?.forEach { file ->
+                        if (file.name.startsWith("online_subtitle_") || file.name.startsWith("local_sub_")) {
+                            file.delete()
+                        }
+                    }
+                }
+            } catch (_: Exception) { }
+        }
     }
 
 
@@ -705,7 +719,7 @@ class ExoplayerView :
             exoSkip.visibility = View.GONE
         }
 
-        val gestureSpeed = (300 * PrefManager.getVal<Float>(PrefName.AnimationSpeed)).toLong()
+        val gestureSpeed = if (PrefManager.getVal<Boolean>(PrefName.AnimationsEnabled) && PrefManager.getVal<Boolean>(PrefName.PlayerGestureAnimations)) (300 * PrefManager.getVal<Float>(PrefName.AnimationSpeed)).toLong() else 0L
         // Player UI Visibility Handler
         val brightnessRunnable =
             Runnable {
@@ -826,7 +840,7 @@ class ExoplayerView :
             },
         )
         val overshoot = AnimationUtils.loadInterpolator(this, R.anim.over_shoot)
-        val controllerDuration = (300 * PrefManager.getVal<Float>(PrefName.AnimationSpeed)).toLong()
+        val controllerDuration = if (PrefManager.getVal<Boolean>(PrefName.AnimationsEnabled) && PrefManager.getVal<Boolean>(PrefName.PlayerControllerAnimations)) (300 * PrefManager.getVal<Float>(PrefName.AnimationSpeed)).toLong() else 0L
 
         fun handleController() {
             if (if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) !isInPictureInPictureMode else true) {
