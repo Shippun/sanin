@@ -121,6 +121,7 @@ class MediaAdaptor(
     }
 
     private var logoJobs = mutableMapOf<Int, Job>()
+    private var backdropJobs = mutableMapOf<Int, Job>()
 
     private fun bindLogo(
         clearlogo: ImageView,
@@ -496,8 +497,8 @@ class MediaAdaptor(
 
             b.itemCompactImage.scaleType = ImageView.ScaleType.CENTER_CROP
             b.itemCompactImage.loadImage(media.cover)
-            logoJobs[position]?.cancel()
-            logoJobs[position] = CoroutineScope(Dispatchers.IO).launch {
+            backdropJobs[position]?.cancel()
+            backdropJobs[position] = CoroutineScope(Dispatchers.IO).launch {
                 val backdropUrl = AniZip.getBackdropUrl(media.id)
                 if (backdropUrl != null) {
                     withContext(Dispatchers.Main) {
