@@ -6,8 +6,6 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.view.inputmethod.EditorInfo
-import android.view.inputmethod.InputMethodManager
-import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.recyclerview.widget.LinearLayoutManager
 import ani.sanin.App.Companion.context
@@ -36,9 +34,6 @@ class SupportingSearchAdapter(private val activity: SearchActivity, private val 
         }
         binding.searchHistoryList.layoutManager = LinearLayoutManager(binding.root.context)
         binding.searchHistoryList.adapter = searchHistoryAdapter
-
-        val imm: InputMethodManager =
-            activity.getSystemService(AppCompatActivity.INPUT_METHOD_SERVICE) as InputMethodManager
 
         if (activity.searchType == SearchType.MANGA || activity.searchType == SearchType.ANIME) {
             throw IllegalArgumentException("Invalid search type (wrong adapter)")
@@ -129,7 +124,7 @@ class SupportingSearchAdapter(private val activity: SearchActivity, private val 
                 EditorInfo.IME_ACTION_SEARCH -> {
                     searchTitle()
                     binding.searchBarText.clearFocus()
-                    imm.hideSoftInputFromWindow(binding.searchBarText.windowToken, 0)
+                    TvKeyboardUtil.hideKeyboard(binding.searchBarText)
                     true
                 }
 

@@ -38,6 +38,10 @@ object TvKeyboardUtil {
     }
 
     fun showKeyboard(view: View) {
+        if (isTv(view.context)) {
+            view.requestFocus()
+            return
+        }
         val imm = view.context.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
             ?: return
         imm.showSoftInput(view, InputMethodManager.SHOW_FORCED)
@@ -49,6 +53,7 @@ object TvKeyboardUtil {
         if (backDismissed.add(view)) {
             setupBackDismiss(view)
         }
+        if (isTv(view.context)) return
         view.postDelayed({
             val imm = view.context.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
                 ?: return@postDelayed
@@ -57,6 +62,10 @@ object TvKeyboardUtil {
     }
 
     fun hideKeyboard(view: View) {
+        if (isTv(view.context)) {
+            view.clearFocus()
+            return
+        }
         val imm = view.context.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
             ?: return
         imm.hideSoftInputFromWindow(view.windowToken, 0)
@@ -81,11 +90,13 @@ object TvKeyboardUtil {
                     return@setOnKeyListener false
                 }
                 backHandled[v] = true
-                (v.context.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager)?.let { imm ->
-                    imm.hideSoftInputFromWindow(v.windowToken, 0)
-                    imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0)
+                if (isTv(v.context)) {
+                    v.clearFocus()
+                } else {
+                    (v.context.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager)?.let { imm ->
+                        imm.hideSoftInputFromWindow(v.windowToken, 0)
+                    }
                 }
-                v.clearFocus()
                 return@setOnKeyListener true
             }
             false
