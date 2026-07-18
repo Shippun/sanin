@@ -14,6 +14,7 @@ import android.graphics.drawable.Drawable
 import android.view.View
 import android.view.ViewTreeObserver
 import androidx.annotation.ColorInt
+import androidx.recyclerview.widget.RecyclerView
 import java.lang.ref.WeakReference
 import kotlin.math.PI
 import kotlin.math.cos
@@ -139,18 +140,29 @@ class GlassEffectDrawable(
         effectsCache = null
     }
 
-    private var scrollInvalidator: Runnable? = null
+    private var lastScrollInvalidation = 0L
 
     fun invalidateOnScroll(scrollableView: View) {
-        scrollInvalidator?.let { scrollableView.removeCallbacks(it) }
         val invalidator = Runnable {
             invalidateCache()
             targetRef.get()?.invalidate()
         }
-        scrollInvalidator = invalidator
-        scrollableView.setOnScrollChangeListener { _, _, _, _, _ ->
-            scrollableView.removeCallbacks(invalidator)
-            scrollableView.postOnAnimation(invalidator)
+        val throttleMs = 80L
+        val onScroll = {
+            val now = System.currentTimeMillis()
+            if (now - lastScrollInvalidation >= throttleMs) {
+                lastScrollInvalidation = now
+                scrollableView.postOnAnimation(invalidator)
+            }
+        }
+        if (scrollableView is RecyclerView) {
+            scrollableView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                override fun onScrolled(rv: RecyclerView, dx: Int, dy: Int) {
+                    onScroll()
+                }
+            })
+        } else if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            scrollableView.setOnScrollChangeListener { _, _, _, _, _ -> onScroll() }
         }
     }
 
