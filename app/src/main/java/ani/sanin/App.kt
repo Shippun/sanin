@@ -56,10 +56,12 @@ class App : Application() {
             ani.sanin.connections.crashlytics.CrashlyticsFactory.createCrashlytics()
         Injekt.addSingletonFactory<CrashlyticsInterface> { crashlytics }
         crashlytics.initialize(this)
-        Logger.init(this)
-        LogcatBuffer.start()
+        if (PrefManager.getVal(PrefName.LoggingEnabled)) {
+            Logger.init(this)
+            LogcatBuffer.start()
+            Logger.log(Log.WARN, "App: Logging started")
+        }
         Thread.setDefaultUncaughtExceptionHandler(FinalExceptionHandler())
-        Logger.log(Log.WARN, "App: Logging started")
 
         Injekt.importModule(AppModule(this))
         Injekt.importModule(PreferenceModule(this))

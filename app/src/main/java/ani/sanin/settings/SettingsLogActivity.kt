@@ -1,6 +1,8 @@
 package ani.sanin.settings
 
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.updateLayoutParams
@@ -15,8 +17,8 @@ import ani.sanin.statusBarHeight
 import ani.sanin.themes.ThemeManager
 import ani.sanin.toast
 import ani.sanin.util.FocusEffectUtil
+import ani.sanin.util.LogcatBuffer
 import ani.sanin.util.Logger
-import android.content.Intent
 
 class SettingsLogActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySettingsLogBinding
@@ -40,8 +42,31 @@ class SettingsLogActivity : AppCompatActivity() {
             }
             FocusEffectUtil.applyFocusListener(logSettingsBack)
 
+            val loggingEnabled = PrefManager.getVal(PrefName.LoggingEnabled)
+
             settingsRecyclerView.adapter = SettingsAdapter(
                 arrayListOf(
+                    Settings(
+                        type = 2,
+                        name = "Logging",
+                        desc = "Master switch for all log capture features",
+                        icon = R.drawable.ic_round_edit_note_24,
+                        isChecked = loggingEnabled,
+                        switch = { isChecked, _ ->
+                            PrefManager.setVal(PrefName.LoggingEnabled, isChecked)
+                            if (isChecked) {
+                                Logger.init(context)
+                                LogcatBuffer.start()
+                                Logger.log(Log.WARN, "Logging enabled manually")
+                                toast("Logging enabled")
+                            } else {
+                                LogcatBuffer.stop()
+                                Logger.clearLog()
+                                toast("Logging disabled")
+                            }
+                            recreate()
+                        },
+                    ),
                     Settings(
                         type = 1,
                         name = "View Live Logcat",
@@ -57,13 +82,17 @@ class SettingsLogActivity : AppCompatActivity() {
                         desc = "Read logcat entries from the past 2 minutes",
                         icon = R.drawable.ic_round_history_24,
                         onClick = {
-                            val logs = Logger.readLogcatLastMinutes(2)
-                            val shareIntent = Intent(Intent.ACTION_SEND).apply {
-                                type = "text/plain"
-                                putExtra(Intent.EXTRA_SUBJECT, "Logcat - Last 2 Minutes")
-                                putExtra(Intent.EXTRA_TEXT, logs)
+                            if (!PrefManager.getVal(PrefName.LoggingEnabled)) {
+                                toast("Enable Logging first")
+                            } else {
+                                val logs = Logger.readLogcatLastMinutes(2)
+                                val shareIntent = Intent(Intent.ACTION_SEND).apply {
+                                    type = "text/plain"
+                                    putExtra(Intent.EXTRA_SUBJECT, "Logcat - Last 2 Minutes")
+                                    putExtra(Intent.EXTRA_TEXT, logs)
+                                }
+                                startActivity(Intent.createChooser(shareIntent, "Share logs"))
                             }
-                            startActivity(Intent.createChooser(shareIntent, "Share logs"))
                         },
                     ),
                     Settings(

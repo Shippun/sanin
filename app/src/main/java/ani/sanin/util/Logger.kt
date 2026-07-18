@@ -58,6 +58,13 @@ object LogcatBuffer {
         }, "LogcatBuffer").apply { isDaemon = true; start() }
     }
 
+    fun clear() {
+        synchronized(lock) {
+            buffer.clear()
+            timestamps.clear()
+        }
+    }
+
     fun stop() {
         running = false
         readerThread?.interrupt()
@@ -252,6 +259,7 @@ object Logger {
     fun clearLog() {
         file?.delete()
         file = null
+        LogcatBuffer.clear()
     }
 
     fun getDeviceAndAppInfo(context: Context): String {
