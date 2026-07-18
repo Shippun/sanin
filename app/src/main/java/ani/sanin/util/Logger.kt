@@ -22,6 +22,128 @@ import java.util.Date
 import java.util.concurrent.Executors
 import kotlin.system.exitProcess
 
+object LogcatBuffer {
+    private const val BUFFER_SIZE = 50000
+    private val buffer = mutableListOf<String>()
+    private val timestamps = mutableListOf<Long>()
+    private val lock = Any()
+    private var readerThread: Thread? = null
+    private var running = false
+    private var started = false
+
+    fun start() {
+        if (started) return
+        started = true
+        running = true
+        readerThread = Thread({
+            try {
+                val pid = android.os.Process.myPid()
+                val process = Runtime.getRuntime().exec(
+                    arrayOf("logcat", "-v", "time", "--pid=$pid")
+                )
+                val reader = BufferedReader(InputStreamReader(process.inputStream))
+                while (running) {
+                    val line = reader.readLine() ?: break
+                    val ts = parseTimestamp(line)
+                    synchronized(lock) {
+                        buffer.add(line)
+                        timestamps.add(ts)
+                        if (buffer.size > BUFFER_SIZE) {
+                            buffer.removeAt(0)
+                            timestamps.removeAt(0)
+                        }
+                    }
+                }
+            } catch (_: Exception) { }
+        }, "LogcatBuffer").apply { isDaemon = true; start() }
+    }
+
+    fun stop() {
+        running = false
+        readerThread?.interrupt()
+        readerThread = null
+    }
+
+    fun getLastMinutes(minutes: Int): String {
+        val cutoff = System.currentTimeMillis() - minutes * 60_000L
+        synchronized(lock) {
+            if (buffer.isEmpty()) return try {
+                readLogcatDirect(minutes)
+            } catch (_: Exception) {
+                "No logs available."
+            }
+            val sb = StringBuilder()
+            for (i in buffer.indices) {
+                if (timestamps[i] >= cutoff) {
+                    sb.appendLine(buffer[i])
+                }
+            }
+            return sb.toString().ifEmpty { "No logs found in the last $minutes minutes." }
+        }
+    }
+
+    private fun parseTimestamp(line: String): Long {
+        if (line.length < 15) return System.currentTimeMillis()
+        return try {
+            val month = line.substring(0, 2).toInt()
+            val day = line.substring(3, 5).toInt()
+            val hour = line.substring(6, 8).toInt()
+            val min = line.substring(9, 11).toInt()
+            val sec = line.substring(12, 14).toInt()
+            val cal = java.util.Calendar.getInstance().apply {
+                timeInMillis = System.currentTimeMillis()
+                set(java.util.Calendar.MONTH, month - 1)
+                set(java.util.Calendar.DAY_OF_MONTH, day)
+                set(java.util.Calendar.HOUR_OF_DAY, hour)
+                set(java.util.Calendar.MINUTE, min)
+                set(java.util.Calendar.SECOND, sec)
+            }
+            cal.timeInMillis
+        } catch (_: Exception) {
+            System.currentTimeMillis()
+        }
+    }
+}
+
+private fun readLogcatDirect(minutes: Int): String {
+    return try {
+        val pid = android.os.Process.myPid()
+        val process = Runtime.getRuntime().exec(
+            arrayOf("logcat", "-d", "-v", "time", "--pid=$pid")
+        )
+        val reader = BufferedReader(InputStreamReader(process.inputStream))
+        val allLines = reader.readLines()
+        reader.close()
+        process.destroy()
+
+        val cutoff = System.currentTimeMillis() - minutes * 60_000L
+        val recent = allLines.filter { line ->
+            try {
+                if (line.length < 15) return@filter false
+                val month = line.substring(0, 2).toInt()
+                val day = line.substring(3, 5).toInt()
+                val hour = line.substring(6, 8).toInt()
+                val min = line.substring(9, 11).toInt()
+                val sec = line.substring(12, 14).toInt()
+                val cal = java.util.Calendar.getInstance().apply {
+                    timeInMillis = System.currentTimeMillis()
+                    set(java.util.Calendar.MONTH, month - 1)
+                    set(java.util.Calendar.DAY_OF_MONTH, day)
+                    set(java.util.Calendar.HOUR_OF_DAY, hour)
+                    set(java.util.Calendar.MINUTE, min)
+                    set(java.util.Calendar.SECOND, sec)
+                }
+                cal.timeInMillis >= cutoff
+            } catch (_: Exception) {
+                true
+            }
+        }
+        recent.joinToString("\n").ifEmpty { "No logs found in the last $minutes minutes." }
+    } catch (e: Exception) {
+        "Failed to read logcat: ${e.message}"
+    }
+}
+
 object Logger {
     var file: File? = null
     private val loggerExecutor = Executors.newSingleThreadExecutor()
@@ -173,46 +295,8 @@ object Logger {
         }
     }
 
-    /**
-     * Reads recent logcat output for the current process from the last [minutes] minutes.
-     */
     fun readLogcatLastMinutes(minutes: Int = 2): String {
-        return try {
-            val pid = android.os.Process.myPid()
-            val process = Runtime.getRuntime().exec(
-                arrayOf("logcat", "-d", "-v", "time", "--pid=$pid")
-            )
-            val reader = BufferedReader(InputStreamReader(process.inputStream))
-            val allLines = reader.readLines()
-            reader.close()
-            process.destroy()
-
-            val cutoff = System.currentTimeMillis() - minutes * 60_000L
-            val recent = allLines.filter { line ->
-                try {
-                    if (line.length < 18) return@filter false
-                    val month = line.substring(0, 2).toInt()
-                    val day = line.substring(3, 5).toInt()
-                    val hour = line.substring(6, 8).toInt()
-                    val min = line.substring(9, 11).toInt()
-                    val sec = line.substring(12, 14).toInt()
-                    val cal = java.util.Calendar.getInstance().apply {
-                        timeInMillis = System.currentTimeMillis()
-                        set(java.util.Calendar.MONTH, month - 1)
-                        set(java.util.Calendar.DAY_OF_MONTH, day)
-                        set(java.util.Calendar.HOUR_OF_DAY, hour)
-                        set(java.util.Calendar.MINUTE, min)
-                        set(java.util.Calendar.SECOND, sec)
-                    }
-                    cal.timeInMillis >= cutoff
-                } catch (_: Exception) {
-                    true
-                }
-            }
-            recent.joinToString("\n").ifEmpty { "No logs found in the last $minutes minutes." }
-        } catch (e: Exception) {
-            "Failed to read logcat: ${e.message}"
-        }
+        return LogcatBuffer.getLastMinutes(minutes)
     }
 
     /**

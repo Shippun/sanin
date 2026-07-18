@@ -18,6 +18,7 @@ import ani.sanin.settings.SettingsActivity
 import ani.sanin.settings.saving.PrefManager
 import ani.sanin.settings.saving.PrefName
 import ani.sanin.util.FinalExceptionHandler
+import ani.sanin.util.LogcatBuffer
 import ani.sanin.util.Logger
 import com.google.android.material.color.DynamicColors
 import eu.kanade.tachiyomi.data.notification.Notifications
@@ -56,6 +57,7 @@ class App : Application() {
         Injekt.addSingletonFactory<CrashlyticsInterface> { crashlytics }
         crashlytics.initialize(this)
         Logger.init(this)
+        LogcatBuffer.start()
         Thread.setDefaultUncaughtExceptionHandler(FinalExceptionHandler())
         Logger.log(Log.WARN, "App: Logging started")
 

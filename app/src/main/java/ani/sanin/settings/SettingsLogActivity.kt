@@ -43,20 +43,12 @@ class SettingsLogActivity : AppCompatActivity() {
             settingsRecyclerView.adapter = SettingsAdapter(
                 arrayListOf(
                     Settings(
-                        type = 2,
-                        name = "Live Log Capture",
-                        desc = "Capture logcat and app logs in real time",
+                        type = 1,
+                        name = "View Live Logcat",
+                        desc = "Open a screen showing live logcat output",
                         icon = R.drawable.ic_round_view_list_24,
-                        isChecked = PrefManager.getVal(PrefName.LogToFile),
-                        switch = { isChecked, _ ->
-                            PrefManager.setVal(PrefName.LogToFile, isChecked)
-                            Logger.init(context)
-                            if (isChecked) {
-                                toast("Log capture enabled")
-                            } else {
-                                Logger.clearLog()
-                                toast("Log capture disabled")
-                            }
+                        onClick = {
+                            startActivity(Intent(this, LiveLogcatActivity::class.java))
                         },
                     ),
                     Settings(
