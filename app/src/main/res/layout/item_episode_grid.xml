@@ -1,17 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/itemEpisodeCont"
     android:layout_width="match_parent"
     android:layout_height="96dp"
     android:layout_margin="8dp"
-    android:background="@drawable/card_outline"
     android:clipToPadding="false"
     android:focusable="true"
     android:translationZ="8dp"
+    app:cardBackgroundColor="@color/bg_black"
     app:cardCornerRadius="32dp"
-    app:cardElevation="4dp">
+    app:cardElevation="4dp"
+    app:strokeColor="?attr/colorPrimaryContainer"
+    app:strokeWidth="2dp">
 
     <ImageView
         android:id="@+id/itemMediaImage"
@@ -189,4 +191,4 @@
         app:srcCompat="@drawable/ic_sparkle"
         tools:ignore="ContentDescription"
         tools:visibility="visible" />
-</androidx.cardview.widget.CardView>
+</com.google.android.material.card.MaterialCardView>

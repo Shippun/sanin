@@ -1,11 +1,13 @@
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
-    android:background="@drawable/card_outline"
-    app:cardCornerRadius="12dp">
+    app:cardBackgroundColor="?attr/colorSurface"
+    app:cardCornerRadius="12dp"
+    app:strokeColor="?attr/colorPrimaryContainer"
+    app:strokeWidth="2dp">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/listAppBar"
@@ -131,4 +133,4 @@
         android:background="?android:colorBackground"
         android:visibility="gone" />
 
-</androidx.cardview.widget.CardView>
+</com.google.android.material.card.MaterialCardView>

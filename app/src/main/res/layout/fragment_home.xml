@@ -200,11 +200,13 @@
                                 style="@style/Widget.Material3.Button"
                                 android:layout_width="wrap_content"
                                 android:layout_height="40dp"
+                                android:backgroundTint="?attr/colorPrimaryContainer"
                                 android:focusable="true"
                                 android:focusableInTouchMode="false"
                                 android:minWidth="120dp"
                                 android:paddingHorizontal="20dp"
                                 android:text="@string/watch_now"
+                                android:textColor="?attr/colorOnPrimaryContainer"
                                 android:textSize="14sp" />
 
                         </LinearLayout>

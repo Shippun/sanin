@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/itemEpisodeCont"
     android:layout_width="match_parent"
     android:layout_height="64dp"
     android:layout_margin="8dp"
-    android:background="@drawable/card_outline"
     android:focusable="true"
-    app:cardCornerRadius="32dp">
+    app:cardBackgroundColor="@color/bg_black"
+    app:cardCornerRadius="32dp"
+    app:strokeColor="?attr/colorPrimaryContainer"
+    app:strokeWidth="2dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -58,4 +60,4 @@
         android:alpha="0.33"
         android:background="?android:colorBackground"
         android:visibility="gone" />
-</androidx.cardview.widget.CardView>
+</com.google.android.material.card.MaterialCardView>
