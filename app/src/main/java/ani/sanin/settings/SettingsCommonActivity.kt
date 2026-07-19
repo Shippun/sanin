@@ -397,6 +397,7 @@ class SettingsCommonActivity : AppCompatActivity() {
         dialog.window?.apply {
             setDimAmount(0.8f)
             attributes.windowAnimations = android.R.style.Animation_Dialog
+            TvKeyboardUtil.retainWindowFocus(this)
         }
         dialog.setOnShowListener {
             dialogView.userAgentTextBox.requestFocus()
