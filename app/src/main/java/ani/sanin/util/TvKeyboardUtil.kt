@@ -25,6 +25,15 @@ object TvKeyboardUtil {
     private val TAG_KEYBOARD = "tv_custom_keyboard"
     private val TAG_KEYBOARD_COMPACT = "tv_custom_keyboard_compact"
 
+    private fun resolveActivity(context: Context): Activity? {
+        var ctx = context
+        while (ctx is android.content.ContextWrapper) {
+            if (ctx is Activity) return ctx
+            ctx = ctx.baseContext
+        }
+        return null
+    }
+
     fun keyboardMode(): Int = PrefManager.getVal(PrefName.KeyboardMode)
 
     /** For mode 0 (System keyboard): show system keyboard on focus */
@@ -49,9 +58,10 @@ object TvKeyboardUtil {
         retainWindowFocus(editText)
         editText.showSoftInputOnFocus = false
         attachKeyboardToWindow(editText)
+        val activity = resolveActivity(editText.context) ?: return
         toggleButton.visibility = View.VISIBLE
         toggleButton.setOnClickListener {
-            val keyboard = getOrCreateKeyboard(editText.context as Activity)
+            val keyboard = getOrCreateKeyboard(activity)
             if (keyboard.isKeyboardVisible()) {
                 keyboard.hide()
                 editText.clearFocus()
@@ -74,17 +84,18 @@ object TvKeyboardUtil {
     fun setupEditTextForAlwaysVisible(editText: EditText) {
         retainWindowFocus(editText)
         editText.showSoftInputOnFocus = false
+        val activity = resolveActivity(editText.context) ?: return
         ensureCompactKeyboardVisible(editText)
         editText.setOnFocusChangeListener { v, hasFocus ->
             if (hasFocus) {
-                getCompactKeyboard(editText.context as Activity).target = editText
+                getCompactKeyboard(activity).target = editText
                 applyFocusBorder(v)
             } else {
                 removeFocusBorder(v)
             }
         }
         if (editText.isFocused) {
-            getCompactKeyboard(editText.context as Activity).target = editText
+            getCompactKeyboard(activity).target = editText
             applyFocusBorder(editText)
         }
     }
