@@ -68,7 +68,7 @@
             android:orientation="horizontal"
             android:layout_marginTop="2dp">
 
-            <TextView android:id="@+id/keyModeToggle" android:text="?123" style="@style/TvKeyboardKeyCompact"
+            <TextView android:id="@+id/keyModeToggle" android:text="123" style="@style/TvKeyboardKeyCompact"
                 android:layout_width="40dp" />
             <TextView android:id="@+id/keySpace" android:text="Space" style="@style/TvKeyboardKeyCompact"
                 android:layout_width="80dp" />
