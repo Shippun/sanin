@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import ani.sanin.R
 import ani.sanin.connections.anilist.AnilistSearch.SearchType
 import ani.sanin.databinding.ItemSearchHistoryBinding
+import ani.sanin.util.FocusEffectUtil
 import ani.sanin.settings.saving.PrefManager
 import ani.sanin.settings.saving.PrefManager.asLiveClass
 import ani.sanin.settings.saving.PrefName
@@ -82,6 +83,10 @@ class SearchHistoryAdapter(type: SearchType, private val searchClicked: (String)
     ): SearchHistoryAdapter.SearchHistoryViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.item_search_history, parent, false)
+        val binding = ItemSearchHistoryBinding.bind(view)
+        binding.searchHistoryTextView.isFocusable = true
+        binding.closeTextView.isFocusable = true
+        FocusEffectUtil.applyFocusListener(binding.searchHistoryTextView, binding.closeTextView)
         return SearchHistoryViewHolder(view)
     }
 

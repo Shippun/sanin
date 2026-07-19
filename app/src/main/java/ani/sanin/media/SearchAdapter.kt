@@ -27,6 +27,7 @@ import ani.sanin.openLinkInBrowser
 import ani.sanin.others.imagesearch.ImageSearchActivity
 import ani.sanin.settings.saving.PrefManager
 import ani.sanin.settings.saving.PrefName
+import ani.sanin.util.FocusEffectUtil
 import ani.sanin.util.TvKeyboardUtil
 import com.google.android.material.checkbox.MaterialCheckBox.STATE_CHECKED
 import com.google.android.material.checkbox.MaterialCheckBox.STATE_INDETERMINATE
@@ -104,6 +105,15 @@ class SearchAdapter(private val activity: SearchActivity, private val type: Sear
         binding.searchChipRecycler.layoutManager =
             LinearLayoutManager(binding.root.context, HORIZONTAL, false)
 
+        FocusEffectUtil.applyFocusListener(
+            binding.searchList,
+            binding.searchAdultCheck,
+            binding.searchByImage,
+            binding.clearHistory,
+            binding.searchFilter,
+            binding.searchResultGrid,
+            binding.searchResultList
+        )
         binding.searchFilter.setOnClickListener {
             SearchFilterBottomDialog.newInstance().show(activity.supportFragmentManager, "dialog")
         }

@@ -84,11 +84,10 @@ object TvKeyboardUtil {
     fun setupEditTextForAlwaysVisible(editText: EditText) {
         retainWindowFocus(editText)
         editText.showSoftInputOnFocus = false
-        val activity = resolveActivity(editText.context) ?: return
         ensureCompactKeyboardVisible(editText)
         editText.setOnFocusChangeListener { v, hasFocus ->
             if (hasFocus) {
-                getCompactKeyboard(activity).apply {
+                getCompactKeyboard(editText)?.apply {
                     target = editText
                     show()
                 }
@@ -98,7 +97,7 @@ object TvKeyboardUtil {
             }
         }
         if (editText.isFocused) {
-            getCompactKeyboard(activity).apply {
+            getCompactKeyboard(editText)?.apply {
                 target = editText
                 show()
             }
@@ -206,7 +205,8 @@ object TvKeyboardUtil {
     }
 
     private fun retainWindowFocus(view: View) {
-        (view.context as? Activity)?.window?.let { retainWindowFocus(it) }
+        if (Build.VERSION.SDK_INT < 24) return
+        resolveActivity(view.context)?.window?.addFlags(WindowManager.LayoutParams.FLAG_LOCAL_FOCUS_MODE)
     }
 
     fun TextView.setupTvKeyboard() {
@@ -291,21 +291,22 @@ object TvKeyboardUtil {
         return keyboard
     }
 
-    private fun getCompactKeyboard(activity: Activity): TvKeyboardView {
-        val decorView = activity.window.decorView as? ViewGroup ?: error("Cannot access decor view")
+    private fun getCompactKeyboard(view: View): TvKeyboardView? {
+        if (!view.isAttachedToWindow) return null
+        val decorView = view.rootView as? ViewGroup ?: return null
         var keyboard = decorView.findViewWithTag<TvKeyboardView>(TAG_KEYBOARD_COMPACT)
         if (keyboard == null) {
-            keyboard = TvKeyboardView(activity, compact = true).apply {
+            keyboard = TvKeyboardView(view.context, compact = true).apply {
                 this.tag = TAG_KEYBOARD_COMPACT
-                visibility = View.VISIBLE
+                visibility = View.GONE
             }
             val params = FrameLayout.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT
             ).apply {
                 gravity = Gravity.START or Gravity.BOTTOM
-                bottomMargin = (16 * activity.resources.displayMetrics.density).toInt()
-                leftMargin = (16 * activity.resources.displayMetrics.density).toInt()
+                bottomMargin = (16 * view.resources.displayMetrics.density).toInt()
+                leftMargin = (16 * view.resources.displayMetrics.density).toInt()
             }
             decorView.addView(keyboard, params)
         }
@@ -313,8 +314,7 @@ object TvKeyboardUtil {
     }
 
     fun ensureCompactKeyboardVisible(view: View) {
-        val activity = view.context as? Activity ?: return
-        getCompactKeyboard(activity)
+        getCompactKeyboard(view)
     }
 
     private fun showCustomKeyboard(view: View) {
@@ -329,10 +329,9 @@ object TvKeyboardUtil {
     }
 
     private fun showCompactKeyboard(editText: EditText) {
-        val activity = resolveActivity(editText.context) ?: return
-        val imm = activity.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+        val imm = editText.context.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
         imm?.hideSoftInputFromWindow(editText.windowToken, 0)
-        getCompactKeyboard(activity).apply {
+        getCompactKeyboard(editText)?.apply {
             target = editText
             show()
         }

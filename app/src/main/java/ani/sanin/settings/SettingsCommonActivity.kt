@@ -129,19 +129,19 @@ class SettingsCommonActivity : AppCompatActivity() {
                     "Libre",
                 )
             settingsExtensionDns.setText(exDns[PrefManager.getVal(PrefName.DohProvider)])
-            settingsExtensionDns.setAdapter(
-                ArrayAdapter(
-                    context,
-                    R.layout.item_dropdown,
-                    exDns,
-                ),
-            )
-            settingsExtensionDns.setOnItemClickListener { _, _, i, _ ->
-                PrefManager.setVal(PrefName.DohProvider, i)
-                settingsExtensionDns.clearFocus()
-                restartApp()
+            settingsExtensionDns.isFocusable = true
+            settingsExtensionDns.setOnClickListener {
+                val current = PrefManager.getVal<Int>(PrefName.DohProvider)
+                customAlertDialog().apply {
+                    setTitle("DNS Provider")
+                    singleChoiceItems(exDns.toTypedArray(), current) { index ->
+                        PrefManager.setVal(PrefName.DohProvider, index)
+                        settingsExtensionDns.setText(exDns[index])
+                        restartApp()
+                    }
+                    show()
+                }
             }
-            TvKeyboardUtil.setupTvInput(settingsExtensionDns)
 
             val startUpTabs = arrayOf("Home", "Anime")
 
