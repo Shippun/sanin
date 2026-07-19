@@ -157,7 +157,7 @@ class TvKeyboardView @JvmOverloads constructor(
         for (i in letterKeys.indices) {
             letterKeys[i].text = chars.getOrElse(i) { "" }
         }
-        modeToggle.text = if (isSymbolsMode) "ABC" else "?123"
+        modeToggle.text = if (isSymbolsMode) "ABC" else "\u003F123"
     }
 
     private var keyboardHeight = 0
