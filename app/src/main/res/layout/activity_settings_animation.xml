@@ -564,7 +564,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:checked="true"
-                    android:drawableStart="@drawable/ic_round_notifications_24"
+                    android:drawableStart="@drawable/ic_round_notifications_active_24"
                     android:drawablePadding="16dp"
                     android:elegantTextHeight="true"
                     android:focusable="true"
