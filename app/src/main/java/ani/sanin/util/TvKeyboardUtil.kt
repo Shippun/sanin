@@ -178,7 +178,7 @@ object TvKeyboardUtil {
         if (keyboard == null) {
             keyboard = TvKeyboardView(activity).apply {
                 this.tag = TAG_KEYBOARD
-                visibility = GONE
+                visibility = View.GONE
             }
             decorView.addView(
                 keyboard,
