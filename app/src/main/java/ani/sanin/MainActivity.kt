@@ -652,6 +652,7 @@ class MainActivity : AppCompatActivity() {
 
         // Inflate the dialog layout
         val dialogView = DialogUserAgentBinding.inflate(layoutInflater).apply {
+            TvKeyboardUtil.setupTvInput(userAgentTextBox)
             userAgentTextBox.hint = "Password"
             subtitle.visibility = View.VISIBLE
             subtitle.text = getString(R.string.enter_password_to_decrypt_file)

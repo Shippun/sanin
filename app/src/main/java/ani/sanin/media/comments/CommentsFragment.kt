@@ -292,6 +292,7 @@ class CommentsFragment : Fragment() {
         binding.commentFilter.setOnClickListener {
             activity.customAlertDialog().apply {
                 val customView = DialogEdittextBinding.inflate(layoutInflater)
+                TvKeyboardUtil.setupTvInput(customView.dialogEditText)
                 setTitle("Enter a chapter/episode number tag")
                 setCustomView(customView.root)
                 setPosButton("OK") {
@@ -312,8 +313,6 @@ class CommentsFragment : Fragment() {
                 setNegButton("Cancel") {}
                 setOnShowListener {
                     customView.dialogEditText.requestFocus()
-                    TvKeyboardUtil.showKeyboardDelayed(customView.dialogEditText)
-                    TvKeyboardUtil.applyTvFocusBorder(customView.dialogEditText)
                 }
                 show()
             }
@@ -503,6 +502,7 @@ class CommentsFragment : Fragment() {
             activity.binding.commentLabel.setOnClickListener {
                 activity.customAlertDialog().apply {
                     val customView = DialogEdittextBinding.inflate(layoutInflater)
+                    TvKeyboardUtil.setupTvInput(customView.dialogEditText)
                     setTitle("Enter a chapter/episode number tag")
                     setCustomView(customView.root)
                     setPosButton("OK") {
@@ -540,9 +540,6 @@ class CommentsFragment : Fragment() {
                     }
                     setOnShowListener {
                         customView.dialogEditText.requestFocus()
-                        val imm = activity?.getSystemService(INPUT_METHOD_SERVICE) as? InputMethodManager
-                        TvKeyboardUtil.showKeyboardDelayed(customView.dialogEditText)
-                        TvKeyboardUtil.applyTvFocusBorder(customView.dialogEditText)
                     }
                     show()
                 }
@@ -753,6 +750,7 @@ class CommentsFragment : Fragment() {
 
         activity.customAlertDialog().apply {
             val customView = DialogEdittextBinding.inflate(layoutInflater)
+            TvKeyboardUtil.setupTvInput(customView.dialogEditText)
             if (defaultProgress > 0) {
                 customView.dialogEditText.setText(defaultProgress.toString())
             }
@@ -785,9 +783,6 @@ class CommentsFragment : Fragment() {
             setNegButton(R.string.cancel) {}
             setOnShowListener {
                 customView.dialogEditText.requestFocus()
-                val imm = activity?.getSystemService(INPUT_METHOD_SERVICE) as? InputMethodManager
-                TvKeyboardUtil.showKeyboardDelayed(customView.dialogEditText)
-                TvKeyboardUtil.applyTvFocusBorder(customView.dialogEditText)
             }
             show()
         }

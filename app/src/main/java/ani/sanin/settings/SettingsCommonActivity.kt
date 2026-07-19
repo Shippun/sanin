@@ -245,14 +245,16 @@ class SettingsCommonActivity : AppCompatActivity() {
                         Settings(
                             type = 1,
                             name = "Keyboard Mode",
-                            desc = "System / Toggle button / Always-visible",
+                            desc = "System / Custom keyboard",
                             icon = R.drawable.ic_round_keyboard_24,
                             onClick = {
-                                val labels = arrayOf("System Keyboard", "Toggle Button", "Always-Visible")
+                                val current = PrefManager.getVal(PrefName.KeyboardMode)
+                                val labels = arrayOf("System Keyboard", "Custom")
+                                val idx = if (current == 2) 1 else 0
                                 customAlertDialog().apply {
                                     setTitle("Keyboard Mode")
-                                    singleChoiceItems(labels, PrefManager.getVal(PrefName.KeyboardMode)) { index ->
-                                        PrefManager.setVal(PrefName.KeyboardMode, index)
+                                    singleChoiceItems(labels, idx) { index ->
+                                        PrefManager.setVal(PrefName.KeyboardMode, if (index == 1) 2 else 0)
                                         restartApp()
                                     }
                                     show()
@@ -358,6 +360,7 @@ class SettingsCommonActivity : AppCompatActivity() {
 
         // Inflate the dialog layout
         val dialogView = DialogUserAgentBinding.inflate(layoutInflater)
+        TvKeyboardUtil.setupTvInput(dialogView.userAgentTextBox)
         val box = dialogView.userAgentTextBox
         box.hint = getString(R.string.password)
         box.setSingleLine()

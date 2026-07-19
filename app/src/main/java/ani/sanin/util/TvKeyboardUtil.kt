@@ -159,9 +159,13 @@ object TvKeyboardUtil {
                 val imm = view.context.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager ?: return
                 imm.showSoftInput(view, InputMethodManager.SHOW_FORCED)
             }
-            1, 2 -> {
+            1 -> {
                 view.requestFocus()
                 if (view is EditText) showCustomKeyboard(view)
+            }
+            2 -> {
+                view.requestFocus()
+                if (view is EditText) showCompactKeyboard(editText = view)
             }
         }
     }
@@ -175,9 +179,14 @@ object TvKeyboardUtil {
                     imm.showSoftInput(view, InputMethodManager.SHOW_FORCED)
                 }, delayMs)
             }
-            1, 2 -> {
+            1 -> {
                 view.postDelayed({
                     if (view is EditText) showCustomKeyboard(view)
+                }, delayMs)
+            }
+            2 -> {
+                view.postDelayed({
+                    if (view is EditText) showCompactKeyboard(editText = view)
                 }, delayMs)
             }
         }
@@ -314,6 +323,16 @@ object TvKeyboardUtil {
         val imm = activity.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
         imm?.hideSoftInputFromWindow(editText.windowToken, 0)
         getOrCreateKeyboard(activity).apply {
+            target = editText
+            show()
+        }
+    }
+
+    private fun showCompactKeyboard(editText: EditText) {
+        val activity = resolveActivity(editText.context) ?: return
+        val imm = activity.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+        imm?.hideSoftInputFromWindow(editText.windowToken, 0)
+        getCompactKeyboard(activity).apply {
             target = editText
             show()
         }
