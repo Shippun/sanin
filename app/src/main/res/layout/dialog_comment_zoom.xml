@@ -34,6 +34,8 @@
                     android:layout_width="48dp"
                     android:layout_height="48dp"
                     android:layout_marginEnd="12dp"
+                    android:focusable="true"
+                    android:nextFocusDown="@+id/zoomReply"
                     android:scaleType="centerCrop"
                     app:srcCompat="@drawable/ic_round_add_circle_24" />
 
@@ -66,7 +68,7 @@
                     android:layout_height="32dp"
                     android:background="?android:attr/selectableItemBackgroundBorderless"
                     android:focusable="true"
-                    android:nextFocusDown="@+id/zoomReply"
+                    android:nextFocusDown="@+id/zoomUserAvatar"
                     android:padding="4dp"
                     android:src="@drawable/ic_round_close_24"
                     app:tint="?attr/colorOnBackground" />
@@ -131,6 +133,8 @@
                     android:background="?android:attr/selectableItemBackgroundBorderless"
                     android:clickable="true"
                     android:focusable="true"
+                    android:nextFocusUp="@+id/zoomUserAvatar"
+                    android:nextFocusLeft="@+id/zoomUserAvatar"
                     android:nextFocusRight="@+id/zoomUpVote"
                     android:padding="8dp"
                     android:src="@drawable/ic_round_reply_24"
@@ -151,6 +155,7 @@
                     android:focusable="true"
                     android:nextFocusLeft="@+id/zoomReply"
                     android:nextFocusRight="@+id/zoomVoteCount"
+                    android:nextFocusUp="@+id/zoomUserAvatar"
                     android:padding="8dp"
                     android:src="@drawable/ic_round_upvote_inactive_24"
                     app:tint="?attr/colorOnBackground"
@@ -167,6 +172,7 @@
                     android:minWidth="32dp"
                     android:nextFocusLeft="@+id/zoomUpVote"
                     android:nextFocusRight="@+id/zoomDownVote"
+                    android:nextFocusUp="@+id/zoomUserAvatar"
                     android:text="0"
                     android:textSize="14sp"
                     android:textColor="?attr/colorOnBackground" />
@@ -179,6 +185,7 @@
                     android:clickable="true"
                     android:focusable="true"
                     android:nextFocusLeft="@+id/zoomVoteCount"
+                    android:nextFocusUp="@+id/zoomUserAvatar"
                     android:padding="8dp"
                     android:rotation="270"
                     android:src="@drawable/ic_round_upvote_inactive_24"

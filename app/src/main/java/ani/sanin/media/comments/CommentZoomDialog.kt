@@ -113,6 +113,7 @@ class CommentZoomDialog : DialogFragment() {
             binding.zoomVoteCount,
             binding.zoomDownVote,
             binding.zoomClose,
+            binding.zoomUserAvatar,
         )
     }
 

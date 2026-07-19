@@ -39,7 +39,7 @@ import ani.sanin.media.MediaNameAdapter
 import ani.sanin.media.MediaDetailsActivity
 import ani.sanin.media.MediaDetailsViewModel
 import ani.sanin.others.IdMappers
-import ani.sanin.setBaseline
+
 import ani.sanin.settings.saving.PrefManager
 import ani.sanin.settings.saving.PrefName
 import ani.sanin.snackString
@@ -99,9 +99,6 @@ class CommentsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         activity = requireActivity() as MediaDetailsActivity
 
-        activity.binding.commentMessageContainer?.let {
-            binding.commentsLayout.setBaseline(it, includeSystemNavBar = true)
-        }
         val mediaId = arguments?.getInt("mediaId") ?: -1
         mediaName = arguments?.getString("mediaName") ?: "unknown"
         if (mediaId == -1) {
@@ -113,9 +110,9 @@ class CommentsFragment : Fragment() {
 
         val markwon = buildMarkwon(activity, fragment = this@CommentsFragment)
 
-        activity.binding.commentUserAvatar.loadImage(Anilist.avatar)
+        binding.commentUserAvatar.loadImage(Anilist.avatar)
         val markwonEditor = MarkwonEditor.create(markwon)
-        activity.binding.commentInput.addTextChangedListener(
+        binding.commentInput.addTextChangedListener(
             MarkwonEditorTextWatcher.withProcess(markwonEditor)
         )
 
@@ -130,14 +127,14 @@ class CommentsFragment : Fragment() {
             binding.commentsOfflineText.visibility = View.GONE
             binding.commentsListContainer.visibility = View.VISIBLE
             updateUiForSource()
-            activity.binding.commentMessageContainer.visibility =
+            binding.commentMessageContainer.visibility =
                 if (CommentsAPI.authToken != null && currentSource == CommentSource.DANOTSU) View.VISIBLE else View.GONE
 
             lifecycleScope.launch {
                 loadAndDisplayComments()
                 binding.commentsRefresh.isRefreshing = false
             }
-            activity.binding.commentReplyToContainer.visibility = View.GONE
+            binding.commentReplyToContainer.visibility = View.GONE
         }
 
         binding.commentsList.adapter = adapter
@@ -214,7 +211,7 @@ class CommentsFragment : Fragment() {
                         binding.commentSort.visibility = View.GONE
                         binding.commentCurrentProgress.visibility = View.GONE
                         binding.commentsProgressBar.visibility = View.GONE
-                        activity.binding.commentMessageContainer.visibility = View.GONE
+                        binding.commentMessageContainer.visibility = View.GONE
                     } else if (CommentsAPI.authToken != null) {
                         lifecycleScope.launch {
                             val commentId = arguments?.getInt("commentId")
@@ -225,7 +222,7 @@ class CommentsFragment : Fragment() {
                             }
                         }
                     } else {
-                        activity.binding.commentMessageContainer.visibility = View.GONE
+                        binding.commentMessageContainer.visibility = View.GONE
                     }
                 }
             }
@@ -256,7 +253,7 @@ class CommentsFragment : Fragment() {
                 if (totalPages > pagesLoaded) {
                     lifecycleScope.launch {
                         loadAndDisplayComments()
-                        activity.binding.commentReplyToContainer.visibility = View.GONE
+                        binding.commentReplyToContainer.visibility = View.GONE
                     }
                 } else {
                     sortComments(sortOrder)
@@ -377,7 +374,7 @@ class CommentsFragment : Fragment() {
         binding.commentSourceTrakt.setOnFocusChangeListener { v, hasFocus ->
             v.elevation = if (hasFocus) 8f else 0f
         }
-        FocusEffectUtil.applyFocusListener(binding.openRules, binding.commentFilter, binding.commentSort)
+        FocusEffectUtil.applyFocusListener(binding.openRules, binding.commentFilter, binding.commentSort, binding.commentCurrentProgress)
 
         var isFetching = false
         binding.commentsList.setOnTouchListener(
@@ -458,48 +455,48 @@ class CommentsFragment : Fragment() {
                 }
             })
 
-        activity.binding.commentInput.addTextChangedListener(object : TextWatcher {
+        binding.commentInput.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
             override fun afterTextChanged(s: android.text.Editable?) {
-                if ((activity.binding.commentInput.text.length) > 300) {
-                    activity.binding.commentInput.text.delete(
+                if ((binding.commentInput.text.length) > 300) {
+                    binding.commentInput.text.delete(
                         300,
-                        activity.binding.commentInput.text.length
+                        binding.commentInput.text.length
                     )
                     snackString("Comment cannot be longer than 300 characters")
                 }
             }
         })
 
-        activity.binding.commentInput.setOnFocusChangeListener { v, hasFocus ->
+        binding.commentInput.setOnFocusChangeListener { v, hasFocus ->
             if (hasFocus) {
                 TvKeyboardUtil.showKeyboardDelayed(v)
                 TvKeyboardUtil.applyTvFocusBorder(v)
-                val targetWidth = activity.binding.commentInputLayout.width -
-                        activity.binding.commentLabel.width -
-                        activity.binding.commentSend.width -
-                        activity.binding.commentUserAvatar.width - 12 + 16
-                val anim = ValueAnimator.ofInt(activity.binding.commentInput.width, targetWidth)
+                val targetWidth = binding.commentInputLayout.width -
+                        binding.commentLabel.width -
+                        binding.commentSend.width -
+                        binding.commentUserAvatar.width - 12 + 16
+                val anim = ValueAnimator.ofInt(binding.commentInput.width, targetWidth)
                 anim.addUpdateListener { valueAnimator ->
-                    val layoutParams = activity.binding.commentInput.layoutParams
+                    val layoutParams = binding.commentInput.layoutParams
                     layoutParams.width = valueAnimator.animatedValue as Int
-                    activity.binding.commentInput.layoutParams = layoutParams
+                    binding.commentInput.layoutParams = layoutParams
                 }
                 anim.duration = 300
 
                 anim.start()
                 anim.doOnEnd {
-                    activity.binding.commentLabel.visibility = View.VISIBLE
-                    activity.binding.commentSend.visibility = View.VISIBLE
-                    activity.binding.commentSpoiler.visibility = View.VISIBLE
-                    activity.binding.commentGif.visibility = View.VISIBLE
-                    activity.binding.commentLabel.animate().translationX(0f).setDuration(300).start()
-                    activity.binding.commentSend.animate().translationX(0f).setDuration(300).start()
+                    binding.commentLabel.visibility = View.VISIBLE
+                    binding.commentSend.visibility = View.VISIBLE
+                    binding.commentSpoiler.visibility = View.VISIBLE
+                    binding.commentGif.visibility = View.VISIBLE
+                    binding.commentLabel.animate().translationX(0f).setDuration(300).start()
+                    binding.commentSend.animate().translationX(0f).setDuration(300).start()
                 }
             }
 
-            activity.binding.commentLabel.setOnClickListener {
+            binding.commentLabel.setOnClickListener {
                 activity.customAlertDialog().apply {
                     val customView = DialogEdittextBinding.inflate(layoutInflater)
                     TvKeyboardUtil.setupTvInput(customView.dialogEditText)
@@ -509,13 +506,13 @@ class CommentsFragment : Fragment() {
                         val text = customView.dialogEditText.text.toString()
                         tag = text.toIntOrNull()
                         if (tag == null) {
-                            activity.binding.commentLabel.background = ResourcesCompat.getDrawable(
+                            binding.commentLabel.background = ResourcesCompat.getDrawable(
                                 resources,
                                 R.drawable.ic_label_off_24,
                                 null
                             )
                         } else {
-                            activity.binding.commentLabel.background = ResourcesCompat.getDrawable(
+                            binding.commentLabel.background = ResourcesCompat.getDrawable(
                                 resources,
                                 R.drawable.ic_label_24,
                                 null
@@ -524,7 +521,7 @@ class CommentsFragment : Fragment() {
                     }
                     setNeutralButton("Clear") {
                         tag = null
-                        activity.binding.commentLabel.background = ResourcesCompat.getDrawable(
+                        binding.commentLabel.background = ResourcesCompat.getDrawable(
                             resources,
                             R.drawable.ic_label_off_24,
                             null
@@ -532,7 +529,7 @@ class CommentsFragment : Fragment() {
                     }
                     setNegButton("Cancel") {
                         tag = null
-                        activity.binding.commentLabel.background = ResourcesCompat.getDrawable(
+                        binding.commentLabel.background = ResourcesCompat.getDrawable(
                             resources,
                             R.drawable.ic_label_off_24,
                             null
@@ -546,28 +543,28 @@ class CommentsFragment : Fragment() {
             }
         }
 
-        activity.binding.commentSpoiler.setOnClickListener {
+        binding.commentSpoiler.setOnClickListener {
             isSpoilerMode = !isSpoilerMode
-            activity.binding.commentSpoiler.alpha = if (isSpoilerMode) 1f else 0.5f
-            activity.binding.commentSpoiler.setImageResource(
+            binding.commentSpoiler.alpha = if (isSpoilerMode) 1f else 0.5f
+            binding.commentSpoiler.setImageResource(
                 if (isSpoilerMode) R.drawable.format_spoiler_24
                 else R.drawable.ic_round_remove_red_eye_24
             )
         }
 
-        activity.binding.commentGif.setOnClickListener {
+        binding.commentGif.setOnClickListener {
             val gifPicker = GifPickerBottomDialog.newInstance()
             gifPicker.setOnGifSelectedListener { gifUrl ->
-                val currentText = activity.binding.commentInput.text.toString()
+                val currentText = binding.commentInput.text.toString()
                 val gifMarkdown = "![gif]($gifUrl)"
                 val newText = if (currentText.isEmpty()) gifMarkdown else "$currentText\n$gifMarkdown"
-                activity.binding.commentInput.setText(newText)
-                activity.binding.commentInput.setSelection(newText.length)
+                binding.commentInput.setText(newText)
+                binding.commentInput.setSelection(newText.length)
             }
             gifPicker.show(childFragmentManager, "gifPicker")
         }
 
-        activity.binding.commentSend.setOnClickListener {
+        binding.commentSend.setOnClickListener {
             if (CommentsAPI.isBanned) {
                 snackString("You are banned from commenting :(")
                 return@setOnClickListener
@@ -662,7 +659,7 @@ class CommentsFragment : Fragment() {
         binding.commentFilter.visibility = if (isSanin) View.VISIBLE else View.GONE
         binding.commentSort.visibility = View.VISIBLE
         binding.commentCurrentProgress.visibility = if (isSanin && (userProgress ?: 0) > 0) View.VISIBLE else View.GONE
-        activity.binding.commentMessageContainer.visibility =
+        binding.commentMessageContainer.visibility =
             if (isSanin && CommentsAPI.authToken != null) View.VISIBLE
             else if (!isSanin && TraktAuth.isLoggedIn()) View.VISIBLE
             else View.GONE
@@ -738,7 +735,7 @@ class CommentsFragment : Fragment() {
             return
         }
 
-        val commentText = activity.binding.commentInput.text.toString()
+        val commentText = binding.commentInput.text.toString()
         if (commentText.isEmpty()) {
             snackString("Comment cannot be empty")
             return
@@ -768,7 +765,7 @@ class CommentsFragment : Fragment() {
                 } else {
                     tag = entered
                 }
-                activity.binding.commentLabel.background = if (tag != null)
+                binding.commentLabel.background = if (tag != null)
                     ResourcesCompat.getDrawable(resources, R.drawable.ic_label_24, null)
                 else
                     ResourcesCompat.getDrawable(resources, R.drawable.ic_label_off_24, null)
@@ -776,7 +773,7 @@ class CommentsFragment : Fragment() {
             }
             setNeutralButton("No tag") {
                 tag = null
-                activity.binding.commentLabel.background =
+                binding.commentLabel.background =
                     ResourcesCompat.getDrawable(resources, R.drawable.ic_label_off_24, null)
                 processComment()
             }
@@ -940,18 +937,18 @@ class CommentsFragment : Fragment() {
         interactionState = InteractionState.NONE
         return when (oldState) {
             InteractionState.EDIT -> {
-                activity.binding.commentReplyToContainer.visibility = View.GONE
-                activity.binding.commentInput.setText("")
+                binding.commentReplyToContainer.visibility = View.GONE
+                binding.commentInput.setText("")
                 val imm = activity.getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
-                imm.hideSoftInputFromWindow(activity.binding.commentInput.windowToken, 0)
+                imm.hideSoftInputFromWindow(binding.commentInput.windowToken, 0)
                 commentWithInteraction?.editing(false)
                 InteractionState.EDIT
             }
             InteractionState.REPLY -> {
-                activity.binding.commentReplyToContainer.visibility = View.GONE
-                activity.binding.commentInput.setText("")
+                binding.commentReplyToContainer.visibility = View.GONE
+                binding.commentInput.setText("")
                 val imm = activity.getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
-                imm.hideSoftInputFromWindow(activity.binding.commentInput.windowToken, 0)
+                imm.hideSoftInputFromWindow(binding.commentInput.windowToken, 0)
                 commentWithInteraction?.replying(false)
                 InteractionState.REPLY
             }
@@ -962,34 +959,34 @@ class CommentsFragment : Fragment() {
     fun editCallback(comment: CommentItem) {
         if (resetOldState() == InteractionState.EDIT) return
         commentWithInteraction = comment
-        activity.binding.commentInput.setText(comment.comment.content)
-        activity.binding.commentInput.requestFocus()
-        activity.binding.commentInput.setSelection(activity.binding.commentInput.text.length)
-        TvKeyboardUtil.showKeyboardDelayed(activity.binding.commentInput)
+        binding.commentInput.setText(comment.comment.content)
+        binding.commentInput.requestFocus()
+        binding.commentInput.setSelection(binding.commentInput.text.length)
+        TvKeyboardUtil.showKeyboardDelayed(binding.commentInput)
         interactionState = InteractionState.EDIT
     }
 
     fun replyCallback(comment: CommentItem) {
         if (resetOldState() == InteractionState.REPLY) return
         commentWithInteraction = comment
-        activity.binding.commentReplyToContainer.visibility = View.VISIBLE
-        activity.binding.commentInput.requestFocus()
-        activity.binding.commentInput.setSelection(activity.binding.commentInput.text.length)
-        TvKeyboardUtil.showKeyboardDelayed(activity.binding.commentInput)
+        binding.commentReplyToContainer.visibility = View.VISIBLE
+        binding.commentInput.requestFocus()
+        binding.commentInput.setSelection(binding.commentInput.text.length)
+        TvKeyboardUtil.showKeyboardDelayed(binding.commentInput)
         interactionState = InteractionState.REPLY
     }
 
     fun replyTo(comment: CommentItem, username: String) {
         if (comment.isReplying) {
-            activity.binding.commentReplyToContainer.visibility = View.VISIBLE
-            activity.binding.commentReplyTo.text = getString(R.string.replying_to, username)
-            activity.binding.commentReplyToCancel.setOnClickListener {
+            binding.commentReplyToContainer.visibility = View.VISIBLE
+            binding.commentReplyTo.text = getString(R.string.replying_to, username)
+            binding.commentReplyToCancel.setOnClickListener {
                 comment.replying(false)
                 replyCallback(comment)
-                activity.binding.commentReplyToContainer.visibility = View.GONE
+                binding.commentReplyToContainer.visibility = View.GONE
             }
         } else {
-            activity.binding.commentReplyToContainer.visibility = View.GONE
+            binding.commentReplyToContainer.visibility = View.GONE
         }
     }
 
@@ -1068,7 +1065,7 @@ class CommentsFragment : Fragment() {
     }
 
     private fun processComment() {
-        var commentText = activity.binding.commentInput.text.toString()
+        var commentText = binding.commentInput.text.toString()
         if (commentText.isEmpty()) {
             snackString("Comment cannot be empty")
             return
@@ -1077,11 +1074,11 @@ class CommentsFragment : Fragment() {
         if (isSpoilerMode) {
             commentText = "||$commentText||"
             isSpoilerMode = false
-            activity.binding.commentSpoiler.alpha = 0.5f
-            activity.binding.commentSpoiler.setImageResource(R.drawable.ic_round_remove_red_eye_24)
+            binding.commentSpoiler.alpha = 0.5f
+            binding.commentSpoiler.setImageResource(R.drawable.ic_round_remove_red_eye_24)
         }
 
-        activity.binding.commentInput.text.clear()
+        binding.commentInput.text.clear()
         val finalText = commentText
         lifecycleScope.launch {
             if (interactionState == InteractionState.EDIT) {
@@ -1089,7 +1086,7 @@ class CommentsFragment : Fragment() {
             } else {
                 handleNewComment(finalText)
                 tag = null
-                activity.binding.commentLabel.background = ResourcesCompat.getDrawable(
+                binding.commentLabel.background = ResourcesCompat.getDrawable(
                     resources,
                     R.drawable.ic_label_off_24,
                     null
