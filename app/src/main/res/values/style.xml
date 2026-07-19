@@ -156,7 +156,4 @@
         <item name="android:background">#1AFFFFFF</item>
         <item name="android:layout_margin">1dp</item>
     </style>
-        <item name="android:background">#33FF0000</item>
-        <item name="android:layout_margin">2dp</item>
-    </style>
 </resources>
