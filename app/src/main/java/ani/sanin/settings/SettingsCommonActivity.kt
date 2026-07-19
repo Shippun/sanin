@@ -243,13 +243,20 @@ class SettingsCommonActivity : AppCompatActivity() {
                             },
                         ),
                         Settings(
-                            type = 2,
-                            name = "Custom Keyboard",
-                            desc = "Use in-app keyboard instead of system keyboard",
-                            icon = R.drawable.ic_round_space_bar_24,
-                            isChecked = PrefManager.getVal(PrefName.UseCustomKeyboard),
-                            switch = { isChecked, _ ->
-                                PrefManager.setVal(PrefName.UseCustomKeyboard, isChecked)
+                            type = 1,
+                            name = "Keyboard Mode",
+                            desc = "System / Toggle button / Always-visible",
+                            icon = R.drawable.ic_round_keyboard_24,
+                            onClick = {
+                                val labels = arrayOf("System Keyboard", "Toggle Button", "Always-Visible")
+                                customAlertDialog().apply {
+                                    setTitle("Keyboard Mode")
+                                    singleChoiceItems(labels, PrefManager.getVal(PrefName.KeyboardMode)) { index ->
+                                        PrefManager.setVal(PrefName.KeyboardMode, index)
+                                        restartApp()
+                                    }
+                                    show()
+                                }
                             },
                         ),
                         Settings(

@@ -132,7 +132,11 @@ class SupportingSearchAdapter(private val activity: SearchActivity, private val 
         }
         binding.searchBar.setEndIconOnClickListener { searchTitle() }
 
-        TvKeyboardUtil.setupTvInput(binding.searchBarText)
+        when (TvKeyboardUtil.keyboardMode()) {
+            0 -> TvKeyboardUtil.setupSystemKeyboard(binding.searchBarText)
+            1 -> TvKeyboardUtil.setupEditTextWithToggle(binding.searchBarText, binding.searchKeyboardToggle)
+            2 -> TvKeyboardUtil.setupEditTextForAlwaysVisible(binding.searchBarText)
+        }
         search = Runnable { searchTitle() }
         requestFocus = Runnable { binding.searchBarText.requestFocus() }
     }

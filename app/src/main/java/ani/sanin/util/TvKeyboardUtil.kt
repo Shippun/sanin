@@ -6,15 +6,16 @@ import android.content.res.Configuration
 import android.app.UiModeManager
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
-import android.graphics.drawable.LayerDrawable
 import android.os.Build
 import android.util.TypedValue
+import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
+import android.widget.FrameLayout
 import android.widget.TextView
 import ani.sanin.settings.saving.PrefManager
 import ani.sanin.settings.saving.PrefName
@@ -22,96 +23,152 @@ import ani.sanin.settings.saving.PrefName
 object TvKeyboardUtil {
 
     private val TAG_KEYBOARD = "tv_custom_keyboard"
+    private val TAG_KEYBOARD_COMPACT = "tv_custom_keyboard_compact"
 
-    private fun useCustomKeyboard(): Boolean = PrefManager.getVal(PrefName.UseCustomKeyboard)
+    fun keyboardMode(): Int = PrefManager.getVal(PrefName.KeyboardMode)
 
-    fun setupTvInput(view: View) {
+    /** For mode 0 (System keyboard): show system keyboard on focus */
+    fun setupSystemKeyboard(view: View) {
         retainWindowFocus(view)
+        view.setOnFocusChangeListener { v, hasFocus ->
+            if (hasFocus) {
+                showKeyboardDelayed(v)
+                applyFocusBorder(v)
+            } else {
+                removeFocusBorder(v)
+            }
+        }
+        if (view.isFocused) {
+            showKeyboardDelayed(view)
+            applyFocusBorder(view)
+        }
+    }
 
-        if (useCustomKeyboard()) {
-            if (view is EditText) {
-                view.showSoftInputOnFocus = false
+    /** For mode 1 (Toggle button): attach toggle button, show/hide custom keyboard on click */
+    fun setupEditTextWithToggle(editText: EditText, toggleButton: View) {
+        retainWindowFocus(editText)
+        editText.showSoftInputOnFocus = false
+        attachKeyboardToWindow(editText)
+        toggleButton.visibility = View.VISIBLE
+        toggleButton.setOnClickListener {
+            val keyboard = getOrCreateKeyboard(editText.context as Activity)
+            if (keyboard.isKeyboardVisible()) {
+                keyboard.hide()
+                editText.clearFocus()
+            } else {
+                keyboard.target = editText
+                keyboard.show()
             }
-            attachKeyboardToWindow(view)
-            view.setOnFocusChangeListener { v, hasFocus ->
-                if (hasFocus) {
-                    if (v is EditText) showCustomKeyboard(v)
-                    applyFocusBorder(v)
-                } else {
-                    hideCustomKeyboard(v)
-                    removeFocusBorder(v)
+        }
+        editText.setOnFocusChangeListener { v, hasFocus ->
+            if (hasFocus) {
+                applyFocusBorder(v)
+            } else {
+                removeFocusBorder(v)
+            }
+        }
+        if (editText.isFocused) applyFocusBorder(editText)
+    }
+
+    /** For mode 2 (Always visible): show compact keyboard at bottom-left, set target on focus */
+    fun setupEditTextForAlwaysVisible(editText: EditText) {
+        retainWindowFocus(editText)
+        editText.showSoftInputOnFocus = false
+        ensureCompactKeyboardVisible(editText)
+        editText.setOnFocusChangeListener { v, hasFocus ->
+            if (hasFocus) {
+                getCompactKeyboard(editText.context as Activity).target = editText
+                applyFocusBorder(v)
+            } else {
+                removeFocusBorder(v)
+            }
+        }
+        if (editText.isFocused) {
+            getCompactKeyboard(editText.context as Activity).target = editText
+            applyFocusBorder(editText)
+        }
+    }
+
+    /** Unified setup that delegates based on keyboard mode */
+    fun setupTvInput(view: View) {
+        when (keyboardMode()) {
+            0 -> setupSystemKeyboard(view)
+            1 -> {
+                // Default toggle behavior when no explicit toggle button provided
+                retainWindowFocus(view)
+                if (view is EditText) {
+                    view.showSoftInputOnFocus = false
+                    attachKeyboardToWindow(view)
+                    view.setOnFocusChangeListener { v, hasFocus ->
+                        if (hasFocus && v is EditText) showCustomKeyboard(v)
+                        else if (!hasFocus) hideCustomKeyboard(v)
+                    }
+                    if (view.isFocused && view is EditText) showCustomKeyboard(view)
                 }
             }
-            if (view.isFocused) {
-                if (view is EditText) showCustomKeyboard(view)
-                applyFocusBorder(view)
-            }
-        } else {
-            view.setOnFocusChangeListener { v, hasFocus ->
-                if (hasFocus) {
-                    showKeyboardDelayed(v)
-                    applyFocusBorder(v)
-                } else {
-                    removeFocusBorder(v)
-                }
-            }
-            if (view.isFocused) {
-                showKeyboardDelayed(view)
-                applyFocusBorder(view)
+            2 -> {
+                if (view is EditText) setupEditTextForAlwaysVisible(view)
             }
         }
     }
 
     fun ensureKeyboardOnFocus(editText: EditText) {
-        retainWindowFocus(editText)
-
-        if (useCustomKeyboard()) {
-            editText.showSoftInputOnFocus = false
-            attachKeyboardToWindow(editText)
-            editText.setOnFocusChangeListener { v, hasFocus ->
-                if (hasFocus) showCustomKeyboard(v)
-                else hideCustomKeyboard(v)
+        when (keyboardMode()) {
+            0 -> {
+                retainWindowFocus(editText)
+                editText.setOnFocusChangeListener { v, hasFocus ->
+                    if (hasFocus) showKeyboardDelayed(v)
+                }
+                if (editText.isFocused) showKeyboardDelayed(editText)
             }
-            if (editText.isFocused) showCustomKeyboard(editText)
-        } else {
-            editText.setOnFocusChangeListener { v, hasFocus ->
-                if (hasFocus) showKeyboardDelayed(v)
+            1 -> {
+                editText.showSoftInputOnFocus = false
+                attachKeyboardToWindow(editText)
+                editText.setOnFocusChangeListener { v, hasFocus ->
+                    if (hasFocus) showCustomKeyboard(v)
+                    else hideCustomKeyboard(v)
+                }
+                if (editText.isFocused) showCustomKeyboard(editText)
             }
-            if (editText.isFocused) showKeyboardDelayed(editText)
+            2 -> setupEditTextForAlwaysVisible(editText)
         }
     }
 
     fun showKeyboard(view: View) {
-        if (useCustomKeyboard()) {
-            view.requestFocus()
-            if (view is EditText) showCustomKeyboard(view)
-        } else {
-            view.requestFocus()
-            retainWindowFocus(view)
-            val imm = view.context.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
-                ?: return
-            imm.showSoftInput(view, InputMethodManager.SHOW_FORCED)
+        when (keyboardMode()) {
+            0 -> {
+                view.requestFocus()
+                retainWindowFocus(view)
+                val imm = view.context.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager ?: return
+                imm.showSoftInput(view, InputMethodManager.SHOW_FORCED)
+            }
+            1, 2 -> {
+                view.requestFocus()
+                if (view is EditText) showCustomKeyboard(view)
+            }
         }
     }
 
     fun showKeyboardDelayed(view: View, delayMs: Long = 150) {
-        if (useCustomKeyboard()) {
-            view.postDelayed({
-                if (view is EditText) showCustomKeyboard(view)
-            }, delayMs)
-        } else {
-            retainWindowFocus(view)
-            view.postDelayed({
-                val imm = view.context.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
-                    ?: return@postDelayed
-                imm.showSoftInput(view, InputMethodManager.SHOW_FORCED)
-            }, delayMs)
+        when (keyboardMode()) {
+            0 -> {
+                retainWindowFocus(view)
+                view.postDelayed({
+                    val imm = view.context.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager ?: return@postDelayed
+                    imm.showSoftInput(view, InputMethodManager.SHOW_FORCED)
+                }, delayMs)
+            }
+            1, 2 -> {
+                view.postDelayed({
+                    if (view is EditText) showCustomKeyboard(view)
+                }, delayMs)
+            }
         }
     }
 
     fun hideKeyboard(view: View) {
         view.clearFocus()
-        if (useCustomKeyboard()) {
+        if (keyboardMode() != 0) {
             hideCustomKeyboard(view)
         }
     }
@@ -127,18 +184,22 @@ object TvKeyboardUtil {
     }
 
     fun TextView.setupTvKeyboard() {
-        if (useCustomKeyboard()) {
-            if (this is EditText) {
-                showSoftInputOnFocus = false
+        when (keyboardMode()) {
+            0 -> {
+                setOnFocusChangeListener { v, hasFocus ->
+                    if (hasFocus) showKeyboardDelayed(v)
+                }
             }
-            attachKeyboardToWindow(this)
-            setOnFocusChangeListener { v, hasFocus ->
-                if (hasFocus && v is EditText) showCustomKeyboard(v)
-                else if (!hasFocus) hideCustomKeyboard(v)
+            1 -> {
+                if (this is EditText) showSoftInputOnFocus = false
+                attachKeyboardToWindow(this)
+                setOnFocusChangeListener { v, hasFocus ->
+                    if (hasFocus && v is EditText) showCustomKeyboard(v)
+                    else if (!hasFocus) hideCustomKeyboard(v)
+                }
             }
-        } else {
-            setOnFocusChangeListener { v, hasFocus ->
-                if (hasFocus) showKeyboardDelayed(v)
+            2 -> {
+                if (this is EditText) setupEditTextForAlwaysVisible(this)
             }
         }
     }
@@ -186,8 +247,7 @@ object TvKeyboardUtil {
     }
 
     private fun getOrCreateKeyboard(activity: Activity): TvKeyboardView {
-        val decorView = activity.window.decorView as? ViewGroup
-            ?: error("Cannot access decor view")
+        val decorView = activity.window.decorView as? ViewGroup ?: error("Cannot access decor view")
         var keyboard = decorView.findViewWithTag<TvKeyboardView>(TAG_KEYBOARD)
         if (keyboard == null) {
             keyboard = TvKeyboardView(activity).apply {
@@ -203,6 +263,32 @@ object TvKeyboardUtil {
             )
         }
         return keyboard
+    }
+
+    private fun getCompactKeyboard(activity: Activity): TvKeyboardView {
+        val decorView = activity.window.decorView as? ViewGroup ?: error("Cannot access decor view")
+        var keyboard = decorView.findViewWithTag<TvKeyboardView>(TAG_KEYBOARD_COMPACT)
+        if (keyboard == null) {
+            keyboard = TvKeyboardView(activity, compact = true).apply {
+                this.tag = TAG_KEYBOARD_COMPACT
+                visibility = View.VISIBLE
+            }
+            val params = FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            ).apply {
+                gravity = Gravity.START or Gravity.BOTTOM
+                bottomMargin = (16 * activity.resources.displayMetrics.density).toInt()
+                leftMargin = (16 * activity.resources.displayMetrics.density).toInt()
+            }
+            decorView.addView(keyboard, params)
+        }
+        return keyboard
+    }
+
+    fun ensureCompactKeyboardVisible(view: View) {
+        val activity = view.context as? Activity ?: return
+        getCompactKeyboard(activity)
     }
 
     private fun showCustomKeyboard(view: View) {

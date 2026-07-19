@@ -5,20 +5,18 @@ import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.util.AttributeSet
-import android.view.Gravity
 import android.view.View
-import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.TextView
-import androidx.core.view.isVisible
 import ani.sanin.R
 
-class TvKeyboardView @JvmOverloads constructor(
+class TvKeyboardView(
     context: Context,
     attrs: AttributeSet? = null,
-    defStyleAttr: Int = 0
+    defStyleAttr: Int = 0,
+    private val compact: Boolean = false
 ) : FrameLayout(context, attrs, defStyleAttr) {
 
     private val primaryColor = FocusEffectUtil.getPrimaryColor(context)
@@ -27,7 +25,7 @@ class TvKeyboardView @JvmOverloads constructor(
         set(value) {
             if (field != value) {
                 field = value
-                if (value != null && !isVisible) show()
+                if (value != null && !compact && !isVisible) show()
             }
         }
 
@@ -50,13 +48,8 @@ class TvKeyboardView @JvmOverloads constructor(
     )
 
     init {
-        inflate(context, R.layout.tv_keyboard_view, this)
+        inflate(context, if (compact) R.layout.tv_keyboard_compact else R.layout.tv_keyboard_view, this)
         setupKeys()
-    }
-
-    override fun onAttachedToWindow() {
-        super.onAttachedToWindow()
-        (layoutParams as? FrameLayout.LayoutParams)?.gravity = Gravity.BOTTOM
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -79,14 +72,11 @@ class TvKeyboardView @JvmOverloads constructor(
         }
 
         val specialIds = listOf(
-            R.id.keyBackspace to null,
-            R.id.keyEnter to null,
-            R.id.keySpace to null,
-            R.id.keyHide to null,
-            R.id.keyModeToggle to null
+            R.id.keyBackspace, R.id.keyEnter, R.id.keySpace,
+            R.id.keyHide, R.id.keyModeToggle
         )
 
-        for ((id, _) in specialIds) {
+        for (id in specialIds) {
             allKeys.add(findViewById(id))
         }
 
@@ -100,13 +90,15 @@ class TvKeyboardView @JvmOverloads constructor(
     }
 
     private fun applyKeyFocus(v: View) {
-        v.animate().scaleX(1.12f).scaleY(1.12f).setDuration(100).start()
-        val borderPx = (2f * v.resources.displayMetrics.density).toInt()
+        val scale = if (compact) 1.08f else 1.12f
+        v.animate().scaleX(scale).scaleY(scale).setDuration(100).start()
+        val borderPx = (if (compact) 1f else 2f) * v.resources.displayMetrics.density
+        val corner = (if (compact) 3f else 6f) * v.resources.displayMetrics.density
         v.background = GradientDrawable().apply {
             setShape(GradientDrawable.RECTANGLE)
             setColor(0x4DFFFFFF.toInt())
-            setStroke(borderPx, primaryColor)
-            cornerRadius = 6f * v.resources.displayMetrics.density
+            setStroke(borderPx.toInt(), primaryColor)
+            cornerRadius = corner
         }
     }
 
@@ -163,6 +155,10 @@ class TvKeyboardView @JvmOverloads constructor(
     private var keyboardHeight = 0
 
     fun show() {
+        if (compact) {
+            visibility = VISIBLE
+            return
+        }
         animate().cancel()
         if (isVisible) return
         visibility = VISIBLE
@@ -175,6 +171,7 @@ class TvKeyboardView @JvmOverloads constructor(
     }
 
     fun hide() {
+        if (compact) return
         animate().cancel()
         if (!isVisible) return
         val h = if (keyboardHeight > 0) keyboardHeight else height
