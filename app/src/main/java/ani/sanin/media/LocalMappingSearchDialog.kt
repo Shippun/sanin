@@ -108,6 +108,7 @@ class LocalMappingSearchDialog : BottomSheetDialogFragment() {
         }
 
         TvKeyboardUtil.setupTvInput(binding.searchBarText)
+        dialog?.window?.let { TvKeyboardUtil.retainWindowFocus(it) }
         binding.searchBarText.setOnEditorActionListener { _, actionId, _ ->
             return@setOnEditorActionListener when (actionId) {
                 EditorInfo.IME_ACTION_SEARCH -> {

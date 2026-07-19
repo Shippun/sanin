@@ -49,6 +49,7 @@ class ProxyDialogFragment : BottomSheetDialogFragment() {
         listOf(binding.proxyHost, binding.proxyPort, binding.proxyUsername, binding.proxyPassword).forEach { input ->
             TvKeyboardUtil.setupTvInput(input)
         }
+        dialog?.window?.let { TvKeyboardUtil.retainWindowFocus(it) }
 
         toggleAuthentication(authEnabled)
 

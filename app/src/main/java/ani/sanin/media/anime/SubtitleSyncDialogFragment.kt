@@ -154,6 +154,7 @@ class SubtitleSyncDialogFragment : DialogFragment() {
         applySyncFocus(binding.syncApply)
 
         TvKeyboardUtil.setupTvInput(binding.syncOffsetInput)
+        dialog?.window?.let { TvKeyboardUtil.retainWindowFocus(it) }
 
         binding.syncSubtractMore.setOnClickListener { changeBy(-1000L) }
         binding.syncSubtract.setOnClickListener { changeBy(-100L) }

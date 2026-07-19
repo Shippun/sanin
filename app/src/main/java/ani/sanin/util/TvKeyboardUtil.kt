@@ -1,5 +1,6 @@
 package ani.sanin.util
 
+import android.app.Activity
 import android.content.Context
 import android.content.res.Configuration
 import android.app.UiModeManager
@@ -9,6 +10,8 @@ import android.graphics.drawable.LayerDrawable
 import android.os.Build
 import android.util.TypedValue
 import android.view.View
+import android.view.Window
+import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.TextView
@@ -16,6 +19,7 @@ import android.widget.TextView
 object TvKeyboardUtil {
 
     fun setupTvInput(view: View) {
+        retainWindowFocus(view)
         view.setOnFocusChangeListener { v, hasFocus ->
             if (hasFocus) {
                 showKeyboardDelayed(v)
@@ -27,6 +31,7 @@ object TvKeyboardUtil {
     }
 
     fun ensureKeyboardOnFocus(editText: EditText) {
+        retainWindowFocus(editText)
         editText.setOnFocusChangeListener { v, hasFocus ->
             if (hasFocus) {
                 showKeyboardDelayed(v)
@@ -36,6 +41,7 @@ object TvKeyboardUtil {
 
     fun showKeyboard(view: View) {
         view.requestFocus()
+        retainWindowFocus(view)
         val imm = view.context.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
             ?: return
         imm.showSoftInput(view, InputMethodManager.SHOW_FORCED)
@@ -45,6 +51,7 @@ object TvKeyboardUtil {
 
     fun showKeyboardDelayed(view: View, delayMs: Long = 150) {
         backDismissed.add(view)
+        retainWindowFocus(view)
         view.postDelayed({
             val imm = view.context.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
                 ?: return@postDelayed
@@ -54,6 +61,16 @@ object TvKeyboardUtil {
 
     fun hideKeyboard(view: View) {
         view.clearFocus()
+    }
+
+    fun retainWindowFocus(window: Window) {
+        if (Build.VERSION.SDK_INT >= 24) {
+            window.addFlags(WindowManager.LayoutParams.FLAG_LOCAL_FOCUS_MODE)
+        }
+    }
+
+    private fun retainWindowFocus(view: View) {
+        (view.context as? Activity)?.window?.let { retainWindowFocus(it) }
     }
 
     fun TextView.setupTvKeyboard() {

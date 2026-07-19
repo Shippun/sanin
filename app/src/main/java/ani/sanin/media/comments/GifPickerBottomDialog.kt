@@ -72,6 +72,7 @@ class GifPickerBottomDialog : BottomSheetDialogFragment() {
         })
 
         TvKeyboardUtil.setupTvInput(binding.gifSearchInput)
+        dialog?.window?.let { TvKeyboardUtil.retainWindowFocus(it) }
 
         loadTrending()
     }
