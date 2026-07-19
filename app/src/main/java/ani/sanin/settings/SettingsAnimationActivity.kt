@@ -115,6 +115,43 @@ class SettingsAnimationActivity : AppCompatActivity() {
             binding.animationSectionPlayer,
             binding.animationSectionPlayerContent
         )
+        setupCollapsibleSection(
+            binding.animationSectionFocus,
+            binding.animationSectionFocusContent
+        )
+        setupCollapsibleSection(
+            binding.animationSectionDialogs,
+            binding.animationSectionDialogsContent
+        )
+        setupCollapsibleSection(
+            binding.animationSectionOther,
+            binding.animationSectionOtherContent
+        )
+
+        bindSwitch(binding.animationNavRail, PrefName.NavRailAnimations)
+        bindSwitch(binding.animationPlayerOverlay, PrefName.PlayerOverlayAnimations)
+        bindSwitch(binding.animationDoubleTap, PrefName.DoubleTapAnimations)
+        bindSwitch(binding.animationSeekBar, PrefName.SeekBarAnimations)
+        bindSwitch(binding.animationProgressShake, PrefName.ProgressShakeAnimations)
+        bindSwitch(binding.animationFocusEffects, PrefName.FocusAnimations)
+        bindSwitch(binding.animationKeyboardKey, PrefName.KeyboardKeyAnimations)
+        bindSwitch(binding.animationTransitions, PrefName.TransitionAnimations)
+        bindSwitch(binding.animationNotificationPopup, PrefName.NotificationPopupAnimations)
+        bindSwitch(binding.animationCommentInput, PrefName.CommentInputAnimations)
+        bindSwitch(binding.animationImageDialog, PrefName.ImageDialogAnimations)
+        bindSwitch(binding.animationSplash, PrefName.SplashAnimations)
+        bindSwitch(binding.animationLikeButton, PrefName.LikeButtonAnimations)
+        bindSwitch(binding.animationIncognitoBanner, PrefName.IncognitoBannerAnimations)
+        bindSwitch(binding.animationSearchHeader, PrefName.SearchHeaderAnimations)
+        bindSwitch(binding.animationScrollToTop, PrefName.ScrollToTopAnimations)
+        bindSwitch(binding.animationInstallSpinner, PrefName.InstallSpinnerAnimations)
+        bindSwitch(binding.animationFilterReset, PrefName.FilterResetAnimations)
+        bindSwitch(binding.animationDescriptionExpand, PrefName.DescriptionExpandAnimations)
+        bindSwitch(binding.animationInfoPage, PrefName.InfoPageAnimations)
+        bindSwitch(binding.animationNoInternet, PrefName.NoInternetAnimations)
+        bindSwitch(binding.animationXpandable, PrefName.XpandableAnimations)
+        bindSwitch(binding.animationAnimatedVectors, PrefName.AnimatedVectorDrawables)
+        bindSwitch(binding.animationMisc, PrefName.MiscUiAnimations)
 
         FocusEffectUtil.applyFocusListener(
             binding.animationBack,
@@ -127,10 +164,44 @@ class SettingsAnimationActivity : AppCompatActivity() {
             binding.animationPlayerController,
             binding.animationProfile,
             binding.animationHome,
+            binding.animationNavRail,
+            binding.animationPlayerOverlay,
+            binding.animationDoubleTap,
+            binding.animationSeekBar,
+            binding.animationProgressShake,
+            binding.animationFocusEffects,
+            binding.animationKeyboardKey,
+            binding.animationTransitions,
+            binding.animationNotificationPopup,
+            binding.animationCommentInput,
+            binding.animationImageDialog,
+            binding.animationSplash,
+            binding.animationLikeButton,
+            binding.animationIncognitoBanner,
+            binding.animationSearchHeader,
+            binding.animationScrollToTop,
+            binding.animationInstallSpinner,
+            binding.animationFilterReset,
+            binding.animationDescriptionExpand,
+            binding.animationInfoPage,
+            binding.animationNoInternet,
+            binding.animationXpandable,
+            binding.animationAnimatedVectors,
+            binding.animationMisc,
             binding.animationSectionDisplay,
             binding.animationSectionNavigation,
             binding.animationSectionPlayer,
+            binding.animationSectionFocus,
+            binding.animationSectionDialogs,
+            binding.animationSectionOther,
         )
+    }
+
+    private fun bindSwitch(switch: com.google.android.material.materialswitch.MaterialSwitch, pref: PrefName) {
+        switch.isChecked = PrefManager.getVal<Boolean>(pref)
+        switch.setOnCheckedChangeListener { _, isChecked ->
+            PrefManager.setVal(pref, isChecked)
+        }
     }
 
     private fun setupCollapsibleSection(header: TextView, content: View) {
