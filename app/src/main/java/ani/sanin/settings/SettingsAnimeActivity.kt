@@ -149,7 +149,7 @@ class SettingsAnimeActivity : AppCompatActivity() {
                         type = 2,
                         name = "Smart Source Persistence",
                         desc = "Remember source selection across sessions",
-                        icon = R.drawable.ic_round_smart_button_24,
+                        icon = R.drawable.ic_round_source_24,
                         isChecked = PrefManager.getVal(PrefName.SmartSourcePersistence),
                         switch = { isChecked, _ ->
                             PrefManager.setVal(PrefName.SmartSourcePersistence, isChecked)
