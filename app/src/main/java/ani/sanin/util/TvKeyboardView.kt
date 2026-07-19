@@ -2,7 +2,6 @@ package ani.sanin.util
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.util.AttributeSet
 import android.view.View
@@ -10,6 +9,7 @@ import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.TextView
+import androidx.core.view.isVisible
 import ani.sanin.R
 
 class TvKeyboardView(
