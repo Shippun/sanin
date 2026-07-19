@@ -16,15 +16,19 @@ import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.TextView
+import ani.sanin.settings.saving.PrefManager
+import ani.sanin.settings.saving.PrefName
 
 object TvKeyboardUtil {
 
     private val TAG_KEYBOARD = "tv_custom_keyboard"
 
+    private fun useCustomKeyboard(): Boolean = PrefManager.getVal(PrefName.UseCustomKeyboard)
+
     fun setupTvInput(view: View) {
         retainWindowFocus(view)
 
-        if (isTv(view.context)) {
+        if (useCustomKeyboard()) {
             if (view is EditText) {
                 view.showSoftInputOnFocus = false
             }
@@ -53,7 +57,7 @@ object TvKeyboardUtil {
     fun ensureKeyboardOnFocus(editText: EditText) {
         retainWindowFocus(editText)
 
-        if (isTv(editText.context)) {
+        if (useCustomKeyboard()) {
             editText.showSoftInputOnFocus = false
             attachKeyboardToWindow(editText)
             editText.setOnFocusChangeListener { v, hasFocus ->
@@ -68,7 +72,7 @@ object TvKeyboardUtil {
     }
 
     fun showKeyboard(view: View) {
-        if (isTv(view.context)) {
+        if (useCustomKeyboard()) {
             view.requestFocus()
             if (view is EditText) showCustomKeyboard(view)
         } else {
@@ -81,7 +85,7 @@ object TvKeyboardUtil {
     }
 
     fun showKeyboardDelayed(view: View, delayMs: Long = 150) {
-        if (isTv(view.context)) {
+        if (useCustomKeyboard()) {
             view.postDelayed({
                 if (view is EditText) showCustomKeyboard(view)
             }, delayMs)
@@ -97,7 +101,7 @@ object TvKeyboardUtil {
 
     fun hideKeyboard(view: View) {
         view.clearFocus()
-        if (isTv(view.context)) {
+        if (useCustomKeyboard()) {
             hideCustomKeyboard(view)
         }
     }
@@ -113,7 +117,7 @@ object TvKeyboardUtil {
     }
 
     fun TextView.setupTvKeyboard() {
-        if (isTv(context)) {
+        if (useCustomKeyboard()) {
             if (this is EditText) {
                 showSoftInputOnFocus = false
             }

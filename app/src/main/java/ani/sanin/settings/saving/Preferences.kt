@@ -139,6 +139,7 @@ enum class PrefName(val data: Pref) {
     GreyWatchedEpisodes(Pref(Location.UI, Boolean::class, false)),
     FocusEffect(Pref(Location.UI, Int::class, 0)),
     CardStyle(Pref(Location.UI, Int::class, 0)),
+    UseCustomKeyboard(Pref(Location.UI, Boolean::class, true)),
 
     UIScale(Pref(Location.UI, Float::class, 1.0f)),
 

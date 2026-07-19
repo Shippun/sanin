@@ -244,6 +244,16 @@ class SettingsCommonActivity : AppCompatActivity() {
                         ),
                         Settings(
                             type = 2,
+                            name = "Custom Keyboard",
+                            desc = "Use in-app keyboard instead of system keyboard",
+                            icon = R.drawable.ic_round_space_bar_24,
+                            isChecked = PrefManager.getVal(PrefName.UseCustomKeyboard),
+                            switch = { isChecked, _ ->
+                                PrefManager.setVal(PrefName.UseCustomKeyboard, isChecked)
+                            },
+                        ),
+                        Settings(
+                            type = 2,
                             name = getString(R.string.search_source_list),
                             desc = getString(R.string.search_source_list_desc),
                             icon = R.drawable.ic_round_search_sources_24,
