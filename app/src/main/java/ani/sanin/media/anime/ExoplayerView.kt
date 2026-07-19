@@ -2219,6 +2219,7 @@ class ExoplayerView :
             exoPlayer.trackSelectionParameters
                 .buildUpon()
                 .setTrackTypeDisabled(TRACK_TYPE_TEXT, isDisabled)
+                .setSubtitleOffsetUs(PrefManager.getVal<Long>(PrefName.SubtitleDelay) * 1000)
                 .build()
     }
 
@@ -2274,6 +2275,13 @@ class ExoplayerView :
     fun applySubtitleOffset(offsetMs: Long) {
         PrefManager.setVal(PrefName.SubtitleDelay, offsetMs)
         PrefManager.setVal(PrefName.SubtitleSyncEnabled, offsetMs != 0L)
+        if (::exoPlayer.isInitialized) {
+            exoPlayer.trackSelectionParameters =
+                exoPlayer.trackSelectionParameters
+                    .buildUpon()
+                    .setSubtitleOffsetUs(offsetMs * 1000)
+                    .build()
+        }
     }
 
     // ── Subtitle file parsing for full-cue sync ───────────────
@@ -3223,7 +3231,8 @@ class ExoplayerView :
                 .setTrackTypeDisabled(TRACK_TYPE_TEXT, isDisabled)
                 .setOverrideForType(
                     TrackSelectionOverride(trackGroup.mediaTrackGroup, index),
-                ).build()
+                ).setSubtitleOffsetUs(PrefManager.getVal<Long>(PrefName.SubtitleDelay) * 1000)
+                .build()
         if (type == TRACK_TYPE_TEXT) {
             setupSubFormatting(playerView)
             applySubtitleStyles(customSubtitleView)
