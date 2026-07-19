@@ -27,12 +27,14 @@ class TvKeyboardView(
             if (field != value) {
                 field = value
                 if (value != null && !compact && !isVisible) show()
+                if (compact && value != null) syncFromTarget()
             }
         }
 
     private var isSymbolsMode = false
 
     private lateinit var modeToggle: TextView
+    private lateinit var previewEditText: EditText
     private var firstKey: TextView? = null
     private val letterKeys = mutableListOf<TextView>()
     private val allKeys = mutableListOf<TextView>()
@@ -66,6 +68,10 @@ class TvKeyboardView(
         )
 
         modeToggle = findViewById(R.id.keyModeToggle)
+        if (compact) {
+            previewEditText = findViewById(R.id.keyPreview)
+            previewEditText.showSoftInputOnFocus = false
+        }
 
         for (id in letterIds) {
             val v = findViewById<TextView>(id)
@@ -111,10 +117,11 @@ class TvKeyboardView(
     }
 
     private fun onKeyClick(view: TextView) {
-        val editText = target ?: return
-        val text = editText.text ?: return
-        val start = editText.selectionStart.coerceAtLeast(0)
-        val end = editText.selectionEnd.coerceAtLeast(0)
+        val src = if (compact) previewEditText else (target ?: return)
+        if (!compact && target == null) return
+        val text = src.text ?: return
+        val start = src.selectionStart.coerceAtLeast(0)
+        val end = src.selectionEnd.coerceAtLeast(0)
         val minPos = minOf(start, end)
         val maxPos = maxOf(start, end)
 
@@ -127,23 +134,42 @@ class TvKeyboardView(
                 }
             }
             R.id.keyEnter -> {
-                editText.onEditorAction(EditorInfo.IME_ACTION_DONE)
+                target?.onEditorAction(EditorInfo.IME_ACTION_DONE)
             }
             R.id.keySpace -> {
                 text.insert(minPos, " ")
-                editText.setSelection(minPos + 1)
+                src.setSelection(minPos + 1)
             }
             R.id.keyHide -> {
                 hide()
-                editText.clearFocus()
+                target?.clearFocus()
             }
             R.id.keyModeToggle -> toggleMode()
             else -> {
                 val char = view.text?.toString() ?: return
                 text.insert(minPos, char)
-                editText.setSelection(minPos + char.length)
+                src.setSelection(minPos + char.length)
             }
         }
+        if (compact) syncToTarget()
+    }
+
+    private fun syncToTarget() {
+        val t = target ?: return
+        val prevText = previewEditText.text?.toString() ?: ""
+        if (t.text?.toString() != prevText) {
+            t.setText(prevText)
+        }
+        try { t.setSelection(previewEditText.selectionStart.coerceAtLeast(0)) } catch (_: Exception) {}
+    }
+
+    private fun syncFromTarget() {
+        val t = target ?: return
+        val targetText = t.text?.toString() ?: ""
+        if (previewEditText.text?.toString() != targetText) {
+            previewEditText.setText(targetText)
+        }
+        try { previewEditText.setSelection(t.selectionStart.coerceAtLeast(0)) } catch (_: Exception) {}
     }
 
     private fun toggleMode() {
@@ -159,6 +185,7 @@ class TvKeyboardView(
 
     fun show() {
         if (compact) {
+            syncFromTarget()
             visibility = VISIBLE
             requestFocus()
             post {
@@ -179,6 +206,7 @@ class TvKeyboardView(
 
     fun hide() {
         if (compact) {
+            syncToTarget()
             clearFocus()
             visibility = GONE
             return
