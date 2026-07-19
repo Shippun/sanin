@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.drawable.GradientDrawable
 import android.util.AttributeSet
+import android.view.KeyEvent
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
@@ -32,6 +33,7 @@ class TvKeyboardView(
     private var isSymbolsMode = false
 
     private lateinit var modeToggle: TextView
+    private var firstKey: TextView? = null
     private val letterKeys = mutableListOf<TextView>()
     private val allKeys = mutableListOf<TextView>()
 
@@ -67,6 +69,7 @@ class TvKeyboardView(
 
         for (id in letterIds) {
             val v = findViewById<TextView>(id)
+            if (firstKey == null) firstKey = v
             letterKeys.add(v)
             allKeys.add(v)
         }
@@ -157,6 +160,10 @@ class TvKeyboardView(
     fun show() {
         if (compact) {
             visibility = VISIBLE
+            requestFocus()
+            post {
+                firstKey?.requestFocus()
+            }
             return
         }
         animate().cancel()
@@ -172,6 +179,7 @@ class TvKeyboardView(
 
     fun hide() {
         if (compact) {
+            clearFocus()
             visibility = GONE
             return
         }
@@ -185,4 +193,15 @@ class TvKeyboardView(
     }
 
     fun isKeyboardVisible(): Boolean = isVisible
+
+    override fun dispatchKeyEvent(event: KeyEvent): Boolean {
+        if (compact && event.action == KeyEvent.ACTION_DOWN && event.keyCode == KeyEvent.KEYCODE_BACK) {
+            if (isVisible) {
+                hide()
+                target?.clearFocus()
+                return true
+            }
+        }
+        return super.dispatchKeyEvent(event)
+    }
 }
