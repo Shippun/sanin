@@ -272,7 +272,6 @@ class MediaDetailsActivity : AppCompatActivity() {
         fun selectTab(idx: Int, animate: Boolean = true) {
             selected = idx
             updateMediaNavIconTints(selected)
-            binding.commentInputLayout.isVisible = selected == 2
             when (idx) {
                 0 -> {
                     binding.mediaInfoFragmentContainer!!.visibility = View.VISIBLE
