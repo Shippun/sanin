@@ -69,6 +69,7 @@ class AddRepositoryBottomSheet : DialogFragment() {
     private var repositories: MutableList<String> = mutableListOf()
     private var onRepositoryRemoved: ((String, MediaType) -> Unit)? = null
     private var adapter: GroupieAdapter = GroupieAdapter()
+    private var backHandled = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -99,6 +100,18 @@ class AddRepositoryBottomSheet : DialogFragment() {
 
         binding.repositoryInput.hint = getString(R.string.anime_add_repository)
         TvKeyboardUtil.setupTvInput(binding.repositoryInput)
+
+        dialog?.setOnKeyListener { _, keyCode, event ->
+            if (keyCode == KeyEvent.KEYCODE_BACK && event.action == KeyEvent.ACTION_DOWN) {
+                if (binding.repositoryInput.hasFocus() && !backHandled) {
+                    binding.repositoryInput.clearFocus()
+                    backHandled = true
+                    return@setOnKeyListener true
+                }
+                backHandled = false
+                false
+            } else false
+        }
 
         binding.addButton.setOnClickListener {
             val input = binding.repositoryInput.text.toString()

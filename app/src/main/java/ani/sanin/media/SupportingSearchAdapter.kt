@@ -124,7 +124,6 @@ class SupportingSearchAdapter(private val activity: SearchActivity, private val 
                 EditorInfo.IME_ACTION_SEARCH -> {
                     searchTitle()
                     binding.searchBarText.clearFocus()
-                    TvKeyboardUtil.hideKeyboard(binding.searchBarText)
                     true
                 }
 

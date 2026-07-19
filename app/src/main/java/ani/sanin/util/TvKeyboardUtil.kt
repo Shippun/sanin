@@ -8,9 +8,7 @@ import android.graphics.drawable.GradientDrawable
 import android.graphics.drawable.LayerDrawable
 import android.os.Build
 import android.util.TypedValue
-import android.view.KeyEvent
 import android.view.View
-import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.TextView
 
@@ -19,7 +17,6 @@ object TvKeyboardUtil {
     fun setupTvInput(view: View) {
         view.setOnFocusChangeListener { v, hasFocus ->
             if (hasFocus) {
-                backHandled[v] = false
                 showKeyboardDelayed(v)
                 applyFocusBorder(v)
             } else {
@@ -31,7 +28,6 @@ object TvKeyboardUtil {
     fun ensureKeyboardOnFocus(editText: EditText) {
         editText.setOnFocusChangeListener { v, hasFocus ->
             if (hasFocus) {
-                backHandled[v] = false
                 showKeyboardDelayed(v)
             }
         }
@@ -47,9 +43,7 @@ object TvKeyboardUtil {
     private val backDismissed = mutableSetOf<View>()
 
     fun showKeyboardDelayed(view: View, delayMs: Long = 150) {
-        if (backDismissed.add(view)) {
-            setupBackDismiss(view)
-        }
+        backDismissed.add(view)
         view.postDelayed({
             val imm = view.context.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
                 ?: return@postDelayed
@@ -59,37 +53,13 @@ object TvKeyboardUtil {
 
     fun hideKeyboard(view: View) {
         view.clearFocus()
-        val imm = view.context.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
-            ?: return
-        imm.hideSoftInputFromWindow(view.windowToken, 0)
     }
 
     fun TextView.setupTvKeyboard() {
         setOnFocusChangeListener { v, hasFocus ->
             if (hasFocus) {
-                backHandled[v] = false
                 showKeyboardDelayed(v)
             }
-        }
-    }
-
-    private val backHandled = mutableMapOf<View, Boolean>()
-
-    fun setupBackDismiss(view: View) {
-        view.setOnKeyListener { v, keyCode, event ->
-            if (keyCode == KeyEvent.KEYCODE_BACK && event.action == KeyEvent.ACTION_DOWN) {
-                if (backHandled[v] == true) {
-                    backHandled[v] = false
-                    return@setOnKeyListener false
-                }
-                backHandled[v] = true
-                v.clearFocus()
-                (v.context.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager)?.let { imm ->
-                    imm.hideSoftInputFromWindow(v.windowToken, 0)
-                }
-                return@setOnKeyListener true
-            }
-            false
         }
     }
 

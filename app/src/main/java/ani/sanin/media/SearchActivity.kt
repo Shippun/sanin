@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.os.Parcelable
 import android.view.View
 import android.view.WindowManager
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
@@ -27,6 +28,7 @@ import ani.sanin.navBarHeight
 import ani.sanin.profile.UsersAdapter
 import ani.sanin.profile.User
 import ani.sanin.px
+import ani.sanin.R
 import ani.sanin.settings.saving.PrefManager
 import ani.sanin.settings.saving.PrefName
 import ani.sanin.statusBarHeight
@@ -71,6 +73,20 @@ class SearchActivity : AppCompatActivity() {
         binding = ActivitySearchBinding.inflate(layoutInflater)
         setContentView(binding.root)
         FocusEffectUtil.applyFocusListener(binding.root)
+        var backHandled = false
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                val focused = currentFocus
+                if (focused?.id == R.id.searchBarText && !backHandled) {
+                    focused.clearFocus()
+                    backHandled = true
+                    return
+                }
+                backHandled = false
+                isEnabled = false
+                onBackPressedDispatcher.onBackPressed()
+            }
+        })
         initActivity(this)
         screenWidth = resources.displayMetrics.run { widthPixels / density }
 

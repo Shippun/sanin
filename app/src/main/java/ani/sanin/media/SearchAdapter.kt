@@ -218,7 +218,6 @@ class SearchAdapter(private val activity: SearchActivity, private val type: Sear
                 EditorInfo.IME_ACTION_SEARCH -> {
                     searchTitle()
                     binding.searchBarText.clearFocus()
-                    TvKeyboardUtil.hideKeyboard(binding.searchBarText)
                     true
                 }
 
