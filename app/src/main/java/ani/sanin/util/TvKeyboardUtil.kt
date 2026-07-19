@@ -88,14 +88,20 @@ object TvKeyboardUtil {
         ensureCompactKeyboardVisible(editText)
         editText.setOnFocusChangeListener { v, hasFocus ->
             if (hasFocus) {
-                getCompactKeyboard(activity).target = editText
+                getCompactKeyboard(activity).apply {
+                    target = editText
+                    show()
+                }
                 applyFocusBorder(v)
             } else {
                 removeFocusBorder(v)
             }
         }
         if (editText.isFocused) {
-            getCompactKeyboard(activity).target = editText
+            getCompactKeyboard(activity).apply {
+                target = editText
+                show()
+            }
             applyFocusBorder(editText)
         }
     }

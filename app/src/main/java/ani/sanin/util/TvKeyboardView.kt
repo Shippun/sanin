@@ -171,7 +171,10 @@ class TvKeyboardView(
     }
 
     fun hide() {
-        if (compact) return
+        if (compact) {
+            visibility = GONE
+            return
+        }
         animate().cancel()
         if (!isVisible) return
         val h = if (keyboardHeight > 0) keyboardHeight else height
