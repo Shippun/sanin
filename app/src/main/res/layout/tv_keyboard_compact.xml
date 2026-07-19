@@ -21,7 +21,6 @@
             android:singleLine="true"
             android:focusable="true"
             android:focusableInTouchMode="true"
-            android:showSoftInputOnFocus="false"
             android:cursorVisible="true"
             android:layout_marginBottom="4dp" />
 
