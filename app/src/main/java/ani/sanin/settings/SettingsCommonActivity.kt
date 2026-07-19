@@ -248,7 +248,7 @@ class SettingsCommonActivity : AppCompatActivity() {
                             desc = "System / Custom keyboard",
                             icon = R.drawable.ic_round_keyboard_24,
                             onClick = {
-                                val current = PrefManager.getVal(PrefName.KeyboardMode)
+                                val current = PrefManager.getVal<Int>(PrefName.KeyboardMode)
                                 val labels = arrayOf("System Keyboard", "Custom")
                                 val idx = if (current == 2) 1 else 0
                                 customAlertDialog().apply {
