@@ -79,17 +79,14 @@ The app is a **player and tracker** — nothing more. All streaming sources come
 - **Comment replies** — from Sanin's own comments server
 - Configurable check frequencies via Alarm Manager
 
-### 📖 Manga / Novel (Experimental)
-- Tachiyomi-compatible manga parser framework in place
-- Direction, layout, webtoon detection, data saver support
-- Sources are community-driven (currently limited)
+
 
 ### 🛠️ Other
-- **App lock** — PIN/biometric
+
 - **Backup/Restore** — `.ani` plain or `.sani` encrypted
 - **Circular log buffer** (50K lines) with live logcat viewer
 - **Cache cleaner** — app cache, Glide disk cache, LogoApi cache, subtitles
-- **Widget** — home screen stats
+
 - **Deep links** — `aniyomi://add-repo` support
 
 ---
@@ -134,9 +131,9 @@ Sanin uses a **Tachiyomi-compatible extension system**. Extensions are separate 
 
 | Your Setup | How To |
 |------------|--------|
-| **TV has a keyboard** | Copy the repo URL from the browser → switch to Sanin → **Settings → Extensions** → tap **`+`** → paste the URL |
-| **No TV keyboard** | **Direct install is encouraged** — the wiki page lists extensions with an "Open" button. Tap it → Sanin opens directly → the extension installs without typing anything. |
-| **Using your phone** | Find the repo URL on your phone → **LocalSend** / **ADB** aren't needed for repos — just note the URL and type it on TV (short form works: `username/repo/branch`) |
+| **TV has a clipboard ** | Copy the repo URL from the browser → switch to Sanin → **Settings → Extensions** → tap **`+`** → paste the URL |
+| **No TV clipboard** | **Direct install is encouraged** — the wiki page lists extensions with an "Open" button. Tap it → Sanin opens directly → the extension installs without typing anything. |
+| **Using your phone** | Find the repo URL on your phone → **LocalSend** / **ADB** aren't needed for repos — just note the URL and type it on TV (short form works: `username/repo/branch`) |or install a Bluetooth keyboard app/wifi
 
 Once added, available extensions appear in the **Available** tab. Tap **Install** on any extension.
 
