@@ -22,6 +22,8 @@ import ani.sanin.databinding.BottomSheetSearchFilterBinding
 import ani.sanin.databinding.ItemChipBinding
 import ani.sanin.util.FocusEffectUtil
 import com.google.android.material.chip.Chip
+import ani.sanin.settings.saving.PrefManager
+import ani.sanin.settings.saving.PrefName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -53,6 +55,7 @@ class SearchFilterBottomDialog : BottomSheetDialogFragment() {
     }
 
     private fun startBounceZoomAnimation(view: View? = null) {
+        if (!(PrefManager.getVal<Boolean>(PrefName.AnimationsEnabled) && PrefManager.getVal<Boolean>(PrefName.FilterResetAnimations))) return
         val targetView = view ?: binding.sortByFilter
         val bounceZoomAnimation = AnimationUtils.loadAnimation(requireContext(), R.anim.bounce_zoom)
         targetView.startAnimation(bounceZoomAnimation)
@@ -118,23 +121,27 @@ class SearchFilterBottomDialog : BottomSheetDialogFragment() {
         setSortByFilterImage()
 
         binding.resetSearchFilter.setOnClickListener {
-            val rotateAnimation =
-                ObjectAnimator.ofFloat(binding.resetSearchFilter, "rotation", 180f, 540f)
-            rotateAnimation.duration = 500
-            rotateAnimation.interpolator = AccelerateDecelerateInterpolator()
-            rotateAnimation.start()
+            if (PrefManager.getVal<Boolean>(PrefName.AnimationsEnabled) && PrefManager.getVal<Boolean>(PrefName.FilterResetAnimations)) {
+                val rotateAnimation =
+                    ObjectAnimator.ofFloat(binding.resetSearchFilter, "rotation", 180f, 540f)
+                rotateAnimation.duration = 500
+                rotateAnimation.interpolator = AccelerateDecelerateInterpolator()
+                rotateAnimation.start()
+            }
             resetSearchFilter()
         }
 
         binding.resetSearchFilter.setOnLongClickListener {
-            val rotateAnimation =
-                ObjectAnimator.ofFloat(binding.resetSearchFilter, "rotation", 180f, 540f)
-            rotateAnimation.duration = 500
-            rotateAnimation.interpolator = AccelerateDecelerateInterpolator()
-            rotateAnimation.start()
-            val bounceAnimation = AnimationUtils.loadAnimation(requireContext(), R.anim.bounce_zoom)
+            if (PrefManager.getVal<Boolean>(PrefName.AnimationsEnabled) && PrefManager.getVal<Boolean>(PrefName.FilterResetAnimations)) {
+                val rotateAnimation =
+                    ObjectAnimator.ofFloat(binding.resetSearchFilter, "rotation", 180f, 540f)
+                rotateAnimation.duration = 500
+                rotateAnimation.interpolator = AccelerateDecelerateInterpolator()
+                rotateAnimation.start()
+                val bounceAnimation = AnimationUtils.loadAnimation(requireContext(), R.anim.bounce_zoom)
 
-            binding.resetSearchFilter.startAnimation(bounceAnimation)
+                binding.resetSearchFilter.startAnimation(bounceAnimation)
+            }
             binding.resetSearchFilter.postDelayed({
                 resetSearchFilter()
 

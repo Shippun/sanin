@@ -8,6 +8,8 @@ import android.view.animation.AlphaAnimation
 import android.view.animation.Animation
 import androidx.recyclerview.widget.RecyclerView
 import ani.sanin.databinding.ItemSearchHeaderBinding
+import ani.sanin.settings.saving.PrefManager
+import ani.sanin.settings.saving.PrefName
 
 abstract class HeaderInterface : RecyclerView.Adapter<HeaderInterface.SearchHeaderViewHolder>() {
     private val itemViewType = 6969
@@ -25,16 +27,26 @@ abstract class HeaderInterface : RecyclerView.Adapter<HeaderInterface.SearchHead
 
     fun setHistoryVisibility(visible: Boolean) {
         if (visible) {
-            binding.searchResultLayout.startAnimation(fadeOutAnimation())
-            binding.searchHistoryList.startAnimation(fadeInAnimation())
+            if (PrefManager.getVal<Boolean>(PrefName.AnimationsEnabled) && PrefManager.getVal<Boolean>(PrefName.SearchHeaderAnimations)) {
+                binding.searchResultLayout.startAnimation(fadeOutAnimation())
+                binding.searchHistoryList.startAnimation(fadeInAnimation())
+            } else {
+                binding.searchResultLayout.alpha = 0f
+                binding.searchHistoryList.alpha = 1f
+            }
             binding.searchResultLayout.visibility = View.GONE
             binding.searchHistoryList.visibility = View.VISIBLE
             binding.searchByImage.visibility = View.VISIBLE
             updateClearHistoryVisibility()
         } else {
             if (binding.searchResultLayout.visibility != View.VISIBLE) {
-                binding.searchResultLayout.startAnimation(fadeInAnimation())
-                binding.searchHistoryList.startAnimation(fadeOutAnimation())
+                if (PrefManager.getVal<Boolean>(PrefName.AnimationsEnabled) && PrefManager.getVal<Boolean>(PrefName.SearchHeaderAnimations)) {
+                    binding.searchResultLayout.startAnimation(fadeInAnimation())
+                    binding.searchHistoryList.startAnimation(fadeOutAnimation())
+                } else {
+                    binding.searchResultLayout.alpha = 1f
+                    binding.searchHistoryList.alpha = 0f
+                }
             }
 
             binding.searchResultLayout.visibility = View.VISIBLE

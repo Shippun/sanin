@@ -82,7 +82,7 @@ class MediaListDialogSmallFragment : DialogFragment() {
             val controller = WindowInsetsControllerCompat(w, w.decorView)
             controller.isAppearanceLightNavigationBars = ColorUtils.calculateLuminance(surfaceColor) > 0.5
         }
-        if (!animated) animateEntry()
+        if (!animated && PrefManager.getVal<Boolean>(PrefName.AnimationsEnabled) && PrefManager.getVal<Boolean>(PrefName.TransitionAnimations)) animateEntry()
     }
 
     private fun animateEntry() {

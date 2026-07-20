@@ -193,7 +193,7 @@ class MediaDetailsActivity : AppCompatActivity() {
                 ft.add(R.id.mediaTabContent, watchFragment, "watch")
             }
             if (::commentsFragment.isInitialized && commentsFragment.isAdded) {
-                if (animate) {
+                if (animate && PrefManager.getVal<Boolean>(PrefName.AnimationsEnabled) && PrefManager.getVal<Boolean>(PrefName.TransitionAnimations)) {
                     val watchView = watchFragment.requireView()
                     val commentsView = commentsFragment.requireView()
                     watchView.alpha = 0f
@@ -231,7 +231,7 @@ class MediaDetailsActivity : AppCompatActivity() {
                 }
                 ft.add(R.id.mediaTabContent, commentsFragment, "comments")
                 ft.commit()
-                if (animate) {
+                if (animate && PrefManager.getVal<Boolean>(PrefName.AnimationsEnabled) && PrefManager.getVal<Boolean>(PrefName.TransitionAnimations)) {
                     container.post {
                         val commentsView = commentsFragment.requireView()
                         commentsView.alpha = 0f
@@ -248,7 +248,7 @@ class MediaDetailsActivity : AppCompatActivity() {
                 val ft = supportFragmentManager.beginTransaction()
                 ft.show(commentsFragment)
                 if (::watchFragment.isInitialized && watchFragment.isAdded) {
-                    if (animate) {
+                    if (animate && PrefManager.getVal<Boolean>(PrefName.AnimationsEnabled) && PrefManager.getVal<Boolean>(PrefName.TransitionAnimations)) {
                         val watchView = watchFragment.requireView()
                         val commentsView = commentsFragment.requireView()
                         commentsView.alpha = 0f
@@ -503,32 +503,50 @@ class MediaDetailsActivity : AppCompatActivity() {
         }
 
         suspend fun clicked() {
-            ObjectAnimator.ofFloat(image, "scaleX", 1f, 0f).setDuration(69).start()
-            ObjectAnimator.ofFloat(image, "scaleY", 1f, 0f).setDuration(100).start()
-            delay(100.milliseconds)
+            if (PrefManager.getVal<Boolean>(PrefName.AnimationsEnabled) && PrefManager.getVal<Boolean>(PrefName.LikeButtonAnimations)) {
+                ObjectAnimator.ofFloat(image, "scaleX", 1f, 0f).setDuration(69).start()
+                ObjectAnimator.ofFloat(image, "scaleY", 1f, 0f).setDuration(100).start()
+                delay(100.milliseconds)
+            }
 
             if (clicked) {
-                ObjectAnimator.ofArgb(
-                    image,
-                    "ColorFilter",
-                    ContextCompat.getColor(context, c1),
-                    ContextCompat.getColor(context, c2)
-                ).setDuration(120).start()
+                if (PrefManager.getVal<Boolean>(PrefName.AnimationsEnabled) && PrefManager.getVal<Boolean>(PrefName.LikeButtonAnimations)) {
+                    ObjectAnimator.ofArgb(
+                        image,
+                        "ColorFilter",
+                        ContextCompat.getColor(context, c1),
+                        ContextCompat.getColor(context, c2)
+                    ).setDuration(120).start()
+                } else {
+                    image.colorFilter = android.graphics.PorterDuffColorFilter(
+                        ContextCompat.getColor(context, c2),
+                        android.graphics.PorterDuff.Mode.SRC_IN
+                    )
+                }
                 image.setImageDrawable(AppCompatResources.getDrawable(context, d1))
             } else image.setImageDrawable(AppCompatResources.getDrawable(context, d2))
-            ObjectAnimator.ofFloat(image, "scaleX", 0f, 1.5f).setDuration(120).start()
-            ObjectAnimator.ofFloat(image, "scaleY", 0f, 1.5f).setDuration(100).start()
-            delay(120.milliseconds)
-            ObjectAnimator.ofFloat(image, "scaleX", 1.5f, 1f).setDuration(100).start()
-            ObjectAnimator.ofFloat(image, "scaleY", 1.5f, 1f).setDuration(100).start()
-            delay(200.milliseconds)
-            if (clicked) {
-                ObjectAnimator.ofArgb(
-                    image,
-                    "ColorFilter",
-                    ContextCompat.getColor(context, c2),
-                    ContextCompat.getColor(context, c1)
-                ).setDuration(200).start()
+            if (PrefManager.getVal<Boolean>(PrefName.AnimationsEnabled) && PrefManager.getVal<Boolean>(PrefName.LikeButtonAnimations)) {
+                ObjectAnimator.ofFloat(image, "scaleX", 0f, 1.5f).setDuration(120).start()
+                ObjectAnimator.ofFloat(image, "scaleY", 0f, 1.5f).setDuration(100).start()
+                delay(120.milliseconds)
+                ObjectAnimator.ofFloat(image, "scaleX", 1.5f, 1f).setDuration(100).start()
+                ObjectAnimator.ofFloat(image, "scaleY", 1.5f, 1f).setDuration(100).start()
+                delay(200.milliseconds)
+                if (clicked) {
+                    ObjectAnimator.ofArgb(
+                        image,
+                        "ColorFilter",
+                        ContextCompat.getColor(context, c2),
+                        ContextCompat.getColor(context, c1)
+                    ).setDuration(200).start()
+                }
+            } else {
+                if (clicked) {
+                    image.colorFilter = android.graphics.PorterDuffColorFilter(
+                        ContextCompat.getColor(context, c1),
+                        android.graphics.PorterDuff.Mode.SRC_IN
+                    )
+                }
             }
         }
 

@@ -477,22 +477,33 @@ class CommentsFragment : Fragment() {
                         binding.commentLabel.width -
                         binding.commentSend.width -
                         binding.commentUserAvatar.width - 12 + 16
-                val anim = ValueAnimator.ofInt(binding.commentInput.width, targetWidth)
-                anim.addUpdateListener { valueAnimator ->
+                if (PrefManager.getVal<Boolean>(PrefName.AnimationsEnabled) && PrefManager.getVal<Boolean>(PrefName.CommentInputAnimations)) {
+                    val anim = ValueAnimator.ofInt(binding.commentInput.width, targetWidth)
+                    anim.addUpdateListener { valueAnimator ->
+                        val layoutParams = binding.commentInput.layoutParams
+                        layoutParams.width = valueAnimator.animatedValue as Int
+                        binding.commentInput.layoutParams = layoutParams
+                    }
+                    anim.duration = 300
+                    anim.start()
+                    anim.doOnEnd {
+                        binding.commentLabel.visibility = View.VISIBLE
+                        binding.commentSend.visibility = View.VISIBLE
+                        binding.commentSpoiler.visibility = View.VISIBLE
+                        binding.commentGif.visibility = View.VISIBLE
+                        binding.commentLabel.animate().translationX(0f).setDuration(300).start()
+                        binding.commentSend.animate().translationX(0f).setDuration(300).start()
+                    }
+                } else {
                     val layoutParams = binding.commentInput.layoutParams
-                    layoutParams.width = valueAnimator.animatedValue as Int
+                    layoutParams.width = targetWidth
                     binding.commentInput.layoutParams = layoutParams
-                }
-                anim.duration = 300
-
-                anim.start()
-                anim.doOnEnd {
                     binding.commentLabel.visibility = View.VISIBLE
                     binding.commentSend.visibility = View.VISIBLE
                     binding.commentSpoiler.visibility = View.VISIBLE
                     binding.commentGif.visibility = View.VISIBLE
-                    binding.commentLabel.animate().translationX(0f).setDuration(300).start()
-                    binding.commentSend.animate().translationX(0f).setDuration(300).start()
+                    binding.commentLabel.translationX = 0f
+                    binding.commentSend.translationX = 0f
                 }
             }
 

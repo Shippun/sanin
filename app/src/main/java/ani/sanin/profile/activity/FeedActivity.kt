@@ -189,16 +189,22 @@ class FeedActivity : AppCompatActivity() {
             alpha = 0f
         }
         binding.notificationNavRail.post {
-            ObjectAnimator.ofFloat(binding.notificationNavRail, View.SCALE_Y, 1f).apply {
-                interpolator = OvershootInterpolator()
-                duration = 500
-            }.start()
-            binding.notificationNavRail.animate()
-                .translationX(0f)
-                .alpha(1f)
-                .setInterpolator(DecelerateInterpolator())
-                .setDuration(500)
-                .start()
+            if (PrefManager.getVal<Boolean>(PrefName.AnimationsEnabled) && PrefManager.getVal<Boolean>(PrefName.NavRailAnimations)) {
+                ObjectAnimator.ofFloat(binding.notificationNavRail, View.SCALE_Y, 1f).apply {
+                    interpolator = OvershootInterpolator()
+                    duration = 500
+                }.start()
+                binding.notificationNavRail.animate()
+                    .translationX(0f)
+                    .alpha(1f)
+                    .setInterpolator(DecelerateInterpolator())
+                    .setDuration(500)
+                    .start()
+            } else {
+                binding.notificationNavRail.translationX = 0f
+                binding.notificationNavRail.scaleY = 1f
+                binding.notificationNavRail.alpha = 1f
+            }
         }
         val id = if (selected == 0) R.id.notificationNavUser else R.id.notificationNavMedia
         binding.root.findViewById<View>(id)?.requestFocus()

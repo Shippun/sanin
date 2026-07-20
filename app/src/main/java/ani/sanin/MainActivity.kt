@@ -194,29 +194,39 @@ class MainActivity : AppCompatActivity() {
         ).asLiveBool()
         incognitoLiveData.observe(this) {
             if (it) {
-                val slideDownAnim = ObjectAnimator.ofFloat(
-                    binding.incognito,
-                    View.TRANSLATION_Y,
-                    -(200f + statusBarHeight),
-                    0f
-                )
-                slideDownAnim.duration = 200
-                slideDownAnim.start()
+                if (PrefManager.getVal<Boolean>(PrefName.AnimationsEnabled) && PrefManager.getVal<Boolean>(PrefName.IncognitoBannerAnimations)) {
+                    val slideDownAnim = ObjectAnimator.ofFloat(
+                        binding.incognito,
+                        View.TRANSLATION_Y,
+                        -(200f + statusBarHeight),
+                        0f
+                    )
+                    slideDownAnim.duration = 200
+                    slideDownAnim.start()
+                } else {
+                    binding.incognito.translationY = 0f
+                }
                 binding.incognito.visibility = View.VISIBLE
                 if (PrefManager.getVal<Boolean>(PrefName.RescueMode)) syncRescueIconMargin(true)
             } else {
-                val slideUpAnim = ObjectAnimator.ofFloat(
-                    binding.incognito,
-                    View.TRANSLATION_Y,
-                    0f,
-                    -(200f + statusBarHeight)
-                )
-                slideUpAnim.duration = 200
-                slideUpAnim.start()
-                Handler(Looper.getMainLooper()).postDelayed({
+                if (PrefManager.getVal<Boolean>(PrefName.AnimationsEnabled) && PrefManager.getVal<Boolean>(PrefName.IncognitoBannerAnimations)) {
+                    val slideUpAnim = ObjectAnimator.ofFloat(
+                        binding.incognito,
+                        View.TRANSLATION_Y,
+                        0f,
+                        -(200f + statusBarHeight)
+                    )
+                    slideUpAnim.duration = 200
+                    slideUpAnim.start()
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        binding.incognito.visibility = View.GONE
+                        if (PrefManager.getVal<Boolean>(PrefName.RescueMode)) syncRescueIconMargin(false)
+                    }, 200)
+                } else {
                     binding.incognito.visibility = View.GONE
+                    binding.incognito.translationY = -(200f + statusBarHeight)
                     if (PrefManager.getVal<Boolean>(PrefName.RescueMode)) syncRescueIconMargin(false)
-                }, 200)
+                }
             }
         }
 
@@ -224,29 +234,38 @@ class MainActivity : AppCompatActivity() {
         rescueModeLiveData.observe(this) {
             if (it) {
                 syncRescueIconMargin(PrefManager.getVal(PrefName.Incognito))
-                val slideDownAnim = ObjectAnimator.ofFloat(
-                    binding.rescueModeIcon,
-                    View.TRANSLATION_Y,
-                    -(200f + statusBarHeight),
-                    0f
-                )
-                slideDownAnim.duration = 200
-                slideDownAnim.start()
+                if (PrefManager.getVal<Boolean>(PrefName.AnimationsEnabled) && PrefManager.getVal<Boolean>(PrefName.MiscUiAnimations)) {
+                    val slideDownAnim = ObjectAnimator.ofFloat(
+                        binding.rescueModeIcon,
+                        View.TRANSLATION_Y,
+                        -(200f + statusBarHeight),
+                        0f
+                    )
+                    slideDownAnim.duration = 200
+                    slideDownAnim.start()
+                } else {
+                    binding.rescueModeIcon.translationY = 0f
+                }
                 binding.rescueModeIcon.visibility = View.VISIBLE
             } else {
-                val slideUpAnim = ObjectAnimator.ofFloat(
-                    binding.rescueModeIcon,
-                    View.TRANSLATION_Y,
-                    0f,
-                    -(200f + statusBarHeight)
-                )
-                slideUpAnim.duration = 200
-                slideUpAnim.start()
-                //wait for animation to finish
-                Handler(Looper.getMainLooper()).postDelayed(
-                    { binding.rescueModeIcon.visibility = View.GONE },
-                    200
-                )
+                if (PrefManager.getVal<Boolean>(PrefName.AnimationsEnabled) && PrefManager.getVal<Boolean>(PrefName.MiscUiAnimations)) {
+                    val slideUpAnim = ObjectAnimator.ofFloat(
+                        binding.rescueModeIcon,
+                        View.TRANSLATION_Y,
+                        0f,
+                        -(200f + statusBarHeight)
+                    )
+                    slideUpAnim.duration = 200
+                    slideUpAnim.start()
+                    //wait for animation to finish
+                    Handler(Looper.getMainLooper()).postDelayed(
+                        { binding.rescueModeIcon.visibility = View.GONE },
+                        200
+                    )
+                } else {
+                    binding.rescueModeIcon.visibility = View.GONE
+                    binding.rescueModeIcon.translationY = -(200f + statusBarHeight)
+                }
             }
         }
         binding.rescueModeIcon.setOnClickListener {
@@ -285,15 +304,19 @@ class MainActivity : AppCompatActivity() {
             val splash = SplashScreenBinding.inflate(layoutInflater)
             binding.root.addView(splash.root)
             splash.root.postDelayed({
-                ObjectAnimator.ofFloat(
-                    splash.root,
-                    View.ALPHA,
-                    1f,
-                    0f
-                ).apply {
-                    duration = 400L
-                    doOnEnd { binding.root.removeView(splash.root) }
-                    start()
+                if (PrefManager.getVal<Boolean>(PrefName.AnimationsEnabled) && PrefManager.getVal<Boolean>(PrefName.SplashAnimations)) {
+                    ObjectAnimator.ofFloat(
+                        splash.root,
+                        View.ALPHA,
+                        1f,
+                        0f
+                    ).apply {
+                        duration = 400L
+                        doOnEnd { binding.root.removeView(splash.root) }
+                        start()
+                    }
+                } else {
+                    binding.root.removeView(splash.root)
                 }
             }, 1200L)
         }
@@ -748,24 +771,32 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showHomeNavRail() {
-        binding.homeNavRail.apply {
-            visibility = View.VISIBLE
-            pivotY = 0f
-            translationX = -60f * resources.displayMetrics.density
-            scaleY = 0.3f
-            alpha = 0f
-        }
-        binding.homeNavRail.post {
-            ObjectAnimator.ofFloat(binding.homeNavRail, View.SCALE_Y, 1f).apply {
-                interpolator = SpringInterpolator()
-                duration = 700
-            }.start()
-            binding.homeNavRail.animate()
-                .translationX(0f)
-                .alpha(1f)
-                .setInterpolator(DecelerateInterpolator())
-                .setDuration(500)
-                .start()
+        if (PrefManager.getVal<Boolean>(PrefName.AnimationsEnabled) && PrefManager.getVal<Boolean>(PrefName.NavRailAnimations)) {
+            binding.homeNavRail.apply {
+                visibility = View.VISIBLE
+                pivotY = 0f
+                translationX = -60f * resources.displayMetrics.density
+                scaleY = 0.3f
+                alpha = 0f
+            }
+            binding.homeNavRail.post {
+                ObjectAnimator.ofFloat(binding.homeNavRail, View.SCALE_Y, 1f).apply {
+                    interpolator = SpringInterpolator()
+                    duration = 700
+                }.start()
+                binding.homeNavRail.animate()
+                    .translationX(0f)
+                    .alpha(1f)
+                    .setInterpolator(DecelerateInterpolator())
+                    .setDuration(500)
+                    .start()
+                updateHomeNavIconTints()
+            }
+        } else {
+            binding.homeNavRail.visibility = View.VISIBLE
+            binding.homeNavRail.translationX = 0f
+            binding.homeNavRail.scaleY = 1f
+            binding.homeNavRail.alpha = 1f
             updateHomeNavIconTints()
         }
         val tab = navPillsViewModel.currentTab.value

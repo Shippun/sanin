@@ -79,7 +79,11 @@ class SupportingSearchAdapter(private val activity: SearchActivity, private val 
 
         FocusEffectUtil.applyFocusListener(binding.clearHistory)
         binding.clearHistory.setOnClickListener {
-            it.startAnimation(fadeOutAnimation())
+            if (PrefManager.getVal<Boolean>(PrefName.AnimationsEnabled) && PrefManager.getVal<Boolean>(PrefName.SearchHeaderAnimations)) {
+                it.startAnimation(fadeOutAnimation())
+            } else {
+                it.alpha = 0f
+            }
             it.visibility = View.GONE
             searchHistoryAdapter.clearHistory()
         }

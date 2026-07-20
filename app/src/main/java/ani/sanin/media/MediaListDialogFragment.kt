@@ -71,7 +71,7 @@ class MediaListDialogFragment : DialogFragment() {
             controller.isAppearanceLightNavigationBars = ColorUtils.calculateLuminance(surfaceColor) > 0.5
         }
         GlassEffectManager.applyGlassToSheet(binding.mediaListContainer, GlassComponent.ListEditor, 16f)
-        if (!animated) animateEntry()
+        if (!animated && PrefManager.getVal<Boolean>(PrefName.AnimationsEnabled) && PrefManager.getVal<Boolean>(PrefName.TransitionAnimations)) animateEntry()
     }
 
     private fun animateEntry() {

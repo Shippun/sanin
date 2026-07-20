@@ -349,10 +349,14 @@ class MediaAdaptor(
         itemView.alpha = 0.85f
         itemView.setOnFocusChangeListener { v, hasFocus ->
             focusListener?.onFocusChange(v, hasFocus)
-            if (hasFocus) {
-                v.animate().alpha(1f).setDuration(200).start()
+            if (PrefManager.getVal<Boolean>(PrefName.AnimationsEnabled) && PrefManager.getVal<Boolean>(PrefName.FocusAnimations)) {
+                if (hasFocus) {
+                    v.animate().alpha(1f).setDuration(200).start()
+                } else {
+                    v.animate().alpha(0.85f).setDuration(200).start()
+                }
             } else {
-                v.animate().alpha(0.85f).setDuration(200).start()
+                v.alpha = if (hasFocus) 1f else 0.85f
             }
         }
     }

@@ -85,25 +85,34 @@ class SubtitleSyncDialogFragment : DialogFragment() {
             scaleY = 0.96f
             alpha = 0.8f
         }
-        binding.syncRoot.post {
-            val lift = ObjectAnimator.ofFloat(binding.syncRoot, View.TRANSLATION_Y, 0f).apply {
-                duration = 180
-                interpolator = DecelerateInterpolator()
+        if (PrefManager.getVal<Boolean>(PrefName.AnimationsEnabled) && PrefManager.getVal<Boolean>(PrefName.TransitionAnimations)) {
+            binding.syncRoot.post {
+                val lift = ObjectAnimator.ofFloat(binding.syncRoot, View.TRANSLATION_Y, 0f).apply {
+                    duration = 180
+                    interpolator = DecelerateInterpolator()
+                }
+                val tilt = ObjectAnimator.ofFloat(binding.syncRoot, View.ROTATION_X, 0f).apply {
+                    duration = 220
+                    interpolator = DecelerateInterpolator()
+                }
+                val scale = ObjectAnimator.ofFloat(binding.syncRoot, View.SCALE_Y, 1f).apply {
+                    duration = 280
+                    interpolator = OvershootInterpolator(1.5f)
+                }
+                val fade = ObjectAnimator.ofFloat(binding.syncRoot, View.ALPHA, 1f).apply {
+                    duration = 200
+                }
+                AnimatorSet().apply {
+                    playTogether(lift, tilt, scale, fade)
+                    start()
+                }
             }
-            val tilt = ObjectAnimator.ofFloat(binding.syncRoot, View.ROTATION_X, 0f).apply {
-                duration = 220
-                interpolator = DecelerateInterpolator()
-            }
-            val scale = ObjectAnimator.ofFloat(binding.syncRoot, View.SCALE_Y, 1f).apply {
-                duration = 280
-                interpolator = OvershootInterpolator(1.5f)
-            }
-            val fade = ObjectAnimator.ofFloat(binding.syncRoot, View.ALPHA, 1f).apply {
-                duration = 200
-            }
-            AnimatorSet().apply {
-                playTogether(lift, tilt, scale, fade)
-                start()
+        } else {
+            binding.syncRoot.apply {
+                rotationX = 0f
+                translationY = 0f
+                scaleY = 1f
+                alpha = 1f
             }
         }
     }
@@ -204,12 +213,22 @@ class SubtitleSyncDialogFragment : DialogFragment() {
                     savedFg[v] = v.foreground
                     v.foreground = border
                 }
-                v.animate().scaleX(1.08f).scaleY(1.08f).setDuration(150).start()
+                if (PrefManager.getVal<Boolean>(PrefName.AnimationsEnabled) && PrefManager.getVal<Boolean>(PrefName.FocusAnimations)) {
+                    v.animate().scaleX(1.08f).scaleY(1.08f).setDuration(150).start()
+                } else {
+                    v.scaleX = 1.08f
+                    v.scaleY = 1.08f
+                }
             } else {
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
                     v.foreground = savedFg.remove(v)
                 }
-                v.animate().scaleX(1f).scaleY(1f).setDuration(150).start()
+                if (PrefManager.getVal<Boolean>(PrefName.AnimationsEnabled) && PrefManager.getVal<Boolean>(PrefName.FocusAnimations)) {
+                    v.animate().scaleX(1f).scaleY(1f).setDuration(150).start()
+                } else {
+                    v.scaleX = 1f
+                    v.scaleY = 1f
+                }
             }
         }
     }
@@ -333,9 +352,19 @@ class SubtitleSyncDialogFragment : DialogFragment() {
             holder.playingBorder.isVisible = isPlaying
             val root = holder.itemBinding.root
             if (isPlaying) {
-                root.animate().scaleX(1.05f).scaleY(1.05f).setDuration(200).start()
+                if (PrefManager.getVal<Boolean>(PrefName.AnimationsEnabled) && PrefManager.getVal<Boolean>(PrefName.FocusAnimations)) {
+                    root.animate().scaleX(1.05f).scaleY(1.05f).setDuration(200).start()
+                } else {
+                    root.scaleX = 1.05f
+                    root.scaleY = 1.05f
+                }
             } else {
-                root.animate().scaleX(1f).scaleY(1f).setDuration(200).start()
+                if (PrefManager.getVal<Boolean>(PrefName.AnimationsEnabled) && PrefManager.getVal<Boolean>(PrefName.FocusAnimations)) {
+                    root.animate().scaleX(1f).scaleY(1f).setDuration(200).start()
+                } else {
+                    root.scaleX = 1f
+                    root.scaleY = 1f
+                }
             }
         }
 
@@ -373,12 +402,22 @@ class SubtitleSyncDialogFragment : DialogFragment() {
                     savedFg[borderView] = borderView.foreground
                     borderView.foreground = border
                 }
-                focusView.animate().scaleX(1.05f).scaleY(1.05f).setDuration(150).start()
+                if (PrefManager.getVal<Boolean>(PrefName.AnimationsEnabled) && PrefManager.getVal<Boolean>(PrefName.FocusAnimations)) {
+                    focusView.animate().scaleX(1.05f).scaleY(1.05f).setDuration(150).start()
+                } else {
+                    focusView.scaleX = 1.05f
+                    focusView.scaleY = 1.05f
+                }
             } else {
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
                     borderView.foreground = savedFg.remove(borderView)
                 }
-                focusView.animate().scaleX(1f).scaleY(1f).setDuration(150).start()
+                if (PrefManager.getVal<Boolean>(PrefName.AnimationsEnabled) && PrefManager.getVal<Boolean>(PrefName.FocusAnimations)) {
+                    focusView.animate().scaleX(1f).scaleY(1f).setDuration(150).start()
+                } else {
+                    focusView.scaleX = 1f
+                    focusView.scaleY = 1f
+                }
             }
         }
     }

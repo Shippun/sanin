@@ -265,15 +265,21 @@ class NotificationActivity : AppCompatActivity() {
         tabProgress.visibility = View.GONE
         tabSwipeRefresh.isEnabled = true
 
-        binding.notificationContent.alpha = 0f
-        binding.notificationContent.scaleX = 0.92f
-        binding.notificationContent.scaleY = 0.92f
-        binding.notificationContent.animate().cancel()
-        binding.notificationContent.animate()
-            .alpha(1f).scaleX(1f).scaleY(1f)
-            .setDuration(300)
-            .setInterpolator(OvershootInterpolator())
-            .start()
+        if (PrefManager.getVal<Boolean>(PrefName.AnimationsEnabled) && PrefManager.getVal<Boolean>(PrefName.TransitionAnimations)) {
+            binding.notificationContent.alpha = 0f
+            binding.notificationContent.scaleX = 0.92f
+            binding.notificationContent.scaleY = 0.92f
+            binding.notificationContent.animate().cancel()
+            binding.notificationContent.animate()
+                .alpha(1f).scaleX(1f).scaleY(1f)
+                .setDuration(300)
+                .setInterpolator(OvershootInterpolator())
+                .start()
+        } else {
+            binding.notificationContent.alpha = 1f
+            binding.notificationContent.scaleX = 1f
+            binding.notificationContent.scaleY = 1f
+        }
 
         tabRecycler.post { tabRecycler.requestFocus() }
     }
@@ -480,12 +486,18 @@ class NotificationActivity : AppCompatActivity() {
             scaleY = 0.3f; alpha = 0f
         }
         binding.notificationNavRail.post {
-            ObjectAnimator.ofFloat(binding.notificationNavRail, View.SCALE_Y, 1f).apply {
-                interpolator = OvershootInterpolator(); duration = 500
-            }.start()
-            binding.notificationNavRail.animate()
-                .translationX(0f).alpha(1f)
-                .setInterpolator(DecelerateInterpolator()).setDuration(500).start()
+            if (PrefManager.getVal<Boolean>(PrefName.AnimationsEnabled) && PrefManager.getVal<Boolean>(PrefName.NavRailAnimations)) {
+                ObjectAnimator.ofFloat(binding.notificationNavRail, View.SCALE_Y, 1f).apply {
+                    interpolator = OvershootInterpolator(); duration = 500
+                }.start()
+                binding.notificationNavRail.animate()
+                    .translationX(0f).alpha(1f)
+                    .setInterpolator(DecelerateInterpolator()).setDuration(500).start()
+            } else {
+                binding.notificationNavRail.translationX = 0f
+                binding.notificationNavRail.scaleY = 1f
+                binding.notificationNavRail.alpha = 1f
+            }
         }
         val id = when (selected) {
             0 -> R.id.notificationNavUser; 1 -> R.id.notificationNavMedia

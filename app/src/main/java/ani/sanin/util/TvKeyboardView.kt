@@ -12,6 +12,8 @@ import android.widget.FrameLayout
 import android.widget.TextView
 import androidx.core.view.isVisible
 import ani.sanin.R
+import ani.sanin.settings.saving.PrefManager
+import ani.sanin.settings.saving.PrefName
 
 class TvKeyboardView(
     context: Context,
@@ -100,7 +102,12 @@ class TvKeyboardView(
 
     private fun applyKeyFocus(v: View) {
         val scale = if (compact) 1.08f else 1.12f
-        v.animate().scaleX(scale).scaleY(scale).setDuration(100).start()
+        if (PrefManager.getVal<Boolean>(PrefName.AnimationsEnabled) && PrefManager.getVal<Boolean>(PrefName.KeyboardKeyAnimations)) {
+            v.animate().scaleX(scale).scaleY(scale).setDuration(100).start()
+        } else {
+            v.scaleX = scale
+            v.scaleY = scale
+        }
         val borderPx = (if (compact) 1f else 2f) * v.resources.displayMetrics.density
         val corner = (if (compact) 3f else 6f) * v.resources.displayMetrics.density
         v.background = GradientDrawable().apply {
@@ -112,7 +119,12 @@ class TvKeyboardView(
     }
 
     private fun removeKeyFocus(v: View) {
-        v.animate().scaleX(1f).scaleY(1f).setDuration(100).start()
+        if (PrefManager.getVal<Boolean>(PrefName.AnimationsEnabled) && PrefManager.getVal<Boolean>(PrefName.KeyboardKeyAnimations)) {
+            v.animate().scaleX(1f).scaleY(1f).setDuration(100).start()
+        } else {
+            v.scaleX = 1f
+            v.scaleY = 1f
+        }
         v.setBackgroundColor(0x1AFFFFFF.toInt())
     }
 

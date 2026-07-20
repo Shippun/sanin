@@ -639,7 +639,7 @@ class ExoplayerView :
         exoPlay.setOnClickListener {
             if (isInitialized) {
                 isPlayerPlaying = exoPlayer.isPlaying
-                (exoPlay.drawable as Animatable?)?.start()
+                if (PrefManager.getVal<Boolean>(PrefName.AnimationsEnabled) && PrefManager.getVal<Boolean>(PrefName.AnimatedVectorDrawables)) (exoPlay.drawable as Animatable?)?.start()
                 if (isPlayerPlaying) {
                     Glide.with(this).load(R.drawable.anim_play_to_pause).into(exoPlay)
                     exoPlayer.pause()
@@ -809,7 +809,11 @@ class ExoplayerView :
             playerView.findViewById<View>(id)?.nextFocusUpId = androidx.media3.ui.R.id.exo_progress
         }
         progressBar.setOnFocusChangeListener { _, hasFocus ->
-            progressBar.animate().scaleY(if (hasFocus) 2.5f else 1f).setDuration(150).start()
+            if (PrefManager.getVal<Boolean>(PrefName.AnimationsEnabled) && PrefManager.getVal<Boolean>(PrefName.SeekBarAnimations)) {
+                progressBar.animate().scaleY(if (hasFocus) 2.5f else 1f).setDuration(150).start()
+            } else {
+                progressBar.scaleY = if (hasFocus) 2.5f else 1f
+            }
         }
 
         pauseOverlay = playerView.findViewById(R.id.exo_pause_overlay)
@@ -973,16 +977,21 @@ class ExoplayerView :
             val showTextAnim = ObjectAnimator.ofFloat(text, "alpha", 0f, 1f).setDuration(150)
 
             fun startAnim() {
-                showTextAnim.start()
+                if (PrefManager.getVal<Boolean>(PrefName.AnimationsEnabled) && PrefManager.getVal<Boolean>(PrefName.DoubleTapAnimations)) {
+                    showTextAnim.start()
 
-                (text.compoundDrawables[1] as? Animatable)?.apply {
-                    if (!isRunning) start()
-                }
+                    (text.compoundDrawables[1] as? Animatable)?.apply {
+                        if (!isRunning) start()
+                    }
 
-                if (!isSeeking && event != null) {
-                    playerView.hideController()
-                    card.circularReveal(event.x.toInt(), event.y.toInt(), !forward, 800)
-                    showCardAnim.start()
+                    if (!isSeeking && event != null) {
+                        playerView.hideController()
+                        card.circularReveal(event.x.toInt(), event.y.toInt(), !forward, 800)
+                        showCardAnim.start()
+                    }
+                } else {
+                    card.alpha = 1f
+                    text.alpha = 1f
                 }
             }
 
@@ -990,8 +999,13 @@ class ExoplayerView :
                 handler.post {
                     showCardAnim.cancel()
                     showTextAnim.cancel()
-                    ObjectAnimator.ofFloat(card, "alpha", card.alpha, 0f).setDuration(150).start()
-                    ObjectAnimator.ofFloat(text, "alpha", 1f, 0f).setDuration(150).start()
+                    if (PrefManager.getVal<Boolean>(PrefName.AnimationsEnabled) && PrefManager.getVal<Boolean>(PrefName.DoubleTapAnimations)) {
+                        ObjectAnimator.ofFloat(card, "alpha", card.alpha, 0f).setDuration(150).start()
+                        ObjectAnimator.ofFloat(text, "alpha", 1f, 0f).setDuration(150).start()
+                    } else {
+                        card.alpha = 0f
+                        text.alpha = 0f
+                    }
                 }
             }
             //endregion
@@ -2983,7 +2997,11 @@ class ExoplayerView :
                 if (!isPlayerPlaying) {
                     pauseOverlay.visibility = View.VISIBLE
                     pauseOverlay.alpha = 0f
-                    pauseOverlay.animate().alpha(1f).setDuration(300).start()
+                    if (PrefManager.getVal<Boolean>(PrefName.AnimationsEnabled) && PrefManager.getVal<Boolean>(PrefName.PlayerOverlayAnimations)) {
+                        pauseOverlay.animate().alpha(1f).setDuration(300).start()
+                    } else {
+                        pauseOverlay.alpha = 1f
+                    }
                     playerView.findViewById<View>(R.id.exo_controller)?.visibility = View.GONE
                     pauseOverlay.requestFocus()
                 }
@@ -2997,7 +3015,7 @@ class ExoplayerView :
         if (!isBuffering) {
             isPlayerPlaying = isPlaying
             playerView.keepScreenOn = isPlaying
-            (exoPlay.drawable as Animatable?)?.start()
+            if (PrefManager.getVal<Boolean>(PrefName.AnimationsEnabled) && PrefManager.getVal<Boolean>(PrefName.AnimatedVectorDrawables)) (exoPlay.drawable as Animatable?)?.start()
             if (!this.isDestroyed) {
                 Glide
                     .with(this)
@@ -3009,9 +3027,14 @@ class ExoplayerView :
             } else {
                 pauseMetadataTimer?.let { handler.removeCallbacks(it) }
                 pauseMetadataTimer = null
-                pauseOverlay.animate().alpha(0f).setDuration(200).withEndAction {
+                if (PrefManager.getVal<Boolean>(PrefName.AnimationsEnabled) && PrefManager.getVal<Boolean>(PrefName.PlayerOverlayAnimations)) {
+                    pauseOverlay.animate().alpha(0f).setDuration(200).withEndAction {
+                        pauseOverlay.visibility = View.GONE
+                    }.start()
+                } else {
+                    pauseOverlay.alpha = 0f
                     pauseOverlay.visibility = View.GONE
-                }.start()
+                }
             }
         }
     }

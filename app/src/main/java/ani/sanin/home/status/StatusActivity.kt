@@ -97,9 +97,13 @@ class StatusActivity : AppCompatActivity(), StoriesCallback {
             val watchedActivity = PrefManager.getCustomVal<Set<Int>>(key, setOf())
             val startFrom = findFirstNonMatch(watchedActivity, activity[position].activity)
             val startIndex = if (startFrom > 0) startFrom else 0
-            binding.stories.startAnimation(slideOutLeft)
+            if (PrefManager.getVal<Boolean>(PrefName.AnimationsEnabled) && PrefManager.getVal<Boolean>(PrefName.TransitionAnimations)) {
+                binding.stories.startAnimation(slideOutLeft)
+            }
             binding.stories.setStoriesList(activity[position].activity, startIndex + 1)
-            binding.stories.startAnimation(slideInRight)
+            if (PrefManager.getVal<Boolean>(PrefName.AnimationsEnabled) && PrefManager.getVal<Boolean>(PrefName.TransitionAnimations)) {
+                binding.stories.startAnimation(slideInRight)
+            }
         } else {
             finish()
         }
@@ -112,9 +116,13 @@ class StatusActivity : AppCompatActivity(), StoriesCallback {
             val watchedActivity = PrefManager.getCustomVal<Set<Int>>(key, setOf())
             val startFrom = findFirstNonMatch(watchedActivity, activity[position].activity)
             val startIndex = if (startFrom > 0) startFrom else 0
-            binding.stories.startAnimation(slideOutRight)
+            if (PrefManager.getVal<Boolean>(PrefName.AnimationsEnabled) && PrefManager.getVal<Boolean>(PrefName.TransitionAnimations)) {
+                binding.stories.startAnimation(slideOutRight)
+            }
             binding.stories.setStoriesList(activity[position].activity, startIndex + 1)
-            binding.stories.startAnimation(slideInLeft)
+            if (PrefManager.getVal<Boolean>(PrefName.AnimationsEnabled) && PrefManager.getVal<Boolean>(PrefName.TransitionAnimations)) {
+                binding.stories.startAnimation(slideInLeft)
+            }
         } else {
             finish()
         }
