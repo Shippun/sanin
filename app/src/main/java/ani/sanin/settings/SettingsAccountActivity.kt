@@ -181,6 +181,11 @@ class SettingsAccountActivity : AppCompatActivity() {
             }
             reload()
         }
+        binding.settingsDiscordLogin.isFocusable = true
+        FocusEffectUtil.applyFocusListener(binding.settingsDiscordLogin)
+        binding.settingsDiscordLogin.setOnClickListener {
+            openLinkInBrowser(getString(R.string.discord))
+        }
         binding.settingsRecyclerView.adapter = SettingsAdapter(
             arrayListOf(
 
