@@ -68,8 +68,6 @@ android {
         create("alpha") {
             applicationIdSuffix = ".beta"
             versionNameSuffix = "-alpha01-$gitCommitHash"
-            manifestPlaceholders["icon_placeholder"] = "@mipmap/ic_launcher_alpha"
-            manifestPlaceholders["icon_placeholder_round"] = "@mipmap/ic_launcher_alpha_round"
             isDebuggable = true
             isMinifyEnabled = true
             isShrinkResources = true
@@ -83,8 +81,6 @@ android {
         getByName("debug") {
             applicationIdSuffix = ".beta"
             versionNameSuffix = "-beta01"
-            manifestPlaceholders["icon_placeholder"] = "@mipmap/ic_launcher_beta"
-            manifestPlaceholders["icon_placeholder_round"] = "@mipmap/ic_launcher_beta_round"
             isDebuggable = false
             isMinifyEnabled = true
             isShrinkResources = true
@@ -95,8 +91,6 @@ android {
         }
 
         getByName("release") {
-            manifestPlaceholders["icon_placeholder"] = "@mipmap/ic_launcher"
-            manifestPlaceholders["icon_placeholder_round"] = "@mipmap/ic_launcher_round"
             isDebuggable = false
             isMinifyEnabled = true
             isShrinkResources = true
