@@ -88,10 +88,6 @@ fun updateProgress(media: Media, number: String) {
                             }
                         }
                     }
-                                activity.startActivity(intent)
-                            }
-                        }
-                    }
                     toast(currContext()?.getString(R.string.setting_progress, a))
                 }
                 media.userProgress = a

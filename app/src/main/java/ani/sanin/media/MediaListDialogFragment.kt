@@ -37,8 +37,6 @@ import ani.sanin.loadImage
 import ani.sanin.navBarHeight
 import ani.sanin.settings.saving.PrefManager
 import ani.sanin.settings.saving.PrefName
-import android.content.Intent
-import ani.sanin.notifications.subscription.NotificationPopupActivity
 import ani.sanin.snackString
 import ani.sanin.tryWith
 import ani.sanin.util.FocusEffectUtil
