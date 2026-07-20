@@ -2,7 +2,7 @@
   <img src="https://raw.githubusercontent.com/Shippun/sanin/main/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png" alt="Sanin" width="128">
   <h1 align="center">Sanin</h1>
   <p align="center">
-    <strong>Anime &amp; Manga app — built for TV, works on phone</strong>
+    <strong>Anime app; — built for TV, works on phone</strong>
   </p>
   <p>
     <a href="https://discord.gg/QCc5xbgbsA"><img src="https://img.shields.io/badge/Join-Discord-5865F2?style=for-the-badge&logo=discord&logoColor=white" alt="Discord"></a>
