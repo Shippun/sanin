@@ -924,7 +924,7 @@
                         android:fontFamily="@font/poppins_bold"
                         android:paddingStart="32dp"
                         android:paddingEnd="32dp"
-                        android:text="NavPill Width"
+                        android:text="NavPill Spacing"
                         app:drawableStartCompat="@drawable/adjust"
                         app:drawableTint="?attr/colorPrimary" />
 
@@ -935,9 +935,9 @@
                         android:layout_marginStart="32dp"
                         android:layout_marginEnd="32dp"
                         android:stepSize="1"
-                        android:value="59"
-                        android:valueFrom="32"
-                        android:valueTo="72"
+                        android:value="26"
+                        android:valueFrom="0"
+                        android:valueTo="35"
                         app:labelBehavior="floating"
                         app:labelStyle="@style/fontTooltip"
                         app:thumbColor="?attr/colorSecondary"
@@ -952,7 +952,7 @@
                         android:fontFamily="@font/poppins_bold"
                         android:paddingStart="32dp"
                         android:paddingEnd="32dp"
-                        android:text="NavPill Spacing"
+                        android:text="NavPill Width"
                         app:drawableStartCompat="@drawable/adjust"
                         app:drawableTint="?attr/colorPrimary" />
 
@@ -963,9 +963,9 @@
                         android:layout_marginStart="32dp"
                         android:layout_marginEnd="32dp"
                         android:stepSize="1"
-                        android:value="26"
-                        android:valueFrom="0"
-                        android:valueTo="35"
+                        android:value="59"
+                        android:valueFrom="2"
+                        android:valueTo="100"
                         app:labelBehavior="floating"
                         app:labelStyle="@style/fontTooltip"
                         app:thumbColor="?attr/colorSecondary"

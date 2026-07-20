@@ -316,15 +316,15 @@ class SettingsAppearanceActivity : AppCompatActivity() {
             updateNavPillPreview()
         }
 
-        binding.appearanceNavPillWidth.value = PrefManager.getVal<Int>(PrefName.NavPillWidth).toFloat()
+        binding.appearanceNavPillWidth.value = PrefManager.getVal<Int>(PrefName.NavPillSpacing).toFloat()
         binding.appearanceNavPillWidth.addOnChangeListener { _, v, _ ->
-            PrefManager.setVal(PrefName.NavPillWidth, v.toInt())
+            PrefManager.setVal(PrefName.NavPillSpacing, v.toInt())
             updateNavPillPreview()
         }
 
-        binding.appearanceNavPillSpacing.value = PrefManager.getVal<Int>(PrefName.NavPillSpacing).toFloat()
+        binding.appearanceNavPillSpacing.value = PrefManager.getVal<Int>(PrefName.NavPillWidth).toFloat()
         binding.appearanceNavPillSpacing.addOnChangeListener { _, v, _ ->
-            PrefManager.setVal(PrefName.NavPillSpacing, v.toInt())
+            PrefManager.setVal(PrefName.NavPillWidth, v.toInt())
             updateNavPillPreview()
         }
 

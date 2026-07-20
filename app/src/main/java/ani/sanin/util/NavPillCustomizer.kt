@@ -11,7 +11,7 @@ import ani.sanin.settings.saving.PrefName
 object NavPillCustomizer {
 
     fun getHeightDp(): Int = PrefManager.getVal<Int>(PrefName.NavPillHeight).coerceIn(32, 72)
-    fun getWidthDp(): Int = PrefManager.getVal<Int>(PrefName.NavPillWidth).coerceIn(32, 72)
+    fun getWidthDp(): Int = PrefManager.getVal<Int>(PrefName.NavPillWidth).coerceIn(2, 100)
     fun getSpacingDp(): Int = PrefManager.getVal<Int>(PrefName.NavPillSpacing).coerceIn(0, 35)
     fun getIconSizeDp(): Int = PrefManager.getVal<Int>(PrefName.NavPillIconSize).coerceIn(8, 28)
     fun getIconColor(): Int = PrefManager.getVal<Int>(PrefName.NavPillIconColor)
