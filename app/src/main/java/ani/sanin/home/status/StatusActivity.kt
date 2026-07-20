@@ -14,6 +14,7 @@ import ani.sanin.initActivity
 import ani.sanin.navBarHeight
 import ani.sanin.profile.User
 import ani.sanin.settings.saving.PrefManager
+import ani.sanin.settings.saving.PrefName
 import ani.sanin.statusBarHeight
 import ani.sanin.themes.ThemeManager
 import ani.sanin.util.Logger
