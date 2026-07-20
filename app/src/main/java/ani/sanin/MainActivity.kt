@@ -823,17 +823,19 @@ class MainActivity : AppCompatActivity() {
                 snackString("Sync triggered")
             },
             R.id.rightRailClearCache to {
-                lifecycleScope.launch(Dispatchers.IO) {
+                lifecycleScope.launch(Dispatchers.Main) {
                     try {
-                        cacheDir.deleteRecursively()
-                        externalCacheDir?.deleteRecursively()
                         Glide.get(this@MainActivity).clearMemory()
-                        Glide.get(this@MainActivity).clearDiskCache()
                         LogoApi.clearCache()
-                        ExoplayerView.clearAllCaches()
-                        withContext(Dispatchers.Main) { snackString("Cache cleared") }
+                        withContext(Dispatchers.IO) {
+                            cacheDir.deleteRecursively()
+                            externalCacheDir?.deleteRecursively()
+                            Glide.get(this@MainActivity).clearDiskCache()
+                            ExoplayerView.clearAllCaches()
+                        }
+                        snackString("Cache cleared")
                     } catch (e: Exception) {
-                        withContext(Dispatchers.Main) { snackString("Failed to clear cache: ${e.message}") }
+                        snackString("Failed to clear cache: ${e.message}")
                     }
                 }
             },
