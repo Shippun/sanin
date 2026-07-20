@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.view.View
+import android.view.ViewGroup
 import android.view.WindowManager
 import android.view.animation.DecelerateInterpolator
 import androidx.appcompat.app.AppCompatActivity
@@ -38,6 +39,14 @@ class NotificationPopupActivity : AppCompatActivity() {
 
         binding = PopupNotificationBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        val maxCardWidth = (420 * resources.displayMetrics.density).toInt()
+        val screenWidth = resources.displayMetrics.widthPixels
+        val margin = ((screenWidth - maxCardWidth) / 2).coerceAtLeast((24 * resources.displayMetrics.density).toInt())
+        val params = binding.popupCard.layoutParams as ViewGroup.MarginLayoutParams
+        params.leftMargin = margin
+        params.rightMargin = margin
+        binding.popupCard.layoutParams = params
 
         val title = intent.getStringExtra("title") ?: ""
         val text = intent.getStringExtra("text") ?: ""

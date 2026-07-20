@@ -8,19 +8,22 @@
     android:clickable="false"
     android:focusable="false">
 
-    <androidx.cardview.widget.CardView
+    <com.google.android.material.card.MaterialCardView
         android:id="@+id/popupCard"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="48dp"
+        android:layout_gravity="center_horizontal|top"
         android:layout_marginTop="24dp"
-        app:cardBackgroundColor="?attr/colorSurface"
+        android:minWidth="300dp"
+        app:cardBackgroundColor="@android:color/black"
         app:cardCornerRadius="16dp"
         app:cardElevation="8dp"
-        app:contentPadding="0dp">
+        app:contentPadding="0dp"
+        app:strokeWidth="1dp"
+        app:strokeColor="?attr/colorPrimary">
 
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:minHeight="72dp"
             android:orientation="horizontal">
@@ -33,36 +36,35 @@
                 android:importantForAccessibility="no" />
 
             <LinearLayout
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:layout_gravity="center_vertical"
+                android:minWidth="200dp"
                 android:orientation="vertical"
                 android:paddingStart="16dp"
-                android:paddingEnd="16dp"
+                android:paddingEnd="24dp"
                 android:paddingVertical="12dp">
 
                 <TextView
                     android:id="@+id/popupTitle"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
                     android:fontFamily="@font/poppins_bold"
                     android:maxLines="1"
-                    android:textColor="?attr/colorOnSurface"
+                    android:textColor="@android:color/white"
                     android:textSize="14sp"
                     tools:text="Attack on Titan" />
 
                 <TextView
                     android:id="@+id/popupText"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
                     android:ellipsize="end"
                     android:fontFamily="@font/poppins"
                     android:maxLines="2"
-                    android:alpha="0.8"
-                    android:textColor="?attr/colorOnSurfaceVariant"
+                    android:textColor="@android:color/darker_gray"
                     android:textSize="12sp"
                     tools:text="Episode 28 : The Dawn of Humanity just released" />
 
@@ -70,6 +72,6 @@
 
         </LinearLayout>
 
-    </androidx.cardview.widget.CardView>
+    </com.google.android.material.card.MaterialCardView>
 
 </FrameLayout>

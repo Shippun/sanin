@@ -26,6 +26,7 @@ import ani.sanin.InputFilterMinMax
 import ani.sanin.R
 import ani.sanin.Refresh
 import ani.sanin.connections.PendingProgressUpdate
+import ani.sanin.connections.statusNotificationPhrase
 import ani.sanin.connections.anilist.Anilist
 import ani.sanin.connections.anilist.api.FuzzyDate
 import ani.sanin.connections.mal.MAL
@@ -280,13 +281,12 @@ class MediaListDialogSmallFragment : DialogFragment() {
                 }
                 Refresh.all()
                 if (PrefManager.getVal<Boolean>(PrefName.ListStatusNotification) && media.userStatus != newStatus) {
-                    val oldDisp = statusStrings[statuses.indexOf(media.userStatus).coerceAtLeast(0)]
                     val intent = Intent(requireActivity(), NotificationPopupActivity::class.java).apply {
-                        putExtra("title", "$oldDisp → $newCheckedStatus")
-                                putExtra("text", getString(R.string.list_updated))
-                                putExtra("coverUrl", media.cover)
-                            }
-                            requireActivity().startActivity(intent)
+                        putExtra("title", statusNotificationPhrase(media, newStatus))
+                        putExtra("text", getString(R.string.list_updated))
+                        putExtra("coverUrl", media.cover)
+                    }
+                    requireActivity().startActivity(intent)
                 } else {
                     val intent = Intent(requireActivity(), NotificationPopupActivity::class.java).apply {
                         putExtra("title", getString(R.string.list_updated))

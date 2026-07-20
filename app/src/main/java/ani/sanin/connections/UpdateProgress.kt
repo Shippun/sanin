@@ -68,24 +68,15 @@ fun updateProgress(media: Media, number: String) {
                         if (media.userStatus == "REPEATING") media.userStatus!! else "CURRENT"
                     )
                     if (PrefManager.getVal<Boolean>(PrefName.ListStatusNotification)) {
-                        val ctx = currContext()
-                        if (ctx != null) {
-                            val statusStrings = ctx.resources.getStringArray(R.array.status_anime)
-                            val statuses = ctx.resources.getStringArray(R.array.status)
-                            val oldIdx = statuses.indexOf(media.userStatus).coerceAtLeast(0)
-                            val oldDisp = statusStrings[oldIdx]
-                            val newStatus = if (media.userStatus == "REPEATING") "REPEATING" else "CURRENT"
-                            val newIdx = statuses.indexOf(newStatus).coerceAtLeast(0)
-                            val newDisp = statusStrings[newIdx]
-                            App.currentActivity()?.let { activity ->
-                                val intent = Intent(activity, NotificationPopupActivity::class.java).apply {
-                                    flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_NO_USER_ACTION
-                                    putExtra("title", "$oldDisp → $newDisp")
-                                    putExtra("text", "")
-                                    putExtra("coverUrl", media.cover)
-                                }
-                                activity.startActivity(intent)
+                        val newStatus = if (media.userStatus == "REPEATING") "REPEATING" else "CURRENT"
+                        App.currentActivity()?.let { activity ->
+                            val intent = Intent(activity, NotificationPopupActivity::class.java).apply {
+                                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_NO_USER_ACTION
+                                putExtra("title", statusNotificationPhrase(media, newStatus))
+                                putExtra("text", "")
+                                putExtra("coverUrl", media.cover)
                             }
+                            activity.startActivity(intent)
                         }
                     }
                     toast(currContext()?.getString(R.string.setting_progress, a))
@@ -158,6 +149,21 @@ fun syncPendingProgressUpdates() {
             toast(currContext()?.getString(R.string.sync_partial, remaining.size))
         }
         Refresh.all()
+    }
+}
+
+fun statusNotificationPhrase(media: Media, newStatus: String): String {
+    val name = Anilist.username ?: "User"
+    val title = media.title?.userPreferred ?: media.title?.romaji ?: "Unknown"
+    val isAnime = media.anime != null
+    return when (newStatus) {
+        "CURRENT" -> if (isAnime) "$name is watching $title" else "$name is reading $title"
+        "PLANNING" -> if (isAnime) "$name is planning to watch $title" else "$name is planning to read $title"
+        "COMPLETED" -> "$name has completed $title"
+        "PAUSED" -> "$name paused $title"
+        "DROPPED" -> "$name dropped $title"
+        "REPEATING" -> if (isAnime) "$name is rewatching $title" else "$name is rereading $title"
+        else -> "$name updated $title"
     }
 }
 
