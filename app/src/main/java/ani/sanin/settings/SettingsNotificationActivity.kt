@@ -21,6 +21,7 @@ import ani.sanin.navBarHeight
 import ani.sanin.notifications.TaskScheduler
 import ani.sanin.notifications.anilist.AnilistNotificationWorker
 import ani.sanin.notifications.comment.CommentNotificationWorker
+import ani.sanin.notifications.subscription.NotificationPopupActivity
 import ani.sanin.notifications.subscription.SubscriptionHelper
 import ani.sanin.notifications.subscription.SubscriptionNotificationWorker
 import ani.sanin.openSettings
@@ -534,6 +535,19 @@ class SettingsNotificationActivity : AppCompatActivity() {
                                     .scheduleAllTasks(context)
                             }
                         },
+                    ),
+                    Settings(
+                        type = 1,
+                        name = "Test Notification",
+                        desc = "Show a test notification popup",
+                        icon = R.drawable.ic_round_notifications_active_24,
+                        onClick = {
+                            val intent = Intent(context, NotificationPopupActivity::class.java).apply {
+                                putExtra("title", "Test Notification")
+                                putExtra("text", "This is a test popup notification! It should appear at the top and dismiss in 2 seconds.")
+                            }
+                            context.startActivity(intent)
+                        }
                     ),
                 )
             )

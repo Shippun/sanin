@@ -9,6 +9,9 @@ import ani.sanin.media.Media
 import ani.sanin.media.emptyMedia
 import ani.sanin.settings.saving.PrefManager
 import ani.sanin.settings.saving.PrefName
+import android.content.Intent
+import ani.sanin.App
+import ani.sanin.notifications.subscription.NotificationPopupActivity
 import ani.sanin.toast
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -74,7 +77,19 @@ fun updateProgress(media: Media, number: String) {
                             val newStatus = if (media.userStatus == "REPEATING") "REPEATING" else "CURRENT"
                             val newIdx = statuses.indexOf(newStatus).coerceAtLeast(0)
                             val newDisp = statusStrings[newIdx]
-                            toast("$oldDisp → $newDisp")
+                            App.currentActivity()?.let { activity ->
+                                val intent = Intent(activity, NotificationPopupActivity::class.java).apply {
+                                    flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_NO_USER_ACTION
+                                    putExtra("title", "$oldDisp → $newDisp")
+                                    putExtra("text", "")
+                                    putExtra("coverUrl", media.cover)
+                                }
+                                activity.startActivity(intent)
+                            }
+                        }
+                    }
+                                activity.startActivity(intent)
+                            }
                         }
                     }
                     toast(currContext()?.getString(R.string.setting_progress, a))

@@ -18,10 +18,12 @@ import androidx.core.graphics.ColorUtils
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updateLayoutParams
+import android.content.Intent
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import ani.sanin.DatePickerFragment
+import ani.sanin.notifications.subscription.NotificationPopupActivity
 import ani.sanin.InputFilterMinMax
 import ani.sanin.R
 import ani.sanin.Refresh
@@ -35,6 +37,8 @@ import ani.sanin.loadImage
 import ani.sanin.navBarHeight
 import ani.sanin.settings.saving.PrefManager
 import ani.sanin.settings.saving.PrefName
+import android.content.Intent
+import ani.sanin.notifications.subscription.NotificationPopupActivity
 import ani.sanin.snackString
 import ani.sanin.tryWith
 import ani.sanin.util.FocusEffectUtil
@@ -391,9 +395,18 @@ class MediaListDialogFragment : DialogFragment() {
                         Refresh.all()
                         if (PrefManager.getVal<Boolean>(PrefName.ListStatusNotification) && media!!.userStatus != newStatus) {
                             val oldDisp = statusStrings[statuses.indexOf(media!!.userStatus).coerceAtLeast(0)]
-                            snackString("$oldDisp → $statusText")
+                            val intent = Intent(requireActivity(), NotificationPopupActivity::class.java).apply {
+                                putExtra("title", "$oldDisp → $statusText")
+                                putExtra("text", getString(R.string.list_updated))
+                                putExtra("coverUrl", media!!.cover)
+                            }
+                            requireActivity().startActivity(intent)
                         } else {
-                            snackString(getString(R.string.list_updated))
+                            val intent = Intent(requireActivity(), NotificationPopupActivity::class.java).apply {
+                                putExtra("title", getString(R.string.list_updated))
+                                putExtra("text", "")
+                            }
+                            requireActivity().startActivity(intent)
                         }
                         dismissAllowingStateLoss()
                     }
