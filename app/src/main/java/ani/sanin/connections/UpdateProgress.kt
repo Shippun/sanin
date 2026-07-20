@@ -154,7 +154,7 @@ fun syncPendingProgressUpdates() {
 
 fun statusNotificationPhrase(media: Media, newStatus: String): String {
     val name = Anilist.username ?: "User"
-    val title = media.title?.userPreferred ?: media.title?.romaji ?: "Unknown"
+    val title = media.userPreferredName.ifEmpty { media.nameRomaji.ifEmpty { media.name ?: "Unknown" } }
     val isAnime = media.anime != null
     return when (newStatus) {
         "CURRENT" -> if (isAnime) "$name is watching $title" else "$name is reading $title"
