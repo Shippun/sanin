@@ -3674,16 +3674,11 @@ class ExoplayerView :
             dialog.show()
             return true
         }
-        if (now - backPressTime < 500L) {
-            finishAndRemoveTask()
-            return true
-        }
-        backPressTime = now
         if (playerView.isControllerFullyVisible) {
             playerView.hideController()
-        } else {
-            playerView.showController()
+            return true
         }
+        finishAndRemoveTask()
         return true
     }
 

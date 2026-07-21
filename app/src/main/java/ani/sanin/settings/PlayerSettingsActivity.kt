@@ -137,6 +137,7 @@ class PlayerSettingsActivity :
             binding.playerSettingsAskUpdateProgress,
             binding.playerSettingsAskChapterZero,
             binding.playerSettingsAskUpdateHentai,
+            binding.playerSettingsConfirmExit,
             binding.playerSettingsAlwaysContinue,
             binding.playerSettingsPauseVideo,
             binding.playerSettingsVerticalGestures,
@@ -281,6 +282,11 @@ class PlayerSettingsActivity :
         }
 
         // Behaviour
+        binding.playerSettingsConfirmExit.isChecked = PrefManager.getVal(PrefName.ConfirmPlayerExit)
+        binding.playerSettingsConfirmExit.setOnCheckedChangeListener { _, isChecked ->
+            PrefManager.setVal(PrefName.ConfirmPlayerExit, isChecked)
+        }
+
         binding.playerSettingsAlwaysContinue.isChecked = PrefManager.getVal(PrefName.AlwaysContinue)
         binding.playerSettingsAlwaysContinue.setOnCheckedChangeListener { _, isChecked ->
             PrefManager.setVal(PrefName.AlwaysContinue, isChecked)

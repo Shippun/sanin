@@ -325,16 +325,6 @@ class SettingsCommonActivity : AppCompatActivity() {
                         ),
                         Settings(
                             type = 2,
-                            name = "Confirm Player Exit",
-                            desc = "Show confirmation dialog before closing player",
-                            icon = R.drawable.ic_round_logout_24,
-                            isChecked = PrefManager.getVal(PrefName.ConfirmPlayerExit),
-                            switch = { isChecked, _ ->
-                                PrefManager.setVal(PrefName.ConfirmPlayerExit, isChecked)
-                            }
-                        ),
-                        Settings(
-                            type = 2,
                             name = "AniList Notifications",
                             desc = "Fetch AniList notification count",
                             icon = R.drawable.ic_anilist,
