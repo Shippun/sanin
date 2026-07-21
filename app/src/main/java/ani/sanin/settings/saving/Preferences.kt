@@ -70,6 +70,7 @@ enum class PrefName(val data: Pref) {
     AutoSyncAniList(Pref(Location.General, Boolean::class, true)),
     UpdateProgressAutomatically(Pref(Location.General, Boolean::class, true)),
     AutoUpdateExtensions(Pref(Location.General, Boolean::class, true)),
+    ConfirmPlayerExit(Pref(Location.General, Boolean::class, false)),
     TraktClientId(Pref(Location.General, String::class, "")),
     TraktCommentsEnabled(Pref(Location.General, Int::class, 0)),
     TraktAccessToken(Pref(Location.Protected, String::class, "")),

@@ -5,6 +5,7 @@ import android.annotation.SuppressLint
 import android.app.Dialog
 import android.app.PictureInPictureParams
 import android.app.PictureInPictureUiState
+import android.app.AlertDialog
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
@@ -3653,6 +3654,24 @@ class ExoplayerView :
             if (!playerView.isControllerFullyVisible) playerView.showController()
             exoPlay.requestFocus()
             backPressTime = now
+            return true
+        }
+        if (PrefManager.getVal<Boolean>(PrefName.ConfirmPlayerExit)) {
+            val dialogView = layoutInflater.inflate(R.layout.dialog_exit_player, null)
+            val dialog = AlertDialog.Builder(this, R.style.MyPopup)
+                .setView(dialogView)
+                .create()
+            dialogView.findViewById<View>(R.id.exitYes).setOnClickListener {
+                dialog.dismiss()
+                finishAndRemoveTask()
+            }
+            dialogView.findViewById<View>(R.id.exitNo).setOnClickListener { dialog.dismiss() }
+            dialog.setOnShowListener { dialogView.findViewById<View>(R.id.exitYes).requestFocus() }
+            dialog.window?.apply {
+                setDimAmount(0.5f)
+                attributes.windowAnimations = android.R.style.Animation_Dialog
+            }
+            dialog.show()
             return true
         }
         if (now - backPressTime < 500L) {

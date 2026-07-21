@@ -112,7 +112,9 @@ The app is a **player and tracker** — nothing more. All streaming sources come
 **Option C — App stores**
 Sanin may be listed in third-party stores like **Downloader** or **Aptoide TV**. Search `"Sanin"` — but always prefer the GitHub release for the latest version.
 
-> **Android requirement:** version 7.0+ (API 24). Most Fire TVs, Nvidia Shields, and Google TVs from 2016+ are supported.
+> **Android requirement:** version 5.0+ (API 21). Works on **Nvidia Shield** (all generations), **Fire TV** (Stick, Cube, Omni), **Google TV** (Chromecast, Sony, TCL, Hisense), **Mi Box**, and any Android TV box. Also works on phones/tablets — no touchscreen required, full D-pad navigation built-in.
+
+**Does NOT support Samsung TVs** — they run Tizen, not Android TV. No Android APK can install on them.
 
 ### 1. Sign In
 Connect your **AniList** or **MyAnimeList** account to sync your watchlist, track progress, and get recommendations.

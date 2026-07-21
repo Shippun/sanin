@@ -525,6 +525,7 @@ class MainActivity : AppCompatActivity() {
                 KeyEvent.KEYCODE_DPAD_RIGHT -> {
                     val id = currentFocus?.id
                     if (id == R.id.homeNavHome || id == R.id.homeNavAnime || id == R.id.homeNavDiscovery || id == R.id.homeNavLibrary) {
+                        if (PrefManager.getVal<Boolean>(PrefName.SideRailPersist)) return false
                         hideHomeNavRail()
                         return true
                     }
