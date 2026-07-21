@@ -14,7 +14,9 @@
 
 Sanin is a **fork of [Dantotsu](https://github.com/rebelonion/Dantotsu)**, rebuilt and optimized from the ground up for **Android TV / Fire TV** with full D-pad navigation, while remaining fully functional on phones and tablets.
 
----
+<p align="center">
+<img src="./github_assets/preview.gif" width="100%" alt="Sanin Preview">
+</p>
 
 ## ⚠️ Disclaimer
 
