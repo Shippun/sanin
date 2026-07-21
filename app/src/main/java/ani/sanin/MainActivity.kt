@@ -517,7 +517,16 @@ class MainActivity : AppCompatActivity() {
         if (event.action == KeyEvent.ACTION_DOWN) {
             when (event.keyCode) {
                 KeyEvent.KEYCODE_BACK, KeyEvent.KEYCODE_ESCAPE -> {
-                    if (binding.homeNavRail.visibility == View.VISIBLE) {
+                    val id = currentFocus?.id
+                    if (id == R.id.homeNavHome || id == R.id.homeNavAnime || id == R.id.homeNavDiscovery || id == R.id.homeNavLibrary) {
+                        if (PrefManager.getVal<Boolean>(PrefName.SideRailPersist)) {
+                            setHomeNavPillsFocusable(false)
+                            val tag = currentFragmentTag
+                            if (tag != null) {
+                                supportFragmentManager.findFragmentByTag(tag)?.view?.let { it.requestFocus() }
+                            }
+                            return true
+                        }
                         hideHomeNavRail()
                         if (binding.homeNavRail.visibility == View.VISIBLE) return true
                     }
@@ -525,7 +534,10 @@ class MainActivity : AppCompatActivity() {
                 KeyEvent.KEYCODE_DPAD_RIGHT -> {
                     val id = currentFocus?.id
                     if (id == R.id.homeNavHome || id == R.id.homeNavAnime || id == R.id.homeNavDiscovery || id == R.id.homeNavLibrary) {
-                        if (PrefManager.getVal<Boolean>(PrefName.SideRailPersist)) return false
+                        if (PrefManager.getVal<Boolean>(PrefName.SideRailPersist)) {
+                            setHomeNavPillsFocusable(false)
+                            return false
+                        }
                         hideHomeNavRail()
                         return true
                     }
@@ -534,6 +546,21 @@ class MainActivity : AppCompatActivity() {
                     val id = currentFocus?.id
                     if (id == R.id.homeNavHome || id == R.id.homeNavAnime || id == R.id.homeNavDiscovery || id == R.id.homeNavLibrary) {
                         return true
+                    }
+                    if (binding.homeNavRail.visibility == View.VISIBLE && PrefManager.getVal<Boolean>(PrefName.SideRailPersist)) {
+                        val focus = currentFocus
+                        var atLeftEdge = false
+                        if (focus != null) {
+                            val railWidth = (60f * resources.displayMetrics.density).toInt()
+                            atLeftEdge = focus.left <= railWidth || focus.focusSearch(View.FOCUS_LEFT) == null
+                        }
+                        if (atLeftEdge) {
+                            setHomeNavPillsFocusable(true)
+                            val tab = navPillsViewModel.currentTab.value
+                            val targetId = when (tab) { 0 -> R.id.homeNavHome; 1 -> R.id.homeNavAnime; 2 -> R.id.homeNavDiscovery; 3 -> R.id.homeNavLibrary; else -> R.id.homeNavHome }
+                            binding.root.findViewById<View>(targetId)?.requestFocus()
+                            return true
+                        }
                     }
                     if (binding.homeNavRail.visibility != View.VISIBLE) {
                         val focus = currentFocus
@@ -566,6 +593,13 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
                 KeyEvent.KEYCODE_MENU -> {
+                    if (binding.homeNavRail.visibility == View.VISIBLE && PrefManager.getVal<Boolean>(PrefName.SideRailPersist)) {
+                        setHomeNavPillsFocusable(true)
+                        val tab = navPillsViewModel.currentTab.value
+                        val targetId = when (tab) { 0 -> R.id.homeNavHome; 1 -> R.id.homeNavAnime; 2 -> R.id.homeNavDiscovery; 3 -> R.id.homeNavLibrary; else -> R.id.homeNavHome }
+                        binding.root.findViewById<View>(targetId)?.requestFocus()
+                        return true
+                    }
                     if (binding.homeNavRail.visibility != View.VISIBLE) {
                         showHomeNavRail()
                         return true
@@ -591,7 +625,12 @@ class MainActivity : AppCompatActivity() {
         updateSideRailGlass()
         val persist = PrefManager.getVal<Boolean>(PrefName.SideRailPersist)
         if (persist && ::navPillsViewModel.isInitialized) {
-            showHomeNavRail()
+            binding.homeNavRail.visibility = View.VISIBLE
+            binding.homeNavRail.translationX = 0f
+            binding.homeNavRail.scaleY = 1f
+            binding.homeNavRail.alpha = 1f
+            updateHomeNavIconTints()
+            setHomeNavPillsFocusable(false)
         }
         updateNavPillFocusChains()
     }
@@ -771,6 +810,13 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun setHomeNavPillsFocusable(focusable: Boolean) {
+        listOf(binding.homeNavHome, binding.homeNavAnime, binding.homeNavDiscovery, binding.homeNavLibrary).forEach {
+            it.isFocusable = focusable
+            it.isFocusableInTouchMode = false
+        }
+    }
+
     private fun showHomeNavRail() {
         if (PrefManager.getVal<Boolean>(PrefName.AnimationsEnabled) && PrefManager.getVal<Boolean>(PrefName.NavRailAnimations)) {
             binding.homeNavRail.apply {
@@ -800,6 +846,7 @@ class MainActivity : AppCompatActivity() {
             binding.homeNavRail.alpha = 1f
             updateHomeNavIconTints()
         }
+        setHomeNavPillsFocusable(true)
         val tab = navPillsViewModel.currentTab.value
         val id = when (tab) {
             0 -> R.id.homeNavHome
