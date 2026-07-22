@@ -26,7 +26,7 @@ class AniyomiExtensionsFragment : Fragment(), SearchQueryHandler {
 
         viewPager.adapter = object : FragmentStateAdapter(childFragmentManager, lifecycle) {
             override fun getItemCount() = 2
-            override fun createFragment(position: Int) = when (position) {
+            override fun createFragment(position: Int): Fragment = when (position) {
                 0 -> InstalledAnimeExtensionsFragment()
                 1 -> AnimeExtensionsFragment()
                 else -> AnimeExtensionsFragment()
