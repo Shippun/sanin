@@ -13,6 +13,8 @@ import eu.kanade.tachiyomi.animesource.model.Video
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
 import rx.Observable
 import java.lang.reflect.Method
 import java.lang.reflect.Modifier
