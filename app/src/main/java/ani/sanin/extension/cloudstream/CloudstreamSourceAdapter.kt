@@ -19,6 +19,7 @@ import java.lang.reflect.Modifier
 class CloudstreamSourceAdapter(
     private val extension: CloudstreamInstalledExtension,
     private val context: Context,
+    private val overrideFilePath: String? = null,
 ) : AnimeCatalogueSource {
 
     override val id: Long = extension.pkgName.hashCode().toLong()
@@ -36,8 +37,15 @@ class CloudstreamSourceAdapter(
         if (initialized) return
         withContext(Dispatchers.IO) {
             try {
-                val ai = context.packageManager.getApplicationInfo(extension.pkgName, 0)
-                val apkPath = ai.sourceDir
+                val apkPath = overrideFilePath ?: extension.filePath ?: run {
+                    val ai = context.packageManager.getApplicationInfo(extension.pkgName, 0)
+                    ai.sourceDir
+                }
+                if (!java.io.File(apkPath).exists()) {
+                    Logger.log("Cloudstream: extension file not found at $apkPath")
+                    initialized = true
+                    return@withContext
+                }
 
                 val classLoader = PathClassLoader(apkPath, null, context.classLoader)
 

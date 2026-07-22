@@ -36,6 +36,7 @@ data class CloudstreamInstalledExtension(
     val icon: Drawable? = null,
     val hasUpdate: Boolean = false,
     val repository: String = "",
+    val filePath: String? = null,
 )
 
 data class CloudstreamRepoCategory(

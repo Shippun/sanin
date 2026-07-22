@@ -1,7 +1,5 @@
 package ani.sanin.extension.cloudstream
 
-import android.app.NotificationManager
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -22,7 +20,6 @@ import ani.sanin.others.LanguageMapper
 import ani.sanin.snackString
 import ani.sanin.util.FocusEffectUtil
 import kotlinx.coroutines.launch
-import rx.android.schedulers.AndroidSchedulers
 
 class CloudstreamInstalledFragment : Fragment() {
     private var _binding: FragmentExtensionsBinding? = null
@@ -49,32 +46,11 @@ class CloudstreamInstalledFragment : Fragment() {
 
     private fun handleUpdate(ext: CloudstreamInstalledExtension) {
         if (!ext.hasUpdate) { snackString("No update available"); return }
-        val context = requireContext()
-        val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        CloudstreamManager.updateExtension(ext)
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(
-                { step ->
-                    val builder = androidx.core.app.NotificationCompat.Builder(
-                        context, eu.kanade.tachiyomi.data.notification.Notifications.CHANNEL_DOWNLOADER_PROGRESS
-                    ).setSmallIcon(R.drawable.ic_round_sync_24)
-                        .setContentTitle("Updating Cloudstream extension")
-                        .setContentText("Step: $step")
-                        .setPriority(androidx.core.app.NotificationCompat.PRIORITY_LOW)
-                    notificationManager.notify(1, builder.build())
-                },
-                { error ->
-                    snackString("Update failed: ${error.message}")
-                    val builder = androidx.core.app.NotificationCompat.Builder(
-                        context, eu.kanade.tachiyomi.data.notification.Notifications.CHANNEL_DOWNLOADER_ERROR
-                    ).setSmallIcon(R.drawable.ic_round_info_24)
-                        .setContentTitle("Update failed")
-                        .setContentText(error.message)
-                        .setPriority(androidx.core.app.NotificationCompat.PRIORITY_HIGH)
-                    notificationManager.notify(1, builder.build())
-                },
-                { snackString("Extension updated") }
-            )
+        lifecycleScope.launch {
+            CloudstreamManager.updateExtension(ext)
+            CloudstreamManager.loadInstalledExtensions(requireContext())
+            snackString("Extension updated")
+        }
     }
 
     private fun handleUninstall(ext: CloudstreamInstalledExtension) {

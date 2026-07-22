@@ -181,13 +181,11 @@ class AllExtensionsFragment : Fragment(), SearchQueryHandler {
             ExtensionEcosystem.CLOUDSTREAM -> {
                 val installed = CloudstreamManager.installedFlow.value.find { it.pkgName == ext.pkgName }
                 if (installed != null) {
-                    CloudstreamManager.updateExtension(installed)
-                        .observeOn(rx.android.schedulers.AndroidSchedulers.mainThread())
-                        .subscribe(
-                            { },
-                            { e -> ani.sanin.snackString("Update failed: ${e.message}") },
-                            { ani.sanin.snackString("Extension updated") }
-                        )
+                    lifecycleScope.launch {
+                        CloudstreamManager.updateExtension(installed)
+                        CloudstreamManager.loadInstalledExtensions(requireContext())
+                        ani.sanin.snackString("Extension updated")
+                    }
                 }
             }
             else -> {}

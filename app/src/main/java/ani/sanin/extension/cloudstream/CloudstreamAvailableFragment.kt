@@ -82,12 +82,17 @@ class CloudstreamAvailableFragment : Fragment() {
     }
 
     private fun installExtension(ext: CloudstreamAvailableExtension) {
-        CloudstreamManager.installExtension(ext)
-            .subscribe(
-                { },
-                { e -> snackString("Install failed: ${e.message}") },
-                { snackString("${ext.name} installed") }
-            )
+        lifecycleScope.launch {
+            CloudstreamManager.installExtension(ext)
+            CloudstreamManager.loadInstalledExtensions(requireContext())
+            val current = extensionAdapter.currentList.toMutableList()
+            val idx = current.indexOfFirst { it.pkgName == ext.pkgName }
+            if (idx >= 0) {
+                current[idx] = current[idx].copy() // trigger diff
+                extensionAdapter.submitList(current)
+            }
+            snackString("${ext.name} installed")
+        }
     }
 
     override fun onDestroyView() { super.onDestroyView(); _binding = null }

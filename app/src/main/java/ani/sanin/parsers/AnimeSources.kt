@@ -63,7 +63,7 @@ object AnimeSources : WatchSources() {
         context: Context,
     ): List<Lazier<BaseParser>> {
         return extensions.map { csExt ->
-            val adapter = CloudstreamSourceAdapter(csExt, context)
+            val adapter = CloudstreamSourceAdapter(csExt, context, csExt.filePath)
             val fakeExtension = AnimeExtension.Installed(
                 name = csExt.name,
                 pkgName = csExt.pkgName,
