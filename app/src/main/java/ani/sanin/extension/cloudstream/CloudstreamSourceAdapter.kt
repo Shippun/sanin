@@ -243,7 +243,11 @@ class CloudstreamSourceAdapter(
                             ?.mapValues { it.value.toString() }
 
                         val headers = if (headersMap.isNullOrEmpty()) null
-                        else okhttp3.Headers.of(headersMap)
+                        else {
+                            val b = okhttp3.Headers.Builder()
+                            headersMap.forEach { (k, v) -> b.add(k, v) }
+                            b.build()
+                        }
 
                         Video(
                             videoUrl = videoUrl,
@@ -304,7 +308,8 @@ class CloudstreamSourceAdapter(
         return AnimesPage(emptyList(), false)
     }
 
-    private fun reflectString(obj: Any, field: String): String? {
+    private fun reflectString(obj: Any?, field: String): String? {
+        if (obj == null) return null
         return try {
             val getter = obj.javaClass.getMethod("get${field.replaceFirstChar { it.uppercase() }}")
             getter.invoke(obj)?.toString()
@@ -320,7 +325,8 @@ class CloudstreamSourceAdapter(
         }
     }
 
-    private fun reflectField(obj: Any, field: String): Any? {
+    private fun reflectField(obj: Any?, field: String): Any? {
+        if (obj == null) return null
         return try {
             val getter = obj.javaClass.getMethod("get${field.replaceFirstChar { it.uppercase() }}")
             getter.invoke(obj)
@@ -336,12 +342,13 @@ class CloudstreamSourceAdapter(
         }
     }
 
-    private fun reflectList(obj: Any, field: String): List<*>? {
+    private fun reflectList(obj: Any?, field: String): List<*>? {
         val raw = reflectField(obj, field)
         return raw as? List<*>
     }
 
-    private fun reflectNumber(obj: Any, field: String): Float? {
+    private fun reflectNumber(obj: Any?, field: String): Float? {
+        if (obj == null) return null
         return try {
             val getter = obj.javaClass.getMethod("get${field.replaceFirstChar { it.uppercase() }}")
             (getter.invoke(obj) as? Number)?.toFloat()
@@ -357,7 +364,8 @@ class CloudstreamSourceAdapter(
         }
     }
 
-    private fun reflectLong(obj: Any, field: String): Long? {
+    private fun reflectLong(obj: Any?, field: String): Long? {
+        if (obj == null) return null
         return try {
             val getter = obj.javaClass.getMethod("get${field.replaceFirstChar { it.uppercase() }}")
             (getter.invoke(obj) as? Number)?.toLong()
