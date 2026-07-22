@@ -8,6 +8,7 @@ import eu.kanade.tachiyomi.network.GET
 import eu.kanade.tachiyomi.network.NetworkHelper
 import eu.kanade.tachiyomi.network.awaitSuccess
 import eu.kanade.tachiyomi.network.parseAs
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
@@ -130,7 +131,8 @@ data class CloudstreamPack(
     val name: String = "",
     val pkg: String = "",
     val version: Int = 0,
-    val `version name`: String = "",
+    @SerialName("version name")
+    val versionName: String = "",
     val lang: String = "",
     val nsfw: Boolean = false,
     val description: String = "",
