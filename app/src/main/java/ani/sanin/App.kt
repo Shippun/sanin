@@ -13,6 +13,7 @@ import ani.sanin.connections.trakt.TraktAuth
 import ani.sanin.connections.crashlytics.CrashlyticsInterface
 import ani.sanin.notifications.TaskScheduler
 import ani.sanin.others.DisabledReports
+import ani.sanin.extension.cloudstream.CloudstreamManager
 import ani.sanin.parsers.AnimeSources
 import ani.sanin.settings.SettingsActivity
 import ani.sanin.settings.saving.PrefManager
@@ -99,6 +100,8 @@ class App : Application() {
             }
         }
 
+        CloudstreamManager.init(this)
+
         val scope = CoroutineScope(Dispatchers.IO)
         scope.launch {
             animeExtensionManager = Injekt.get()
@@ -106,7 +109,11 @@ class App : Application() {
                 animeExtensionManager.findAvailableExtensions()
             }
             Logger.log("Anime Extensions: ${animeExtensionManager.installedExtensionsFlow.first()}")
-            AnimeSources.init(animeExtensionManager.installedExtensionsFlow)
+            AnimeSources.init(
+                animeExtensionManager.installedExtensionsFlow,
+                this@App,
+                CloudstreamManager.installedFlow,
+            )
         }
         GlobalScope.launch {
             if (PrefManager.getVal<Int>(PrefName.CommentsEnabled) == 1) {

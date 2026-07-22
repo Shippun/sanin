@@ -47,6 +47,19 @@ object CloudstreamApi {
             val response = networkService.client.newCall(GET(repoUrl)).awaitSuccess()
             val text = response.body.string()
             val jsonObj = json.parseToJsonElement(text).jsonObject
+
+            if (jsonObj["pluginLists"]?.jsonArray != null && jsonObj["manifestVersion"]?.jsonPrimitive?.content == "1") {
+                val extensions = CloudstreamRepoParser.parsePluginLists(url, jsonObj)
+                val name = jsonObj["name"]?.jsonPrimitive?.content ?: url.substringAfterLast("/").substringBeforeLast(".")
+                val description = jsonObj["description"]?.jsonPrimitive?.content ?: ""
+                return CloudstreamRepo(
+                    url = url,
+                    name = name,
+                    description = description,
+                    extensions = extensions,
+                )
+            }
+
             parseRepoJson(url, jsonObj)
         } catch (e: Exception) {
             Logger.log("Failed to fetch Cloudstream repo: $url")

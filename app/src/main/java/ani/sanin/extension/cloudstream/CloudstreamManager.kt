@@ -26,8 +26,11 @@ object CloudstreamManager {
     val reposFlow = _reposFlow.asStateFlow()
 
     private var installer: ExtensionInstaller? = null
+    private var isInitialized = false
 
     fun init(context: Context) {
+        if (isInitialized) return
+        isInitialized = true
         installer = ExtensionInstaller(context)
         loadInstalledExtensions(context)
         CloudstreamUpdateWorker.schedule(context)
