@@ -12,6 +12,7 @@ import eu.kanade.tachiyomi.animesource.model.SEpisodeImpl
 import eu.kanade.tachiyomi.animesource.model.Video
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import rx.Observable
 import java.lang.reflect.Method
 import java.lang.reflect.Modifier
 
@@ -266,6 +267,22 @@ class CloudstreamSourceAdapter(
     }
 
     override fun getFilterList(): AnimeFilterList = AnimeFilterList(emptyList())
+
+    override fun fetchPopularAnime(page: Int): Observable<AnimesPage> {
+        return Observable.fromCallable { getPopularAnime(page) }
+    }
+
+    override fun fetchSearchAnime(page: Int, query: String, filters: AnimeFilterList): Observable<AnimesPage> {
+        return Observable.fromCallable { getSearchAnime(page, query, filters) }
+    }
+
+    override fun fetchLatestUpdates(page: Int): Observable<AnimesPage> {
+        return Observable.just(AnimesPage(emptyList(), false))
+    }
+
+    override suspend fun getSeasonList(anime: eu.kanade.tachiyomi.animesource.model.SAnime): List<eu.kanade.tachiyomi.animesource.model.SAnime> {
+        return emptyList()
+    }
 
     override suspend fun getPopularAnime(page: Int): AnimesPage {
         ensureInitialized()
