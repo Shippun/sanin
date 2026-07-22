@@ -11,6 +11,7 @@ import eu.kanade.tachiyomi.animesource.model.SAnimeImpl
 import eu.kanade.tachiyomi.animesource.model.SEpisodeImpl
 import eu.kanade.tachiyomi.animesource.model.Video
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import rx.Observable
 import java.lang.reflect.Method
@@ -32,6 +33,9 @@ class CloudstreamSourceAdapter(
     private var loadMethod: Method? = null
     private var loadLinksMethod: Method? = null
     private var initialized = false
+    private var isSuspendSearch = false
+    private var isSuspendLoad = false
+    private var isSuspendLinks = false
 
     private suspend fun ensureInitialized() {
         if (initialized) return
@@ -51,10 +55,14 @@ class CloudstreamSourceAdapter(
 
                 val providerClass = findProviderClass(classLoader, apkPath)
                 if (providerClass != null) {
+                    Logger.log("Cloudstream: found provider class ${providerClass.name}")
                     providerInstance = providerClass.getDeclaredConstructor().newInstance()
-                    searchMethod = tryFindMethod(providerClass, "search", String::class.java)
-                    loadMethod = tryFindMethod(providerClass, "load", String::class.java)
-                    loadLinksMethod = tryFindMethod(providerClass, "loadLinks", String::class.java)
+                    searchMethod = findMethodAnySig(providerClass, listOf("search", "getSearch", "find"), String::class.java)
+                    loadMethod = findMethodAnySig(providerClass, listOf("load", "getLoad"), String::class.java)
+                    loadLinksMethod = findMethodAnySig(providerClass, listOf("loadLinks", "getLink", "getVideoList", "fetchLinks"), String::class.java)
+                    Logger.log("Cloudstream: search=${searchMethod != null} load=${loadMethod != null} links=${loadLinksMethod != null}")
+                } else {
+                    Logger.log("Cloudstream: no provider class found in $apkPath")
                 }
                 initialized = true
             } catch (e: Exception) {
@@ -66,49 +74,59 @@ class CloudstreamSourceAdapter(
     }
 
     private fun findProviderClass(classLoader: ClassLoader, apkPath: String): Class<*>? {
-        val apiClass = tryLoadApiClass(classLoader, "com.lagradost.cloudstream3.API")
-        if (apiClass != null) {
-            return scanDexForProviders(apkPath, classLoader, apiClass)
-        }
-        val baseClass = tryLoadApiClass(classLoader, "com.lagradost.cloudstream3.Provider")
-        if (baseClass != null) {
-            return scanDexForProviders(apkPath, classLoader, baseClass)
-        }
-        return null
-    }
-
-    private fun tryLoadApiClass(classLoader: ClassLoader, name: String): Class<*>? {
-        return try {
-            classLoader.loadClass(name)
-        } catch (_: Exception) {
-            null
-        }
-    }
-
-    private fun scanDexForProviders(
-        apkPath: String,
-        classLoader: ClassLoader,
-        baseClass: Class<*>,
-    ): Class<*>? {
         try {
             val dexFile = DexFile(apkPath)
             val entries = dexFile.entries()
+            val candidates = mutableListOf<Class<*>>()
             while (entries.hasMoreElements()) {
                 val className = entries.nextElement()
                 try {
                     val clazz = classLoader.loadClass(className)
-                    if (baseClass.isAssignableFrom(clazz) &&
-                        !clazz.isInterface &&
-                        !Modifier.isAbstract(clazz.modifiers)
-                    ) {
-                        dexFile.close()
-                        return clazz
+                    if (clazz.isInterface || Modifier.isAbstract(clazz.modifiers)) continue
+                    if (clazz.name.startsWith("kotlin.") || clazz.name.startsWith("android.")) continue
+
+                    val methods = clazz.methods.map { it.name }
+                    // Provider-like classes will have a "search" method
+                    if (methods.any { it == "search" || it == "getSearch" || it == "load" }) {
+                        candidates.add(clazz)
                     }
-                } catch (_: Exception) {
-                }
+                } catch (_: Exception) { }
             }
             dexFile.close()
+
+            if (candidates.isEmpty()) return null
+            // Prefer the class with the most methods (likely the real provider, not a helper)
+            return candidates.maxByOrNull { it.methods.size }
         } catch (_: Exception) {
+            return null
+        }
+    }
+
+    private fun findMethodAnySig(clazz: Class<*>, names: List<String>, paramType: Class<*>): Method? {
+        for (name in names) {
+            // Regular (String)
+            tryFindMethod(clazz, name, paramType)?.let { return it }
+            // Suspend (String, Continuation)
+            try {
+                val m = clazz.getMethod(name, paramType, kotlin.coroutines.Continuation::class.java)
+                m.isAccessible = true
+                if (name == "search" || name == "getSearch" || name == "find") isSuspendSearch = true
+                else if (name == "load" || name == "getLoad") isSuspendLoad = true
+                else isSuspendLinks = true
+                return m
+            } catch (_: Exception) { }
+            // (String, Int)
+            tryFindMethod(clazz, name, paramType, Integer.TYPE)?.let { return it }
+            tryFindMethod(clazz, name, paramType, Int::class.java)?.let { return it }
+            // (String, Int, Continuation)
+            try {
+                val m = clazz.getMethod(name, paramType, Integer.TYPE, kotlin.coroutines.Continuation::class.java)
+                m.isAccessible = true
+                if (name == "search" || name == "getSearch" || name == "find") isSuspendSearch = true
+                else if (name == "load" || name == "getLoad") isSuspendLoad = true
+                else isSuspendLinks = true
+                return m
+            } catch (_: Exception) { }
         }
         return null
     }
@@ -125,6 +143,27 @@ class CloudstreamSourceAdapter(
         }
     }
 
+    private fun callSuspendMethod(provider: Any, method: Method, arg: Any?): Any? {
+        return try {
+            kotlinx.coroutines.runBlocking {
+                kotlin.coroutines.suspendCoroutine { cont ->
+                    try {
+                        val result = method.invoke(provider, arg, cont)
+                        if (result !== kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED) {
+                            @Suppress("UNCHECKED_CAST")
+                            (cont as kotlin.coroutines.Continuation<Any?>).resume(result)
+                        }
+                    } catch (e: Exception) {
+                        cont.resumeWithException(e)
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            Logger.log("Cloudstream suspend call failed: ${e.message}")
+            null
+        }
+    }
+
     override suspend fun getSearchAnime(
         page: Int,
         query: String,
@@ -136,7 +175,8 @@ class CloudstreamSourceAdapter(
 
         return withContext(Dispatchers.IO) {
             try {
-                val rawResults = method.invoke(provider, query)
+                val rawResults = if (isSuspendSearch) callSuspendMethod(provider, method, query)
+                    else method.invoke(provider, query)
                 val results = rawResults as? List<*> ?: return@withContext AnimesPage(emptyList(), false)
 
                 val animes = results.mapNotNull { item ->
@@ -170,7 +210,8 @@ class CloudstreamSourceAdapter(
 
         return withContext(Dispatchers.IO) {
             try {
-                val rawResponse = method.invoke(provider, anime.url)
+                val rawResponse = if (isSuspendLoad) callSuspendMethod(provider, method, anime.url)
+                    else method.invoke(provider, anime.url)
                 if (rawResponse == null) return@withContext anime
 
                 val name = reflectString(rawResponse, "name") ?: anime.title
@@ -200,7 +241,8 @@ class CloudstreamSourceAdapter(
 
         return withContext(Dispatchers.IO) {
             try {
-                val rawResponse = method.invoke(provider, anime.url)
+                val rawResponse = if (isSuspendLoad) callSuspendMethod(provider, method, anime.url)
+                    else method.invoke(provider, anime.url)
                 if (rawResponse == null) return@withContext emptyList()
 
                 val rawEpisodes = reflectField(rawResponse, "episodes") as? List<*> ?: return@withContext emptyList()
@@ -240,7 +282,8 @@ class CloudstreamSourceAdapter(
 
         return withContext(Dispatchers.IO) {
             try {
-                val rawResults = method.invoke(provider, episode.url)
+                val rawResults = if (isSuspendLinks) callSuspendMethod(provider, method, episode.url)
+                    else method.invoke(provider, episode.url)
                 val results = rawResults as? List<*> ?: return@withContext emptyList()
 
                 results.mapNotNull { link ->
@@ -302,11 +345,12 @@ class CloudstreamSourceAdapter(
 
         return withContext(Dispatchers.IO) {
             try {
-                val popularMethod = tryFindMethod(provider.javaClass, "getPopular", Integer.TYPE)
-                    ?: tryFindMethod(provider.javaClass, "getPopular", Int::class.java)
-                    ?: tryFindMethod(provider.javaClass, "popular", Integer.TYPE)
-                    ?: tryFindMethod(provider.javaClass, "popular", Int::class.java)
-                val rawResults = popularMethod?.invoke(provider, page)
+                val popularMethod = findMethodAnySig(provider.javaClass, listOf("getPopular", "popular"), Integer.TYPE)
+                val rawResults = popularMethod?.let { method ->
+                    val isSuspend = method.parameterTypes.lastOrNull() == kotlin.coroutines.Continuation::class.java
+                    if (isSuspend) callSuspendMethod(provider, method, page.toString())
+                    else method.invoke(provider, page)
+                }
                 val results = rawResults as? List<*> ?: return@withContext AnimesPage(emptyList(), false)
 
                 val animes = results.mapNotNull { item ->
