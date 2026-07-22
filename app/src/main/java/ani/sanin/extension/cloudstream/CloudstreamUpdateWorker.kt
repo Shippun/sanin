@@ -10,7 +10,7 @@ import androidx.work.WorkManager
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 import ani.sanin.util.Logger
-import java.time.Duration
+
 
 class CloudstreamUpdateWorker(
     appContext: Context,
@@ -41,8 +41,10 @@ class CloudstreamUpdateWorker(
                 .setRequiredNetworkType(NetworkType.CONNECTED)
                 .build()
 
-            val workRequest = PeriodicWorkRequest.Builder<CloudstreamUpdateWorker>(
-                Duration.ofHours(24)
+            val workRequest = PeriodicWorkRequest.Builder(
+                CloudstreamUpdateWorker::class.java,
+                24,
+                java.util.concurrent.TimeUnit.HOURS,
             ).setConstraints(constraints).build()
 
             WorkManager.getInstance(context).enqueueUniquePeriodicWork(

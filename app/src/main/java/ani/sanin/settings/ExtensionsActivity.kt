@@ -118,7 +118,7 @@ class ExtensionsActivity : AppCompatActivity() {
                 it.name.lowercase().replace("_", " ")
                     .replaceFirstChar { c -> if (c.isLowerCase()) c.titlecase(Locale.ROOT) else c.toString() }
             }.toTypedArray()
-            val listOrder = PrefManager.getVal(PrefName.LangSort)
+            val listOrder = PrefManager.getVal<String>(PrefName.LangSort)
             val index = LanguageMapper.Companion.Language.entries.indexOfFirst { it.code == listOrder }
             customAlertDialog().apply {
                 setTitle("Language")
