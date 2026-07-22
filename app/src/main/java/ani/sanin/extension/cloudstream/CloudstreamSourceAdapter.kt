@@ -269,11 +269,15 @@ class CloudstreamSourceAdapter(
     override fun getFilterList(): AnimeFilterList = AnimeFilterList(emptyList())
 
     override fun fetchPopularAnime(page: Int): Observable<AnimesPage> {
-        return Observable.fromCallable { getPopularAnime(page) }
+        return Observable.fromCallable {
+            kotlinx.coroutines.runBlocking { getPopularAnime(page) }
+        }
     }
 
     override fun fetchSearchAnime(page: Int, query: String, filters: AnimeFilterList): Observable<AnimesPage> {
-        return Observable.fromCallable { getSearchAnime(page, query, filters) }
+        return Observable.fromCallable {
+            kotlinx.coroutines.runBlocking { getSearchAnime(page, query, filters) }
+        }
     }
 
     override fun fetchLatestUpdates(page: Int): Observable<AnimesPage> {
