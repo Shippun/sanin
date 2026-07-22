@@ -5,6 +5,7 @@ import eu.kanade.tachiyomi.network.GET
 import eu.kanade.tachiyomi.network.NetworkHelper
 import eu.kanade.tachiyomi.network.awaitSuccess
 import eu.kanade.tachiyomi.network.parseAs
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonArray
@@ -12,7 +13,7 @@ import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonPrimitive
-
+import kotlinx.serialization.decodeFromString
 import tachiyomi.core.util.lang.withIOContext
 import uy.kohesive.injekt.injectLazy
 
@@ -90,7 +91,7 @@ object CloudstreamRepoParser {
                 name = plugin.name,
                 pkgName = plugin.packageName,
                 versionName = plugin.version,
-                versionCode = plugin.code,
+                versionCode = plugin.versionCode,
                 lang = plugin.language,
                 isNsfw = false,
                 description = plugin.description,
@@ -107,8 +108,16 @@ object CloudstreamRepoParser {
 
     private suspend fun fetchPluginList(url: String): List<CloudstreamPlugin> {
         val response = networkService.client.newCall(GET(url)).awaitSuccess()
-        return with(json) {
-            response.parseAs<List<CloudstreamPlugin>>()
+        val text = response.body.string()
+        Logger.log("Cloudstream: fetched plugins from $url, length=${text.length}")
+        return try {
+            val plugins = json.decodeFromString<List<CloudstreamPlugin>>(text)
+            Logger.log("Cloudstream: parsed ${plugins.size} plugins. First: name='${plugins.firstOrNull()?.name}', pkg='${plugins.firstOrNull()?.packageName}', download='${plugins.firstOrNull()?.download?.take(50)}'")
+            plugins
+        } catch (e: Exception) {
+            Logger.log("Cloudstream: failed to parse plugin list from $url: ${e.message}")
+            Logger.log(text.take(500))
+            emptyList()
         }
     }
 
@@ -123,16 +132,24 @@ object CloudstreamRepoParser {
 @Serializable
 data class CloudstreamPlugin(
     val name: String = "",
+    @SerialName("internalName")
     val packageName: String = "",
-    val version: String = "",
-    val code: Long = 0,
-    val icon: String? = null,
+    @SerialName("url")
     val download: String = "",
+    @SerialName("iconUrl")
+    val icon: String? = null,
     val language: String = "en",
-    val status: String = "",
     val tvTypes: List<String>? = null,
     val fileSize: Long = 0,
     val description: String = "",
-    val author: String? = null,
+    @SerialName("repositoryUrl")
     val website: String? = null,
-)
+    val status: Int = 0,
+    @SerialName("version")
+    val versionCode: Long = 0,
+    @SerialName("authors")
+    private val _authors: List<String>? = null,
+) {
+    val author: String? get() = _authors?.firstOrNull()
+    val version: String get() = versionCode.toString()
+}

@@ -28,6 +28,7 @@ object CloudstreamApi {
             val urls = PrefManager.getVal<Set<String>>(PrefName.CloudstreamExtensionRepos).toList()
             if (urls.isEmpty()) return@withIOContext emptyList()
 
+            Logger.log("Cloudstream: fetching ${urls.size} repos: $urls")
             urls.asyncMap { url ->
                 try {
                     fetchRepo(url)
@@ -36,7 +37,9 @@ object CloudstreamApi {
                     Logger.log(e)
                     null
                 }
-            }.filterNotNull()
+            }.filterNotNull().also {
+                Logger.log("Cloudstream: fetched ${it.size}/${urls.size} repos successfully")
+            }
         }
     }
 
@@ -46,12 +49,14 @@ object CloudstreamApi {
                 else "${url.trimEnd('/')}/repo.json"
             val response = networkService.client.newCall(GET(repoUrl)).awaitSuccess()
             val text = response.body.string()
+            Logger.log("Cloudstream: fetched repo from $repoUrl, length=${text.length}, preview=${text.take(200)}")
             val jsonObj = json.parseToJsonElement(text).jsonObject
 
             if (jsonObj["pluginLists"]?.jsonArray != null && jsonObj["manifestVersion"]?.jsonPrimitive?.content == "1") {
                 val extensions = CloudstreamRepoParser.parsePluginLists(url, jsonObj)
                 val name = jsonObj["name"]?.jsonPrimitive?.content ?: url.substringAfterLast("/").substringBeforeLast(".")
                 val description = jsonObj["description"]?.jsonPrimitive?.content ?: ""
+                Logger.log("Cloudstream: parsed pluginLists repo '$name' with ${extensions.size} extensions")
                 return CloudstreamRepo(
                     url = url,
                     name = name,
@@ -60,7 +65,9 @@ object CloudstreamApi {
                 )
             }
 
-            parseRepoJson(url, jsonObj)
+            val result = parseRepoJson(url, jsonObj)
+            Logger.log("Cloudstream: parsed packs repo '${result.name}' with ${result.extensions.size} extensions")
+            result
         } catch (e: Exception) {
             Logger.log("Failed to fetch Cloudstream repo: $url")
             Logger.log(e)
