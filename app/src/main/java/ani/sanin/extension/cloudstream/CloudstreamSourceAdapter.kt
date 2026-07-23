@@ -224,11 +224,11 @@ class CloudstreamSourceAdapter(
         data: String,
     ): List<Any> {
         val collected = mutableListOf<Any>()
+        val proxyClassLoader = provider.javaClass.classLoader ?: context.classLoader
         val params = method.parameterTypes
         val isSuspend = params.lastOrNull() == kotlin.coroutines.Continuation::class.java
         val realParams = if (isSuspend) params.dropLast(1) else params.toList()
 
-        // Build args: find the Function1 params and intercept them
         val callArgs = arrayOfNulls<Any?>(realParams.size)
         var stringPassed = false
         var boolPassed = false
@@ -239,32 +239,26 @@ class CloudstreamSourceAdapter(
             val p = realParams[i]
             callArgs[i] = when {
                 !stringPassed && p == String::class.java -> {
-                    stringPassed = true
-                    data
+                    stringPassed = true; data
                 }
                 !boolPassed && (p == Boolean::class.java || p == java.lang.Boolean.TYPE) -> {
-                    boolPassed = true
-                    false
+                    boolPassed = true; false
                 }
                 !subCbCreated && p.name.contains("Function") && !linkCbCreated -> {
                     subCbCreated = true
                     Proxy.newProxyInstance(
-                        context.classLoader,
+                        proxyClassLoader,
                         arrayOf(p),
-                        InvocationHandler { _, m, _ ->
-                            if (m.name == "invoke") Unit else null
-                        }
+                        InvocationHandler { _, _, _ -> Unit }
                     )
                 }
                 !linkCbCreated && p.name.contains("Function") -> {
                     linkCbCreated = true
                     Proxy.newProxyInstance(
-                        context.classLoader,
+                        proxyClassLoader,
                         arrayOf(p),
-                        InvocationHandler { _, m, a ->
-                            if (m.name == "invoke" && a != null && a.isNotEmpty()) {
-                                collected.add(a[0])
-                            }
+                        InvocationHandler { _, _, a ->
+                            if (a != null && a.isNotEmpty()) collected.add(a[0])
                             Unit
                         }
                     )
@@ -275,11 +269,24 @@ class CloudstreamSourceAdapter(
 
         try {
             if (isSuspend) {
-                val fullArgs = callArgs.toMutableList()
-                fullArgs.add(null as kotlin.coroutines.Continuation<*>?) // placeholder
-                val result = method.invoke(provider, *fullArgs.toTypedArray())
-                if (result !== kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED) {
-                    // returned boolean - ignore
+                runBlocking {
+                    kotlin.coroutines.suspendCoroutine { cont ->
+                        val fullArgs = callArgs.toMutableList()
+                        val contIdx = method.parameterTypes.indexOfFirst {
+                            it == kotlin.coroutines.Continuation::class.java
+                        }
+                        if (contIdx >= 0) {
+                            while (fullArgs.size < contIdx) fullArgs.add(null)
+                            fullArgs.add(contIdx, cont)
+                        } else {
+                            fullArgs.add(cont)
+                        }
+                        val result = method.invoke(provider, *fullArgs.toTypedArray())
+                        if (result !== kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED) {
+                            @Suppress("UNCHECKED_CAST")
+                            (cont as kotlin.coroutines.Continuation<Any?>).resume(result)
+                        }
+                    }
                 }
             } else {
                 method.invoke(provider, *callArgs)
@@ -356,7 +363,12 @@ class CloudstreamSourceAdapter(
                     else method.invoke(provider, query)
                 }
 
-                val (results, _) = extractSearchResults(rawResults)
+                Logger.log("Cloudstream search: rawResults=${rawResults?.javaClass?.name}")
+                val (results, hasNextPage) = extractSearchResults(rawResults)
+                Logger.log("Cloudstream search: extracted ${results.size} results, hasNext=$hasNextPage")
+                if (results.isNotEmpty()) {
+                    Logger.log("Cloudstream search: first result type=${results.first().javaClass.name}")
+                }
 
                 val animes = results.mapNotNull { item ->
                     try {
@@ -422,9 +434,14 @@ class CloudstreamSourceAdapter(
             try {
                 val rawResponse = if (loadIsSuspend) callSuspendMethod(provider, method, anime.url)
                     else method.invoke(provider, anime.url)
-                if (rawResponse == null) return@withContext emptyList()
+                if (rawResponse == null) {
+                    Logger.log("Cloudstream getEpisodeList: load returned null")
+                    return@withContext emptyList()
+                }
 
+                Logger.log("Cloudstream getEpisodeList: load returned ${rawResponse.javaClass.name}")
                 val rawEpisodes = extractEpisodes(rawResponse)
+                Logger.log("Cloudstream getEpisodeList: extracted ${rawEpisodes.size} episodes")
 
                 rawEpisodes.mapNotNull { ep ->
                     try {
@@ -458,16 +475,27 @@ class CloudstreamSourceAdapter(
     override suspend fun getVideoList(episode: eu.kanade.tachiyomi.animesource.model.SEpisode): List<Video> {
         ensureInitialized()
         val provider = providerInstance ?: return emptyList()
-        val method = loadLinksMethod ?: return emptyList()
+        val method = loadLinksMethod ?: run {
+            Logger.log("Cloudstream getVideoList: no loadLinksMethod found")
+            return emptyList()
+        }
+
+        Logger.log("Cloudstream getVideoList: method=${method.name} params=${method.parameterTypes.map { it.simpleName }} cb=$loadLinksHasCallback suspend=$loadLinksIsSuspend")
 
         return withContext(Dispatchers.IO) {
             try {
                 val links = if (loadLinksHasCallback) {
+                    Logger.log("Cloudstream getVideoList: using callback-based collectExtractorLinks")
                     collectExtractorLinks(method, provider, episode.url)
                 } else {
                     val rawResults = if (loadLinksIsSuspend) callSuspendMethod(provider, method, episode.url)
                         else method.invoke(provider, episode.url)
                     (rawResults as? List<*>) ?: emptyList()
+                }
+
+                Logger.log("Cloudstream getVideoList: collected ${links.size} links")
+                if (links.isNotEmpty()) {
+                    Logger.log("Cloudstream getVideoList: first link types ${links.first().javaClass.name}")
                 }
 
                 links.mapNotNull { link ->
