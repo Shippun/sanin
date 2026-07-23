@@ -367,7 +367,7 @@ class CloudstreamSourceAdapter(
                 val (results, hasNextPage) = extractSearchResults(rawResults)
                 Logger.log("Cloudstream search: extracted ${results.size} results, hasNext=$hasNextPage")
                 if (results.isNotEmpty()) {
-                    Logger.log("Cloudstream search: first result type=${results.first().javaClass.name}")
+                    Logger.log("Cloudstream search: first result type=${results.first()?.javaClass?.name}")
                 }
 
                 val animes = results.mapNotNull { item ->
@@ -495,7 +495,7 @@ class CloudstreamSourceAdapter(
 
                 Logger.log("Cloudstream getVideoList: collected ${links.size} links")
                 if (links.isNotEmpty()) {
-                    Logger.log("Cloudstream getVideoList: first link types ${links.first().javaClass.name}")
+                    Logger.log("Cloudstream getVideoList: first link type=${links.first()?.javaClass?.name}")
                 }
 
                 links.mapNotNull { link ->
