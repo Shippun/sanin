@@ -2,8 +2,6 @@ package ani.sanin.extension.cloudstream
 
 import android.content.Context
 import ani.sanin.util.Logger
-import dalvik.system.DexFile
-import dalvik.system.PathClassLoader
 import eu.kanade.tachiyomi.animesource.AnimeCatalogueSource
 import eu.kanade.tachiyomi.animesource.model.AnimeFilterList
 import eu.kanade.tachiyomi.animesource.model.AnimesPage
@@ -20,6 +18,9 @@ import java.lang.reflect.InvocationHandler
 import java.lang.reflect.Method
 import java.lang.reflect.Modifier
 import java.lang.reflect.Proxy
+import java.nio.ByteBuffer
+import java.nio.ByteOrder
+import java.util.zip.ZipFile
 
 class CloudstreamSourceAdapter(
     private val extension: CloudstreamInstalledExtension,
@@ -63,7 +64,41 @@ class CloudstreamSourceAdapter(
                     return@withContext
                 }
 
-                val classLoader = PathClassLoader(apkPath, null, context.classLoader)
+                val apkFile = java.io.File(apkPath)
+                val fileBytes = apkFile.readBytes()
+                val dexBuffers = mutableListOf<ByteBuffer>()
+
+                if (fileBytes.size >= 4 &&
+                    fileBytes[0] == 'P'.code.toByte() && fileBytes[1] == 'K'.code.toByte()
+                ) {
+                    // ZIP/APK format
+                    try {
+                        ZipFile(apkPath).use { zip ->
+                            val entries = zip.entries()
+                            while (entries.hasMoreElements()) {
+                                val entry = entries.nextElement()
+                                if (entry.name.startsWith("classes") && entry.name.endsWith(".dex")) {
+                                    dexBuffers.add(ByteBuffer.wrap(zip.getInputStream(entry).readBytes()))
+                                }
+                            }
+                        }
+                    } catch (_: Exception) {
+                        Logger.log("Cloudstream: failed to read ZIP entries from $apkPath")
+                    }
+                } else {
+                    // Raw DEX file
+                    dexBuffers.add(ByteBuffer.wrap(fileBytes))
+                }
+
+                if (dexBuffers.isEmpty()) {
+                    Logger.log("Cloudstream: no DEX buffers from $apkPath")
+                    initialized = true
+                    return@withContext
+                }
+
+                val classLoader = dalvik.system.InMemoryDexClassLoader(
+                    dexBuffers.toTypedArray(), context.classLoader
+                )
 
                 val providerClass = findProviderClass(classLoader, apkPath)
                 if (providerClass != null) {
@@ -101,29 +136,105 @@ class CloudstreamSourceAdapter(
 
     private fun findProviderClass(classLoader: ClassLoader, apkPath: String): Class<*>? {
         try {
-            val dexFile = DexFile(apkPath)
-            val entries = dexFile.entries()
             val candidates = mutableListOf<Class<*>>()
-            while (entries.hasMoreElements()) {
-                val className = entries.nextElement()
-                try {
-                    val clazz = classLoader.loadClass(className)
-                    if (clazz.isInterface || Modifier.isAbstract(clazz.modifiers)) continue
-                    if (clazz.name.startsWith("kotlin.") || clazz.name.startsWith("android.")) continue
+            val apkFile = java.io.File(apkPath)
+            val fileBytes = apkFile.readBytes()
 
-                    val methodNames = clazz.methods.map { it.name }.toSet()
-                    if (methodNames.any { it == "search" || it == "getSearch" || it == "load" }) {
-                        candidates.add(clazz)
+            val dexBlocks = mutableListOf<ByteArray>()
+            if (fileBytes.size >= 4 &&
+                fileBytes[0] == 'P'.code.toByte() && fileBytes[1] == 'K'.code.toByte()
+            ) {
+                try {
+                    ZipFile(apkPath).use { zip ->
+                        val entries = zip.entries()
+                        while (entries.hasMoreElements()) {
+                            val entry = entries.nextElement()
+                            if (entry.name.startsWith("classes") && entry.name.endsWith(".dex")) {
+                                dexBlocks.add(zip.getInputStream(entry).readBytes())
+                            }
+                        }
                     }
                 } catch (_: Exception) { }
+            } else {
+                dexBlocks.add(fileBytes)
             }
-            dexFile.close()
 
+            for (bytes in dexBlocks) {
+                val classNames = parseDexClassNames(bytes)
+                for (className in classNames) {
+                    try {
+                        val javaName = className.replace('/', '.')
+                        if (javaName.startsWith("kotlin.") || javaName.startsWith("android.")) continue
+
+                        val clazz = classLoader.loadClass(javaName)
+                        if (clazz.isInterface || Modifier.isAbstract(clazz.modifiers)) continue
+
+                        val methodNames = clazz.methods.map { it.name }.toSet()
+                        if (methodNames.any { it == "search" || it == "getSearch" || it == "load" }) {
+                            candidates.add(clazz)
+                        }
+                    } catch (_: Exception) { }
+                }
+            }
             if (candidates.isEmpty()) return null
             return candidates.maxByOrNull { it.methods.size }
         } catch (_: Exception) {
             return null
         }
+    }
+
+    private fun parseDexClassNames(dexBytes: ByteArray): List<String> {
+        if (dexBytes.size < 0x70) return emptyList()
+        val buf = ByteBuffer.wrap(dexBytes).order(ByteOrder.LITTLE_ENDIAN)
+        val magic = ByteArray(4)
+        buf.get(magic)
+        if (magic[0] != 'd'.code.toByte() || magic[1] != 'e'.code.toByte() ||
+            magic[2] != 'x'.code.toByte() || magic[3] != '\n'.code.toByte()
+        ) return emptyList()
+
+        val stringIdsOff = buf.getInt(0x38)
+        val stringIdsSize = buf.getInt(0x3C)
+        val typeIdsOff = buf.getInt(0x48)
+        val typeIdsSize = buf.getInt(0x4C)
+        val classDefsOff = buf.getInt(0x60)
+        val classDefsSize = buf.getInt(0x64)
+
+        if (classDefsSize == 0 || classDefsOff <= 0) return emptyList()
+
+        val classNames = mutableListOf<String>()
+        for (i in 0 until classDefsSize) {
+            val defPos = classDefsOff + i * 32
+            if (defPos + 4 > dexBytes.size) break
+            val typeIdx = buf.getInt(defPos)
+            if (typeIdx < 0 || typeIdx >= typeIdsSize) continue
+
+            val typePos = typeIdsOff + typeIdx * 4
+            if (typePos + 4 > dexBytes.size) continue
+            val stringIdx = buf.getInt(typePos)
+            if (stringIdx < 0 || stringIdx >= stringIdsSize) continue
+
+            val strPos = stringIdsOff + stringIdx * 4
+            if (strPos + 4 > dexBytes.size) continue
+            val stringDataOff = buf.getInt(strPos)
+            if (stringDataOff <= 0 || stringDataOff >= dexBytes.size) continue
+
+            // Read ULEB128 length
+            var len = 0
+            var shift = 0
+            var readPos = stringDataOff
+            while (readPos < dexBytes.size) {
+                val byte = dexBytes[readPos].toInt() and 0xFF
+                len = len or ((byte and 0x7F) shl shift)
+                shift += 7
+                readPos++
+                if (byte and 0x80 == 0) break
+            }
+            if (readPos + len > dexBytes.size) continue
+
+            val nameBytes = dexBytes.copyOfRange(readPos, readPos + len)
+            classNames.add(String(nameBytes, Charsets.UTF_8))
+        }
+        return classNames
     }
 
     private fun findMethodWithInfo(clazz: Class<*>, names: List<String>): Triple<Method?, Boolean, Boolean> {
