@@ -49,9 +49,9 @@ object StremioSubtitles {
                 }
             }
 
-            // 2. Try OpenSubtitles (Stremio) if enabled
+            // 2. Try OpenSubtitles (Stremio proxy) if enabled
             if (providers.contains("Stremio")) {
-                Logger.log("StremioSubtitles: Fetching OpenSubtitles...")
+                Logger.log("StremioSubtitles: Fetching Stremio OpenSubtitles...")
                 try {
                     val imdbId = media.idIMDB
                     if (imdbId != null) {
@@ -75,6 +75,22 @@ object StremioSubtitles {
                     e.printStackTrace()
                 }
             }
+
+            // 3. Try OpenSubtitles (official API) if enabled
+            if (providers.contains("OpenSubtitles")) {
+                Logger.log("StremioSubtitles: Fetching official OpenSubtitles...")
+                try {
+                    val imdbId = media.idIMDB
+                    if (imdbId != null) {
+                        val subs = OpenSubtitles.search(imdbId, season, episode)
+                        Logger.log("OpenSubtitles: returned ${subs.size} subs")
+                        allSubs.addAll(subs)
+                    }
+                } catch (e: Exception) {
+                    Logger.log("OpenSubtitles: Error - ${e.message}")
+                }
+            }
+
             allSubs
         }
     }

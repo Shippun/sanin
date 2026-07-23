@@ -398,8 +398,8 @@ class PlayerSettingsActivity :
         binding.playerSettingsOnlineProviders.isEnabled = binding.playerSettingsOnlineSubtitles.isChecked
         binding.playerSettingsOnlineLanguages.isEnabled = binding.playerSettingsOnlineSubtitles.isChecked
 
-        val allProviders = arrayOf("Wyzie", "Stremio")
-        val allProviderLabels = arrayOf("Wyzie", "Stremio")
+        val allProviders = arrayOf("Wyzie", "Stremio", "OpenSubtitles")
+        val allProviderLabels = arrayOf("Wyzie", "Stremio", "OpenSubtitles")
         binding.playerSettingsOnlineProviders.setOnClickListener {
             val currentProviders = PrefManager.getVal<Set<String>>(PrefName.OnlineSubtitleProviders)
             val checkedItems = BooleanArray(allProviders.size) { index ->
@@ -417,6 +417,17 @@ class PlayerSettingsActivity :
                 }
                 setPosButton("Done", null)
                 show()
+            }
+        }
+
+        binding.openSubtitlesApiKeyInput.setText(PrefManager.getVal<String>(PrefName.OpenSubtitlesApiKey))
+        binding.openSubtitlesApiKeyInput.setOnEditorActionListener { _, _, _ ->
+            PrefManager.setVal(PrefName.OpenSubtitlesApiKey, binding.openSubtitlesApiKeyInput.text?.toString() ?: "")
+            false
+        }
+        binding.openSubtitlesApiKeyInput.onFocusChangeListener = android.view.View.OnFocusChangeListener { _, hasFocus ->
+            if (!hasFocus) {
+                PrefManager.setVal(PrefName.OpenSubtitlesApiKey, binding.openSubtitlesApiKeyInput.text?.toString() ?: "")
             }
         }
 
