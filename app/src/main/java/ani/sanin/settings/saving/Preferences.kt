@@ -40,8 +40,6 @@ enum class PrefName(val data: Pref) {
         )
     ),
     AnimeExtensionRepos(Pref(Location.General, Set::class, setOf<String>())),
-    CloudstreamExtensionRepos(Pref(Location.General, Set::class, setOf<String>())),
-    CloudstreamInstalledExtensions(Pref(Location.General, Set::class, setOf<String>())),
 
     AnimeSourcesOrder(Pref(Location.General, List::class, listOf<String>())),
     SortedAnimeSH(Pref(Location.General, List::class, listOf<SearchHistory>())),

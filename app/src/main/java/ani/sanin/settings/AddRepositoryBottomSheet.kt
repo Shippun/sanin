@@ -15,9 +15,6 @@ import ani.sanin.R
 import ani.sanin.copyToClipboard
 import ani.sanin.databinding.BottomSheetAddRepositoryBinding
 import ani.sanin.databinding.ItemRepoBinding
-import ani.sanin.extension.cloudstream.CloudstreamManager
-import ani.sanin.extension.cloudstream.CloudstreamRepoParser
-import ani.sanin.extension.cloudstream.RepoType
 import ani.sanin.media.MediaType
 import ani.sanin.settings.saving.PrefManager
 import ani.sanin.settings.saving.PrefName
@@ -30,7 +27,6 @@ import eu.kanade.tachiyomi.extension.anime.AnimeExtensionManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import uy.kohesive.injekt.Injekt
 import uy.kohesive.injekt.api.get
 
@@ -60,7 +56,6 @@ class RepoItem(
         return this
             .removePrefix("https://raw.githubusercontent.com/")
             .replace("index.min.json", "")
-            .replace("repo.json", "")
             .removeSuffix("/")
     }
 }
@@ -107,10 +102,11 @@ class AddRepositoryBottomSheet : DialogFragment() {
 
         binding.addButton.setOnClickListener {
             val input = binding.repositoryInput.text.toString()
-            if (input.isNotBlank()) {
+            val error = isValidUrl(input)
+            if (error == null) {
                 acceptUrl(input)
             } else {
-                binding.repositoryInput.error = "URL cannot be empty"
+                binding.repositoryInput.error = error
             }
         }
 
@@ -124,8 +120,13 @@ class AddRepositoryBottomSheet : DialogFragment() {
             ) {
                 val url = textView.text.toString()
                 if (url.isNotBlank()) {
-                    acceptUrl(url)
-                    return@setOnEditorActionListener true
+                    val error = isValidUrl(url)
+                    if (error == null) {
+                        acceptUrl(url)
+                        return@setOnEditorActionListener true
+                    } else {
+                        binding.repositoryInput.error = error
+                    }
                 }
             }
             false
@@ -134,52 +135,39 @@ class AddRepositoryBottomSheet : DialogFragment() {
 
     private fun acceptUrl(url: String) {
         val finalUrl = getRepoUrl(url)
-        context?.let { ctx ->
-            addRepoWarning(ctx) {
-                binding.addButton.isEnabled = false
-                CoroutineScope(Dispatchers.IO).launch {
-                    val result = CloudstreamRepoParser.detectRepoType(finalUrl)
-                    if (result == null) {
-                        CoroutineScope(Dispatchers.Main).launch {
-                            binding.addButton.isEnabled = true
-                            binding.repositoryInput.error = "Failed to fetch repository"
-                        }
-                        return@launch
-                    }
-                    withContext(Dispatchers.Main) {
-                        when (result.type) {
-                            RepoType.ANIYOMI -> addAniyomiRepo(finalUrl)
-                            RepoType.CLOUDSTREAM_PACKS, RepoType.CLOUDSTREAM_PLUGINLISTS -> addCloudstreamRepo(finalUrl)
-                            RepoType.UNKNOWN -> {
-                                binding.addButton.isEnabled = true
-                                binding.repositoryInput.error = "Unsupported repository format"
-                            }
-                        }
-                    }
-                    dismiss()
-                }
+        context?.let { context ->
+            addRepoWarning(context) {
+                onRepositoryAdded?.invoke(finalUrl, mediaType)
+                dismiss()
             }
         }
     }
 
-    private fun addAniyomiRepo(url: String) {
-        val normalizedUrl = if (!url.contains("index.min.json")) {
-            "${url.trimEnd('/')}/index.min.json"
-        } else url
-        val repos = PrefManager.getVal<Set<String>>(PrefName.AnimeExtensionRepos).plus(normalizedUrl)
-        PrefManager.setVal(PrefName.AnimeExtensionRepos, repos)
-        CoroutineScope(Dispatchers.IO).launch {
-            Injekt.get<AnimeExtensionManager>().findAvailableExtensions()
+    private fun isValidUrl(input: String): String? {
+        if (input.startsWith("http://") || input.startsWith("https://")) {
+            if (!input.removeSuffix("/").endsWith("index.min.json")) {
+                return "URL must end with index.min.json"
+            }
+            return null
         }
-        onRepositoryAdded?.invoke(normalizedUrl, mediaType)
-    }
 
-    private fun addCloudstreamRepo(url: String) {
-        CloudstreamManager.addRepo(url)
-        CoroutineScope(Dispatchers.IO).launch {
-            CloudstreamManager.refreshRepos()
+        val parts = input.split("/")
+        if (parts.size !in 2..3) {
+            return "Must be a full URL or in format: username/repo[/branch]"
         }
-        onRepositoryAdded?.invoke(url, mediaType)
+
+        val username = parts[0]
+        val repo = parts[1]
+        val branch = if (parts.size == 3) parts[2] else "repo"
+
+        if (username.isBlank() || repo.isBlank()) {
+            return "Username and repository name cannot be empty"
+        }
+        if (parts.size == 3 && branch.isBlank()) {
+            return "Branch name cannot be empty"
+        }
+
+        return null
     }
 
     private fun getRepoUrl(input: String): String {

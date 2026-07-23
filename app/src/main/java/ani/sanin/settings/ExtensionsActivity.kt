@@ -1,10 +1,12 @@
 package ani.sanin.settings
 
+import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.AutoCompleteTextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.updateLayoutParams
@@ -13,15 +15,10 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import ani.sanin.R
 import ani.sanin.databinding.ActivityExtensionsBinding
-import ani.sanin.extension.all.AllExtensionsFragment
-import ani.sanin.extension.cloudstream.CloudstreamManager
-import ani.sanin.extension.cloudstream.CloudstreamUpdateWorker
-import ani.sanin.extension.aniyomi.AniyomiExtensionsFragment
-import ani.sanin.extension.cloudstream.CloudstreamExtensionsFragment
 import ani.sanin.initActivity
+import ani.sanin.util.FocusEffectUtil
 import ani.sanin.media.MediaType
 import ani.sanin.navBarHeight
-import ani.sanin.snackString
 import ani.sanin.others.AndroidBug5497Workaround
 import ani.sanin.others.LanguageMapper
 import ani.sanin.settings.saving.PrefManager
@@ -36,7 +33,6 @@ import java.util.Locale
 
 class ExtensionsActivity : AppCompatActivity() {
     lateinit var binding: ActivityExtensionsBinding
-    private var currentEcosystem = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,142 +41,148 @@ class ExtensionsActivity : AppCompatActivity() {
         binding = ActivityExtensionsBinding.inflate(layoutInflater)
         setContentView(binding.root)
         initActivity(this)
-        AndroidBug5497Workaround.assistActivity(this) { showing ->
-            binding.searchView.updateLayoutParams<ViewGroup.MarginLayoutParams> {
-                bottomMargin = if (showing) statusBarHeight else statusBarHeight + navBarHeight
+        AndroidBug5497Workaround.assistActivity(this) {
+            if (it) {
+                binding.searchView.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+                    bottomMargin = statusBarHeight
+                }
+            } else {
+                binding.searchView.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+                    bottomMargin = statusBarHeight + navBarHeight
+                }
             }
         }
+
         binding.searchView.updateLayoutParams<ViewGroup.MarginLayoutParams> {
             bottomMargin = statusBarHeight + navBarHeight
         }
-        binding.settingsContainer.updateLayoutParams<ViewGroup.MarginLayoutParams> {
-            topMargin = statusBarHeight
-            bottomMargin = navBarHeight
-        }
 
-        CloudstreamManager.init(this)
-
-        val ecoTabLayout = findViewById<TabLayout>(R.id.ecoPillTabLayout)
-        val subTabLayout = findViewById<TabLayout>(R.id.tabLayout)
+        val tabLayout = findViewById<TabLayout>(R.id.tabLayout)
         val viewPager = findViewById<ViewPager2>(R.id.viewPager)
-        viewPager.offscreenPageLimit = 2
+        viewPager.offscreenPageLimit = 1
 
         viewPager.adapter = object : FragmentStateAdapter(this) {
-            override fun getItemCount() = 3
-            override fun createFragment(position: Int): Fragment = when (position) {
-                0 -> AllExtensionsFragment()
-                1 -> AniyomiExtensionsFragment()
-                2 -> CloudstreamExtensionsFragment()
-                else -> AllExtensionsFragment()
+            override fun getItemCount(): Int = 2
+
+            override fun createFragment(position: Int): Fragment {
+                return when (position) {
+                    0 -> InstalledAnimeExtensionsFragment()
+                    1 -> AnimeExtensionsFragment()
+                    else -> AnimeExtensionsFragment()
+                }
             }
+
         }
 
-        ecoTabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
-            override fun onTabSelected(tab: TabLayout.Tab) {
-                currentEcosystem = tab.position
-                viewPager.currentItem = tab.position
-                subTabLayout.visibility = if (tab.position == 0) View.GONE else View.VISIBLE
-                binding.languageselect.visibility =
-                    if (tab.position == 0 || tab.position == 2) View.GONE else View.VISIBLE
-                binding.searchViewText.setText("")
-                updateRepoButton()
-            }
-            override fun onTabUnselected(tab: TabLayout.Tab) {}
-            override fun onTabReselected(tab: TabLayout.Tab) {}
-        })
+        val searchView: AutoCompleteTextView = findViewById(R.id.searchViewText)
 
-        TabLayoutMediator(ecoTabLayout, viewPager) { tab, _ ->
-            tab.text = when (tab.position) {
-                0 -> "All"
-                1 -> "Aniyomi"
-                2 -> "Cloudstream"
+        tabLayout.addOnTabSelectedListener(
+            object : TabLayout.OnTabSelectedListener {
+                override fun onTabSelected(tab: TabLayout.Tab) {
+                    searchView.setText("")
+                    searchView.clearFocus()
+                    tabLayout.clearFocus()
+                    if (tab.text?.contains("Installed") == true) binding.languageselect.visibility =
+                        View.GONE
+                    else binding.languageselect.visibility = View.VISIBLE
+                    viewPager.updateLayoutParams<ViewGroup.LayoutParams> {
+                        height = ViewGroup.LayoutParams.MATCH_PARENT
+                    }
+
+                    if (tab.text?.contains("Anime") == true) {
+                        generateRepositoryButton(MediaType.ANIME)
+                    }
+                }
+
+                override fun onTabUnselected(tab: TabLayout.Tab) {
+                    viewPager.updateLayoutParams<ViewGroup.LayoutParams> {
+                        height = ViewGroup.LayoutParams.MATCH_PARENT
+                    }
+                    tabLayout.clearFocus()
+                }
+
+                override fun onTabReselected(tab: TabLayout.Tab) {
+                    viewPager.updateLayoutParams<ViewGroup.LayoutParams> {
+                        height = ViewGroup.LayoutParams.MATCH_PARENT
+                    }
+                    // Do nothing
+                }
+            }
+        )
+
+        TabLayoutMediator(tabLayout, viewPager) { tab, position ->
+            tab.text = when (position) {
+                0 -> "Installed Anime"
+                1 -> "Available Anime"
+                2 -> "Installed Manga"
+                3 -> "Available Manga"
+                4 -> "Installed Novels"
+                5 -> "Available Novels"
                 else -> null
             }
         }.attach()
 
-        val searchView: AutoCompleteTextView = findViewById(R.id.searchViewText)
+
         searchView.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) {}
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun afterTextChanged(s: Editable?) {
+            }
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+            }
+
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                val tag = "f${viewPager.currentItem}"
-                val frag = supportFragmentManager.findFragmentByTag(tag)
-                if (frag is SearchQueryHandler) {
-                    frag.updateContentBasedOnQuery(s?.toString()?.trim())
+                val currentFragment =
+                    supportFragmentManager.findFragmentByTag("f${viewPager.currentItem}")
+                if (currentFragment is SearchQueryHandler) {
+                    currentFragment.updateContentBasedOnQuery(s?.toString()?.trim())
                 }
             }
         })
 
         TvKeyboardUtil.setupTvInput(binding.searchViewText)
 
+        initActivity(this)
         binding.languageselect.setOnClickListener {
-            val languageOptions = LanguageMapper.Companion.Language.entries.map {
-                it.name.lowercase().replace("_", " ")
-                    .replaceFirstChar { c -> if (c.isLowerCase()) c.titlecase(Locale.ROOT) else c.toString() }
-            }.toTypedArray()
-            val listOrder = PrefManager.getVal<String>(PrefName.LangSort)
-            val index = LanguageMapper.Companion.Language.entries.indexOfFirst { it.code == listOrder }
+            val languageOptions =
+                LanguageMapper.Companion.Language.entries.map { entry ->
+                    entry.name.lowercase().replace("_", " ")
+                        .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() }
+                }.toTypedArray()
+            val listOrder: String = PrefManager.getVal(PrefName.LangSort)
+            val index = LanguageMapper.Companion.Language.entries.toTypedArray()
+                .indexOfFirst { it.code == listOrder }
             customAlertDialog().apply {
                 setTitle("Language")
                 singleChoiceItems(languageOptions, index) { selected ->
-                    PrefManager.setVal(PrefName.LangSort, LanguageMapper.Companion.Language.entries[selected].code)
-                    val tag = "f${viewPager.currentItem}"
-                    val frag = supportFragmentManager.findFragmentByTag(tag)
-                    if (frag is SearchQueryHandler) frag.notifyDataChanged()
+                    PrefManager.setVal(
+                        PrefName.LangSort,
+                        LanguageMapper.Companion.Language.entries[selected].code
+                    )
+                    val currentFragment =
+                        supportFragmentManager.findFragmentByTag("f${viewPager.currentItem}")
+                    if (currentFragment is SearchQueryHandler) {
+                        currentFragment.notifyDataChanged()
+                    }
                 }
                 show()
             }
         }
-
-        updateRepoButton()
+        binding.settingsContainer.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+            topMargin = statusBarHeight
+            bottomMargin = navBarHeight
+        }
     }
 
-    private fun updateRepoButton() {
+    private fun generateRepositoryButton(type: MediaType) {
         binding.openSettingsButton.setOnClickListener {
-            when (currentEcosystem) {
-                1 -> showAniyomiRepoDialog()
-                2 -> showCloudstreamRepoDialog()
-                0 -> showEcosystemPickerDialog()
-            }
-        }
-        binding.openSettingsButton.setOnLongClickListener {
-            if (currentEcosystem == 2) {
-                CloudstreamUpdateWorker.triggerManualUpdate(this)
-                snackString("Cloudstream update check triggered")
-                true
-            } else false
-        }
-    }
+            val repos = PrefManager.getVal<Set<String>>(PrefName.AnimeExtensionRepos)
+            AddRepositoryBottomSheet.newInstance(
+                type,
+                repos.toList(),
+                AddRepositoryBottomSheet::addRepo,
+                AddRepositoryBottomSheet::removeRepo
 
-    private fun showAniyomiRepoDialog() {
-        val repos = PrefManager.getVal<Set<String>>(PrefName.AnimeExtensionRepos)
-        AddRepositoryBottomSheet.newInstance(
-            MediaType.ANIME, repos.toList(),
-            AddRepositoryBottomSheet::addRepo,
-            AddRepositoryBottomSheet::removeRepo
-        ).show(supportFragmentManager, "add_repo")
-    }
-
-    private fun showCloudstreamRepoDialog() {
-        val repos = CloudstreamManager.getRepos()
-        AddRepositoryBottomSheet.newInstance(
-            MediaType.ANIME, repos,
-            { url, _ -> CloudstreamManager.addRepo(url) },
-            { url, _ -> CloudstreamManager.removeRepo(url) }
-        ).show(supportFragmentManager, "add_repo")
-    }
-
-    private fun showEcosystemPickerDialog() {
-        val options = arrayOf("Aniyomi", "Cloudstream")
-        customAlertDialog().apply {
-            setTitle("Repository Type")
-            singleChoiceItems(options) { which ->
-                when (which) {
-                    0 -> showAniyomiRepoDialog()
-                    1 -> showCloudstreamRepoDialog()
-                }
-            }
-            show()
+            ).show(supportFragmentManager, "add_repo")
         }
     }
 }

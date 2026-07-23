@@ -19,6 +19,7 @@
             app:cardBackgroundColor="@color/nav_bg_inv"
             app:cardCornerRadius="16dp"
             app:cardElevation="0dp">
+
         </androidx.cardview.widget.CardView>
 
         <TextView
@@ -63,24 +64,9 @@
     </LinearLayout>
 
     <com.google.android.material.tabs.TabLayout
-        android:id="@+id/ecoPillTabLayout"
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:layout_marginHorizontal="32dp"
-        android:layout_marginTop="4dp"
-        app:tabBackground="@drawable/tab_pill_bg"
-        app:tabIndicator="@null"
-        app:tabGravity="fill"
-        app:tabMode="fixed"
-        app:tabPaddingEnd="16dp"
-        app:tabPaddingStart="16dp"
-        app:tabTextAppearance="@style/NavBarText" />
-
-    <com.google.android.material.tabs.TabLayout
         android:id="@+id/tabLayout"
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:visibility="gone"
         app:tabContentStart="32dp"
         app:tabGravity="fill"
         app:tabMode="scrollable"

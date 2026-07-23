@@ -1,12 +1,9 @@
 package ani.sanin.parsers
 
 import ani.sanin.Lazier
-import ani.sanin.extension.cloudstream.CloudstreamInstalledExtension
-import ani.sanin.extension.cloudstream.CloudstreamSourceAdapter
 import ani.sanin.lazyList
 import ani.sanin.settings.saving.PrefManager
 import ani.sanin.settings.saving.PrefName
-import android.content.Context
 import eu.kanade.tachiyomi.extension.anime.model.AnimeExtension
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
@@ -15,31 +12,26 @@ object AnimeSources : WatchSources() {
     override var list: List<Lazier<BaseParser>> = emptyList()
     var pinnedAnimeSources: List<String> = emptyList()
     var isInitialized = false
-    private var appContext: Context? = null
 
-    suspend fun init(
-        fromExtensions: StateFlow<List<AnimeExtension.Installed>>,
-        context: Context,
-        fromCloudstream: StateFlow<List<CloudstreamInstalledExtension>>? = null,
-    ) {
-        appContext = context
+    suspend fun init(fromExtensions: StateFlow<List<AnimeExtension.Installed>>) {
         pinnedAnimeSources =
             PrefManager.getNullableVal<List<String>>(PrefName.AnimeSourcesOrder, null)
                 ?: emptyList()
 
+        // Initialize with the first value from StateFlow
         val initialExtensions = fromExtensions.first()
-        list = createParsersFromExtensions(initialExtensions) +
-            createParsersFromCloudstream(fromCloudstream?.first() ?: emptyList(), context) +
-            listOf(Lazier({ LocalAnimeParser() }, "Local"))
+        list = createParsersFromExtensions(initialExtensions) + listOf(
+            Lazier({ LocalAnimeParser() }, "Local")
+        )
         isInitialized = true
 
         fromExtensions.collect { extensions ->
-            val csExtensions = fromCloudstream?.value ?: emptyList()
             list = sortPinnedAnimeSources(
-                createParsersFromExtensions(extensions) +
-                    createParsersFromCloudstream(csExtensions, context),
+                createParsersFromExtensions(extensions),
                 pinnedAnimeSources
-            ) + listOf(Lazier({ LocalAnimeParser() }, "Local"))
+            ) + listOf(
+                Lazier({ LocalAnimeParser() }, "Local")
+            )
         }
     }
 
@@ -50,38 +42,10 @@ object AnimeSources : WatchSources() {
         )
     }
 
-    private fun createParsersFromExtensions(
-        extensions: List<AnimeExtension.Installed>
-    ): List<Lazier<BaseParser>> {
+    private fun createParsersFromExtensions(extensions: List<AnimeExtension.Installed>): List<Lazier<BaseParser>> {
         return extensions.map { extension ->
-            Lazier({ DynamicAnimeParser(extension) }, extension.name)
-        }
-    }
-
-    private fun createParsersFromCloudstream(
-        extensions: List<CloudstreamInstalledExtension>,
-        context: Context,
-    ): List<Lazier<BaseParser>> {
-        return extensions.map { csExt ->
-            val adapter = CloudstreamSourceAdapter(csExt, context, csExt.filePath)
-            val fakeExtension = AnimeExtension.Installed(
-                name = csExt.name,
-                pkgName = csExt.pkgName,
-                versionName = csExt.versionName,
-                versionCode = csExt.versionCode,
-                libVersion = 0.0,
-                lang = csExt.lang.ifEmpty { "en" },
-                isNsfw = csExt.isNsfw,
-                hasReadme = false,
-                hasChangelog = false,
-                sources = listOf(adapter),
-                pkgFactory = null,
-                icon = csExt.icon,
-                hasUpdate = csExt.hasUpdate,
-                isObsolete = false,
-                isUnofficial = true,
-            )
-            Lazier({ DynamicAnimeParser(fakeExtension) }, csExt.name)
+            val name = extension.name
+            Lazier({ DynamicAnimeParser(extension) }, name)
         }
     }
 
