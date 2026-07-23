@@ -420,16 +420,7 @@ class PlayerSettingsActivity :
             }
         }
 
-        binding.openSubtitlesApiKeyInput.setText(PrefManager.getVal<String>(PrefName.OpenSubtitlesApiKey))
-        binding.openSubtitlesApiKeyInput.setOnEditorActionListener { _, _, _ ->
-            PrefManager.setVal(PrefName.OpenSubtitlesApiKey, binding.openSubtitlesApiKeyInput.text?.toString() ?: "")
-            false
-        }
-        binding.openSubtitlesApiKeyInput.onFocusChangeListener = android.view.View.OnFocusChangeListener { _, hasFocus ->
-            if (!hasFocus) {
-                PrefManager.setVal(PrefName.OpenSubtitlesApiKey, binding.openSubtitlesApiKeyInput.text?.toString() ?: "")
-            }
-        }
+
 
         val allLanguages = arrayOf(
             "en", "ar", "pt", "es", "id", "fr", "ru", "zh", "ja", "tr", "it", "de", "pl", "th", "vi", "ko"

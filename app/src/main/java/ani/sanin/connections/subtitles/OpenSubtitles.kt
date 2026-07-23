@@ -17,14 +17,9 @@ object OpenSubtitles {
 
     private const val BASE_URL = "https://api.opensubtitles.com/api/v1"
     private const val USER_AGENT = "Sanin v3.2.2"
-
-    private fun getApiKey(): String? {
-        val key = PrefManager.getVal<String>(PrefName.OpenSubtitlesApiKey)
-        return key.ifBlank { null }
-    }
+    private const val API_KEY = "sMaSHqhfU08qaUehns7TOLJbbEg8O3D4"
 
     suspend fun search(imdbId: String, season: Int, episode: Int): List<StremioSub> {
-        val apiKey = getApiKey() ?: return emptyList()
         return withContext(Dispatchers.IO) {
             try {
                 val languages = PrefManager.getVal<Set<String>>(PrefName.OnlineSubtitleLanguages)
@@ -38,7 +33,7 @@ object OpenSubtitles {
 
                 val request = Request.Builder()
                     .url(url)
-                    .header("Api-Key", apiKey)
+                    .header("Api-Key", API_KEY)
                     .header("User-Agent", USER_AGENT)
                     .header("Content-Type", "application/json")
                     .build()
@@ -55,7 +50,7 @@ object OpenSubtitles {
                 searchResult.data.mapNotNull { item ->
                     try {
                         val fileId = item.attributes.files.firstOrNull()?.fileId ?: return@mapNotNull null
-                        val downloadUrl = downloadSubtitle(fileId, apiKey) ?: return@mapNotNull null
+                        val downloadUrl = downloadSubtitle(fileId, API_KEY) ?: return@mapNotNull null
                         Logger.log("OpenSubtitles: Got link for file $fileId → $downloadUrl")
 
                         StremioSub(

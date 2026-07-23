@@ -274,26 +274,6 @@
                     app:iconPadding="16dp"
                     app:iconSize="24dp" />
 
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/playerSettingsOpenSubtitlesKey"
-                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="32dp"
-                    android:layout_marginBottom="8dp"
-                    android:hint="OpenSubtitles API Key"
-                    app:endIconMode="password_toggle"
-                    app:passwordToggleEnabled="true">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/openSubtitlesApiKeyInput"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="@font/poppins"
-                        android:inputType="textPassword"
-                        android:maxLines="1" />
-                </com.google.android.material.textfield.TextInputLayout>
-
             </ani.sanin.others.Xpandable>
 
             <ani.sanin.others.Xpandable
