@@ -96,9 +96,13 @@ class CloudstreamSourceAdapter(
                     return@withContext
                 }
 
-                val classLoader = dalvik.system.InMemoryDexClassLoader(
-                    dexBuffers.toTypedArray(), context.classLoader
-                )
+                val classLoader = if (android.os.Build.VERSION.SDK_INT >= 26) {
+                    dalvik.system.InMemoryDexClassLoader(
+                        dexBuffers.toTypedArray(), context.classLoader
+                    )
+                } else {
+                    dalvik.system.PathClassLoader(apkPath, null, context.classLoader)
+                }
 
                 val providerClass = findProviderClass(classLoader, apkPath)
                 if (providerClass != null) {
