@@ -43,6 +43,12 @@ class CloudstreamSourceAdapter(
     private var loadLinksHasCallback = false
     private var initialized = false
 
+    private data class LinksMethodInfo(
+        val method: Method?,
+        val isSuspend: Boolean = false,
+        val isCallback: Boolean = false,
+    )
+
     private suspend fun ensureInitialized() {
         if (initialized) return
         withContext(Dispatchers.IO) {
@@ -73,10 +79,10 @@ class CloudstreamSourceAdapter(
                     loadMethod = load
                     loadIsSuspend = lIsSus
 
-                    val (links, _, linksIsSus, linksIsCb) = findLoadLinksMethod(providerClass)
-                    loadLinksMethod = links
-                    loadLinksIsSuspend = linksIsSus
-                    loadLinksHasCallback = linksIsCb
+                    val linksInfo = findLoadLinksMethod(providerClass)
+                    loadLinksMethod = linksInfo.method
+                    loadLinksIsSuspend = linksInfo.isSuspend
+                    loadLinksHasCallback = linksInfo.isCallback
 
                     Logger.log("Cloudstream: search=${searchMethod != null} page=$searchHasPage suspend=$searchIsSuspend " +
                         "load=${loadMethod != null} suspend=$loadIsSuspend " +
@@ -151,7 +157,7 @@ class CloudstreamSourceAdapter(
         return Triple(null, false, false)
     }
 
-    private fun findLoadLinksMethod(clazz: Class<*>): Triple<Method?, Boolean, Boolean, Boolean> {
+    private fun findLoadLinksMethod(clazz: Class<*>): LinksMethodInfo {
         val names = listOf("loadLinks", "getLink", "getVideoList", "fetchLinks")
         for (name in names) {
             val methods = clazz.methods.filter { it.name == name }
@@ -165,21 +171,21 @@ class CloudstreamSourceAdapter(
                 // Standard CS3 callback-based: (String, boolean, Function1, Function1)
                 if (realParams.size == 4 && realParams[0] == String::class.java) {
                     m.isAccessible = true
-                    return Triple(m, false, isSuspend, true)
+                    return LinksMethodInfo(m, isSuspend, true)
                 }
                 // Legacy List-returning: (String)
                 if (realParams.size == 1 && realParams[0] == String::class.java) {
                     m.isAccessible = true
-                    return Triple(m, false, isSuspend, false)
+                    return LinksMethodInfo(m, isSuspend, false)
                 }
                 // Simple (String, boolean) returning List
                 if (realParams.size == 2 && realParams[0] == String::class.java) {
                     m.isAccessible = true
-                    return Triple(m, false, isSuspend, false)
+                    return LinksMethodInfo(m, isSuspend, false)
                 }
             }
         }
-        return Triple(null, false, false, false)
+        return LinksMethodInfo(null, false, false)
     }
 
     private fun callSuspendMethod(provider: Any, method: Method, vararg args: Any?): Any? {
